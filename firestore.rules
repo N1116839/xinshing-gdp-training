@@ -1,0 +1,10 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /gdpTrainingQa/{sectionId}/items/{itemId} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasAll(['name','question','sectionId','createdAt']) && request.resource.data.name is string && request.resource.data.name.size() <= 50 && request.resource.data.question is string && request.resource.data.question.size() <= 1000;
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['replies']);
+    }
+  }
+}
