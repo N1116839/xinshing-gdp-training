@@ -50,7 +50,7 @@
     .hero .lead{max-width:680px;color:#315753;font-weight:600}
     .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
     .panel{grid-column:span 12;padding:22px;background:var(--panel);border:1px solid var(--line);box-shadow:0 8px 22px rgba(20,64,61,.06)}
-    .half{grid-column:span 6}.third{grid-column:span 4}.wide{grid-column:span 8}
+    .half{grid-column:span 6}.third{grid-column:span 4}.wide{grid-column:span 12}
     h3{margin:0 0 14px;color:var(--brand);font-size:20px;line-height:1.35}
     h4{margin:0 0 8px;color:var(--ink);font-size:15px}
     ul,ol{margin:0;padding-left:1.25rem;color:var(--ink-soft);line-height:1.75}
@@ -233,9 +233,13 @@
     .step:nth-child(even){background:var(--brand-2)}
     .step small{color:#dcefeb;font-weight:700}
     /* ── Q&A ── */
-    .qa-list{display:grid;gap:12px;margin-top:14px}
-    .qa-card{padding:12px;background:#f7fbfb;border:1px solid var(--line)}
+    .qa-layout{display:grid;grid-template-columns:340px 1fr;gap:24px;align-items:start}
+    .qa-ask-col{position:sticky;top:16px}
+    .qa-list-col{min-height:120px}
+    .qa-list{display:grid;gap:12px}
+    .qa-card{padding:14px;background:#f7fbfb;border:1px solid var(--line);border-left:4px solid var(--brand)}
     .qa-card .meta{display:flex;justify-content:space-between;gap:10px;margin-bottom:6px;color:var(--ink-soft);font-size:12px}
+    @media(max-width:760px){.qa-layout{grid-template-columns:1fr}.qa-ask-col{position:static}}
     .reply{margin-top:8px;padding:8px;background:#fff9ef;border-left:3px solid var(--gold);color:var(--ink)}
     form{display:grid;gap:10px}
     label{display:grid;gap:5px;color:var(--ink-soft);font-size:13px;font-weight:700}
@@ -1294,8 +1298,8 @@ function renderContent(s){
     auditSlides(s),
     panel("稽查時最常看的證據鏈",evidenceMap(s),"half"),
     panel("時程與資料節點",schedule(s.schedule),"half"),
-    panel("不符合 GDP 流程時的共同處理閉環",capaFlow,"half"),
-    panel("部門 Q&A 留言區",qaHtml(s),"wide")
+    panel("不符合 GDP 流程時的共同處理閉環",capaFlow,""),
+    panel("部門 Q&A 討論區",qaHtml(s),"")
   ].filter(Boolean).join("");
 }
 
@@ -1303,18 +1307,29 @@ function renderContent(s){
    Q&A RENDER
 ═══════════════════════════════════════════════ */
 function qaHtml(s){
-  return `<form id="qaForm">
-    <label>提問人<input name="name" placeholder="姓名或部門" required></label>
-    <label>問題內容<textarea name="question" placeholder="看不懂的段落、文件編號或實務情境" required></textarea></label>
-    <div class="actions"><button class="primary" type="submit">送出問題</button><span class="note">依「${s.title}」分類保存。</span></div>
-  </form>
-  <div id="qaList" class="qa-list"></div>`;
+  return `<div class="qa-layout">
+    <div class="qa-ask-col">
+      <h4 style="margin-bottom:12px">提出問題</h4>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">看到不懂的段落、文件編號或實務情境，直接留言。管理者回覆後會顯示在右側。</p>
+      <form id="qaForm">
+        <label>提問人<input name="name" placeholder="姓名或部門" required></label>
+        <label>問題內容<textarea name="question" placeholder="例如：DP54-01 的收貨時間限制是什麼？" required style="min-height:90px"></textarea></label>
+        <div class="actions"><button class="primary" type="submit">送出問題</button><span class="note">儲存至「${esc(s.title)}」。</span></div>
+      </form>
+    </div>
+    <div class="qa-list-col">
+      <h4 style="margin-bottom:12px">本頁問題與回覆 <span id="qaCount" style="font-size:13px;font-weight:400;color:var(--muted)"></span></h4>
+      <div id="qaList" class="qa-list"></div>
+    </div>
+  </div>`;
 }
 async function renderQa(id){
   const el=document.getElementById("qaList");
   if(!el) return;
   const items=await qaStore.list(id);
-  if(!items.length){ el.innerHTML=`<p class="note">目前尚無問題。觀看教材時若有疑問，可在上方留言。</p>`; return; }
+  const cnt=document.getElementById("qaCount");
+  if(cnt) cnt.textContent=items.length?"（"+items.length+" 則）":"（尚無問題）";
+  if(!items.length){ el.innerHTML=`<p class="note" style="padding:14px 0">目前尚無問題。左側提問後將顯示於此。</p>`; return; }
   el.innerHTML=items.map(item=>`
     <div class="qa-card">
       <div class="meta"><strong>${esc(item.name)}</strong><span>${fmtDate(item.createdAt)}</span></div>
