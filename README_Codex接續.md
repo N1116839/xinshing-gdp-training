@@ -836,3 +836,252 @@ G:\我的雲端硬碟\2026codex\codex-skills-lazy-pack
   - `html-training-deck`：新增年度行事曆視覺與重複資訊規則。
 - 已同步到 Google Drive 備份與 `codex-skills-lazy-pack` repo，並重建 ZIP 懶人包。
 ```
+## 2026-05-25 專案續作：行事曆完成狀態 Firestore 同步
+```
+### 本輪完成
+- 延續「已完成 / 未完成」狀態同步工作，將年度資料收件行事曆狀態改為穩定項目 ID：
+  - HTML 端每筆收件卡片產生 `item-序號-hash` 作為 Firestore 文件 ID。
+  - 保留舊版 `gdp-calendar-status-序號` localStorage fallback，避免舊本機狀態立即失效。
+  - 讀取時改為一次載入 `gdpTrainingCalendarStatus/collection-calendar/items`，不再每張卡片各讀一次。
+  - 寫入時同步 `sectionId`、`itemId`、`itemIndex`、`status`、`updatedAt`。
+- Firestore rules 已收緊 `gdpTrainingCalendarStatus` 欄位：
+  - 只允許 `sectionId`、`itemId`、`itemIndex`、`status`、`updatedAt`。
+  - `sectionId` 必須符合路徑，`itemId` 必須符合文件 ID。
+  - `status` 只能是 `done` 或 `pending`。
+```
+### 驗證
+```
+- JavaScript 語法檢查通過。
+- Edge headless 開啟 `#collection-calendar` 成功。
+- 頁面偵測到 61 筆收件卡片。
+- 第一筆「已完成 / 未完成」按鈕可在畫面上切換。
+- 驗證截圖：
+  - `outputs/calendar_status_firestore_sync_preview.png`
+```
+### 尚未完成 / 交接事項
+```
+- 使用者已明確同意安裝/執行 Firebase CLI。
+- 已用 `npm.cmd install -g firebase-tools` 安裝 Firebase CLI 15.18.0。
+- 已確認目前 Firebase 專案為 `xinshing-gdp-training-20260525`。
+- 已部署 Firestore rules：
+  `firebase.cmd deploy --only firestore:rules --project xinshing-gdp-training-20260525`
+- 部署後 Edge headless 驗證通過：
+  1. 開啟 `gdp_internal_training.html#collection-calendar`
+  2. 切換第一筆收件狀態為「已完成」
+  3. 重新整理後仍從 Firestore 讀回「已完成」
+  4. 無 console warning/error
+- 驗證截圖：
+  - `outputs/calendar_status_firestore_sync_verified.png`
+```
+## 2026-05-25 使用者回饋：先文字、後視覺重構
+```
+### 使用者最新要求
+- 先將回饋列入專案。
+- 目前優先處理文字與資訊架構，文字統一修正完後，再執行視覺化修正。
+- HTML 可以大幅變動，只要保留真正要呈現的重點；可使用左中右、上下、橫排、條列式、下拉式、滑桿、拖拉等 HTML 可做到的互動。
+```
+### 資料保存與 Firebase 風險
+```
+1. 目前收件行事曆的「已完成 / 未完成」狀態寫在使用者個人的 Firebase 專案。
+   - 風險：如果使用者離職、帳號停用或專案權限移轉不完整，資料可能無法交接。
+   - 需設計成公司可接管的資料保存方式，而不是綁定個人帳號。
+2. 資料是年度性資料，每年都會重複產生與查核。
+   - 目前 UI 只有當年度狀態，沒有年度切換、歷史封存、年度複製或年度查核視角。
+   - 需加入年度維度，讓每一年能各自保存狀態與查核紀錄。
+3. 後續需提出資料架構方案：
+   - Firebase 專案所有權與權限應改為公司可管理的帳號或公司 Google Cloud / Firebase 專案。
+   - Firestore collection 應加入年份層級，例如 `gdpTrainingCalendarStatus/{year}/sections/{sectionId}/items/{itemId}`，或等效結構。
+   - UI 應加入年度選擇、複製上一年度項目、年度結案/鎖定、匯出備份。
+   - 需考慮離職交接：匯出 JSON/CSV、規則檔、Firebase 設定、部署指令與管理者清單都要可交接。
+```
+### 行事曆功能修正
+```
+- 關鍵設備行事曆應該像年度資料收件行事曆一樣，根據時間做條列式選單。
+- 收件行事曆已有「已完成 / 未完成」，但需延伸年度保存與查核。
+- 收資料的人要能清楚知道：
+  - 什麼時間點
+  - 該找誰
+  - 收什麼資料
+  - 對應哪份表單、SOP 或設備紀錄
+  - 該年度是否已完成
+```
+### 頁面視覺與資訊層級問題
+```
+- 目前每一頁上方滿版，中間只有網頁一半，下面又有部分滿版，Q&A 區塊又很小，整體視覺不雅觀，重點不清楚。
+- 後續視覺重構需避免同一頁寬度與資訊密度忽大忽小。
+- Q&A 不應只是頁尾一小塊；需依頁面角色決定是否變成側欄、底部討論區、或「本頁問題」抽屜。
+- 每一頁需要有明確主軸：
+  - 這頁要新人理解什麼
+  - 這頁要收資料的人完成什麼
+  - 這頁要稽查時快速找到什麼證據
+```
+### 部門文件覆蓋不足問題
+```
+- 每個部門上方目前列出的文件數不足，容易讓觀看者誤以為只需要讀那幾份。
+- 例如倉庫不應只有 4 個文件。
+- 很多文件是跨部門會碰到的，例如進出貨可能同時涉及採購、品保、倉庫。
+- 後續需重新規劃部門頁的文件呈現，不一定放在現在位置。
+- 建議文字優先整理成：
+  - 部門必讀文件
+  - 跨部門會碰到的文件
+  - 發生異常時才需要查的文件
+  - 稽查常問文件
+  - 對應時程/紀錄責任
+```
+### 內容主軸重排
+```
+1. 品質手冊與 SMF 是 GDP 的核心，需獨立出來。
+   - 品質手冊：說明「為何要做 GDP」。
+   - SMF：說明「新勝醫藥怎麼做 GDP」。
+   - 這兩個不應淹沒在一般部門頁或文件清單中。
+2. 各部門新人要容易觀看。
+   - 新人頁面應以「我是哪個部門、我要先看什麼、我日常要做什麼、稽查會問什麼」為主。
+   - 避免只用 SOP 編號堆疊。
+3. 時程行事曆與關鍵設備行事曆要服務收資料的人。
+   - 需要直接回答：何時、找誰、收什麼、證據是什麼、是否完成。
+```
+### 後續執行順序
+```
+第一階段：文字與資訊架構
+1. 重新定義 HTML 的主導航與頁面分組：核心概念、部門新人、年度收件、關鍵設備、Q&A/查核。
+2. 重寫品質手冊與 SMF 的說明文字，分別對應「為何做 GDP」與「公司怎麼做 GDP」。
+3. 重新整理各部門文件矩陣，標示必讀、共用、異常、稽查、時程責任。
+4. 統一收件行事曆與關鍵設備行事曆的文字欄位與年度語意。
+5. 先確認文字無誤，再進入視覺化重構。
+
+第二階段：視覺化重構
+1. 重新設計每頁版面，避免寬度與區塊節奏混亂。
+2. 讓品質手冊/SMF 成為獨立核心入口。
+3. 讓部門頁改為新人導向的任務式視圖。
+4. 讓年度收件與關鍵設備行事曆使用一致的時間條列式互動。
+5. 增加年度切換、年度封存、狀態同步與匯出/交接設計。
+```
+## 2026-05-25 第一階段開始：文字與資訊架構初版
+```
+### 本輪完成
+- HTML 主導航分組改為：
+  - `GDP核心`
+  - `新人部門`
+  - `年度行事曆`
+- 品質手冊頁已重寫定位：
+  - 標籤改為「為何要做 GDP」。
+  - 文字明確說明品質手冊不是表單集合，而是把法規要求、管理責任、偏差/CAPA、風險、內稽與管理審查串成品質系統。
+  - 新增「本頁定位」三張文字卡：這頁先回答、新人要記得、稽查會看。
+- SMF 廠商清冊頁已重寫定位：
+  - 標籤改為「公司怎麼做 GDP」。
+  - 文字明確說明 SMF 串連場所、組織、產品範圍、儲存條件、委外物流、供應商、客戶與產品清冊。
+  - 新增「本頁定位」三張文字卡。
+- 各部門頁新增「部門文件閱讀地圖」：
+  - 各部門分類
+  - 人事
+  - GDP 權責人
+  - 管理藥師
+  - 品保
+  - 倉管
+  - 採購
+  - 業務
+  - 文管
+- 倉管頁已特別補強：不再只呈現 DP33/DP54/DP55/DP57，而是列出日常倉儲、跨部門共用、設備/場所三組文件，包含 DP32、DP33、DP34、DP35、DP36、DP54、DP55、DP56、DP57、DP63、DP65、WI25、DP25 等脈絡。
+- 年度資料收件行事曆新增「年度保存與交接策略」：
+  - 年度保存
+  - 公司接管
+  - 交接備份
+- 關鍵設備行事曆文字改為「關鍵設備時間核對台」，欄位語意改成：
+  - 找誰
+  - 收什麼
+  - 依據
+```
+### 驗證
+```
+- JavaScript 語法檢查通過。
+- Edge headless 已逐頁驗證：
+  - `manual`
+  - `smf`
+  - `warehouse`
+  - `collection-calendar`
+  - `equipment-calendar`
+- 驗證結果：
+  - 品質手冊與 SMF 均有 3 張本頁定位卡。
+  - 倉管有 3 張部門文件閱讀地圖卡。
+  - 年度資料收件行事曆有 3 張年度保存與交接策略卡，並保留 61 筆收件卡片。
+  - 關鍵設備行事曆有 12 筆設備時間核對項目。
+- 手機寬度檢查：
+  - 倉管頁無水平溢出。
+- 新增驗證截圖：
+  - `outputs/text_phase_manual.png`
+  - `outputs/text_phase_smf.png`
+  - `outputs/text_phase_warehouse.png`
+  - `outputs/text_phase_collection-calendar.png`
+  - `outputs/text_phase_equipment-calendar.png`
+  - `outputs/text_phase_mobile_warehouse.png`
+```
+### 下一步
+```
+- 繼續第一階段文字整理：逐頁檢查所有部門文件閱讀地圖是否需要再依 SOP 原文補強。
+- 年度保存目前先是文字策略，尚未把 Firestore 路徑實際改成年度層級。
+- 等文字與資訊架構確認後，再進第二階段視覺重構，處理目前使用者指出的寬度節奏、滿版/半版混亂與 Q&A 區塊弱化問題。
+```
+## 2026-05-25 收工同步：skills 第二大腦 canonical 與整包懶人包
+```
+### 使用者決策
+- 使用者希望 skills 統一放在第二大腦。
+- 換電腦或換 AI agent 時，優先到第二大腦讀技能。
+- 之後使用者說「建立skills」時，應先在第二大腦建立或更新，再同步到本機 Codex、Google Drive 備份與 GitHub lazy-pack。
+- GitHub 懶人包希望相關 skills 放在同一個整包裡，下載後能一次安裝全部技能。
+```
+### 目前新建 skills 的位置
+```
+- Codex 實際讀取位置：
+  `C:\Users\小狼\.codex\skills`
+- Google Drive 備份：
+  `G:\我的雲端硬碟\2026codex\skills`
+- 第二大腦 canonical source（本輪新增）：
+  `G:\我的雲端硬碟\我的第二大腦\Codex標準\skills`
+- GitHub lazy-pack repo：
+  `G:\我的雲端硬碟\2026codex\codex-skills-lazy-pack`
+  `https://github.com/N1116839/codex-skills-lazy-pack`
+```
+### 本輪完成
+```
+- 已將 6 個 personal skills 同步到第二大腦 canonical source：
+  - gas-targeted-fix
+  - html-training-deck
+  - project-init-sync
+  - shutdown-sync
+  - skills-sync
+  - startup-sync
+- 已將本機 `C:\Users\小狼\.codex\skills` 同步到同一批 6 個 personal skills。
+- 已更新 `skills-sync` 規則：
+  - 第二大腦為 canonical human-readable source。
+  - 「建立skills」時先建立/更新第二大腦，再同步到本機、Google Drive 備份與 GitHub lazy-pack。
+  - GitHub lazy-pack 需同時提供個別 ZIP 與整包 ZIP。
+- 已在 lazy-pack repo 新增一次安裝腳本：
+  - `install-all-skills.ps1`
+- 已建立整包懶人包：
+  - `packages/codex-personal-skills-bundle.zip`
+- 已重新打包所有個別 skill ZIP，確保 ZIP 內容包含最新規則。
+```
+### GitHub 懶人包目前打包方式
+```
+目前有兩種：
+1. 個別包：
+   - `packages/<skill-name>.zip`
+   - 適合只安裝某一個 skill。
+2. 整包：
+   - `packages/codex-personal-skills-bundle.zip`
+   - 內含 `skills/`、`install-all-skills.ps1`、README 與索引。
+   - 新電腦解壓後執行 `install-all-skills.ps1`，可一次安裝全部 personal skills 到 `%USERPROFILE%\.codex\skills`。
+```
+### 驗證
+```
+- 第二大腦 canonical source 已可看到 6 個 personal skills。
+- 本機 Codex skills 已可看到 6 個 personal skills + `.system`。
+- packages 內已有 6 個個別 ZIP 與 1 個整包 ZIP。
+- 明顯敏感字串掃描只有命中 skill 說明文字中的 `secrets/tokens/private key` 規則，未見實際金鑰內容。
+```
+### 尚未完成
+```
+- 尚未 commit / push 本專案。
+- 尚未 commit / push `codex-skills-lazy-pack` repo。
+- `codex-skills-lazy-pack` 目前有 README、SKILLS_INDEX、packages、skills-sync、install-all-skills.ps1 等變更待提交。
+```

@@ -59,6 +59,12 @@
     .pill{display:inline-grid;min-width:88px;min-height:44px;place-items:center;padding:6px 10px;color:var(--brand);background:#e8f3f2;border:1px solid #cde0dd;border-radius:8px;font-size:14px;font-weight:700;text-align:center}
     .pill.doc-pill{cursor:pointer;background:#fff;border-color:var(--gold);box-shadow:0 6px 14px rgba(184,131,47,.12)}
     .pill.doc-pill:hover{color:#fff;background:var(--brand);border-color:var(--brand)}
+    .brief-grid,.doc-map-grid,.governance-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    .brief-card,.doc-map-card,.governance-card{padding:14px;background:#f7fbfb;border:1px solid var(--line);border-top:4px solid var(--brand)}
+    .brief-card strong,.doc-map-card strong,.governance-card strong{display:block;margin-bottom:8px;color:var(--brand);font-size:16px}
+    .brief-card p,.governance-card p{margin:0;color:var(--ink-soft);line-height:1.65}
+    .doc-map-card ul{margin-top:6px}
+    .doc-map-card small{display:block;color:var(--gold);font-weight:800;margin-bottom:6px}
     .slide-label{display:inline-grid;place-items:center;width:40px;height:40px;margin-bottom:8px;color:#fff;background:var(--gold);border-radius:50%;font-weight:800}
     .audit-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
     .audit-card{min-height:140px;padding:14px;background:#f4faf9;border:1px solid #cde0dd;border-top:5px solid var(--brand);font-size:15px;line-height:1.55;text-align:left;cursor:pointer}
@@ -234,7 +240,7 @@
       .topbar{align-items:flex-start;flex-direction:column}
       .half,.third,.wide{grid-column:span 12}
       .flow{grid-template-columns:1fr}
-      .audit-grid,.audit-focus,.audit-focus-list,.evidence-map,.metric-strip{grid-template-columns:1fr}
+      .audit-grid,.audit-focus,.audit-focus-list,.evidence-map,.metric-strip,.brief-grid,.doc-map-grid,.governance-grid{grid-template-columns:1fr}
       .training-split{grid-template-columns:1fr}
       .dept-flow{flex-direction:column}
       .dept-flow-arrow{transform:rotate(90deg)}
@@ -313,9 +319,14 @@ window.GDP_FIREBASE_CONFIG = {
 ═══════════════════════════════════════════════ */
 const sections = [
   {
-    id:"manual",group:"文件主軸",title:"品質手冊",tag:"品質系統總覽",
-    lead:"藥品離開製造廠後進入批發、配送，直至病患手中，每個環節都可能影響品質。GDP（西藥優良運銷規範）正是這段旅程的品質保障，確保藥品在儲存與運輸中維持安全性與有效性。DM10-01 品質手冊是本公司 GDP 系統的最高層級文件，說明公司如何以組織、程序、資源與風險管理落實 GDP。",
+    id:"manual",group:"GDP核心",title:"品質手冊",tag:"為何要做 GDP",
+    lead:"品質手冊回答的是「為什麼公司必須做 GDP」。藥品離開製造廠後，批發、儲存、運輸、退回、回收與紀錄保存都可能影響品質；GDP 不是額外文件工作，而是確保藥品在供應鏈中仍維持安全、有效與可追溯的品質系統。DM10-01 是本公司 GDP 系統最高層級文件，用來把法規要求、管理責任、偏差/CAPA、風險管理、內部稽核與管理審查串成同一套品質邏輯。",
     pills:["DM10-01","DP12-01","偏差/CAPA","管理審查","內部稽核"],
+    coreBrief:[
+      {title:"這頁先回答",body:"為什麼藥品不是出廠後就結束管理，而是到交付客戶前都需要 GDP 管制。"},
+      {title:"新人要記得",body:"GDP 的核心不是背條文，是讓採購、倉儲、配送、客訴、退回、回收與紀錄都能被追溯。"},
+      {title:"稽查會看",body:"公司是否有品質系統、權責人、偏差/CAPA、風險管理、內部稽核與管理審查，而不是只看單一表單。"}
+    ],
     standards:{
       picsgdp:["品質系統需確保藥品在整個配送鏈中維持品質與完整性（GDP 第一章）","系統需涵蓋組織架構、程序、流程、資源與必要活動","偏差需立即識別、記錄、調查，依品質風險管理原則採取 CAPA","管理階層需定期審查品質系統績效，確保持續符合 GDP","品質系統績效可由申訴、退回、偏差、CAPA、回收等指標追蹤"],
       taiwan:["西藥優良運銷準則第一章為台灣 GDP 法規基礎","公司需建立並執行完整品質系統，確保藥品來自合法供應鏈","品質紀錄至少保存 5 年，食藥署可隨時稽查","台灣規定公司需指定 GDP 權責人，確保系統維持與訓練","不符合事項與 CAPA 需文件化，供稽查時提供"],
@@ -338,9 +349,14 @@ const sections = [
     qa:true
   },
   {
-    id:"smf",group:"文件主軸",title:"SMF廠商清冊",tag:"公司場地與作業範圍",
-    lead:"新勝醫藥有限公司（新北市中和區）以藥品批發、經銷為主業，GDP 品質管理系統於 111 年 8 月 23 日建立完成。WI10-01 SMF 廠商基本資料是稽查員了解本公司整體 GDP 執行情況的主要文件，載明場所、組織架構、委外物流安排與產品範圍。受訓者需能找到最新版清冊，並理解各清冊與採購、倉管、業務、委外物流的關聯。",
+    id:"smf",group:"GDP核心",title:"SMF廠商清冊",tag:"公司怎麼做 GDP",
+    lead:"SMF 回答的是「新勝醫藥實際怎麼做 GDP」。它把公司場所、組織架構、產品範圍、儲存條件、委外物流、供應商、客戶與產品清冊放在同一個脈絡中，讓稽查員能快速理解公司作業邊界與證據來源。新人不需要一開始背完整清冊，但要知道遇到供應商、客戶、產品、儲位、委外物流或緊急聯絡問題時，應回到 WI10-01 與相關清冊確認。",
     pills:["WI10-01","藥品清冊","嘉里醫藥物流","合約/品質協議","儲存條件"],
+    coreBrief:[
+      {title:"這頁先回答",body:"公司有哪些場所、藥品範圍、委外物流、供應商與客戶，GDP 作業邊界在哪裡。"},
+      {title:"新人要記得",body:"SMF 不是單一文件，而是把組織、產品清冊、供應商清冊、客戶清冊與委外物流串起來。"},
+      {title:"稽查會看",body:"清冊是否為最新版，實際現場、儲存條件、委外協議與日常作業是否一致。"}
+    ],
     standards:{
       picsgdp:["Site Master File (SMF) 需說明公司場所、組織架構、作業範圍與 GDP 活動","SMF 為稽查員了解公司整體 GDP 執行情況的主要說明文件","廠商清冊需反映最新供應商、委外物流與客戶核准狀態","委外物流合約與品質協議需清楚界定雙方責任、通報流程與績效監測","SMF 組織、範圍、人員、委外安排異動時需及時更新"],
       taiwan:["食藥署 GDP 指引（西藥優良運銷準則）要求藥商提供完整場所與作業範圍說明","供應商與客戶清冊需定期更新，確認與現行核准狀態一致","委外物流合約與品質協議需清楚界定雙方責任與監督方式","食藥署稽查時需提供 SMF 及最新版廠商/客戶清冊供查閱","藥品許可證持有人資訊、保存條件與儲位需可追溯至產品清冊"],
@@ -380,8 +396,8 @@ const sections = [
     qa:true
   },
   {
-    id:"departments",group:"部門分類",title:"各部門分類",tag:"跨部門責任地圖",
-    lead:"每個單位要知道自己何時產出資料、交給誰、由誰核准、保存多久，以及異常時如何回到偏差/CAPA 閉環。",
+    id:"departments",group:"新人部門",title:"各部門分類",tag:"新人入口與跨部門責任",
+    lead:"這一頁不是完整文件清單，而是新人入口。每個單位先看自己日常要做什麼、會跟哪些部門交接、哪些文件是必讀、哪些文件是共用、哪些文件通常在異常或稽查時才會被翻出來。進出貨、客訴、退回、回收、供應商與客戶資格都不是單一部門的事，頁面需避免讓人誤以為只要讀少數幾份文件。",
     pills:["GDP權責人","管理藥師","品保","人事","倉管","採購","業務","文管"],
     standards:{
       picsgdp:["GDP 要求每位人員清楚了解自己在品質系統中的角色與責任","跨部門交接需有明確輸入、輸出與責任界定","所有人員需完成職前及年度持續訓練，並有合格紀錄","職務代理需正式授權，不得違反職能分立原則"],
@@ -515,7 +531,7 @@ const sections = [
     qa:true
   },
   {
-    id:"personnel",group:"部門分類",title:"人事",tag:"人員資格與教育訓練",
+    id:"personnel",group:"新人部門",title:"人事",tag:"人員資格與教育訓練",
     lead:"人事單元確保所有參與 GDP 活動的人員具備資格、完成訓練並留有紀錄。訓練區分外部（GDP 權責人年度必修）與內部（全員，授課講師主導，測驗合格）兩類。",
     pills:["DP22-01","DP24-01","DP25-01","FR24-01","FR24-02"],
     standards:{
@@ -538,7 +554,7 @@ const sections = [
     qa:true
   },
   {
-    id:"rp",group:"部門分類",title:"GDP權責人",tag:"品質系統責任",
+    id:"rp",group:"新人部門",title:"GDP權責人",tag:"品質系統責任",
     lead:"GDP 權責人是品質系統維持與重大決策授權的核心角色。所有部門需知道哪些事項必須升級到 GDP 權責人，以及權責人如何追蹤結案。",
     pills:["任命書","訓練計畫","供應商/客戶核准","自我查核","委外作業"],
     standards:{
@@ -557,7 +573,7 @@ const sections = [
     qa:true
   },
   {
-    id:"pharmacist",group:"部門分類",title:"管理藥師",tag:"藥品安全與回收",
+    id:"pharmacist",group:"新人部門",title:"管理藥師",tag:"藥品安全與回收",
     lead:"管理藥師訓練重點放在藥品供應鏈安全、疑似偽禁仿冒藥判斷、退回品風險、回收與模擬回收。異常事件需能立即隔離、判斷、通知與紀錄。",
     pills:["DP64-01","DP65-01","疑似偽禁仿冒藥","回收","模擬回收"],
     standards:{
@@ -576,7 +592,7 @@ const sections = [
     qa:true
   },
   {
-    id:"qa",group:"部門分類",title:"品保",tag:"偏差、CAPA 與內稽",
+    id:"qa",group:"新人部門",title:"品保",tag:"偏差、CAPA 與內稽",
     lead:"品保是內部稽核、缺失判定、CAPA 跟催與品質系統改善的主要執行者。訓練聚焦在證據、期限、原因分析、改善有效性確認。",
     pills:["DP12-02","DP12-03","DP82-01","FR12-03","FR12-04"],
     standards:{
@@ -595,7 +611,7 @@ const sections = [
     qa:true
   },
   {
-    id:"warehouse",group:"部門分類",title:"倉管",tag:"收貨、儲存、揀貨與溫控",
+    id:"warehouse",group:"新人部門",title:"倉管",tag:"收貨、儲存、揀貨與溫控",
     lead:"倉管單元讓同仁熟悉收貨、驗收、入庫、儲位、溫度監測、異常提報、揀貨與出貨複查。稽核重點通常回到紀錄是否即時、完整、可追溯。",
     pills:["DP33-01","DP54-01","DP55-01","DP57-01","溫度紀錄"],
     standards:{
@@ -614,7 +630,7 @@ const sections = [
     qa:true
   },
   {
-    id:"purchase",group:"部門分類",title:"採購",tag:"供應商資格與採購紀錄",
+    id:"purchase",group:"新人部門",title:"採購",tag:"供應商資格與採購紀錄",
     lead:"採購單元重點是只向核准供應商採購，並保存可追溯的採購紀錄。新供應商或異常條件需完成資格認可、實質檢核與風險評估。",
     pills:["DP52-01","供應商評鑑","PIC/S GMP","PMF核備函","採購紀錄"],
     standards:{
@@ -633,7 +649,7 @@ const sections = [
     qa:true
   },
   {
-    id:"sales",group:"部門分類",title:"業務",tag:"客戶資格、訂單與客訴",
+    id:"sales",group:"新人部門",title:"業務",tag:"客戶資格、訂單與客訴",
     lead:"業務單元涵蓋客戶資格確認、訂單輸入、出貨資訊完整性、客訴受理、退貨查證與回收聯繫。強調客戶合法資格與紀錄完整。",
     pills:["DP53-01","DP57-01","DP62-01","DP63-01","DP65-01"],
     standards:{
@@ -652,7 +668,7 @@ const sections = [
     qa:true
   },
   {
-    id:"doc",group:"部門分類",title:"文管",tag:"文件發行、紀錄保存與版本",
+    id:"doc",group:"新人部門",title:"文管",tag:"文件發行、紀錄保存與版本",
     lead:"文管確保正式文件、表單與品質紀錄可被找到、可辨識、版本正確且保存期限清楚。文件未經訓練與考核前，不應視為已正式生效。",
     pills:["DP42-01","DP42-02","FR10-01","版本管制","至少5年"],
     standards:{
@@ -721,12 +737,98 @@ const visualAssets = {
   doc:"assets/gdp-training-doc-audit.png"
 };
 
+const departmentDocumentMaps = {
+  departments:{
+    intro:"部門頁不是只列各自最少文件，而是把新人必讀、跨部門共用、異常時查閱與稽查常問文件分開，避免把 GDP 誤解成單一部門自己的作業。",
+    groups:[
+      {label:"核心共讀",note:"所有 GDP 人員都要理解",docs:["DM10-01 品質手冊","WI10-01 SMF 廠商基本資料","DP12-01 品質管理系統","DP22-01 組織與職掌"]},
+      {label:"作業共用",note:"跨部門交接會遇到",docs:["DP52-01 供應商評鑑","DP53-01 客戶認可","DP54-01 進出貨","DP57-01 訂單、揀貨及配銷"]},
+      {label:"異常與查核",note:"事情不順或稽查時會用",docs:["DP12-02 偏差","DP12-03 CAPA","DP62-01 客訴","DP63-01 退回","DP65-01 回收","DP82-01 內部稽核"]}
+    ]
+  },
+  personnel:{
+    intro:"人事不是只看訓練表，還要確保組織職掌、代理人、門禁與衛生清潔能支持 GDP 作業。",
+    groups:[
+      {label:"必讀",note:"新人與異動必看",docs:["DP22-01 組織與職掌","DP24-01 員工教育訓練","DP25-01 人員衛生暨環境清潔"]},
+      {label:"共用",note:"會與倉管、文管、GDP 權責人交接",docs:["WI22-01 組織圖暨職務說明","FR22-01 組織各職稱指派名單","WI25-01 門禁進出管制"]},
+      {label:"稽查常問",note:"資格與訓練證據",docs:["FR24-01 外部訓練紀錄","FR24-02 內部訓練紀錄","補訓與再評鑑紀錄"]}
+    ]
+  },
+  rp:{
+    intro:"GDP 權責人要看的是整個系統是否運作，不是只看任命書；供應商、客戶、委外、偏差、內稽與管理審查都會回到這個角色。",
+    groups:[
+      {label:"必讀",note:"系統責任",docs:["DM10-01 品質手冊","DP12-01 品質管理系統","DP14-01 管理階層檢討","DP82-01 內部稽核"]},
+      {label:"共用",note:"需要核准或追蹤",docs:["DP52-01 供應商評鑑","DP53-01 客戶認可","DP72-01 委外作業","WI10-01 SMF"]},
+      {label:"異常",note:"需審核與追蹤結案",docs:["DP12-02 偏差","DP12-03 CAPA","DP12-04 變更","DP15-01 品質風險"]}
+    ]
+  },
+  pharmacist:{
+    intro:"管理藥師重點是藥品安全判斷與緊急處置，需連結回收、退回、偽禁仿冒藥與配送紀錄。",
+    groups:[
+      {label:"必讀",note:"藥品安全事件",docs:["DP64-01 偽禁仿冒藥","DP65-01 藥品回收","DP63-01 退回品"]},
+      {label:"共用",note:"需要查批號、客戶與庫存",docs:["DP57-01 訂單、揀貨及配銷","DP54-01 進出貨","DP55-01 產品儲存"]},
+      {label:"稽查常問",note:"是否能快速追溯與通報",docs:["模擬回收紀錄","回收通知與結案紀錄","非符合品隔離與處置紀錄"]}
+    ]
+  },
+  qa:{
+    intro:"品保不只看偏差/CAPA，也要能把內稽、變更、風險、管理審查與部門改善串成完整證據鏈。",
+    groups:[
+      {label:"必讀",note:"品質事件與改善",docs:["DP12-02 偏差","DP12-03 CAPA","DP82-01 內部稽核"]},
+      {label:"共用",note:"跨部門改善會碰到",docs:["DP12-04 變更管制","DP15-01 品質風險","DP14-01 管理階層檢討","DP36-01 驗證確效"]},
+      {label:"稽查常問",note:"證據與結案",docs:["FR12-03 偏差事件處理報告","FR12-04 矯正預防處理單","稽核查檢表與缺失追蹤"]}
+    ]
+  },
+  warehouse:{
+    intro:"倉管文件絕不只 4 份。倉庫會碰到場所、設備、門禁、病媒、溫度、電腦化系統、進出貨、儲存、揀貨、退回、回收與非符合品隔離。",
+    groups:[
+      {label:"必讀",note:"日常倉儲作業",docs:["DP32-01 作業場所規劃","DP33-01 溫度監視","DP54-01 藥品進出貨","DP55-01 產品儲存","DP57-01 訂單、揀貨及配銷"]},
+      {label:"共用",note:"與品保、業務、採購交接",docs:["DP52-01 供應商評鑑","DP53-01 客戶認可","DP63-01 退回品","DP65-01 回收","DP56-01 廢棄物"]},
+      {label:"設備/場所",note:"維持倉庫條件",docs:["DP34-01 關鍵設備","DP34-02 量測儀器","DP35-01 電腦化系統","DP36-01 驗證確效","WI25-01 門禁","DP25-02 病媒防治"]}
+    ]
+  },
+  purchase:{
+    intro:"採購不是只有供應商評鑑；採購會影響進貨、供應鏈合法性、產品追溯、SMF 清冊與異常升級。",
+    groups:[
+      {label:"必讀",note:"採購與供應商",docs:["DP52-01 藥品供應商評鑑","核准供應商清冊","WI10-01 SMF 廠商基本資料"]},
+      {label:"共用",note:"會與倉管、品保交接",docs:["DP54-01 藥品進出貨","DP55-01 產品儲存","DP72-01 委外作業"]},
+      {label:"稽查常問",note:"合法來源與文件有效性",docs:["藥品許可證字號","PIC/S GMP / PMF 核備函","年度供應商評鑑紀錄"]}
+    ]
+  },
+  sales:{
+    intro:"業務文件橫跨客戶資格、訂單、客訴、退回與回收；出貨不是倉管單獨完成，訂單資訊與客戶資格會直接影響追溯。",
+    groups:[
+      {label:"必讀",note:"客戶與訂單",docs:["DP53-01 客戶認可","DP57-01 訂單、揀貨及配銷","客戶清冊"]},
+      {label:"共用",note:"會與倉管、管理藥師、品保交接",docs:["DP62-01 客訴","DP63-01 退回品","DP65-01 回收","DP54-01 進出貨"]},
+      {label:"稽查常問",note:"流向與通知證據",docs:["銷貨憑單","客戶資格文件","客訴結案紀錄","回收客戶通知紀錄"]}
+    ]
+  },
+  doc:{
+    intro:"文管要能讓所有文件與紀錄被找到、版本正確且保存年限清楚；部門資料交來後，最終也會回到文件與品質紀錄管理。",
+    groups:[
+      {label:"必讀",note:"文件與紀錄制度",docs:["DP42-01 文件管制","DP42-02 品質紀錄","FR10-01 文件總覽表"]},
+      {label:"共用",note:"所有部門都會送來紀錄",docs:["訓練紀錄","溫度紀錄","採購/銷售紀錄","偏差/CAPA","內稽紀錄"]},
+      {label:"稽查常問",note:"版次、生效與保存",docs:["發行章紙本","作廢文件銷毀紀錄","年度定期審查","保存 5 年證據"]}
+    ]
+  }
+};
+
+const annualDataGovernance = [
+  {title:"年度保存",body:"收件狀態應以年度為單位保存，避免 2026 年完成狀態覆蓋 2027 年資料。後續資料路徑需加入年度層級。"},
+  {title:"公司接管",body:"目前 Firebase 在個人專案；正式使用前應改由公司可管理帳號持有，並設定至少兩位管理者。"},
+  {title:"交接備份",body:"每年結案後應匯出狀態、收件清單與 Q&A；交接資料需包含 Firebase 專案、rules、部署指令與管理者清單。"}
+];
+
 /* ═══════════════════════════════════════════════
    FIREBASE Q&A STORE
 ═══════════════════════════════════════════════ */
 const qaStore = {
   mode:"local",
   async init() {
+    if(this.initPromise) return this.initPromise;
+    this.initPromise = this._init();
+    return this.initPromise;
+  },
+  async _init() {
     if(!window.GDP_FIREBASE_CONFIG) return;
     try {
       const appMod = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js");
@@ -775,6 +877,63 @@ const qaStore = {
   }
 };
 
+const calendarStatusStore = {
+  sectionId:"collection-calendar",
+  cache:null,
+  key(itemId){ return `gdp-calendar-status-${itemId}`; },
+  fallbackKey(index){ return `gdp-calendar-status-${index}`; },
+  docId(itemId){ return itemId; },
+  async load(){
+    if(this.cache) return this.cache;
+    this.cache = new Map();
+    if(!qaStore.db) return this.cache;
+    try{
+      const {collection,getDocs} = qaStore.firebase;
+      const snap = await getDocs(collection(qaStore.db,"gdpTrainingCalendarStatus",this.sectionId,"items"));
+      snap.docs.forEach(d=>{
+        const data=d.data();
+        if(data.status==="done"||data.status==="pending") this.cache.set(d.id,data.status);
+      });
+    }catch(e){ console.warn("行事曆狀態讀取失敗，使用本機狀態",e); }
+    return this.cache;
+  },
+  async get(index,itemId){
+    const local=localStorage.getItem(this.key(itemId))||localStorage.getItem(this.fallbackKey(index))||"pending";
+    if(!qaStore.db) return local;
+    const remote = (await this.load()).get(this.docId(itemId));
+    if(remote==="done"||remote==="pending"){
+      localStorage.setItem(this.key(itemId),remote);
+      return remote;
+    }
+    return local;
+  },
+  async set(index,itemId,status){
+    localStorage.setItem(this.key(itemId),status);
+    localStorage.setItem(this.fallbackKey(index),status);
+    if(this.cache) this.cache.set(this.docId(itemId),status);
+    if(!qaStore.db) return;
+    try{
+      const {doc,setDoc,serverTimestamp} = qaStore.firebase;
+      await setDoc(doc(qaStore.db,"gdpTrainingCalendarStatus",this.sectionId,"items",this.docId(itemId)),{
+        sectionId:this.sectionId,
+        itemId:this.docId(itemId),
+        itemIndex:Number(index),
+        status,
+        updatedAt:serverTimestamp()
+      },{merge:true});
+    }catch(e){ console.warn("行事曆狀態同步失敗，已保留本機狀態",e); }
+  }
+};
+
+function stableCalendarItemId(item,index){
+  const raw=[item.freq,item.dept,item.data,item.form,item.source].join("|");
+  let hash=0;
+  for(let i=0;i<raw.length;i++){
+    hash=((hash<<5)-hash+raw.charCodeAt(i))|0;
+  }
+  return `item-${String(index).padStart(3,"0")}-${Math.abs(hash).toString(36)}`;
+}
+
 /* ═══════════════════════════════════════════════
    RENDER HELPERS
 ═══════════════════════════════════════════════ */
@@ -791,6 +950,28 @@ function list(items,ordered=false){
 }
 function schedule(items){
   return `<div class="timeline">${items.map(([t,d])=>`<div class="time-item"><strong>${t}</strong><span>${d}</span></div>`).join("")}</div>`;
+}
+function coreBriefHtml(s){
+  if(!s.coreBrief) return "";
+  return `<div class="brief-grid">${s.coreBrief.map(x=>`
+    <article class="brief-card"><strong>${esc(x.title)}</strong><p>${esc(x.body)}</p></article>
+  `).join("")}</div>`;
+}
+function documentMapSection(s){
+  const map=departmentDocumentMaps[s.id];
+  if(!map) return "";
+  const cards=map.groups.map(g=>`
+    <article class="doc-map-card">
+      <small>${esc(g.note)}</small>
+      <strong>${esc(g.label)}</strong>
+      <ul>${g.docs.map(d=>`<li>${esc(d)}</li>`).join("")}</ul>
+    </article>`).join("");
+  return `<p class="lead" style="font-size:15px">${esc(map.intro)}</p><div class="doc-map-grid">${cards}</div>`;
+}
+function annualGovernanceSection(){
+  return `<div class="governance-grid">${annualDataGovernance.map(x=>`
+    <article class="governance-card"><strong>${esc(x.title)}</strong><p>${esc(x.body)}</p></article>
+  `).join("")}</div>`;
 }
 function policyTable(items){
   return `<div class="policy-grid">${items.map(r=>`
@@ -939,7 +1120,9 @@ function collectionCalendarSection(s){
   const items=s.collectionCalendar;
   const freqs=[...new Set(items.map(x=>x.freq))];
   const depts=["GDP 權責人","管理藥師","品保","倉管","採購","業務","文管","人事"];
-  const clearItem=(x,i)=>`
+  const clearItem=(x,i)=>{
+    const itemId=stableCalendarItemId(x,i);
+    return `
     <article class="calendar-item" data-freq="${esc(x.freq)}" data-dept="${esc(x.dept)}">
       <div><span class="freq-badge">${esc(x.freq)}</span></div>
       <div class="calendar-item-main">
@@ -949,13 +1132,14 @@ function collectionCalendarSection(s){
           <div class="calendar-meta-box"><b>表單/紀錄</b>${esc(x.form)}</div>
           <div class="calendar-meta-box"><b>負責人</b>${esc(x.owner)}</div>
           <div class="calendar-meta-box"><b>來源</b>${esc(x.source)}</div>
-          <div class="calendar-status" data-calendar-status="${i}" aria-label="收件狀態">
+          <div class="calendar-status" data-calendar-status="${i}" data-calendar-status-id="${esc(itemId)}" aria-label="收件狀態">
             <button type="button" data-status="done">已完成</button>
             <button type="button" data-status="pending">未完成</button>
           </div>
         </div>
       </div>
     </article>`;
+  };
   const table=`<div class="calendar-controls">
       <label>依頻率篩選<select id="calendarFreq"><option value="">全部頻率</option>${freqs.map(f=>`<option value="${esc(f)}">${esc(f)}</option>`).join("")}</select></label>
       <label>依部門篩選<select id="calendarDept"><option value="">全部部門</option>${depts.map(d=>`<option value="${esc(d)}">${esc(d)}</option>`).join("")}</select></label>
@@ -995,10 +1179,10 @@ function equipmentOnlySection(s){
     <div>
       <h4>${esc(x.equipment)}</h4>
       <p>${esc(x.task)}</p>
-      <div class="equipment-meta"><span>${esc(x.owner)}</span><span>${esc(x.form)}</span><span>${esc(x.source)}</span></div>
+      <div class="equipment-meta"><span>找誰：${esc(x.owner)}</span><span>收什麼：${esc(x.form)}</span><span>依據：${esc(x.source)}</span></div>
     </div>
   </article>`).join("");
-  return panel("關鍵設備條列式選單",`<div class="equip-menu"><div class="equip-menu-list">${menu}</div><div class="equip-item-list">${list}</div></div>`,"wide");
+  return panel("關鍵設備時間核對台",`<p class="lead" style="font-size:15px">這一頁跟年度資料收件行事曆一樣，先依時間點篩選，再看該找誰、收什麼設備保養/校驗/確效證據，以及對應哪份 SOP 或表單。</p><div class="equip-menu"><div class="equip-menu-list">${menu}</div><div class="equip-item-list">${list}</div></div>`,"wide");
 }
 function docButtons(s){
   if(["collection-calendar","equipment-calendar"].includes(s.id)) return "";
@@ -1029,8 +1213,11 @@ function renderContent(s){
   </div>`;
   return [
     panel("視覺導讀",visualIntro(s),""),
+    s.coreBrief ? panel("本頁定位",coreBriefHtml(s),"wide") : "",
     panel("規範到現場：四層對照",standardsSwipe(s.standards),"wide"),
     panel("學習重點",list(s.focus),"wide"),
+    departmentDocumentMaps[s.id] ? panel("部門文件閱讀地圖",documentMapSection(s),"wide") : "",
+    s.id==="collection-calendar" ? panel("年度保存與交接策略",annualGovernanceSection(),"wide") : "",
     s.qualityPolicy ? panel("品質政策與目標 KPI（DM10-01）",policyTable(s.qualityPolicy),"wide") : "",
     s.companyProfile ? panel("新勝醫藥 GDP 執行概況（WI10-01）",companyProfileHtml(s.companyProfile),"wide") : "",
     s.trainingInfo ? panel("教育訓練：外部 vs 內部",trainingTable(s.trainingInfo),"wide") : "",
@@ -1156,13 +1343,17 @@ function bindCalendarFilters(){
   const dept=document.getElementById("calendarDept");
   const rows=[...document.querySelectorAll("#calendarRows [data-freq]")];
   document.querySelectorAll("[data-calendar-status]").forEach(group=>{
-    const key=`gdp-calendar-status-${group.dataset.calendarStatus}`;
-    const saved=localStorage.getItem(key)||"pending";
+    const index=group.dataset.calendarStatus;
+    const itemId=group.dataset.calendarStatusId;
+    const saved=localStorage.getItem(calendarStatusStore.key(itemId))||localStorage.getItem(calendarStatusStore.fallbackKey(index))||"pending";
     const buttons=[...group.querySelectorAll("button")];
+    calendarStatusStore.get(index,itemId).then(status=>{
+      buttons.forEach(btn=>btn.classList.toggle("active",btn.dataset.status===status));
+    });
     buttons.forEach(btn=>{
       btn.classList.toggle("active",btn.dataset.status===saved);
-      btn.addEventListener("click",()=>{
-        localStorage.setItem(key,btn.dataset.status);
+      btn.addEventListener("click",async()=>{
+        await calendarStatusStore.set(index,itemId,btn.dataset.status);
         buttons.forEach(x=>x.classList.toggle("active",x===btn));
       });
     });
@@ -1216,7 +1407,7 @@ function renderNav(){
   const mob=document.getElementById("mobileMenu");
   nav.innerHTML="";mob.innerHTML="";
   const freqSteps=["發生時啟動","每日","每月","每兩個月","每季","每半年","每年","每三年"];
-  const navGroups=["文件主軸","部門分類","年度行事曆"];
+  const navGroups=["GDP核心","新人部門","年度行事曆"];
   navGroups.forEach(group=>{
     const groupSections=sections.filter(s=>s.group===group);
     if(!groupSections.length) return;
@@ -1305,9 +1496,9 @@ function fmtDate(v){
 (async function init(){
   renderNav();
   initDocModal();
+  await qaStore.init();
   const hash=location.hash.slice(1);
   await showSection(sections.some(s=>s.id===hash)?hash:current);
-  qaStore.init().then(()=>renderQa(current)).catch(()=>renderQa(current));
 })();
 </script>
 </body>
