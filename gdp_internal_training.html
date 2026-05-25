@@ -1278,8 +1278,7 @@ function collectionCalendarSection(s){
     `<div class="equip-menu">
       <div class="equip-menu-list" id="calMenuList">${menu}</div>
       <div id="calItemList">${deptFilter}<div class="equip-item-list">${list}</div></div>
-    </div>
-    <p class="note" style="margin-top:14px">本頁只列有收件、啟動或核對責任的文件；完整來源放在每筆卡片的「依據」欄。</p>`,
+    </div>`,
     "wide");
 }
 function equipmentOnlySection(s){
@@ -1345,10 +1344,8 @@ function renderContent(s){
     collectionCalendarSection(s),
     s.equipmentRef ? equipmentOnlySection(s) : "",
     deptFlowSection(s),
-    docButtons(s),
     auditSlides(s),
     panel("稽查時最常看的證據鏈",evidenceMap(s),"half"),
-    panel("時程與資料節點",schedule(s.schedule),"half"),
     panel("不符合 GDP 流程時的共同處理閉環",capaFlow,""),
     panel("部門 Q&A 討論區",qaHtml(s),"")
   ].filter(Boolean).join("");
@@ -1592,7 +1589,6 @@ function renderNav(){
   const nav=document.getElementById("nav");
   const mob=document.getElementById("mobileMenu");
   nav.innerHTML="";mob.innerHTML="";
-  const freqSteps=["發生時啟動","每日","每月","每兩個月","每季","每半年","每年","每三年"];
   const navGroups=["GDP核心","新人部門","年度行事曆"];
   navGroups.forEach(group=>{
     const groupSections=sections.filter(s=>s.group===group);
@@ -1613,25 +1609,6 @@ function renderNav(){
       b.addEventListener("click",()=>showSection(s.id));body.appendChild(b);
       const opt=document.createElement("option");
       opt.value=s.id;opt.textContent=`${s.group} / ${s.title}`;mob.appendChild(opt);
-      /* freq sub-steps under 資料收件行事曆 */
-      if(s.id==="collection-calendar"){
-        const sub=document.createElement("div");
-        sub.className="nav-sub-items";
-        freqSteps.forEach(freq=>{
-          const fb=document.createElement("button");
-          fb.className="nav-freq-item";fb.type="button";fb.textContent=freq;fb.dataset.freq=freq;
-          fb.addEventListener("click",async e=>{
-            e.stopPropagation();
-            await showSection("collection-calendar");
-            const calBtn=document.querySelector(`[data-cal-freq="${freq}"]`);
-            if(calBtn) calBtn.click();
-            document.querySelectorAll(".nav-freq-item").forEach(x=>x.classList.remove("active"));
-            fb.classList.add("active");
-          });
-          sub.appendChild(fb);
-        });
-        body.appendChild(sub);
-      }
     });
   });
   mob.addEventListener("change",e=>showSection(e.target.value));
