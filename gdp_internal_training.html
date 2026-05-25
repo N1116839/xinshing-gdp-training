@@ -254,6 +254,18 @@
       .swipe-text{font-size:14px}
       .slide-btn{font-size:13px;padding:7px 12px}
     }
+    @media(max-width:960px){
+      main{padding:24px 14px 34px}
+      .hero,.panel{width:100%;max-width:calc(100vw - 28px);min-width:0;padding:18px 14px}
+      .hero>*,.panel>*,.slide-pane{min-width:0}
+      .hero{min-height:auto}
+      .hero::before{background:linear-gradient(90deg,rgba(247,251,251,.98),rgba(247,251,251,.88)),var(--hero-image,url("assets/gdp-training-hero.png")) center right/cover no-repeat}
+      .visual-band::before{background:rgba(247,251,251,.82)}
+      h2,h3,h4,p,li,strong,button,.lead,.hero .lead,.visual-band>*{max-width:100%;overflow-wrap:anywhere;word-break:break-all}
+      .pill{min-width:0;max-width:100%;white-space:normal}
+      .pipe-hdr{overflow-x:auto}
+      .swipe-panel,.slide-track,.visual-band{max-width:100%;min-width:0}
+    }
     .policy-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:4px}
     .policy-card{border-radius:10px;border:1.5px solid var(--line);overflow:hidden;background:#fff}
     .policy-card-head{display:flex;align-items:center;gap:10px;padding:12px 14px;background:#0a4d8a;color:#fff}
@@ -340,8 +352,8 @@ const sections = [
     ],
     qualityPolicy:[
       {dir:"安全",goal:"防止偽藥進入供應鏈",kpi:"偽藥識別訓練合格分數 ≥ 70 分",icon:"🛡️"},
-      {dir:"有效",goal:"有效處理藥品緊急異常事件",kpi:"緊急應變演練有效處理時間 < 12 小時",icon:"⚡"},
-      {dir:"有效",goal:"合理時間內正確運送給顧客",kpi:"訂單逾期率 < 1%、打單錯誤率 < 1%",icon:"📦"},
+      {dir:"應變",goal:"有效處理藥品緊急異常事件",kpi:"緊急應變演練有效處理時間 < 12 小時",icon:"⚡"},
+      {dir:"交付",goal:"合理時間內正確運送給顧客",kpi:"訂單逾期率 < 1%、打單錯誤率 < 1%",icon:"📦"},
       {dir:"品質",goal:"藥品品質之維持",kpi:"室溫藥品 ≤ 25°C，冷鏈藥品 2～8°C",icon:"🌡️"}
     ],
     schedule:[["每年","內部稽核、管理階層檢討、品質系統有效性回顧。"],["異常發生時","立即提報偏差，品保調查原因，GDP 權責主管追蹤與審核。"],["文件異動時","完成修訂、核准、訓練與考核後，文件才可生效。"]],
@@ -351,7 +363,7 @@ const sections = [
   {
     id:"smf",group:"GDP核心",title:"SMF廠商清冊",tag:"公司怎麼做 GDP",
     lead:"SMF 回答的是「新勝醫藥實際怎麼做 GDP」。它把公司場所、組織架構、產品範圍、儲存條件、委外物流、供應商、客戶與產品清冊放在同一個脈絡中，讓稽查員能快速理解公司作業邊界與證據來源。新人不需要一開始背完整清冊，但要知道遇到供應商、客戶、產品、儲位、委外物流或緊急聯絡問題時，應回到 WI10-01 與相關清冊確認。",
-    pills:["WI10-01","藥品清冊","嘉里醫藥物流","合約/品質協議","儲存條件"],
+    pills:["WI10-01","藥品清冊","嘉里醫藥物流","合約/品質協議","24hr 緊急聯絡"],
     coreBrief:[
       {title:"這頁先回答",body:"公司有哪些場所、藥品範圍、委外物流、供應商與客戶，GDP 作業邊界在哪裡。"},
       {title:"新人要記得",body:"SMF 不是單一文件，而是把組織、產品清冊、供應商清冊、客戶清冊與委外物流串起來。"},
@@ -392,12 +404,12 @@ const sections = [
       ]
     },
     schedule:[["清冊異動時","同步更新產品、供應商、儲位、保存條件與委外資訊。"],["委外評鑑時","確認物流業者適任性、文件維護、溫度紀錄與改善事項。"],["查詢需求時","能快速提供產品清冊、供應商資格與委外品質協議。"]],
-    audit:["SMF 是否清楚說明公司場所、作業範圍、組織與 GDP 活動。","產品清冊是否包含品名、許可證、持有者、保存條件與儲存位置。","委外物流是否有合約、品質協議與核准紀錄。","委外活動是否明確界定責任、通報、文件保存與績效監測。","供應商與客戶清冊是否為最新版，異動是否有核准與紀錄。","保存溫度與儲位資訊是否能回到實際標示與倉儲紀錄。","委外物流溫度、清潔、安全與暫存管制是否可提供佐證。","清冊異動是否同步到相關 SOP、表單、訓練與現場作業。"],
+    audit:["SMF 是否清楚說明公司場所、作業範圍、組織與 GDP 活動。","產品清冊是否包含品名、許可證、持有者、保存條件與儲存位置。","委外物流是否有合約、品質協議與核准紀錄。","委外活動是否明確界定責任、通報、文件保存與績效監測。","供應商與客戶清冊是否為最新版，異動是否有核准與紀錄。","24 小時緊急聯絡人與代理人是否與 WI10-01 一致，現場人員是否知道查詢位置。","保存溫度與儲位資訊是否能回到實際標示與倉儲紀錄。","委外物流溫度、清潔、安全與暫存管制是否可提供佐證。","清冊異動是否同步到相關 SOP、表單、訓練與現場作業。"],
     qa:true
   },
   {
     id:"departments",group:"新人部門",title:"各部門分類",tag:"新人入口與跨部門責任",
-    lead:"這一頁不是完整文件清單，而是新人入口。每個單位先看自己日常要做什麼、會跟哪些部門交接、哪些文件是必讀、哪些文件是共用、哪些文件通常在異常或稽查時才會被翻出來。進出貨、客訴、退回、回收、供應商與客戶資格都不是單一部門的事，頁面需避免讓人誤以為只要讀少數幾份文件。",
+    lead:"這一頁是新人入口。每個單位先看自己日常要做什麼、會跟哪些部門交接、哪些文件是必讀、哪些文件是共用、哪些文件通常在異常或稽查時才會被翻出來。進出貨、客訴、退回、回收、供應商與客戶資格都需要跨部門共同完成。",
     pills:["GDP權責人","管理藥師","品保","人事","倉管","採購","業務","文管"],
     standards:{
       picsgdp:["GDP 要求每位人員清楚了解自己在品質系統中的角色與責任","跨部門交接需有明確輸入、輸出與責任界定","所有人員需完成職前及年度持續訓練，並有合格紀錄","職務代理需正式授權，不得違反職能分立原則"],
@@ -739,7 +751,7 @@ const visualAssets = {
 
 const departmentDocumentMaps = {
   departments:{
-    intro:"部門頁不是只列各自最少文件，而是把新人必讀、跨部門共用、異常時查閱與稽查常問文件分開，避免把 GDP 誤解成單一部門自己的作業。",
+    intro:"新人可先依「核心共讀、作業共用、異常與查核」三個方向閱讀，先建立整體 GDP 作業地圖，再回到各部門日常責任。",
     groups:[
       {label:"核心共讀",note:"所有 GDP 人員都要理解",docs:["DM10-01 品質手冊","WI10-01 SMF 廠商基本資料","DP12-01 品質管理系統","DP22-01 組織與職掌"]},
       {label:"作業共用",note:"跨部門交接會遇到",docs:["DP52-01 供應商評鑑","DP53-01 客戶認可","DP54-01 進出貨","DP57-01 訂單、揀貨及配銷"]},
@@ -779,11 +791,12 @@ const departmentDocumentMaps = {
     ]
   },
   warehouse:{
-    intro:"倉管文件絕不只 4 份。倉庫會碰到場所、設備、門禁、病媒、溫度、電腦化系統、進出貨、儲存、揀貨、退回、回收與非符合品隔離。",
+    intro:"倉管頁先從日常倉儲作業開始，再往外連到場所設備、門禁、病媒、溫度、電腦化系統、進出貨、儲存、揀貨、退回、回收與非符合品隔離。",
     groups:[
       {label:"必讀",note:"日常倉儲作業",docs:["DP32-01 作業場所規劃","DP33-01 溫度監視","DP54-01 藥品進出貨","DP55-01 產品儲存","DP57-01 訂單、揀貨及配銷"]},
       {label:"共用",note:"與品保、業務、採購交接",docs:["DP52-01 供應商評鑑","DP53-01 客戶認可","DP63-01 退回品","DP65-01 回收","DP56-01 廢棄物"]},
-      {label:"設備/場所",note:"維持倉庫條件",docs:["DP34-01 關鍵設備","DP34-02 量測儀器","DP35-01 電腦化系統","DP36-01 驗證確效","WI25-01 門禁","DP25-02 病媒防治"]}
+      {label:"設備/場所",note:"維持倉庫條件",docs:["DP34-01 關鍵設備","DP34-02 量測儀器","DP35-01 電腦化系統","DP36-01 驗證確效","WI25-01 門禁","DP25-02 病媒防治"]},
+      {label:"稽查常問",note:"現場條件與紀錄證據",docs:["溫度連續監測紀錄","收貨/出貨/揀貨紀錄","非符合品隔離紀錄","退回與回收流向紀錄","設備保養與校正紀錄","門禁與病媒防治紀錄"]}
     ]
   },
   purchase:{
@@ -1001,16 +1014,41 @@ function auditGrid(items){
 function chunk(arr,n){
   const r=[];for(let i=0;i<arr.length;i+=n)r.push(arr.slice(i,i+n));return r;
 }
+function auditChecklistFor(item){
+  const text=String(item||"");
+  const rules=[
+    [/SMF|場所|作業範圍|組織|GDP 活動/,["WI10-01 的場所、組織架構與作業範圍為最新版。","現場實際作業、委外安排與 SMF 內容一致。","人員能說明 SMF 與產品、供應商、客戶清冊的關係。"]],
+    [/緊急聯絡|24 小時|代理人/,["WI10-01 上的緊急聯絡人與代理人資訊可立即查到。","現場值班或相關人員知道異常時先通知誰。","聯絡人異動時有同步更新 SMF 與訓練/公告紀錄。"]],
+    [/產品清冊|許可證|保存條件|儲存位置|儲位/,["藥品清冊可追溯品名、許可證字號、持有者與保存條件。","實際儲位、標示與清冊內容一致。","異動時有核准、更新日期與責任部門紀錄。"]],
+    [/委外|物流|品質協議|合約/,["合約與品質協議可說明雙方責任、通報與文件保存。","委外物流溫度紀錄與績效監測資料可提出。","委外異常能回到偏差/CAPA 或改善追蹤紀錄。"]],
+    [/供應商|客戶/,["清冊為最新版，資格文件仍在有效期限內。","新增、停用或異動有審查與核准紀錄。","採購、業務、品保與 GDP 權責人的責任分工清楚。"]],
+    [/保存溫度|溫度|警報/,["溫度紀錄可連續追溯，異常區間有處理說明。","室溫、冷鏈或運輸條件與 SOP/清冊要求一致。","警報、偏差與改善措施有責任人與結案紀錄。"]],
+    [/GDP 權責|任命|授權|代理/,["任命書、職責、授權與代理安排可立即提出。","代理人受過必要訓練且責任不衝突。","重大核准事項可追溯到 GDP 權責主管或授權代理。"]],
+    [/偏差/,["偏差事件有即時提報日期、發生部門與影響範圍。","調查結論有根本原因、風險評估與責任單位。","需要改善時已連到 CAPA 或變更管制並追蹤結案。"]],
+    [/CAPA|矯正|預防/,["CAPA 有原因分析、改善措施、期限與責任人。","有效性確認不是只寫完成，需有可查證證據。","逾期、無效或重複發生時有升級處理。"]],
+    [/變更/,["變更前有風險評估與核准紀錄。","文件版次、訓練與現場作業已同步更新。","重大變更已評估是否需通報、再確效或補充驗證。"]],
+    [/管理階層|管理審查|績效/,["年度品質指標已彙整並提交管理階層檢討。","會議紀錄包含結論、資源需求與改善追蹤。","前次決議事項有後續執行與有效性確認。"]],
+    [/內部稽核|稽核/,["年度稽核計畫、查檢表與通知紀錄完整。","缺失有責任單位、改善期限與 CAPA 連結。","改善完成後由品保或指定人員確認有效性。"]],
+    [/紀錄|追溯|保存/,["紀錄有日期、簽名、責任人與必要附件。","資料可從文件、表單、批號或日期追溯到實際作業。","保存期限與歸檔位置清楚，抽查時能快速提出。"]],
+    [/訓練|考核/,["訓練對象、教材、日期與講師紀錄完整。","考核結果符合合格標準，不合格者有補訓紀錄。","文件變更後相關人員已完成再訓練。"]],
+    [/清冊異動|同步/,["異動有提出原因、核准人與生效日期。","相關清冊、SOP、表單、現場標示與訓練同步。","舊版資料已控管，避免現場使用過期資訊。"]]
+  ];
+  const hit=rules.find(([pattern])=>pattern.test(text));
+  return hit ? hit[1] : ["指出此重點對應的 SOP、WI、FR 或清冊。","確認現場紀錄能支持畫面上的說法。","說明資料缺漏時的補正部門與處理路徑。"];
+}
+function auditDetailHtml(no,item,heading="先確認這一點"){
+  return `<small>稽查重點 ${String(no).padStart(2,"0")}</small>
+      <h4>${heading}</h4>
+      <p>${esc(item)}</p>
+      <ul>${auditChecklistFor(item).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`;
+}
 function auditSlides(s){
   if(!s.audit||!s.audit.length) return "";
   const first=s.audit[0];
   const focus=`<div class="audit-focus">
     <div class="audit-focus-list">${s.audit.map((item,i)=>`<button class="audit-card ${i===0?"active":""}" type="button" data-audit-no="${i+1}" data-audit-item="${esc(item)}"><strong>${String(i+1).padStart(2,"0")}</strong>${esc(item)}</button>`).join("")}</div>
     <div class="audit-detail" id="auditDetail">
-      <small>稽查重點 01</small>
-      <h4>先確認這一點</h4>
-      <p>${esc(first)}</p>
-      <ul><li>找得到對應 SOP 或表單。</li><li>紀錄有日期、簽名與責任人。</li><li>現場做法與文件描述一致。</li></ul>
+      ${auditDetailHtml(1,first)}
     </div>
   </div>`;
   return panel("稽查重點互動核對",focus,"wide");
@@ -1391,10 +1429,7 @@ function bindAuditFocus(){
       cards.forEach(c=>c.classList.remove("active"));
       card.classList.add("active");
       const no=String(card.dataset.auditNo||"").padStart(2,"0");
-      detail.innerHTML=`<small>稽查重點 ${no}</small>
-        <h4>核對這一點</h4>
-        <p>${esc(card.dataset.auditItem)}</p>
-        <ul><li>對應文件或表單是否能立即開啟。</li><li>紀錄是否完整、即時、正確、可追溯。</li><li>若資料缺漏，是否知道由哪個部門補正。</li></ul>`;
+      detail.innerHTML=auditDetailHtml(no,card.dataset.auditItem,"核對這一點");
     });
   });
 }
