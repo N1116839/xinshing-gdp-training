@@ -193,6 +193,21 @@
     .equip-item-list{display:grid;gap:10px}
     .equip-list-item{display:grid;grid-template-columns:120px 1fr;gap:10px;padding:12px;background:#fff;border:1px solid var(--line);border-left:5px solid var(--gold)}
     .equip-list-item h4{color:var(--brand);margin-bottom:4px}
+    /* ── dept schedule ── */
+    .dept-sched{display:grid;grid-template-columns:190px 1fr;gap:14px}
+    .dept-sched-tabs{display:grid;gap:7px;align-content:start}
+    .dept-sched-tab{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;padding:10px 12px;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:6px;cursor:pointer;font:inherit;font-size:13px;text-align:left}
+    .dept-sched-tab.active{color:#fff;background:var(--brand);border-color:var(--brand)}
+    .dept-sched-tab span{font-weight:700;min-width:22px;text-align:right}
+    .dept-sched-pane{display:none}
+    .dept-sched-pane.active{display:block}
+    .ds-item{padding:12px 0;border-bottom:1px solid var(--line-soft,#e8eeed)}
+    .ds-item:last-child{border-bottom:0}
+    .ds-item-title{font-weight:700;font-size:15px;color:var(--ink);margin-bottom:4px}
+    .ds-item-note{font-size:13px;color:var(--muted,#5a7070);margin-bottom:7px;line-height:1.55}
+    .ds-item-meta{display:flex;flex-wrap:wrap;gap:5px}
+    .ds-item-meta span{background:#f7fbfb;border:1px solid var(--line);border-radius:4px;padding:3px 8px;font-size:12px;color:var(--ink)}
+    @media(max-width:700px){.dept-sched{grid-template-columns:1fr}}
     /* ── doc modal ── */
     .doc-modal{position:fixed;inset:0;z-index:30;display:none;background:rgba(15,55,50,.44);padding:28px}
     .doc-modal.open{display:grid;place-items:center}
@@ -1255,6 +1270,7 @@ function renderContent(s){
     panel("規範到現場：四層對照",standardsSwipe(s.standards),"wide"),
     panel("學習重點",list(s.focus),"wide"),
     departmentDocumentMaps[s.id] ? panel("部門文件閱讀地圖",documentMapSection(s),"wide") : "",
+    deptScheduleSection(s),
     s.id==="collection-calendar" ? panel("年度保存與交接策略",annualGovernanceSection(),"wide") : "",
     s.qualityPolicy ? panel("品質政策與目標 KPI（DM10-01）",policyTable(s.qualityPolicy),"wide") : "",
     s.companyProfile ? panel("新勝醫藥 GDP 執行概況（WI10-01）",companyProfileHtml(s.companyProfile),"wide") : "",
@@ -1409,6 +1425,59 @@ function bindCalendarFilters(){
   freq.addEventListener("change",apply);
   dept.addEventListener("change",apply);
 }
+const deptIdMap={
+  personnel:"人事", rp:"GDP 權責人", pharmacist:"管理藥師",
+  qa:"品保", warehouse:"倉管", purchase:"採購", sales:"業務", doc:"文管"
+};
+function deptScheduleSection(s){
+  const deptName=deptIdMap[s.id];
+  if(!deptName) return "";
+  const calSrc=sections.find(x=>x.id==="collection-calendar");
+  if(!calSrc||!calSrc.collectionCalendar) return "";
+  const items=calSrc.collectionCalendar.filter(x=>{
+    const depts=String(x.dept).split("/").map(d=>d.trim());
+    return depts.some(d=>d===deptName||d.includes(deptName));
+  });
+  if(!items.length) return "";
+  const freqOrder=["發生時啟動","每日","每月","每兩個月","每季","每半年","每年","每三年"];
+  const byFreq={};
+  items.forEach(x=>{if(!byFreq[x.freq])byFreq[x.freq]=[];byFreq[x.freq].push(x);});
+  const orderedFreqs=freqOrder.filter(f=>byFreq[f]&&byFreq[f].length);
+  const pid=`ds_${s.id}`;
+  const tabs=orderedFreqs.map((freq,i)=>`<button type="button" class="dept-sched-tab${i===0?" active":""}" data-ds-tab="${pid}" data-ds-freq="${esc(freq)}">${esc(freq)}<span>${byFreq[freq].length}</span></button>`).join("");
+  const panes=orderedFreqs.map((freq,i)=>`<div class="dept-sched-pane${i===0?" active":""}" data-ds-pane="${pid}" data-ds-pfreq="${esc(freq)}">${
+    byFreq[freq].map(x=>`<div class="ds-item">
+      <div class="ds-item-title">${esc(x.data)}</div>
+      <div class="ds-item-note">${esc(x.note)}</div>
+      <div class="ds-item-meta">
+        <span>📋 ${esc(x.form)}</span>
+        <span>👤 ${esc(x.owner)}</span>
+        <span>📖 ${esc(x.source)}</span>
+      </div>
+    </div>`).join("")
+  }</div>`).join("");
+  return panel(`${deptName} 資料交付時程（${items.length} 項）`,
+    `<p style="font-size:14px;color:var(--muted);margin-bottom:12px">點擊左側頻率，查看「${deptName}」在各時間節點需要提交、啟動或確認的資料。</p>
+    <div class="dept-sched"><div class="dept-sched-tabs">${tabs}</div><div class="dept-sched-body">${panes}</div></div>`,
+    "wide");
+}
+function bindDeptSchedTabs(){
+  const allTabs=[...document.querySelectorAll("[data-ds-tab]")];
+  if(!allTabs.length) return;
+  const pids=[...new Set(allTabs.map(t=>t.dataset.dsTab))];
+  pids.forEach(pid=>{
+    const tabs=allTabs.filter(t=>t.dataset.dsTab===pid);
+    const panes=[...document.querySelectorAll(`[data-ds-pane="${pid}"]`)];
+    tabs.forEach(tab=>{
+      tab.addEventListener("click",()=>{
+        tabs.forEach(t=>t.classList.remove("active"));
+        panes.forEach(p=>p.classList.remove("active"));
+        tab.classList.add("active");
+        panes.find(p=>p.dataset.dsPfreq===tab.dataset.dsFreq)?.classList.add("active");
+      });
+    });
+  });
+}
 function bindEquipmentMenu(){
   const buttons=[...document.querySelectorAll("[data-equip-freq]")];
   const items=[...document.querySelectorAll("[data-equip-item]")];
@@ -1506,6 +1575,7 @@ async function showSection(id){
   initSwipePanels();
   bindCalendarFilters();
   bindEquipmentMenu();
+  bindDeptSchedTabs();
   bindAuditFocus();
   bindQaForm(id);
   bindDocButtons();
