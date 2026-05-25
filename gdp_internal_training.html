@@ -297,6 +297,24 @@
     .profile-basics{flex:1;min-width:260px}
     .profile-staff{flex:2;min-width:320px;overflow-x:auto}
     .profile-staff .info-table th{width:auto}
+    /* ── spec/company action cards in standards swipe ── */
+    .spec-rule-card{display:flex;align-items:flex-start;gap:14px;padding:14px 18px;border-bottom:1px solid var(--line);background:#fff}
+    .spec-rule-card:last-child{border-bottom:none}
+    .spec-rule-card:hover{background:#fafcfc}
+    .spec-rule-num{flex-shrink:0;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:12px;margin-top:2px}
+    .spec-rule-text{flex:1;font-size:15px;line-height:1.72;color:var(--ink);padding-top:6px}
+    .company-action-card{display:flex;align-items:flex-start;gap:14px;padding:13px 18px;border-bottom:1px solid var(--line);background:#fff;transition:background .12s}
+    .company-action-card:last-child{border-bottom:none}
+    .company-action-card:hover{background:#f4fbfb}
+    .company-action-icon{flex-shrink:0;font-size:22px;width:44px;height:44px;display:grid;place-items:center;background:#e8f3f2;border-radius:10px;margin-top:2px}
+    .company-action-no{font-size:11px;font-weight:800;color:var(--gold);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+    .company-action-text{font-size:15px;line-height:1.72;color:var(--ink)}
+    .doc-pill-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;padding:16px}
+    .doc-pill-card{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:#fffaf4;border:1px solid #f0e0c8;border-radius:8px;cursor:pointer;transition:background .12s}
+    .doc-pill-card:hover{background:#fff3de}
+    .doc-pill-icon{font-size:18px;flex-shrink:0;padding-top:1px}
+    .doc-pill-label{font-size:14px;font-weight:700;color:#7b3f00;line-height:1.45}
+    @media(max-width:960px){.doc-pill-grid{grid-template-columns:1fr}.company-action-card,.spec-rule-card{padding:11px 14px}}
   </style>
 </head>
 <body>
@@ -1105,14 +1123,42 @@ function standardsSwipe(standards){
     const items=standards[t.key]||[];
     if(!items.length) return `<div style="padding:20px 18px;color:#aaa;font-size:14px">—</div>`;
     if(t.key==="docs"){
-      return items.map(item=>`<div class="swipe-doc-item">
-        <span class="swipe-doc-icon">📄</span>
-        <span class="swipe-doc-label">${item}</span>
+      return `<div class="doc-pill-grid">${items.map(item=>`<div class="doc-pill-card"><span class="doc-pill-icon">📄</span><span class="doc-pill-label">${hl(item)}</span></div>`).join("")}</div>`;
+    }
+    if(t.key==="company"){
+      const ci=txt=>{
+        if(/疑似|偽禁|仿冒|偽藥/.test(txt)) return "🚫";
+        if(/回收|模擬回收/.test(txt)) return "🔄";
+        if(/隔離|非符合/.test(txt)) return "🚨";
+        if(/退回|退貨|報廢/.test(txt)) return "↩️";
+        if(/溫度|警戒|冷鏈|溫控|溫濕度|溫度計/.test(txt)) return "🌡️";
+        if(/進貨|收貨|驗收|入庫/.test(txt)) return "📦";
+        if(/揀貨|出貨|配送/.test(txt)) return "🚚";
+        if(/紀錄|記錄|保存|保管/.test(txt)) return "📋";
+        if(/校驗|校正|確效/.test(txt)) return "⚖️";
+        if(/設備|UPS|冷氣|發電機/.test(txt)) return "🔧";
+        if(/採購|供應商|評鑑/.test(txt)) return "🏭";
+        if(/訓練|教育|考核/.test(txt)) return "📚";
+        if(/稽核|稽查|審查/.test(txt)) return "🔍";
+        if(/偏差|CAPA|矯正/.test(txt)) return "⚠️";
+        if(/客戶|業務|客訴/.test(txt)) return "🤝";
+        if(/委外|物流|嘉里/.test(txt)) return "🚛";
+        if(/文件|清冊|版次|發行/.test(txt)) return "📑";
+        if(/每年|每月|每日|年度/.test(txt)) return "🗓️";
+        if(/資格|認可|核准|許可/.test(txt)) return "✔️";
+        return "✅";
+      };
+      return items.map((item,i)=>`<div class="company-action-card">
+        <div class="company-action-icon">${ci(item)}</div>
+        <div>
+          <div class="company-action-no">公司做法 ${String(i+1).padStart(2,"0")}</div>
+          <div class="company-action-text">${hl(item)}</div>
+        </div>
       </div>`).join("");
     }
-    return items.map(item=>`<div class="swipe-item">
-      <div class="swipe-dot" style="background:${t.col}"></div>
-      <div class="swipe-text">${hl(item)}</div>
+    return items.map((item,i)=>`<div class="spec-rule-card">
+      <div class="spec-rule-num" style="background:${t.col}">${String(i+1).padStart(2,"0")}</div>
+      <div class="spec-rule-text">${hl(item)}</div>
     </div>`).join("");
   }
   const uid=`sw${Math.random().toString(36).slice(2,8)}`;
@@ -1186,50 +1232,55 @@ function respMatrix(s){
 function collectionCalendarSection(s){
   if(!s.collectionCalendar) return "";
   const items=s.collectionCalendar;
-  const freqs=[...new Set(items.map(x=>x.freq))];
+  const freqOrder=["發生時啟動","每日","每月","每兩個月","每季","每半年","每年","每三年"];
   const depts=["GDP 權責人","管理藥師","品保","倉管","採購","業務","文管","人事"];
-  const clearItem=(x,i)=>{
+  const byFreq={};
+  items.forEach(x=>{if(!byFreq[x.freq])byFreq[x.freq]=[];byFreq[x.freq].push(x);});
+  const activeFreqs=freqOrder.filter(f=>byFreq[f]&&byFreq[f].length);
+  const firstFreq=activeFreqs[0]||"";
+  const menu=activeFreqs.map(freq=>`<button type="button" class="${freq===firstFreq?"active":""}" data-cal-freq="${esc(freq)}"><span>${esc(freq)}</span><strong>${byFreq[freq].length}</strong></button>`).join("");
+  const deptFilter=`<div style="margin-bottom:12px;display:flex;align-items:center;gap:8px">
+    <label style="font-size:13px;font-weight:700;color:var(--ink-soft);white-space:nowrap">部門篩選</label>
+    <select id="calendarDept" style="padding:6px 10px;border:1px solid var(--line);border-radius:6px;font:inherit;font-size:13px;color:var(--ink);flex:1">
+      <option value="">全部部門</option>${depts.map(d=>`<option value="${esc(d)}">${esc(d)}</option>`).join("")}
+    </select>
+  </div>`;
+  const list=items.map((x,i)=>{
     const itemId=stableCalendarItemId(x,i);
-    return `
-    <article class="calendar-item" data-freq="${esc(x.freq)}" data-dept="${esc(x.dept)}">
-      <div><span class="freq-badge">${esc(x.freq)}</span></div>
-      <div class="calendar-item-main">
-        <div class="calendar-item-title"><span class="dept-badge">${esc(x.dept)}</span><strong>${esc(x.data)}</strong></div>
-        <div class="calendar-note">${esc(x.note)}</div>
-        <div class="calendar-item-meta">
-          <div class="calendar-meta-box"><b>表單/紀錄</b>${esc(x.form)}</div>
-          <div class="calendar-meta-box"><b>負責人</b>${esc(x.owner)}</div>
-          <div class="calendar-meta-box"><b>來源</b>${esc(x.source)}</div>
-          <div class="calendar-status" data-calendar-status="${i}" data-calendar-status-id="${esc(itemId)}" aria-label="收件狀態">
+    return `<article class="equip-list-item" data-cal-item="${esc(x.freq)}" data-cal-dept="${esc(x.dept)}"${x.freq===firstFreq?"":" style=\"display:none\""}>
+      <div>
+        <span class="freq-badge">${esc(x.freq)}</span>
+        <span class="dept-badge" style="margin-top:6px;display:block">${esc(x.dept)}</span>
+      </div>
+      <div>
+        <h4>${esc(x.data)}</h4>
+        <p style="font-size:14px;color:var(--ink-soft);line-height:1.62;margin-bottom:9px">${esc(x.note)}</p>
+        <div class="equipment-meta">
+          <span>找誰：${esc(x.owner)}</span>
+          <span>收什麼：${esc(x.form)}</span>
+          <span>依據：${esc(x.source)}</span>
+          <span class="calendar-status" data-calendar-status="${i}" data-calendar-status-id="${esc(itemId)}" aria-label="收件狀態">
             <button type="button" data-status="done">已完成</button>
             <button type="button" data-status="pending">未完成</button>
-          </div>
+          </span>
         </div>
       </div>
     </article>`;
-  };
-  const table=`<div class="calendar-controls">
-      <label>依頻率篩選<select id="calendarFreq"><option value="">全部頻率</option>${freqs.map(f=>`<option value="${esc(f)}">${esc(f)}</option>`).join("")}</select></label>
-      <label>依部門篩選<select id="calendarDept"><option value="">全部部門</option>${depts.map(d=>`<option value="${esc(d)}">${esc(d)}</option>`).join("")}</select></label>
-    </div>
-    <div class="calendar-summary">
-      <div class="calendar-kpi"><strong>${items.length}</strong><span>收件節點</span></div>
-      <div class="calendar-kpi"><strong>${freqs.length}</strong><span>頻率類型</span></div>
-      <div class="calendar-kpi"><strong>${items.filter(x=>x.freq==="發生時啟動").length}</strong><span>發生時啟動</span></div>
-      <div class="calendar-kpi"><strong>${items.filter(x=>x.freq==="每三年").length}</strong><span>三年節點</span></div>
-    </div>
-    <div class="calendar-source-note">本頁不把資料夾內所有文件做成另一份清單；只列有收件、啟動或核對責任的文件。完整來源放在每一筆卡片的「來源」欄，避免與頻率與 SOP 區塊重複。</div>
-    <div class="calendar-list" id="calendarRows">${items.map(clearItem).join("")}</div>`;
-  const groups=freqs.map(freq=>{
-    const groupItems=items.filter(x=>x.freq===freq);
-    const deptCount=new Set(groupItems.flatMap(x=>String(x.dept).split("/").map(d=>d.trim()).filter(Boolean))).size;
-    return `<article class="calendar-group">
-      <h4>${esc(freq)}<span>${groupItems.length} 項</span></h4>
-      <p>${deptCount} 個責任部門需要在此頻率提交或確認資料；明細已整合在上方核對卡片。</p>
-    </article>`;
   }).join("");
-  return panel("資料收件核對台",table,"wide")+
-    panel("收件節奏摘要",`<div class="calendar-groups">${groups}</div>`,"");
+  const kpiHtml=`<div class="metric-strip" style="margin-bottom:18px">
+    <div class="metric"><strong style="color:var(--warn)">${(byFreq["發生時啟動"]||[]).length}</strong><span>發生時啟動</span></div>
+    <div class="metric"><strong style="color:var(--brand-2)">${((byFreq["每日"]||[]).length+(byFreq["每月"]||[]).length+(byFreq["每兩個月"]||[]).length)}</strong><span>每日∕月∕兩月</span></div>
+    <div class="metric"><strong style="color:var(--brand)">${((byFreq["每季"]||[]).length+(byFreq["每半年"]||[]).length+(byFreq["每年"]||[]).length)}</strong><span>每季∕半年∕年</span></div>
+    <div class="metric"><strong style="color:var(--gold)">${items.length}</strong><span>共計節點</span></div>
+  </div>`;
+  return panel("資料收件核對台",
+    kpiHtml+
+    `<div class="equip-menu">
+      <div class="equip-menu-list" id="calMenuList">${menu}</div>
+      <div id="calItemList">${deptFilter}<div class="equip-item-list">${list}</div></div>
+    </div>
+    <p class="note" style="margin-top:14px">本頁只列有收件、啟動或核對責任的文件；完整來源放在每筆卡片的「依據」欄。</p>`,
+    "wide");
 }
 function equipmentOnlySection(s){
   const src=sections.find(x=>x.id===s.equipmentRef);
@@ -1419,9 +1470,6 @@ function initSwipePanels(){
   });
 }
 function bindCalendarFilters(){
-  const freq=document.getElementById("calendarFreq");
-  const dept=document.getElementById("calendarDept");
-  const rows=[...document.querySelectorAll("#calendarRows [data-freq]")];
   document.querySelectorAll("[data-calendar-status]").forEach(group=>{
     const index=group.dataset.calendarStatus;
     const itemId=group.dataset.calendarStatusId;
@@ -1438,18 +1486,26 @@ function bindCalendarFilters(){
       });
     });
   });
-  if(!freq||!dept||!rows.length) return;
-  function apply(){
-    const f=freq.value;
-    const d=dept.value;
-    rows.forEach(row=>{
-      const okFreq=!f||row.dataset.freq===f;
-      const okDept=!d||row.dataset.dept.includes(d);
-      row.style.display=okFreq&&okDept?"":"none";
+  const menuBtns=[...document.querySelectorAll("[data-cal-freq]")];
+  const calItems=[...document.querySelectorAll("[data-cal-item]")];
+  const deptSel=document.getElementById("calendarDept");
+  if(!menuBtns.length||!calItems.length) return;
+  function applyCalFilter(activeFreq,activeDept){
+    menuBtns.forEach(btn=>btn.classList.toggle("active",btn.dataset.calFreq===activeFreq));
+    calItems.forEach(item=>{
+      const fOk=item.dataset.calItem===activeFreq;
+      const dOk=!activeDept||String(item.dataset.calDept).split("/").map(d=>d.trim()).some(d=>d===activeDept||d.includes(activeDept));
+      item.style.display=fOk&&dOk?"":"none";
     });
   }
-  freq.addEventListener("change",apply);
-  dept.addEventListener("change",apply);
+  menuBtns.forEach(btn=>btn.addEventListener("click",()=>applyCalFilter(btn.dataset.calFreq,deptSel?.value||"")));
+  if(deptSel){
+    deptSel.addEventListener("change",()=>{
+      const active=menuBtns.find(b=>b.classList.contains("active"))||menuBtns[0];
+      applyCalFilter(active?.dataset.calFreq||"",deptSel.value);
+    });
+  }
+  applyCalFilter(menuBtns[0]?.dataset.calFreq||"","");
 }
 const deptIdMap={
   personnel:"人事", rp:"GDP 權責人", pharmacist:"管理藥師",
@@ -1567,8 +1623,8 @@ function renderNav(){
           fb.addEventListener("click",async e=>{
             e.stopPropagation();
             await showSection("collection-calendar");
-            const freqSel=document.getElementById("calendarFreq");
-            if(freqSel){freqSel.value=freq;freqSel.dispatchEvent(new Event("change"));}
+            const calBtn=document.querySelector(`[data-cal-freq="${freq}"]`);
+            if(calBtn) calBtn.click();
             document.querySelectorAll(".nav-freq-item").forEach(x=>x.classList.remove("active"));
             fb.classList.add("active");
           });

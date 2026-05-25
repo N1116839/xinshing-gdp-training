@@ -1223,3 +1223,51 @@ G:\我的雲端硬碟\2026codex\codex-skills-lazy-pack
 ### 注意
 - `outputs/measure_layout.cjs` 與 `outputs/capture_mobile.cjs` 是本輪臨時驗證腳本，屬於輸出/檢查工具，不建議納入 Git。
 ```
+
+## 2026-05-25 三欄視覺化與年度收件行事曆重做紀錄
+```
+### 本輪完成
+- 三欄規範對照面板（standardsSwipe）視覺升級：
+  - PIC/S GDP / 台灣食藥署：改為圓形編號 + 規範文字的卡片（spec-rule-card）
+  - 新勝做法：改為分類 emoji icon + 行動卡片（company-action-card）
+    - 🌡️ 溫控、📦 進出貨、🚚 配送、📋 紀錄、🚫 疑似偽禁仿冒、🔄 回收、⚠️ 偏差
+  - 參考文件：改為方格卡片排列（doc-pill-grid）
+- 年度資料收件行事曆（collection-calendar）重做版型：
+  - 新版：左側頻率選單 + 右側篩選後卡片清單，與「關鍵設備時間核對台」一致
+  - 保留 Firestore 狀態同步、部門篩選 select、KPI 摘要列
+- JavaScript 語法驗證：通過
+```
+
+### 使用者回饋（下一輪必須修正）
+```
+#### 回饋一：視覺化的定義是互動式，不只是排版
+- 視覺化在此專案中指真正的 HTML 互動元素：
+  - 滑桿（input range）、拖拉（drag/swipe）
+  - 點擊叫出（Modal、Accordion、Tooltip、Tab panel）
+  - 輪播圖（Carousel）、動態表單（即時驗證、JS 改變內容）
+- 上一輪只把文字改成卡片，並非真正的互動式，下一輪視覺化要從這個定義出發。
+
+#### 回饋二：每頁有三個重複的文件/SOP 區域
+目前每個部門頁面從上到下有：
+1. 頂部 pills（pagePills 顯示文件編號）
+2. 部門文件閱讀地圖（documentMapSection，分類最清楚）
+3. 本頁相關 SOP（docButtons，點擊可開 SOP 面板）
+應合併為只保留一個，讓它成為可點擊開啟 SOP 面板的入口。
+
+#### 回饋三：時程資訊重複
+- 「時程與資料節點」（schedule 區塊）
+- 「部門資料交付時程」（deptScheduleSection，已有頻率 tab 互動）
+應合併，只保留功能較豐富的 deptScheduleSection。
+```
+
+### 下一輪優先順序
+```
+1. 修正頁面重複區域：
+   a. 合併三個文件/SOP 區域，只留「部門文件閱讀地圖」整合 SOP 點擊入口
+   b. 合併「時程與資料節點」和「部門資料交付時程」，只留頻率 tab 版本
+2. 視覺化=互動式：加入真正的 HTML 互動元素
+   - 三欄規範對照：改為可左右拖動或滑桿控制的比較面板
+   - 稽查重點：翻卡記憶（flip card）或選擇題互動
+   - 倉管、品保、管理藥師優先
+3. Git commit 與 push 到 GitHub Pages
+```
