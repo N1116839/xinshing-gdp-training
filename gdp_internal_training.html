@@ -48,23 +48,62 @@
     .pill.doc-pill:hover{color:#fff;background:var(--brand);border-color:var(--brand)}
     .slide-label{display:inline-grid;place-items:center;width:40px;height:40px;margin-bottom:8px;color:#fff;background:var(--gold);border-radius:50%;font-weight:800}
     .audit-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-    .audit-card{min-height:140px;padding:14px;background:#f4faf9;border:1px solid #cde0dd;border-top:5px solid var(--brand);font-size:15px;line-height:1.55}
+    .audit-card{min-height:140px;padding:14px;background:#f4faf9;border:1px solid #cde0dd;border-top:5px solid var(--brand);font-size:15px;line-height:1.55;text-align:left;cursor:pointer}
     .audit-card strong{display:block;margin-bottom:8px;color:var(--brand);font-size:18px}
+    .audit-card.active{background:#fff8ef;border-color:#d49435;border-top-color:var(--gold)}
+    .audit-focus{display:grid;grid-template-columns:1.1fr .9fr;gap:14px;align-items:stretch}
+    .audit-focus-list{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .audit-detail{padding:16px;background:#0f5b50;color:#fff;border:1px solid #0f5b50;min-height:230px}
+    .audit-detail small{display:block;color:#f2c56b;font-weight:800;margin-bottom:8px}
+    .audit-detail h4{font-size:22px;margin-bottom:10px;color:#fff}
+    .audit-detail p{line-height:1.75;color:#e9f5f2}
+    .audit-detail ul{margin-top:12px;padding-left:1rem;color:#fff}
     .visual-band{position:relative;min-height:200px;padding:24px;display:grid;align-content:end;background:#e8f3f2 center/cover no-repeat;border:1px solid var(--line);overflow:hidden}
     .visual-band::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(247,251,251,.96),rgba(247,251,251,.64),rgba(247,251,251,.1))}
     .visual-band>*{position:relative;max-width:620px}
     .visual-band h3{font-size:26px}
-    /* ── 3-column swipe panel ── */
-    .swipe-panel{width:100%}
-    .swipe-tabs{display:flex;border-bottom:2px solid var(--line);margin-bottom:0}
-    .swipe-tab{flex:1;padding:11px 6px;background:transparent;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;cursor:pointer;font:inherit;font-size:13px;font-weight:700;color:var(--ink-soft);transition:color .18s,border-color .18s;text-align:center}
-    .swipe-tab.active{color:var(--col,var(--brand));border-bottom-color:var(--col,var(--brand))}
-    .swipe-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-    .swipe-track::-webkit-scrollbar{display:none}
-    .swipe-col{flex:0 0 100%;scroll-snap-align:start;padding:16px 4px 4px}
-    .swipe-col ul{font-size:15px}
-    .swipe-col li{padding:4px 0;border-bottom:1px solid var(--line)}
-    .swipe-col li:last-child{border-bottom:none}
+    /* ── pipeline slider ── */
+    .swipe-panel{width:100%;border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:0 8px 24px rgba(20,64,61,.10)}
+    /* pipeline stepper header */
+    .pipe-hdr{display:flex;align-items:center;padding:14px 12px;background:linear-gradient(135deg,#f0f8f7 0%,#e8f5f3 100%);border-bottom:2px solid var(--line);gap:0}
+    .pipe-step{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;flex:1;padding:2px;transition:opacity .2s}
+    .pipe-step:not(.active){opacity:.55}
+    .pipe-node{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:22px;background:#dde8e7;border:3px solid transparent;transition:all .35s cubic-bezier(.4,0,.2,1)}
+    .pipe-step.active .pipe-node{background:var(--sw-col,var(--brand));border-color:rgba(255,255,255,.6);transform:scale(1.18);box-shadow:0 6px 16px rgba(0,0,0,.22)}
+    .pipe-lbl{font-size:10.5px;font-weight:800;text-align:center;color:var(--ink-soft);line-height:1.35;transition:color .25s}
+    .pipe-step.active .pipe-lbl{color:var(--sw-col,var(--brand))}
+    .pipe-arrow{color:#b0cbc8;font-size:16px;flex-shrink:0;padding:0 2px;margin-bottom:18px;transition:color .25s}
+    /* viewport & slide track */
+    .slide-vp{overflow:hidden}
+    .slide-track{display:flex;transition:transform .45s cubic-bezier(.4,0,.2,1);will-change:transform}
+    .slide-pane{flex:0 0 100%;min-height:180px}
+    /* pane header */
+    .slide-hd{display:flex;align-items:center;gap:10px;padding:13px 18px;color:#fff;font-weight:800;font-size:15px;letter-spacing:.01em}
+    .slide-hd-icon{font-size:22px}
+    /* item cards */
+    .swipe-item{display:flex;gap:12px;align-items:flex-start;padding:13px 18px;border-bottom:1px solid var(--line);background:#fff;transition:background .12s}
+    .swipe-item:last-child{border-bottom:none}
+    .swipe-item:hover{background:#f4fbfb}
+    .swipe-dot{flex-shrink:0;width:9px;height:9px;margin-top:8px;border-radius:50%}
+    .swipe-text{font-size:15px;line-height:1.75;color:var(--ink)}
+    .swipe-text b{font-weight:800;background:rgba(0,0,0,.07);padding:0 4px;border-radius:3px}
+    /* docs column */
+    .swipe-doc-item{display:flex;align-items:flex-start;gap:12px;padding:12px 18px;border-bottom:1px solid #f0e0c8;background:#fffaf4;cursor:pointer;transition:background .14s}
+    .swipe-doc-item:last-child{border-bottom:none}
+    .swipe-doc-item:hover{background:#fff3de}
+    .swipe-doc-icon{font-size:18px;flex-shrink:0;padding-top:1px}
+    .swipe-doc-label{font-size:14px;font-weight:700;color:#7b3f00;line-height:1.55}
+    /* nav bar */
+    .slide-nav{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:#f7fbfb;border-top:1px solid var(--line)}
+    .slide-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;border:1.5px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;font:inherit;font-size:14px;font-weight:700;color:var(--brand);transition:all .2s}
+    .slide-btn:hover:not(:disabled){background:var(--brand);color:#fff;border-color:var(--brand)}
+    .slide-btn:disabled{opacity:.3;cursor:default}
+    .slide-dots{display:flex;gap:8px;align-items:center}
+    .slide-dot{width:10px;height:10px;border-radius:50%;background:var(--line);cursor:pointer;transition:background .25s,transform .25s}
+    .slide-dot.active{background:var(--brand);transform:scale(1.4)}
+    /* progress bar under pipeline header */
+    .pipe-progress{height:4px;background:var(--line);position:relative;overflow:hidden}
+    .pipe-progress-fill{height:100%;background:linear-gradient(90deg,var(--brand),var(--gold));transition:width .45s cubic-bezier(.4,0,.2,1)}
     /* ── dept flow ── */
     .dept-flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:4px}
     .dept-step{display:grid;grid-template-columns:38px 1fr;gap:8px;align-items:start;flex:1;min-width:140px;padding:12px;background:#f0f8f7;border:1px solid var(--line);border-left:4px solid var(--brand)}
@@ -91,6 +130,39 @@
     .resp-table th{background:var(--brand);color:#fff;font-weight:700}
     .resp-table td:first-child{text-align:left;font-weight:700;background:#f4faf9}
     .resp-table .r{color:var(--brand);font-weight:800}.resp-table .s{color:var(--ink-soft)}
+    /* ── collection calendar ── */
+    .calendar-controls{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+    .calendar-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+    .calendar-kpi{padding:12px;background:#f4faf9;border:1px solid var(--line);border-left:5px solid var(--brand)}
+    .calendar-kpi strong{display:block;color:var(--brand);font-size:24px;line-height:1}
+    .calendar-lanes{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+    .calendar-lane{background:#fff;border:1px solid var(--line);border-top:5px solid var(--brand);padding:13px;min-height:132px}
+    .calendar-lane h4{color:var(--brand);margin-bottom:8px}
+    .calendar-lane ul{display:grid;gap:6px;padding-left:1rem;font-size:13px}
+    .calendar-checklist{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .calendar-check{display:grid;grid-template-columns:auto 1fr;gap:9px;align-items:start;padding:11px;background:#fff;border:1px solid var(--line)}
+    .calendar-check input{margin-top:3px;accent-color:var(--brand)}
+    .calendar-check strong{display:block;color:var(--brand)}
+    .calendar-check span{display:block;color:var(--ink-soft);font-size:13px;line-height:1.5}
+    .calendar-table-wrap{overflow:auto;border:1px solid var(--line);background:#fff}
+    .calendar-table{width:100%;min-width:980px;border-collapse:collapse;font-size:13px}
+    .calendar-table th,.calendar-table td{padding:10px 11px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+    .calendar-table th{position:sticky;top:0;background:var(--brand);color:#fff;z-index:1}
+    .calendar-table tr:hover td{background:#f7fbfb}
+    .freq-badge,.dept-badge{display:inline-block;white-space:nowrap;padding:3px 8px;border-radius:999px;font-weight:800;font-size:12px}
+    .freq-badge{color:#fff;background:var(--gold)}
+    .dept-badge{color:var(--brand);background:#e8f3f2;border:1px solid #cde0dd}
+    .calendar-note{color:var(--ink-soft);line-height:1.55}
+    .calendar-groups{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .calendar-group{padding:14px;background:#fff;border:1px solid var(--line);border-top:5px solid var(--gold)}
+    .calendar-group h4{display:flex;justify-content:space-between;gap:10px;color:var(--brand)}
+    .calendar-group ul{padding-left:1rem;font-size:13px}
+    .equipment-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .equipment-card{padding:13px;background:#fff;border:1px solid var(--line);border-left:5px solid var(--gold)}
+    .equipment-card h4{color:var(--brand);margin-bottom:6px}
+    .equipment-card p{color:var(--ink-soft);font-size:13px;line-height:1.55}
+    .equipment-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+    .equipment-meta span{padding:3px 7px;background:#f7fbfb;border:1px solid var(--line);font-size:12px;color:var(--ink)}
     /* ── doc modal ── */
     .doc-modal{position:fixed;inset:0;z-index:30;display:none;background:rgba(15,55,50,.44);padding:28px}
     .doc-modal.open{display:grid;place-items:center}
@@ -138,11 +210,32 @@
       .topbar{align-items:flex-start;flex-direction:column}
       .half,.third,.wide{grid-column:span 12}
       .flow{grid-template-columns:1fr}
-      .audit-grid,.evidence-map,.metric-strip{grid-template-columns:1fr}
+      .audit-grid,.audit-focus,.audit-focus-list,.evidence-map,.metric-strip{grid-template-columns:1fr}
       .training-split{grid-template-columns:1fr}
       .dept-flow{flex-direction:column}
       .dept-flow-arrow{transform:rotate(90deg)}
+      .calendar-controls,.calendar-summary,.calendar-groups,.calendar-lanes,.calendar-checklist,.equipment-grid{grid-template-columns:1fr}
+      .pipe-hdr{padding:10px 6px}
+      .pipe-node{width:36px;height:36px;font-size:17px}
+      .pipe-lbl{font-size:9.5px}
+      .pipe-arrow{font-size:13px;padding:0}
+      .slide-hd{font-size:14px;padding:11px 14px}
+      .swipe-item,.swipe-doc-item{padding:10px 14px}
+      .swipe-text{font-size:14px}
+      .slide-btn{font-size:13px;padding:7px 12px}
     }
+    .policy-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:4px}
+    .policy-card{border-radius:10px;border:1.5px solid var(--line);overflow:hidden;background:#fff}
+    .policy-card-head{display:flex;align-items:center;gap:10px;padding:12px 14px;background:#0a4d8a;color:#fff}
+    .policy-icon{font-size:22px}
+    .policy-dir{font-weight:800;font-size:15px}
+    .policy-goal{padding:10px 14px;font-size:14px;color:var(--ink);border-bottom:1px solid var(--line)}
+    .policy-kpi{padding:8px 14px 12px;font-size:13px;color:#444}
+    .policy-kpi small{display:inline-block;background:#d4edda;color:#155724;font-weight:700;padding:1px 7px;border-radius:4px;margin-right:6px;font-size:11px}
+    .profile-grid{display:flex;gap:20px;flex-wrap:wrap}
+    .profile-basics{flex:1;min-width:260px}
+    .profile-staff{flex:2;min-width:320px;overflow-x:auto}
+    .profile-staff .info-table th{width:auto}
   </style>
 </head>
 <body>
@@ -183,12 +276,12 @@
 </div>
 <script>
 window.GDP_FIREBASE_CONFIG = {
-  apiKey: "AIzaSyA6ivChgQ_pwpHfGFuCoZF9R7duWYOz-aE",
-  authDomain: "ai-test-52540.firebaseapp.com",
-  projectId: "ai-test-52540",
-  storageBucket: "ai-test-52540.firebasestorage.app",
-  messagingSenderId: "278568086611",
-  appId: "1:278568086611:web:01f1ffda4578f93014aaa6"
+  apiKey: "AIzaSyBX6Z31XPRIMEzQuIpHL-6ptgV40rum8gI",
+  authDomain: "xinshing-gdp-training-20260525.firebaseapp.com",
+  projectId: "xinshing-gdp-training-20260525",
+  storageBucket: "xinshing-gdp-training-20260525.firebasestorage.app",
+  messagingSenderId: "177484921581",
+  appId: "1:177484921581:web:a685952f6372dee5fe6ae4"
 };
 
 /* ═══════════════════════════════════════════════
@@ -197,28 +290,67 @@ window.GDP_FIREBASE_CONFIG = {
 const sections = [
   {
     id:"manual",group:"文件主軸",title:"品質手冊",tag:"品質系統總覽",
-    lead:"品質手冊是 GDP 系統最高層級文件，讓每位同仁理解：公司如何以組織、程序、資源與風險管理確保藥品在儲存與運輸時維持品質。",
+    lead:"藥品離開製造廠後進入批發、配送，直至病患手中，每個環節都可能影響品質。GDP（西藥優良運銷規範）正是這段旅程的品質保障，確保藥品在儲存與運輸中維持安全性與有效性。DM10-01 品質手冊是本公司 GDP 系統的最高層級文件，說明公司如何以組織、程序、資源與風險管理落實 GDP。",
     pills:["DM10-01","DP12-01","偏差/CAPA","管理審查","內部稽核"],
     standards:{
       picsgdp:["品質系統需確保藥品在整個配送鏈中維持品質與完整性（GDP 第一章）","系統需涵蓋組織架構、程序、流程、資源與必要活動","偏差需立即識別、記錄、調查，依品質風險管理原則採取 CAPA","管理階層需定期審查品質系統績效，確保持續符合 GDP","品質系統績效可由申訴、退回、偏差、CAPA、回收等指標追蹤"],
       taiwan:["西藥優良運銷準則第一章為台灣 GDP 法規基礎","公司需建立並執行完整品質系統，確保藥品來自合法供應鏈","品質紀錄至少保存 5 年，食藥署可隨時稽查","台灣規定公司需指定 GDP 權責人，確保系統維持與訓練","不符合事項與 CAPA 需文件化，供稽查時提供"],
-      company:["DM10-01 品質手冊為公司 GDP 系統最高層級文件","GDP 權責主管負責系統維持、訓練計畫與資源取得","每年執行一次內部稽核與管理階層檢討","偏差填寫 FR12-03 偏差事件處理報告單，品保調查後追蹤 CAPA","品質績效指標：客訴數、偏差數、CAPA 結案率、稽核缺失數"]
+      company:["DM10-01 品質手冊為公司 GDP 系統最高層級文件，由 GDP 權責主管負責維持","GDP 五大保證：①藥品採購/儲存/供應符合 GDP ②管理職責清楚明定 ③藥品在適當期間交付給正確接收者 ④作業同時紀錄 ⑤偏差文件化、調查並追蹤 CAPA","每年執行一次內部稽核與管理階層檢討，彙整品質績效指標","偏差填寫 FR12-03 偏差事件處理報告單，品保調查後啟動 CAPA（FR12-04）","委外作業需評估受託方適任性、定期監測績效，品質協議書為依據"],
+      docs:["DM10-01 品質手冊","DP12-01 品質管理系統程序書","DP12-02 偏差管理作業程序（FR12-03）","DP12-03 矯正與預防作業程序書（FR12-04）","DP12-04 變更管制作業程序書","DP14-01 管理階層檢討作業程序","DP15-01 品質風險作業程序書"]
     },
-    focus:["GDP 延續 GMP 品質精神，將藥品出廠後的儲存、運送與配送納入品質系統。","偏差必須文件化、調查、風險評估，必要時啟動 CAPA 或變更管制。","品質系統績效可用申訴、退回、回收、偏差、CAPA、委外績效追蹤。"],
+    focus:[
+      "為何做 GDP：藥品出廠後若儲存不當（溫度超標、污染）或來源不明（偽禁仿冒藥），病患可能用到無效甚至有害的藥品。GDP 確保新勝醫藥在整個批發配送鏈中維持藥品原廠品質。",
+      "品質系統五大保證（DM10-01 核心）：①藥品採購、儲存、供應符合 GDP ②管理職責清楚明定 ③藥品在適當期間交付給正確接收者 ④作業同時紀錄、不事後補填 ⑤偏差文件化、調查並追蹤 CAPA。",
+      "品質績效年度追蹤：申訴數、偏差數、CAPA 結案率、稽核缺失數、訂單逾期率、溫度警報次數，每年管理審查時一併彙整檢視，由 GDP 權責主管確認改善效果。"
+    ],
+    qualityPolicy:[
+      {dir:"安全",goal:"防止偽藥進入供應鏈",kpi:"偽藥識別訓練合格分數 ≥ 70 分",icon:"🛡️"},
+      {dir:"有效",goal:"有效處理藥品緊急異常事件",kpi:"緊急應變演練有效處理時間 < 12 小時",icon:"⚡"},
+      {dir:"有效",goal:"合理時間內正確運送給顧客",kpi:"訂單逾期率 < 1%、打單錯誤率 < 1%",icon:"📦"},
+      {dir:"品質",goal:"藥品品質之維持",kpi:"室溫藥品 ≤ 25°C，冷鏈藥品 2～8°C",icon:"🌡️"}
+    ],
     schedule:[["每年","內部稽核、管理階層檢討、品質系統有效性回顧。"],["異常發生時","立即提報偏差，品保調查原因，GDP 權責主管追蹤與審核。"],["文件異動時","完成修訂、核准、訓練與考核後，文件才可生效。"]],
     audit:["品質系統是否涵蓋組織架構、程序、流程、資源與必要活動。","GDP 權責人是否有正式任命、職責、授權與代理安排。","偏差是否即時提報、文件化、調查並完成風險評估。","CAPA 是否有原因分析、責任單位、期限、有效性確認與結案紀錄。","變更是否經風險評估、核准、訓練與文件版次管制。","管理階層是否定期檢討品質系統績效與資源需求。","內部稽核是否依計畫執行，缺失是否追蹤改善。","品質紀錄是否完整、即時、可追溯且依期限保存。"],
     qa:true
   },
   {
     id:"smf",group:"文件主軸",title:"SMF廠商清冊",tag:"公司場地與作業範圍",
-    lead:"SMF 與廠商清冊說明公司場所、儲存條件、產品範圍與委外運輸安排。受訓者需能找到最新版清冊，並理解清冊與供應商、客戶、委外物流的關聯。",
+    lead:"新勝醫藥有限公司（新北市中和區）以藥品批發、經銷為主業，GDP 品質管理系統於 111 年 8 月 23 日建立完成。WI10-01 SMF 廠商基本資料是稽查員了解本公司整體 GDP 執行情況的主要文件，載明場所、組織架構、委外物流安排與產品範圍。受訓者需能找到最新版清冊，並理解各清冊與採購、倉管、業務、委外物流的關聯。",
     pills:["WI10-01","藥品清冊","嘉里醫藥物流","合約/品質協議","儲存條件"],
     standards:{
-      picsgdp:["Site Master File (SMF) 需說明公司場所、組織架構、作業範圍與 GDP 活動","SMF 為稽查員了解公司整體 GDP 執行情況的主要說明文件","廠商清冊需反映最新供應商、委外物流與客戶核准狀態","SMF 組織、範圍、委外安排異動時需及時更新"],
-      taiwan:["食藥署 GDP 指引要求藥商提供完整場所與作業說明","供應商與客戶清冊需定期更新，與現行核准狀態一致","委外物流合約與品質協議需清楚界定雙方責任","WI10-01 廠商基本資料說明場所、組織架構與核准供應商"],
-      company:["WI10-01 涵蓋公司場所、儲存條件、產品範圍與委外物流安排","嘉里醫藥物流為核准委外物流商，每季提供一筆運輸過程溫度記錄","供應商清冊與客戶清冊由採購/業務分別維護，異動需核准","產品清冊包含品名、許可證字號、保存條件與儲位，可供批號追溯"]
+      picsgdp:["Site Master File (SMF) 需說明公司場所、組織架構、作業範圍與 GDP 活動","SMF 為稽查員了解公司整體 GDP 執行情況的主要說明文件","廠商清冊需反映最新供應商、委外物流與客戶核准狀態","委外物流合約與品質協議需清楚界定雙方責任、通報流程與績效監測","SMF 組織、範圍、人員、委外安排異動時需及時更新"],
+      taiwan:["食藥署 GDP 指引（西藥優良運銷準則）要求藥商提供完整場所與作業範圍說明","供應商與客戶清冊需定期更新，確認與現行核准狀態一致","委外物流合約與品質協議需清楚界定雙方責任與監督方式","食藥署稽查時需提供 SMF 及最新版廠商/客戶清冊供查閱","藥品許可證持有人資訊、保存條件與儲位需可追溯至產品清冊"],
+      company:["WI10-01 涵蓋公司場所（新北市中和區）、儲存條件、產品範圍與委外物流安排","本公司為經銷商，無持有藥品許可證；品名、許可證字號、持有者與保存條件均見藥品清冊（SMF 附件二）","嘉里醫藥物流股份有限公司為核准委外運輸商，有合約書與品質協議書；每季提供運輸過程溫度紀錄","供應商清冊（採購維護）、客戶清冊（業務維護）、產品清冊（倉管/品保維護），異動需核准並即時更新","24 小時緊急聯絡：鄭振宏 0930656906，代理人黃獻逸 0932037129"],
+      docs:["WI10-01 SMF 廠商基本資料（場所、組織架構、委外物流安排）","藥品清冊（SMF 附件二：品名、許可證字號、持有者、保存溫度、儲位）","供應商清冊（採購維護）","客戶清冊（業務維護）","DP72-01 委外作業程序書（嘉里醫藥物流品質協議依據）"]
     },
-    focus:["本公司主要業務為藥品批發、經銷。","一般藥品與高關注藥品運輸委由合格物流業者執行，須有合約與品質協議。","產品名稱、許可證字號、保存溫度與放置地點需可由藥品清冊追溯。"],
+    focus:[
+      "新勝醫藥為有倉儲、無自行運輸的批發模式，運輸全委嘉里醫藥物流股份有限公司，雙方有合約書與品質協議書；委外物流須維持藥品品質與完整性，發生問題時以 CAPA 系統改善。",
+      "本公司無持有藥品許可證（以經銷商身分運作）；所有品名、許可證字號、許可證持有者、保存溫度、儲位，均可從藥品清冊（SMF 附件二）追溯。",
+      "SMF 若有組織、場所、人員、委外安排異動，需即時更新——不等年度彙整。稽查員一旦發現清冊資料與現況不符，即可記缺失。"
+    ],
+    companyProfile:{
+      basics:[
+        ["公司名稱","新勝醫藥有限公司"],
+        ["藥商地址","新北市中和區中山路二段 340 巷 24 號 1 樓"],
+        ["主要業務","藥品批發、經銷（藥局、診所、經銷商）"],
+        ["GDP 建立","111 年 8 月 23 日（場所儲存驗收完成）"],
+        ["作業範圍","一般藥品＋高關注藥品（無輸入、無零售）"],
+        ["委外運輸","嘉里醫藥物流股份有限公司（合約書＋品質協議書）"],
+        ["24hr 緊急聯絡","鄭振宏 0930656906 ／ 代理 黃獻逸 0932037129"],
+        ["溫度管制","室溫藥品 ≤ 25°C，冷鏈藥品 2～8°C"]
+      ],
+      staffQual:[
+        {role:"GDP 權責主管",edu:"相關科系",exp:"≥ 3 年",mustTrain:"DM10-01、DP12-01、DP14-01"},
+        {role:"管理藥師",edu:"藥學系＋藥師執照",exp:"—",mustTrain:"DP15-01、DP64-01、DP65-01"},
+        {role:"品管（品保）",edu:"相關科系",exp:"≥ 3 年",mustTrain:"DP12-02、DP12-03、DP35-01、DP82-01"},
+        {role:"倉庫組長",edu:"大學以上",exp:"≥ 3 年",mustTrain:"DP33-01、DP34-01、DP55-01、DP57-01"},
+        {role:"業務組長",edu:"—",exp:"≥ 3 年",mustTrain:"DP53-01、DP62-01、DP63-01"},
+        {role:"採購",edu:"—",exp:"≥ 1 年",mustTrain:"DP52-01、DP54-01、DP72-01"},
+        {role:"倉管",edu:"—",exp:"≥ 1 年",mustTrain:"DP33-01、DP55-01、DP57-01"},
+        {role:"文管",edu:"企管/相關",exp:"≥ 1 年",mustTrain:"DP42-01、DP42-02"},
+        {role:"人事",edu:"企管/相關",exp:"≥ 1 年",mustTrain:"DP22-01、DP24-01"}
+      ]
+    },
     schedule:[["清冊異動時","同步更新產品、供應商、儲位、保存條件與委外資訊。"],["委外評鑑時","確認物流業者適任性、文件維護、溫度紀錄與改善事項。"],["查詢需求時","能快速提供產品清冊、供應商資格與委外品質協議。"]],
     audit:["SMF 是否清楚說明公司場所、作業範圍、組織與 GDP 活動。","產品清冊是否包含品名、許可證、持有者、保存條件與儲存位置。","委外物流是否有合約、品質協議與核准紀錄。","委外活動是否明確界定責任、通報、文件保存與績效監測。","供應商與客戶清冊是否為最新版，異動是否有核准與紀錄。","保存溫度與儲位資訊是否能回到實際標示與倉儲紀錄。","委外物流溫度、清潔、安全與暫存管制是否可提供佐證。","清冊異動是否同步到相關 SOP、表單、訓練與現場作業。"],
     qa:true
@@ -230,7 +362,8 @@ const sections = [
     standards:{
       picsgdp:["GDP 要求每位人員清楚了解自己在品質系統中的角色與責任","跨部門交接需有明確輸入、輸出與責任界定","所有人員需完成職前及年度持續訓練，並有合格紀錄","職務代理需正式授權，不得違反職能分立原則"],
       taiwan:["台灣規定各部門人員了解 GDP 活動並留有訓練紀錄","部門間資料交接需可追溯，支援藥品回收與稽查","各部門須能在稽查時提出最新版 SOP 與表單","異常時所有部門需了解偏差提報路徑與通報節點"],
-      company:["公司設有 GDP 權責人、管理藥師、品保、人事、倉管、採購、業務、文管","日常：採購/收貨/儲存/訂單/揀貨/出貨/紀錄同步完成","每月：溫度資料整理、運輸溫度核實紀錄","每年：教育訓練、內部稽核、管理審查、文件定期審查"]
+      company:["公司設有 GDP 權責人、管理藥師、品保、人事、倉管、採購、業務、文管","日常：採購/收貨/儲存/訂單/揀貨/出貨/紀錄同步完成","每月：溫度資料整理、運輸溫度核實紀錄","每年：教育訓練、內部稽核、管理審查、文件定期審查"],
+      docs:["DM10-01 品質手冊（整體 GDP 系統）","WI10-01 SMF 廠商基本資料（組織架構）","DP22-01 組織與職掌標準作業程序"]
     },
     respMatrix:{
       cols:["GDP\n權責人","管理\n藥師","品保","人事","倉管","採購","業務","文管"],
@@ -250,13 +383,102 @@ const sections = [
     qa:true
   },
   {
+    id:"collection-calendar",group:"年度行事曆",title:"年度資料收件行事曆",tag:"各部門資料收件與啟動時機",
+    lead:"站在負責收資料的人角度，整理何時要向哪個部門收哪些紀錄、清冊、表單與報告。固定週期與發生時啟動項目分開管理，避免年度稽核或管理審查前才回頭補資料。",
+    pills:["DP12-02","DP14-01","DP24-01","DP33-01","DP42-01","DP52-01","DP53-01","DP57-01","DP65-01","DP82-01"],
+    standards:{
+      picsgdp:["GDP 紀錄需與作業同步產生，並可支持追溯、回收與稽查。","偏差、客訴、退回、偽禁仿冒藥與回收屬於發生時即啟動的品質事件。","例行性資料需依既定週期彙整，作為管理審查與自我查核輸入。","資料收件需明確指定來源部門、表單、保存與審核責任。"],
+      taiwan:["西藥優良運銷準則要求運銷紀錄、資格資料、溫度資料與品質事件可供查閱。","內部稽核、管理階層檢討與文件定期審查需有年度紀錄。","客戶與供應商資格需定期複查，確認許可文件與 GDP 資格仍有效。","回收作業安排至少每年評估一次，且必要時能立即啟動。"],
+      company:["每月向倉管收當月溫度紀錄，並追蹤運輸溫度核實資料。","每兩個月向倉管收庫存盤點紀錄，異常時啟動調查與文件化。","每季向委外物流收嘉里醫藥運輸過程溫度記錄 1 筆。","每年向業務收客戶清冊與客戶認可審查紀錄，向採購收供應商評鑑資料。"],
+      docs:["DP12-02 偏差管理作業程序","DP14-01 管理階層檢討作業程序","DP24-01 員工教育訓練作業程序","DP33-01 溫度監視作業程序書","DP42-01 文件管制作業程序書","DP52-01 藥品供應商評鑑作業程序","DP53-01 客戶認可審查程序書","DP57-01 訂單、揀貨及配銷管理程序書","DP65-01 藥品回收管理程序書","DP82-01 內部稽核作業程序書"]
+    },
+    focus:["這一頁站在收資料的人角度，不列 SOP 未明定的空週期，只列固定週期或發生時啟動的資料節點。","部門篩選只保留 GDP權責人、管理藥師、品保、倉管、採購、業務、文管、人事，便於新人快速記憶自己要交哪些資料。","客戶清冊、供應商清冊、設備保養、溫度測繪、溫度紀錄、偏差/CAPA、客訴/退回/回收，都要能回到表單與 SOP 來源。"],
+    collectionCalendar:[
+      {freq:"發生時啟動",dept:"品保",data:"偏差事件提報與調查資料",form:"FR12-03 偏差事件處理報告單、FR12-02 偏差事件處理管制表",owner:"品保 / GDP 權責人 / 發生部門",source:"DP12-02",note:"發現 GDP 作業與規範或 SOP 發生偏差時立即提報；溫度偏差、停電、文件不完整、資格檢查不足皆屬可能來源。"},
+      {freq:"發生時啟動",dept:"品保",data:"矯正與預防措施執行資料",form:"FR12-04 矯正與預防處理單",owner:"品保 / 責任部門",source:"DP12-03",note:"偏差、稽核缺失或重複問題需 CAPA 時，由責任部門提出原因分析、改善措施與完成期限。"},
+      {freq:"發生時啟動",dept:"文管",data:"文件制修訂、廢止或變更申請資料",form:"FR42-02 文件制/修訂申請單、文件首頁",owner:"文管 / 原權責部門",source:"DP42-01、DP12-04",note:"新增文件、文件不合時宜、偏差調查後需變更流程、DM/DP/WI 文件修訂時啟動。"},
+      {freq:"發生時啟動",dept:"文管",data:"品質系統文件總覽表更新",form:"FR10-01 文件總覽表",owner:"文管",source:"FR10-01",note:"有新增、移除文件時更新，確保教材、現場文件與清冊同步。"},
+      {freq:"發生時啟動",dept:"人事",data:"組織各職稱指派名單更新",form:"FR22-01 組織各職稱指派名單",owner:"人事 / GDP 權責人",source:"DP22-01、FR10-01",note:"有新進人員、員工離職或職務異動時重新確認，不等年度彙整。"},
+      {freq:"發生時啟動",dept:"人事",data:"門禁授權資料更新",form:"FR25-02 門禁同意授權書",owner:"人事 / 倉管",source:"WI25-01、FR10-01",note:"有新進人員、員工離職或門禁權限異動時更新授權，避免未授權人員進入倉儲區。"},
+      {freq:"發生時啟動",dept:"品保",data:"電腦化系統授權資料更新",form:"FR35-02 電腦化系統授權書",owner:"品保 / 系統管理者",source:"DP35-01、FR10-01",note:"有新進人員、員工離職或系統權限異動時更新，確保帳號權限可追溯。"},
+      {freq:"發生時啟動",dept:"倉管",data:"儲位編號或儲區資訊更新",form:"WI32-03 儲位編號原則",owner:"倉管",source:"DP32-01、FR10-01",note:"有更換儲位或儲區配置異動時更新，並確認標示、系統與現場一致。"},
+      {freq:"發生時啟動",dept:"倉管",data:"GDP 相關設備清單更新",form:"FR34-02 GDP 相關設備清單",owner:"倉管 / 品保",source:"DP34-01、FR10-01",note:"新增、更換或移除設備時更新，並確認保養、校驗與確效資料是否同步。"},
+      {freq:"發生時啟動",dept:"品保",data:"驗證或再確效評估資料",form:"4Q 確效報告或合作廠商格式",owner:"品保 / 倉管",source:"DP36-01、FR10-01",note:"有更換系統、重大維修、遷廠、機器搬動、設備負面趨勢或重大變更時評估再確效。"},
+      {freq:"發生時啟動",dept:"品保",data:"溫度測繪再執行資料",form:"溫度測繪報告",owner:"品保 / 倉管",source:"DP33-01",note:"倉儲區開始使用前、貨架或環境變更、重大事件或環境變更時需重新測繪。"},
+      {freq:"發生時啟動",dept:"業務",data:"客戶申訴原始資料、調查與回覆紀錄",form:"FR62-01 客訴回覆單、FR62-02 客戶申訴登錄管制表",owner:"業務 / 品保",source:"DP62-01",note:"接到客戶抱怨時登錄並區分藥品品質與運銷品質，逾期案件由業務追蹤。"},
+      {freq:"發生時啟動",dept:"業務 / 倉管",data:"退回品申請、核對與處置資料",form:"退貨證明、溫控紀錄、系統銷貨憑單",owner:"業務 / 倉管",source:"DP63-01",note:"客戶退貨時查證原出貨紀錄，退回品先隔離並依程序核對批號、效期與數量。"},
+      {freq:"發生時啟動",dept:"管理藥師 / 業務 / 倉管",data:"疑似偽禁仿冒藥通報、隔離與處置資料",form:"疑似偽禁仿冒藥事件紀錄",owner:"管理藥師",source:"DP64-01",note:"供應鏈、退回品或作業過程發現疑似品時立即停止銷售與運銷，移入非符合區。"},
+      {freq:"發生時啟動",dept:"管理藥師 / 業務 / 品保",data:"藥品回收計畫、通知、成果與客戶庫存回報",form:"FR65-01、FR65-02、FR65-03",owner:"管理藥師 / 品保",source:"DP65-01",note:"回收訊息或品質安全事件發生時立即啟動，業務聯繫客戶並回收進度紀錄。"},
+      {freq:"發生時啟動",dept:"採購 / 倉管 / 品保",data:"藥品訂購缺失與驗收不合格資料",form:"FR52-03 藥品訂購缺失登錄表",owner:"採購 / 品保",source:"DP52-01、DP54-01",note:"到貨驗收不合格或供應商交付異常時登錄，年底作為供應商定期評核依據。"},
+      {freq:"發生時啟動",dept:"管理藥師",data:"新品項藥品識別資料更新",form:"藥品識別作業標準電子檔",owner:"管理藥師 / 品保",source:"DP64-01、FR10-01",note:"有新品項時補齊外盒標籤、藥品識別與偽禁仿冒藥辨識資料。"},
+      {freq:"發生時啟動",dept:"採購",data:"委外廠商清冊異動資料",form:"FR72-03 合格委外作業廠商名冊",owner:"採購 / 品保",source:"DP72-01、FR10-01",note:"新增或移除委外廠商時更新，確認合約、品質協議與評鑑狀態。"},
+      {freq:"每日",dept:"採購",data:"到貨驗收紀錄表列印與驗收資料",form:"FR54-01 到貨點收驗收紀錄表、採購單",owner:"採購 / 倉管",source:"DP54-01、FR10-01",note:"每日有到貨時，採購單與到貨點收驗收紀錄需同步列印或建立，核對品名、批號、效期、數量與車廂溫度。"},
+      {freq:"每日",dept:"文管",data:"電腦化系統自動備份確認",form:"系統備份紀錄",owner:"文管 / 系統管理者",source:"FR57-01",note:"正航系統自動備份設定為每日凌晨 3 點及下午 7 點兩次。"},
+      {freq:"每日",dept:"業務 / 倉管",data:"訂單、銷貨單、發票、出貨與配送資料",form:"訂購單、銷貨單、配送標示單、FR57-03 託運總表",owner:"業務 / 倉管",source:"DP57-01",note:"有訂單與出貨即同步產生紀錄，內容需含日期、品名、批號、效期、數量、客戶與地址。"},
+      {freq:"每日",dept:"倉管",data:"每日清潔檢查與病媒防治處理紀錄",form:"FR25-01 每日清潔檢查紀錄表、FR25-04 病媒防治處理紀錄表",owner:"倉管",source:"DP25-01、DP25-02、FR10-01",note:"每日確認環境清潔與病媒防治處理紀錄，支援倉儲衛生與稽核查閱。"},
+      {freq:"每月",dept:"倉管",data:"當月溫度紀錄與偏差檢視結果",form:"FR33-01 溫度監視紀錄表",owner:"倉管 / 管理藥師",source:"DP33-01、DP55-01",note:"每月底抓取前一月整日溫度資料曲線圖；每月上班最後一日整理當月溫度記錄並檢視偏差。"},
+      {freq:"每月",dept:"業務 / 倉管",data:"進出貨相關紀錄檢對資料",form:"採購單、FR54-01、銷貨/出貨紀錄",owner:"倉管 / 業務",source:"DP54-01",note:"進、出貨相關紀錄每月執行檢對，確認資訊正確完整。"},
+      {freq:"每月",dept:"倉管",data:"一般物流運輸溫度核實資料",form:"運輸過程溫度紀錄表、FR57-04 出貨車輛檢查紀錄表",owner:"倉管 / 品保",source:"DP54-01、DP57-01",note:"運輸溫度紀錄權責為倉管部；每月定期抽查三筆物流車輛運輸溫度，作為核實紀錄。"},
+      {freq:"每月",dept:"倉管",data:"病媒防治偵測報告",form:"FR25-03 病媒防治偵測報告表",owner:"倉管 / 品保",source:"DP25-02、FR10-01",note:"每月彙整病媒防治偵測結果，異常時依程序處理。"},
+      {freq:"每月",dept:"倉管",data:"UPS 不斷電系統保養檢查",form:"FR34-03 設備定期保養維修紀錄表（UPS）",owner:"倉管",source:"DP34-01、FR10-01",note:"UPS 不斷電系統每月保養檢查。"},
+      {freq:"每月",dept:"倉管",data:"分離式冷氣外觀檢查",form:"FR34-03 設備定期保養維修紀錄表（分離式冷氣）",owner:"倉管",source:"DP34-01、FR10-01",note:"分離式冷氣外觀每月檢查。"},
+      {freq:"每月",dept:"倉管",data:"柴油發電機發動測試與迴路檢查",form:"FR34-03 設備定期保養維修紀錄表（柴油發電機）",owner:"倉管",source:"DP34-01、FR10-01",note:"柴油發電機發動測試與迴路檢查每月執行。"},
+      {freq:"每月",dept:"倉管",data:"溫控警報系統功能測試",form:"FR34-03 設備定期保養維修紀錄表（溫控警報系統）",owner:"倉管",source:"DP33-01、DP34-01、FR10-01",note:"溫控警報系統燈光、蜂鳴器、警示通報每月測試。"},
+      {freq:"每月",dept:"採購",data:"食藥署藥商 GMP/GDP 合規確認",form:"採購評鑑資料、食藥署查核紀錄",owner:"採購",source:"DP52-01",note:"每月定期至食藥署網站確認藥品供應廠商是否有嚴重違反 GMP/GDP 的紀錄，確認持續符合 GMP/GDP 資格，結果作為年度供應商評鑑依據。"},
+      {freq:"每月",dept:"文管 / 品保",data:"電腦化系統資料數據異地備份確認",form:"備份紀錄",owner:"文管 / 系統管理者",source:"DP35-01",note:"電腦化系統資料/數據應每月定期備份，並異地分開保存；保存期限至少 5 年。"},
+      {freq:"每兩月",dept:"倉管",data:"庫存盤點紀錄與異常調查資料",form:"庫存盤點紀錄、偏差/CAPA 表單（如有異常）",owner:"倉管 / 品保",source:"DM10-01",note:"庫存盤點兩個月乙次；異常需調查並文件化，必要時通報主管機關。"},
+      {freq:"每季",dept:"倉管",data:"嘉里醫藥運輸過程溫度記錄",form:"運輸過程溫度紀錄表",owner:"倉管 / 品保",source:"DP57-01",note:"嘉里醫藥經評估後，每季提供 1 筆運輸過程溫度記錄作為核實紀錄；每季與每三個月視為同義週期。"},
+      {freq:"每季",dept:"倉管",data:"病媒防治器具更換紀錄",form:"FR25-05 病媒防治器具更換紀錄表",owner:"倉管",source:"DP25-02、FR10-01",note:"蟑螂屋、捕鼠器、誘蟻餌、捕蚊燈每季一次；若達異常條件或器具失效時即時更換。"},
+      {freq:"每季",dept:"倉管",data:"分離式冷氣濾網保養",form:"FR34-03 設備定期保養維修紀錄表（分離式冷氣）",owner:"倉管",source:"DP34-01、FR10-01",note:"分離式冷氣濾網每季保養。"},
+      {freq:"每季",dept:"倉管",data:"柴油發電機柴油量與充電電池檢查",form:"FR34-03 設備定期保養維修紀錄表（柴油發電機）",owner:"倉管",source:"DP34-01、FR10-01",note:"柴油量與充電電池每季檢查。"},
+      {freq:"每季",dept:"倉管",data:"溫度計電池更換與時間校正",form:"FR34-03 設備定期保養維修紀錄表",owner:"倉管",source:"DP34-01",note:"每三個月更換溫度計電池；電池更換後時間會初始化，需依中原標準時間重新校正。"},
+      {freq:"每半年",dept:"倉管",data:"門禁警報系統保養檢查",form:"FR34-03 設備定期保養維修紀錄表（門禁警報系統）",owner:"倉管",source:"DP34-01、FR10-01",note:"門禁警報系統每半年保養檢查。"},
+      {freq:"每年",dept:"業務",data:"合格客戶清單與客戶認可審查紀錄",form:"FR53-01 合格客戶清單、FR53-02 客戶認可審查紀錄表",owner:"業務主管",source:"DP53-01",note:"每年將客戶清冊發給業務核對；每位合格客戶每年至少評估一次，確認許可文件與 GDP 資格。"},
+      {freq:"每年",dept:"採購 / 倉管 / 品保",data:"供應商定期評核資料與訂購缺失彙整",form:"供應商清冊、供應商評鑑表、FR52-03",owner:"採購 / 品保",source:"DP52-01",note:"年底由倉管、採購、品保針對藥品訂購缺失登錄表作為供應商定期評核依據。"},
+      {freq:"每年",dept:"人事",data:"年度教育訓練計畫、外部/內部訓練紀錄與合格結果",form:"FR24-01、FR24-02",owner:"人事 / GDP 權責人",source:"DP24-01",note:"每年編列教育訓練計畫並至少執行一次；GDP 權責人每年至少一次外部訓練。"},
+      {freq:"每年",dept:"人事",data:"職責職前訓練對照確認",form:"FR22-02 職責【職前】訓練對照表",owner:"人事 / GDP 權責人",source:"FR10-01",note:"每年一次確認職責與訓練對照，確保職務、代理與訓練需求一致。"},
+      {freq:"每年",dept:"品保",data:"內部稽核計畫、查檢表與稽核報告",form:"FR82-01、FR82-02、FR82-03",owner:"品保 / GDP 權責人",source:"DP82-01",note:"每年 12 月實施內部品質稽核活動，缺失需轉 CAPA 並追蹤。"},
+      {freq:"每年",dept:"GDP 權責人 / 品保",data:"管理階層檢討輸入資料",form:"管理階層檢討及監督報告",owner:"GDP 權責人",source:"DP14-01",note:"年底至少一次，收集倉庫資料、運輸資料、客訴、回收、退回、偏差、CAPA、變更、自我查核與外部查核結果。"},
+      {freq:"每年",dept:"文管",data:"文件定期審查意見與失效文件銷毀資料",form:"FR42-02、FR42-05、FR42-06",owner:"文管 / 各部門",source:"DP42-01",note:"每年 12 月向各相關單位徵詢文件修改意見；每年第一個星期挑出屆期作廢文件並製作銷毀紀錄。"},
+      {freq:"每年",dept:"管理藥師 / 業務 / 品保",data:"模擬回收演練資料與成果報告",form:"FR65-01、FR65-02、FR65-03、模擬藥物回收作業演練報告",owner:"管理藥師 / 品保",source:"DP65-01",note:"每年度進行 1 次模擬回收作業演練，由業務聯繫客戶回報庫存，品管彙整報告。"},
+      {freq:"每年",dept:"品保",data:"風險管理年度審視資料",form:"FR15-01、FR15-02 風險追蹤紀錄表",owner:"品保",source:"DP15-01",note:"每年依客戶抱怨、報廢退貨等資訊審視風險管理結果。"},
+      {freq:"每年",dept:"文管",data:"作廢文件銷毀清單與簽核紀錄",form:"FR42-06 文件銷毀紀錄表",owner:"文管",source:"DP42-01",note:"每年第一個星期挑出已屆保管期限之作廢文件，簽核後銷毀。"},
+      {freq:"每年",dept:"品保",data:"量測儀器外部校正資料",form:"外部校正報告",owner:"品保",source:"DP34-02、FR10-01",note:"每年 12 月底安排外部校正；校正報告保存五年。"},
+      {freq:"每年",dept:"倉管",data:"分離式冷氣外機鰭片保養",form:"FR34-03 設備定期保養維修紀錄表（分離式冷氣）",owner:"倉管",source:"DP34-01、FR10-01",note:"分離式冷氣外機鰭片每年保養。"},
+      {freq:"每年",dept:"倉管",data:"柴油發電機引擎檢查",form:"FR34-03 設備定期保養維修紀錄表（柴油發電機）",owner:"倉管",source:"DP34-01、FR10-01",note:"柴油發電機引擎每年檢查。"},
+      {freq:"每年",dept:"倉管",data:"儲存條件確認",form:"WI55-01 儲存條件",owner:"倉管 / 管理藥師",source:"DP55-01、FR10-01",note:"每年確認儲存條件、現場標示與產品保存條件一致。"},
+      {freq:"每年",dept:"品保",data:"進銷存電腦化系統確效報告確認",form:"FR57-01 進銷存電腦化系統確效報告書",owner:"品保 / 系統管理者",source:"DP35-01、FR10-01",note:"每年一次確認系統備份、復原與權限設定資料。"},
+      {freq:"每年",dept:"採購",data:"委外廠商合約、評鑑與名冊資料",form:"FR72-01、FR72-02、FR72-04",owner:"採購 / 品保",source:"DP72-01、FR10-01",note:"每年確認委外廠商合約、定期評鑑與符合 GDP 評鑑結果。"},
+      {freq:"每三年",dept:"GDP 權責人",data:"品質手冊、SMF 與品質系統基礎文件再確認",form:"DM10-01、WI10-01、DP12-01、FR12-01",owner:"GDP 權責人 / 品保",source:"FR10-01",note:"FR10-01 時程索引列為三年一次；若內容、組織、場所或 GDP 核備資料異動，仍需即時更新。"},
+      {freq:"每三年",dept:"品保",data:"儲存環境溫度測繪報告",form:"溫度測繪報告",owner:"品保 / 倉管",source:"DP33-01",note:"無環境重大變更時每三年執行，每次於夏季及冬季各測量七天；重大事件或環境變更時不等三年。"}
+    ],
+    equipmentCalendar:[
+      {freq:"每月",equipment:"UPS 不斷電系統",task:"功能與保養檢查",owner:"倉管",form:"FR34-03",source:"DP34-01 / FR10-01"},
+      {freq:"每月",equipment:"分離式冷氣",task:"外觀檢查",owner:"倉管",form:"FR34-03",source:"FR10-01"},
+      {freq:"每季",equipment:"分離式冷氣",task:"濾網保養",owner:"倉管",form:"FR34-03",source:"FR10-01"},
+      {freq:"每年",equipment:"分離式冷氣",task:"外機鰭片保養",owner:"倉管",form:"FR34-03",source:"FR10-01"},
+      {freq:"每月",equipment:"柴油發電機",task:"發動測試、迴路檢查",owner:"倉管",form:"FR34-03",source:"FR10-01"},
+      {freq:"每季",equipment:"柴油發電機",task:"柴油量、充電電池檢查",owner:"倉管",form:"FR34-03",source:"FR10-01"},
+      {freq:"每年",equipment:"柴油發電機",task:"引擎檢查",owner:"倉管",form:"FR34-03",source:"FR10-01"},
+      {freq:"每月",equipment:"溫控警報系統",task:"燈光、蜂鳴器、警示通報測試",owner:"倉管",form:"FR34-03",source:"DP33-01 / FR10-01"},
+      {freq:"每半年",equipment:"門禁警報系統",task:"保養檢查",owner:"倉管",form:"FR34-03",source:"FR10-01"},
+      {freq:"每年",equipment:"溫度計、溫濕度記錄器",task:"外部校正",owner:"品保",form:"外部校正報告",source:"DP34-02"},
+      {freq:"每三年",equipment:"倉儲環境",task:"夏季與冬季溫度測繪",owner:"品保 / 倉管",form:"溫度測繪報告",source:"DP33-01"},
+      {freq:"發生時啟動",equipment:"倉儲環境或關鍵設備",task:"環境變更、重大事件、重大維修、遷移後再測繪或再確效評估",owner:"品保 / 倉管",form:"溫度測繪報告、4Q 確效報告",source:"DP33-01 / DP36-01"}
+    ],
+    schedule:[["發生時啟動","偏差、CAPA、客訴、退回、偽禁仿冒藥、藥品回收、文件/人員/儲位/設備/委外異動、新品項與新供應商都不等到月結。"],["固定週期","每日、每月、每兩月、每季、每半年、每年、每三年為目前索引表或 SOP 可追溯的收件節奏。"],["資料來源原則","FR10-01 有時程NEW 可作索引，但頁面內容仍以 SOP 原文核對；若索引與 SOP 不一致，應回報公司修正。"]],
+    audit:["行事曆是否能回答：什麼時間點、向哪一個部門、收哪一份資料。","每一筆資料是否有 SOP 或表單來源，不用口頭記憶管理。","部門篩選是否只保留指定的 8 個部門。","每季與每三個月是否已合併，不再重複。","客戶清冊是否每年交業務核對並完成 FR53-01、FR53-02。","運輸溫度紀錄權責是否列為倉管部。","溫控警報、門禁警報、溫度測繪、外部校正與設備保養是否納入。","未明定固定週期的項目是否未被寫成正式要求。"],
+    qa:true
+  },
+  {
     id:"personnel",group:"部門分類",title:"人事",tag:"人員資格與教育訓練",
     lead:"人事單元確保所有參與 GDP 活動的人員具備資格、完成訓練並留有紀錄。訓練區分外部（GDP 權責人年度必修）與內部（全員，授課講師主導，測驗合格）兩類。",
     pills:["DP22-01","DP24-01","DP25-01","FR24-01","FR24-02"],
     standards:{
       picsgdp:["人員需具備資格、知識、技能，並在職責範圍內接受訓練（GDP 第二章）","職前訓練（On-the-job training）需在執行作業前完成","偽禁仿冒藥識別與特定條件藥品需有對應訓練課程","訓練紀錄需文件化並評估訓練有效性","衛生標準：感染性疾病管制、個人清潔、人員識別與門禁"],
       taiwan:["西藥優良運銷準則第二章規定人員資格與訓練要求","GDP 活動人員需在開始執行作業前達到所界定能力","持續訓練需有紀錄，包含考核結果與訓練有效性評估","人員衛生程序需涵蓋門禁管制、清潔消毒與病媒防治"],
-      company:["DP22-01 規定組織架構與各職位 GDP 職責","DP24-01 規定職前、持續、外部訓練程序與合格標準","內部訓練：授課講師主導，測驗合格 ≥ 70 分，紀錄於 FR24-02","外部訓練：GDP 權責人每年至少一次，紀錄於 FR24-01","DP25-01 規定人員衛生、門禁（FR25-02）與環境清潔"]
+      company:["DP22-01 規定組織架構與各職位 GDP 職責","DP24-01 規定職前、持續、外部訓練程序與合格標準","內部訓練：授課講師主導，測驗合格 ≥ 70 分，紀錄於 FR24-02","外部訓練：GDP 權責人每年至少一次，紀錄於 FR24-01","DP25-01 規定人員衛生、門禁（FR25-02）與環境清潔"],
+      docs:["DP22-01 組織與職掌標準作業程序","DP24-01 員工教育訓練作業程序（FR24-01 外部訓練紀錄、FR24-02 內部訓練紀錄）","DP25-01 人員衛生暨環境清潔作業程序書（FR25-02 門禁授權書）"]
     },
     trainingInfo:{
       external:{icon:"🏛️",label:"外部教育訓練",color:"#0a4d8a",who:"GDP 權責人（每年至少一次）",when:"年度定期",where:"外部認可訓練機構",instructor:"外部合格師資",format:"課堂講授、研討會、法規更新說明",record:"FR24-01 外部訓練紀錄",score:"依外部機構認定",keep:"至少 5 年"},
@@ -278,7 +500,8 @@ const sections = [
     standards:{
       picsgdp:["GDP Responsible Person 是品質系統維持的核心負責角色","需確保品質系統被執行且維持，並取得必要資源與權限","核准可能影響 GDP 符合性的轉委託（分包）作業","確保供應商與客戶資格評估已完成並文件化","需有代理人制度，代理人具備同等 GDP 知識與授權"],
       taiwan:["台灣規定公司需指定 GDP 權責人，承擔品質系統責任","GDP 權責人需確保訓練計畫執行，人員維持 GDP 執行能力","自我查核結果需提報 GDP 權責人，缺失由其追蹤改善","重大偏差、CAPA、變更管制需 GDP 權責人審核與追蹤"],
-      company:["GDP 權責主管持有任命書，職務說明與授權書存於人事資料","定期審核偏差、CAPA 狀態，確保改善期限與有效性","監督年度內部稽核計畫執行，彙整管理階層檢討資料","核准新供應商、委外物流商，確認品質協議符合要求"]
+      company:["GDP 權責主管持有任命書，職務說明與授權書存於人事資料","定期審核偏差、CAPA 狀態，確保改善期限與有效性","監督年度內部稽核計畫執行，彙整管理階層檢討資料","核准新供應商、委外物流商，確認品質協議符合要求"],
+      docs:["GDP 權責人任命書與授權書（人事資料存檔）","DP12-02 偏差管理作業程序","DP12-03 矯正與預防作業程序書","DP82-01 內部稽核作業程序書","DP14-01 管理階層檢討作業程序"]
     },
     deptFlow:[{
       title:"異常升級與 CAPA 追蹤閉環",
@@ -295,8 +518,9 @@ const sections = [
     pills:["DP64-01","DP65-01","疑似偽禁仿冒藥","回收","模擬回收"],
     standards:{
       picsgdp:["藥品供應鏈安全是配送商的核心責任（GDP 第六章）","疑似偽禁仿冒品需立即隔離、調查，並通知主管機關","回收需能快速啟動，運銷紀錄需支援批號與客戶追溯","模擬回收應定期執行，測試追溯能力與回收效率","退回品需風險評估，無法確認保存條件者不得回到可銷售庫存"],
-      taiwan:["藥事法要求藥商配置管理藥師確保藥品安全","疑似偽藥、禁藥需依規定通知食藥署與上市許可持有廠商","DP64-01 規定偽禁仿冒藥處理程序，需立即停止銷售","DP65-01 規定回收管理程序，包含模擬回收年度要求","退回品依 DP63-01 處理，通過風險評估才可回到庫存"],
-      company:["疑似偽禁仿冒藥立即停止銷售，上呈管理藥師，移入非符合區","回收啟動：確認批號、數量、客戶流向，通知相關客戶","模擬回收每年至少一次，選擇已配送多家客戶的批號測試追溯","退回品風險評估，無法確認保存條件者直接報廢處理"]
+      taiwan:["藥事法要求藥商配置管理藥師，確保藥品供應鏈安全","西藥優良運銷準則第六章規定疑似偽禁仿冒藥需立即隔離，並通知食藥署與上市許可持有廠商","食藥署要求年度模擬回收測試批號追溯能力與回收完成效率","退回品依食藥署規定不得自動回到可銷售庫存，需有風險評估與處置紀錄","回收紀錄需完整保存，供食藥署稽查時提供客戶、批號與數量追溯"],
+      company:["疑似偽禁仿冒藥立即停止銷售，上呈管理藥師，移入非符合區","回收啟動：確認批號、數量、客戶流向，通知相關客戶","模擬回收每年至少一次，選擇已配送多家客戶的批號測試追溯","退回品風險評估，無法確認保存條件者直接報廢處理"],
+      docs:["DP64-01 偽禁仿冒藥作業程序書","DP65-01 藥品回收管理程序書（含模擬回收年度要求）","DP63-01 退回品管理作業程序書"]
     },
     deptFlow:[
       {title:"藥品回收執行流程",steps:[["01","接獲回收通知","製造商/食藥署\n或公司自發回收","DP65-01"],["02","確認批號範圍","查詢運銷紀錄\n確認影響批號",""],["03","聯繫客戶","通知受影響客戶\n停止使用/銷售",""],["04","收回藥品","記錄回收數量\n核對批號效期",""],["05","隔離評估","移置非符合區\n等候處置指示",""],["06","結案通報","回收完成率\n通報主管機關","DP65-01"]]},
@@ -313,8 +537,9 @@ const sections = [
     pills:["DP12-02","DP12-03","DP82-01","FR12-03","FR12-04"],
     standards:{
       picsgdp:["偏差管理系統需確保所有不符合被識別、調查與文件化","根本原因分析（RCA）是 CAPA 的基礎，不能只描述表面現象","CAPA 需有責任歸屬、期限、執行追蹤與有效性確認","內部稽核需按計畫執行，缺失需追蹤改善並結案","品質系統改善需提報管理審查"],
-      taiwan:["DP12-02 偏差管理：發現 GDP 不符合時填 FR12-03 提報","DP12-03 CAPA：消除實際或潛在不符合，確認改善有效性","DP82-01 內部稽核：依計畫執行，缺失開立 FR12-04","稽核報告需歸檔，保存期限至少 5 年","管理審查應包含內外稽核、客訴、回收、偏差、CAPA 績效資料"],
-      company:["品保收件偏差後完成分類、調查、風險評估與建議處置","CAPA 追蹤到結案：責任單位改善 → 品保確認有效性 → 歸檔","每年依計畫執行內部稽核，缺失開立矯正預防處理單","稽核報告與 CAPA 提報 GDP 權責人與管理審查"]
+      taiwan:["西藥優良運銷準則要求建立偏差管理制度，不符合事項需識別、文件化、調查","CAPA 需有根本原因分析、責任歸屬、期限、有效性確認與結案紀錄","食藥署要求內部稽核依計畫執行，缺失需追蹤矯正並結案","稽核報告與品質紀錄至少保存 5 年，供食藥署稽查時提供","管理審查需包含內外稽核、申訴、回收、偏差、CAPA 等品質績效資料"],
+      company:["品保收件偏差後完成分類、調查、風險評估與建議處置","CAPA 追蹤到結案：責任單位改善 → 品保確認有效性 → 歸檔","每年依計畫執行內部稽核，缺失開立矯正預防處理單","稽核報告與 CAPA 提報 GDP 權責人與管理審查"],
+      docs:["DP12-02 偏差管理作業程序（FR12-03 偏差事件處理報告單）","DP12-03 矯正與預防作業程序書（FR12-04 矯正預防處理單）","DP82-01 內部稽核作業程序書"]
     },
     deptFlow:[{
       title:"內部稽核執行流程",
@@ -331,8 +556,9 @@ const sections = [
     pills:["DP33-01","DP54-01","DP55-01","DP57-01","溫度紀錄"],
     standards:{
       picsgdp:["儲存設施需保持良好條件，防止汙染、溫度超標與交叉污染（GDP 第四章）","溫度監控設備需定期校驗，位置依溫度測繪或風險評估決定","FEFO（先到期先出）原則管理批號，確保不出貨過期品","非符合品需實體隔離，設有非符合區（Quarantine area）","收貨時需確認供應商核准狀態，並核對品名、批號、效期"],
-      taiwan:["DP33-01：溫度監視程序，每月底整理前一月整日溫度資料曲線圖","DP54-01：收貨確認供應商核准、外觀完好、文件齊全","DP55-01：每月最後上班日整理當月溫度紀錄，異常啟動偏差","溫度異常需立即通知管理藥師，移置非符合區評估","門禁管制（WI25-01）、病媒防治（DP25-02）需有紀錄"],
-      company:["常溫倉庫警戒線 23.5°C，溫控設備：分離式冷氣 + UPS 不斷電","每日監控儲存環境，每月最後上班日整理當月溫度紀錄","進貨：核對品名/批號/效期/數量/外觀，填寫進貨紀錄","揀貨：依 FEFO 揀取指定批號，出貨前複查後交配送","溫度計、溫濕度記錄器每年校驗，設備保養紀錄維持 ≥5 年"]
+      taiwan:["西藥優良運銷準則第四章規定儲存設施需維持良好條件，防止污染、溫度超標與交叉污染","食藥署要求溫度監控設備定期校驗，位置依溫度測繪或風險評估決定","收貨需確認貨物來自核准供應商，外觀完好且運送期間未明顯受損","FEFO（先到期先出）為食藥署 GDP 規定，需有批號管理與紀錄","非符合品需實體隔離於非符合區，溫度異常、受損品等需文件化處置"],
+      company:["常溫倉庫警戒線 23.5°C，溫控設備：分離式冷氣 + UPS 不斷電","每日監控儲存環境，每月最後上班日整理當月溫度紀錄","進貨：核對品名/批號/效期/數量/外觀，填寫進貨紀錄","揀貨：依 FEFO 揀取指定批號，出貨前複查後交配送","溫度計、溫濕度記錄器每年校驗，設備保養紀錄維持 ≥5 年"],
+      docs:["DP33-01 溫度監視作業程序書（FR33-01 每月溫度紀錄）","DP54-01 藥品進出貨管理程序書","DP55-01 產品儲存作業程序書","DP25-02 病媒防治程序、WI25-01 門禁管制"]
     },
     deptFlow:[{
       title:"進貨到出貨完整作業流程",
@@ -349,8 +575,9 @@ const sections = [
     pills:["DP52-01","供應商評鑑","PIC/S GMP","PMF核備函","採購紀錄"],
     standards:{
       picsgdp:["僅可向核准供應商採購藥品，不得向未核准供應商進貨（GDP 第五章）","新供應商需盡職調查（Due Diligence）：能力、可靠性、法規資格","供應商評估結果需文件化，並依風險等級定期審閱","採購紀錄需保存並能支援產品追溯（批號、效期、來源）","異常採購條件（可疑價格、異常包裝）需升級處理"],
-      taiwan:["DP52-01：採購前需確認供應商已完成資格認可與核准","國內廠商：需具藥品許可證、藥商登記等合法資格","國外廠商：需確認 PIC/S GMP 認證或 PMF 核備函與上市許可","採購紀錄需保存：日期、品名、批號、效期、數量、供應商","供應商資格異動需重新評估，不合格者暫停採購"],
-      company:["核准供應商清冊由採購維護，新增/移除需 GDP 權責人核准","國內：確認藥品許可證字號；國外：確認 PIC/S GMP / PMF 核備函","採購紀錄與供應商評鑑表保存 ≥5 年","年度供應商評鑑：審閱資格文件、品質表現與配送紀錄"]
+      taiwan:["西藥優良運銷準則第五章規定僅可向核准供應商採購藥品，不得向未核准來源進貨","國內廠商：需具藥品許可證字號與藥商登記等合法資格（食藥署查核）","國外廠商：需確認 PIC/S GMP 認證或 PMF 核備函與上市許可文件","採購紀錄需可支援產品追溯，保存日期、品名、批號、效期、數量、供應商","供應商資格異動或表現不佳，需重新評估，不合格者暫停採購"],
+      company:["核准供應商清冊由採購維護，新增/移除需 GDP 權責人核准","國內：確認藥品許可證字號；國外：確認 PIC/S GMP / PMF 核備函","採購紀錄與供應商評鑑表保存 ≥5 年","年度供應商評鑑：審閱資格文件、品質表現與配送紀錄"],
+      docs:["DP52-01 藥品供應商評鑑作業程序","核准供應商清冊（採購維護，GDP 權責人核准）"]
     },
     deptFlow:[{
       title:"供應商資格認可流程",
@@ -367,8 +594,9 @@ const sections = [
     pills:["DP53-01","DP57-01","DP62-01","DP63-01","DP65-01"],
     standards:{
       picsgdp:["藥品僅供應給有合法資格的客戶，不得向無資格對象出貨（GDP 第五章）","銷售紀錄需可追溯到具體客戶、批號、數量與日期","客訴需分類（品質申訴 vs 運銷申訴）並依程序處理","退回品不得自動回到可銷售庫存，需先完成風險評估","回收時需能快速聯繫客戶並確認庫存與回收數量"],
-      taiwan:["DP53-01：確認客戶持有藥品販賣許可或合法使用資格文件","DP57-01：業務接單後建立訂單編號作為銷售追溯依據","DP62-01：客訴登錄原始細節，運銷品質原則上一個月內結案","DP63-01：退貨先查證為本公司出貨，核對批號與效期","客戶資格文件不齊全時不得出貨，定期複查需文件化"],
-      company:["客戶清冊由業務維護，含開業執照、藥事代碼或藥商許可","訂單建立後產生唯一訂單編號，供倉管揀貨與追溯使用","客訴區分品質申訴（通知製造商）與運銷申訴（一個月結案）","退貨查證：核對系統銷售憑單、批號、效期，經評估才退還庫存","回收時：業務聯繫客戶，確認庫存批號、數量並安排回收"]
+      taiwan:["西藥優良運銷準則第五章規定藥品僅可供應給具合法資格的客戶，不得向無資格對象出貨","食藥署要求銷售紀錄可追溯至具體客戶、批號、數量與日期","客訴需依食藥署規定分類處理，品質申訴必要時需通知製造商與主管機關","退回品不得自動回到可銷售庫存，需有風險評估與處置紀錄","客戶資格文件需定期複查，文件不齊全時不得視為核准客戶"],
+      company:["客戶清冊由業務維護，含開業執照、藥事代碼或藥商許可","訂單建立後產生唯一訂單編號，供倉管揀貨與追溯使用","客訴區分品質申訴（通知製造商）與運銷申訴（一個月結案）","退貨查證：核對系統銷售憑單、批號、效期，經評估才退還庫存","回收時：業務聯繫客戶，確認庫存批號、數量並安排回收"],
+      docs:["DP53-01 客戶認可審查程序書","DP57-01 訂單、揀貨及配銷管理程序書","DP62-01 客訴管理作業程序書","DP63-01 退回品管理作業程序書","DP65-01 藥品回收管理程序書"]
     },
     deptFlow:[
       {title:"客戶資格認可流程",steps:[["01","新客戶申請","提供資格文件\n許可證/醫事代碼","DP53-01"],["02","資格審查","核對法令資格\n確認文件完整性",""],["03","核准與清冊","通過核准\n加入客戶清冊",""],["04","定期複查","資格文件到期\n重新確認",""],["05","異常停止","資格異常\n暫停出貨","DP53-01"]]},
@@ -385,8 +613,9 @@ const sections = [
     pills:["DP42-01","DP42-02","FR10-01","版本管制","至少5年"],
     standards:{
       picsgdp:["文件系統需確保制定、審查、核准、發行與版本管制（GDP 第三章）","現場僅使用當前有效版本文件，過時版本需立即移除","品質紀錄需不可篡改、即時記錄，不得事後補填","電子記錄系統需驗證確效，確保數據完整性（ALCOA+ 原則）","文件與記錄保存期限至少 5 年，並可供稽查時快速取用"],
-      taiwan:["DP42-01：文件需經制定/審查/核准/登錄/發行流程","紙本正式文件由文管存放並加蓋發行章，電子檔僅供查閱","文件修訂後需完成教育訓練與考核才可生效","DP42-02：品質紀錄至少保存 5 年，跨年度由文管保管","每年 12 月徵詢修改意見，執行定期審查；每年初銷毀到期作廢文件"],
-      company:["正式文件：制定→審查→核准→文管登錄→發行→訓練考核→生效","文件總覽表反映最新版編號、版次、生效日與狀態","作廢文件依期限簽核銷毀，電子檔移至作廢資料夾","品質紀錄包含：採購、進出貨、溫度、稽核、偏差、CAPA、訓練紀錄","每年第一個星期：確認應銷毀的到期作廢文件清單"]
+      taiwan:["西藥優良運銷準則第三章規定文件系統需確保制定、審查、核准、發行與版本管制","食藥署規定現場僅使用當前有效版本文件，過時版本需立即撤除","文件修訂後需完成教育訓練與考核，相關人員達合格門檻後新版才可生效","品質紀錄至少保存 5 年，且可供食藥署稽查時快速索引取用","電子記錄需符合數據完整性原則（ALCOA+），防止未授權修改或刪除"],
+      company:["正式文件：制定→審查→核准→文管登錄→發行→訓練考核→生效","文件總覽表反映最新版編號、版次、生效日與狀態","作廢文件依期限簽核銷毀，電子檔移至作廢資料夾","品質紀錄包含：採購、進出貨、溫度、稽核、偏差、CAPA、訓練紀錄","每年第一個星期：確認應銷毀的到期作廢文件清單"],
+      docs:["DP42-01 文件管制作業程序書（版本管制、發行章、定期審查）","DP42-02 品質紀錄作業程序書（保存期限 ≥5 年、FR10-01 文件總覽表）"]
     },
     deptFlow:[{
       title:"文件生命週期",
@@ -431,6 +660,7 @@ const sopLibrary = {
 const visualAssets = {
   manual:"assets/gdp-training-quality.png",smf:"assets/gdp-training-supply-chain.png",
   departments:"assets/gdp-training-people.png",personnel:"assets/gdp-training-people.png",
+  "collection-calendar":"assets/gdp-training-doc-audit.png",
   rp:"assets/gdp-training-quality.png",pharmacist:"assets/gdp-training-supply-chain.png",
   qa:"assets/gdp-training-doc-audit.png",warehouse:"assets/gdp-training-warehouse.png",
   purchase:"assets/gdp-training-supply-chain.png",sales:"assets/gdp-training-people.png",
@@ -505,14 +735,47 @@ function list(items,ordered=false){
 function schedule(items){
   return `<div class="timeline">${items.map(([t,d])=>`<div class="time-item"><strong>${t}</strong><span>${d}</span></div>`).join("")}</div>`;
 }
+function policyTable(items){
+  return `<div class="policy-grid">${items.map(r=>`
+    <div class="policy-card">
+      <div class="policy-card-head"><span class="policy-icon">${r.icon}</span><span class="policy-dir">${r.dir}</span></div>
+      <div class="policy-goal">${r.goal}</div>
+      <div class="policy-kpi"><small>KPI</small>${r.kpi}</div>
+    </div>`).join("")}</div>`;
+}
+function companyProfileHtml(p){
+  const basics=`<table class="info-table">
+    ${p.basics.map(([k,v])=>`<tr><th>${k}</th><td>${v}</td></tr>`).join("")}
+  </table>`;
+  const staffRows=p.staffQual.map(r=>`<tr><td><strong>${r.role}</strong></td><td>${r.edu}</td><td>${r.exp}</td><td style="font-size:12px">${r.mustTrain}</td></tr>`).join("");
+  const staff=`<div style="overflow-x:auto"><table class="info-table">
+    <thead><tr><th>職稱</th><th>最低學歷</th><th>最低年資</th><th>必修文件</th></tr></thead>
+    <tbody>${staffRows}</tbody>
+  </table></div>`;
+  return `<div class="profile-grid">
+    <div class="profile-basics"><h4 style="margin:0 0 8px;color:#0a4d8a;font-size:14px">公司基本資料（WI10-01 §壹）</h4>${basics}</div>
+    <div class="profile-staff"><h4 style="margin:0 0 8px;color:#0a4d8a;font-size:14px">各職位任用資格與必修文件（WI10-01 §參）</h4>${staff}</div>
+  </div>`;
+}
 function auditGrid(items){
-  return `<div class="audit-grid">${items.map((item,i)=>`<div class="audit-card"><strong>${String(i+1).padStart(2,"0")}</strong>${item}</div>`).join("")}</div>`;
+  return `<div class="audit-grid">${items.map((item,i)=>`<button class="audit-card" type="button" data-audit-item="${esc(item)}"><strong>${String(i+1).padStart(2,"0")}</strong>${esc(item)}</button>`).join("")}</div>`;
 }
 function chunk(arr,n){
   const r=[];for(let i=0;i<arr.length;i+=n)r.push(arr.slice(i,i+n));return r;
 }
 function auditSlides(s){
-  return chunk(s.audit,4).map((items,i,a)=>panel(`稽查重點 ${i+1}/${a.length}`,auditGrid(items),"")).join("");
+  if(!s.audit||!s.audit.length) return "";
+  const first=s.audit[0];
+  const focus=`<div class="audit-focus">
+    <div class="audit-focus-list">${s.audit.map((item,i)=>`<button class="audit-card ${i===0?"active":""}" type="button" data-audit-no="${i+1}" data-audit-item="${esc(item)}"><strong>${String(i+1).padStart(2,"0")}</strong>${esc(item)}</button>`).join("")}</div>
+    <div class="audit-detail" id="auditDetail">
+      <small>稽查重點 01</small>
+      <h4>先確認這一點</h4>
+      <p>${esc(first)}</p>
+      <ul><li>找得到對應 SOP 或表單。</li><li>紀錄有日期、簽名與責任人。</li><li>現場做法與文件描述一致。</li></ul>
+    </div>
+  </div>`;
+  return panel("稽查重點互動核對",focus,"wide");
 }
 function visualIntro(s){
   const src=visualAssets[s.id]||"assets/gdp-training-hero.png";
@@ -524,17 +787,49 @@ function visualIntro(s){
 function standardsSwipe(standards){
   if(!standards) return "";
   const tabs=[
-    {key:"picsgdp",label:"🌐 PIC/S GDP 國際規範",col:"#0a4d8a"},
-    {key:"taiwan", label:"🇹🇼 台灣食藥署規定",col:"#006437"},
-    {key:"company",label:"🏢 新勝醫藥做法",    col:"#0f5b50"}
+    {key:"picsgdp",label:"PIC/S GDP",     fullLabel:"PIC/S GDP 國際規範", icon:"🌐",col:"#0a4d8a",bg:"#eef2f9"},
+    {key:"taiwan", label:"台灣食藥署",     fullLabel:"台灣食藥署規定",     icon:"🇹🇼",col:"#006437",bg:"#edf5ef"},
+    {key:"company",label:"新勝做法",       fullLabel:"新勝醫藥做法",       icon:"🏢",col:"#0f5b50",bg:"#eaf3f1"},
+    {key:"docs",   label:"參考文件",       fullLabel:"新勝醫藥參考文件",   icon:"📋",col:"#7b3f00",bg:"#fff8f0"}
   ];
+  function hl(text){
+    return text.replace(/([A-Z]{2}\d{2}-\d{2})/g,'<b>$1</b>');
+  }
+  function paneBody(t){
+    const items=standards[t.key]||[];
+    if(!items.length) return `<div style="padding:20px 18px;color:#aaa;font-size:14px">—</div>`;
+    if(t.key==="docs"){
+      return items.map(item=>`<div class="swipe-doc-item">
+        <span class="swipe-doc-icon">📄</span>
+        <span class="swipe-doc-label">${item}</span>
+      </div>`).join("");
+    }
+    return items.map(item=>`<div class="swipe-item">
+      <div class="swipe-dot" style="background:${t.col}"></div>
+      <div class="swipe-text">${hl(item)}</div>
+    </div>`).join("");
+  }
   const uid=`sw${Math.random().toString(36).slice(2,8)}`;
+  const arrows=tabs.map((_,i)=>i<tabs.length-1?`<div class="pipe-arrow">›</div>`:"").join("");
+  const pipeSteps=tabs.map((t,i)=>`<div class="pipe-step${i===0?" active":""}" data-col="${i}" style="--sw-col:${t.col}">
+      <div class="pipe-node">${t.icon}</div>
+      <div class="pipe-lbl">${t.label}</div>
+    </div>${i<tabs.length-1?'<div class="pipe-arrow">›</div>':''}`).join("");
+  const panes=tabs.map(t=>`<div class="slide-pane">
+      <div class="slide-hd" style="background:${t.col}">
+        <span class="slide-hd-icon">${t.icon}</span>${t.fullLabel}
+      </div>
+      <div style="background:${t.bg}">${paneBody(t)}</div>
+    </div>`).join("");
+  const dotHtml=tabs.map((_,i)=>`<span class="slide-dot${i===0?" active":""}"></span>`).join("");
   return `<div class="swipe-panel" data-uid="${uid}">
-    <div class="swipe-tabs">
-      ${tabs.map((t,i)=>`<button class="swipe-tab${i===0?" active":""}" data-col="${i}" style="--col:${t.col}">${t.label}</button>`).join("")}
-    </div>
-    <div class="swipe-track" id="${uid}">
-      ${tabs.map((t,i)=>`<div class="swipe-col">${list(standards[t.key]||[])}</div>`).join("")}
+    <div class="pipe-hdr">${pipeSteps}</div>
+    <div class="pipe-progress"><div class="pipe-progress-fill" style="width:25%"></div></div>
+    <div class="slide-vp"><div class="slide-track" id="${uid}">${panes}</div></div>
+    <div class="slide-nav">
+      <button class="slide-btn slide-prev" disabled>‹ 上一層</button>
+      <div class="slide-dots">${dotHtml}</div>
+      <button class="slide-btn slide-next">下一層 ›</button>
     </div>
   </div>`;
 }
@@ -582,6 +877,65 @@ function respMatrix(s){
     <tbody>${rows.map(([act,...cells])=>`<tr><td>${act}</td>${cells.map(c=>`<td class="${c==="主辦"?"r":"s"}">${c}</td>`).join("")}</tr>`).join("")}</tbody>
   </table></div>`;
 }
+function collectionCalendarSection(s){
+  if(!s.collectionCalendar) return "";
+  const items=s.collectionCalendar;
+  const freqs=[...new Set(items.map(x=>x.freq))];
+  const depts=["GDP 權責人","管理藥師","品保","倉管","採購","業務","文管","人事"];
+  const clearItem=(x)=>`
+    <tr data-freq="${esc(x.freq)}" data-dept="${esc(x.dept)}">
+      <td><span class="freq-badge">${esc(x.freq)}</span></td>
+      <td><span class="dept-badge">${esc(x.dept)}</span></td>
+      <td><strong>${esc(x.data)}</strong><div class="calendar-note">${esc(x.note)}</div></td>
+      <td>${esc(x.form)}</td>
+      <td>${esc(x.owner)}</td>
+      <td>${esc(x.source)}</td>
+    </tr>`;
+  const laneOrder=["發生時啟動","每日","每月","每季","每年","每三年"];
+  const lanes=laneOrder.map(freq=>{
+    const laneItems=items.filter(x=>x.freq===freq).slice(0,5);
+    return `<article class="calendar-lane">
+      <h4>${esc(freq)}</h4>
+      <ul>${laneItems.map(x=>`<li>${esc(x.dept)}｜${esc(x.data)}</li>`).join("")}</ul>
+    </article>`;
+  }).join("");
+  const checks=items.filter(x=>["發生時啟動","每月","每季","每年","每三年"].includes(x.freq)).slice(0,12).map((x,i)=>`
+    <label class="calendar-check">
+      <input type="checkbox" data-calendar-check="${i}">
+      <span><strong>${esc(x.freq)}｜${esc(x.dept)}</strong>${esc(x.data)}<br>${esc(x.form)}</span>
+    </label>`).join("");
+  const table=`<div class="calendar-controls">
+      <label>依頻率篩選<select id="calendarFreq"><option value="">全部頻率</option>${freqs.map(f=>`<option value="${esc(f)}">${esc(f)}</option>`).join("")}</select></label>
+      <label>依部門篩選<select id="calendarDept"><option value="">全部部門</option>${depts.map(d=>`<option value="${esc(d)}">${esc(d)}</option>`).join("")}</select></label>
+    </div>
+    <div class="calendar-summary">
+      <div class="calendar-kpi"><strong>${items.length}</strong><span>收件節點</span></div>
+      <div class="calendar-kpi"><strong>${freqs.length}</strong><span>頻率類型</span></div>
+      <div class="calendar-kpi"><strong>${items.filter(x=>x.freq==="發生時啟動").length}</strong><span>發生時啟動</span></div>
+      <div class="calendar-kpi"><strong>${items.filter(x=>x.freq==="每三年").length}</strong><span>三年節點</span></div>
+    </div>
+    <div class="calendar-lanes">${lanes}</div>
+    <div class="calendar-table-wrap"><table class="calendar-table">
+      <thead><tr><th>時間點</th><th>收件部門</th><th>資料名稱與啟動節點</th><th>表單/紀錄</th><th>負責人</th><th>來源</th></tr></thead>
+      <tbody id="calendarRows">${items.map(clearItem).join("")}</tbody>
+    </table></div>`;
+  const groups=freqs.map(freq=>{
+    const groupItems=items.filter(x=>x.freq===freq);
+    return `<article class="calendar-group">
+      <h4>${esc(freq)}<span>${groupItems.length} 項</span></h4>
+      <ul>${groupItems.map(x=>`<li><strong>${esc(x.dept)}</strong>：${esc(x.data)}</li>`).join("")}</ul>
+    </article>`;
+  }).join("");
+  const equipment=(s.equipmentCalendar||[]).map(x=>`<article class="equipment-card">
+    <h4>${esc(x.equipment)}</h4>
+    <p><strong>${esc(x.freq)}</strong>｜${esc(x.task)}</p>
+    <div class="equipment-meta"><span>${esc(x.owner)}</span><span>${esc(x.form)}</span><span>${esc(x.source)}</span></div>
+  </article>`).join("");
+  return panel("資料收件核對台",table,"wide")+
+    panel("本月收件勾選",`<div class="calendar-checklist">${checks}</div>`,"wide")+
+    panel("關鍵設備保養/校驗行事曆",`<div class="equipment-grid">${equipment}</div>`,"wide")+
+    panel("依頻率分組",`<div class="calendar-groups">${groups}</div>`,"");
+}
 function docButtons(s){
   const docs=s.pills.filter(p=>sopLibrary[p]);
   if(!docs.length) return "";
@@ -610,10 +964,13 @@ function renderContent(s){
   </div>`;
   return [
     panel("視覺導讀",visualIntro(s),""),
-    panel("規範到現場：三層對照",standardsSwipe(s.standards),"wide"),
+    panel("規範到現場：四層對照",standardsSwipe(s.standards),"wide"),
     panel("學習重點",list(s.focus),"wide"),
+    s.qualityPolicy ? panel("品質政策與目標 KPI（DM10-01）",policyTable(s.qualityPolicy),"wide") : "",
+    s.companyProfile ? panel("新勝醫藥 GDP 執行概況（WI10-01）",companyProfileHtml(s.companyProfile),"wide") : "",
     s.trainingInfo ? panel("教育訓練：外部 vs 內部",trainingTable(s.trainingInfo),"wide") : "",
     s.respMatrix   ? panel("跨部門責任矩陣",respMatrix(s),"") : "",
+    collectionCalendarSection(s),
     deptFlowSection(s),
     docButtons(s),
     auditSlides(s),
@@ -698,21 +1055,72 @@ function initDocModal(){
 ═══════════════════════════════════════════════ */
 function initSwipePanels(){
   document.querySelectorAll(".swipe-panel").forEach(panel=>{
-    const uid=panel.dataset.uid;
-    const track=document.getElementById(uid);
+    const uid   = panel.dataset.uid;
+    const track = document.getElementById(uid);
     if(!track) return;
-    const tabs=panel.querySelectorAll(".swipe-tab");
-    tabs.forEach((tab,i)=>{
-      tab.addEventListener("click",()=>{
-        track.scrollTo({left:i*track.offsetWidth,behavior:"smooth"});
-        tabs.forEach(t=>t.classList.remove("active"));
-        tab.classList.add("active");
-      });
+    const steps   = panel.querySelectorAll(".pipe-step");
+    const dots    = panel.querySelectorAll(".slide-dot");
+    const prevBtn = panel.querySelector(".slide-prev");
+    const nextBtn = panel.querySelector(".slide-next");
+    const fill    = panel.querySelector(".pipe-progress-fill");
+    const total   = steps.length;
+    let cur = 0;
+
+    function goto(i, animate=true){
+      cur = Math.max(0, Math.min(total-1, i));
+      if(!animate) track.style.transition="none";
+      track.style.transform=`translateX(-${cur*100}%)`;
+      if(!animate) requestAnimationFrame(()=>{ track.style.transition=""; });
+      steps.forEach((s,j)=>s.classList.toggle("active", j===cur));
+      dots.forEach((d,j)=>d.classList.toggle("active", j===cur));
+      if(fill) fill.style.width=`${((cur+1)/total)*100}%`;
+      prevBtn.disabled = cur===0;
+      nextBtn.disabled = cur===total-1;
+    }
+
+    steps.forEach((s,i)=>s.addEventListener("click",()=>goto(i)));
+    dots.forEach((d,i)=>d.addEventListener("click",()=>goto(i)));
+    prevBtn.addEventListener("click",()=>goto(cur-1));
+    nextBtn.addEventListener("click",()=>goto(cur+1));
+    goto(0, false);
+  });
+}
+function bindCalendarFilters(){
+  const freq=document.getElementById("calendarFreq");
+  const dept=document.getElementById("calendarDept");
+  const rows=[...document.querySelectorAll("#calendarRows tr")];
+  document.querySelectorAll("[data-calendar-check]").forEach(box=>{
+    const key=`gdp-calendar-check-${box.dataset.calendarCheck}`;
+    box.checked=localStorage.getItem(key)==="1";
+    box.addEventListener("change",()=>localStorage.setItem(key,box.checked?"1":"0"));
+  });
+  if(!freq||!dept||!rows.length) return;
+  function apply(){
+    const f=freq.value;
+    const d=dept.value;
+    rows.forEach(row=>{
+      const okFreq=!f||row.dataset.freq===f;
+      const okDept=!d||row.dataset.dept.includes(d);
+      row.style.display=okFreq&&okDept?"":"none";
     });
-    track.addEventListener("scroll",()=>{
-      const idx=Math.round(track.scrollLeft/track.offsetWidth);
-      tabs.forEach((t,i)=>t.classList.toggle("active",i===idx));
-    },{passive:true});
+  }
+  freq.addEventListener("change",apply);
+  dept.addEventListener("change",apply);
+}
+function bindAuditFocus(){
+  const detail=document.getElementById("auditDetail");
+  const cards=[...document.querySelectorAll("[data-audit-item]")];
+  if(!detail||!cards.length) return;
+  cards.forEach(card=>{
+    card.addEventListener("click",()=>{
+      cards.forEach(c=>c.classList.remove("active"));
+      card.classList.add("active");
+      const no=String(card.dataset.auditNo||"").padStart(2,"0");
+      detail.innerHTML=`<small>稽查重點 ${no}</small>
+        <h4>核對這一點</h4>
+        <p>${esc(card.dataset.auditItem)}</p>
+        <ul><li>對應文件或表單是否能立即開啟。</li><li>紀錄是否完整、即時、正確、可追溯。</li><li>若資料缺漏，是否知道由哪個部門補正。</li></ul>`;
+    });
   });
 }
 
@@ -723,17 +1131,19 @@ function renderNav(){
   const nav=document.getElementById("nav");
   const mob=document.getElementById("mobileMenu");
   nav.innerHTML="";mob.innerHTML="";
-  let last="";
-  sections.forEach(s=>{
-    if(s.group!==last){
-      const g=document.createElement("div");
-      g.className="nav-group";g.textContent=s.group;nav.appendChild(g);last=s.group;
-    }
-    const b=document.createElement("button");
-    b.className="nav-button";b.type="button";b.textContent=s.title;b.dataset.section=s.id;
-    b.addEventListener("click",()=>showSection(s.id));nav.appendChild(b);
-    const opt=document.createElement("option");
-    opt.value=s.id;opt.textContent=`${s.group} / ${s.title}`;mob.appendChild(opt);
+  const navGroups=["文件主軸","部門分類","年度行事曆"];
+  navGroups.forEach(group=>{
+    const groupSections=sections.filter(s=>s.group===group);
+    if(!groupSections.length) return;
+    const g=document.createElement("div");
+    g.className="nav-group";g.textContent=group;nav.appendChild(g);
+    groupSections.forEach(s=>{
+      const b=document.createElement("button");
+      b.className="nav-button";b.type="button";b.textContent=s.title;b.dataset.section=s.id;
+      b.addEventListener("click",()=>showSection(s.id));nav.appendChild(b);
+      const opt=document.createElement("option");
+      opt.value=s.id;opt.textContent=`${s.group} / ${s.title}`;mob.appendChild(opt);
+    });
   });
   mob.addEventListener("change",e=>showSection(e.target.value));
 }
@@ -755,6 +1165,8 @@ async function showSection(id){
   document.querySelectorAll(".nav-button").forEach(b=>b.classList.toggle("active",b.dataset.section===id));
   document.getElementById("mobileMenu").value=id;
   initSwipePanels();
+  bindCalendarFilters();
+  bindAuditFocus();
   bindQaForm(id);
   bindDocButtons();
   await renderQa(id);
@@ -779,9 +1191,9 @@ function fmtDate(v){
 (async function init(){
   renderNav();
   initDocModal();
-  await qaStore.init();
   const hash=location.hash.slice(1);
   await showSection(sections.some(s=>s.id===hash)?hash:current);
+  qaStore.init().then(()=>renderQa(current)).catch(()=>renderQa(current));
 })();
 </script>
 </body>
