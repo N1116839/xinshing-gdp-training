@@ -152,30 +152,41 @@
     .calendar-lane{background:#fff;border:1px solid var(--line);border-top:5px solid var(--brand);padding:13px;min-height:132px}
     .calendar-lane h4{color:var(--brand);margin-bottom:8px}
     .calendar-lane ul{display:grid;gap:6px;padding-left:1rem;font-size:13px}
-    .calendar-checklist{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-    .calendar-check{display:grid;grid-template-columns:auto 1fr;gap:9px;align-items:start;padding:11px;background:#fff;border:1px solid var(--line)}
-    .calendar-check input{margin-top:3px;accent-color:var(--brand)}
-    .calendar-check strong{display:block;color:var(--brand)}
-    .calendar-check span{display:block;color:var(--ink-soft);font-size:13px;line-height:1.5}
-    .calendar-table-wrap{overflow:auto;border:1px solid var(--line);background:#fff}
-    .calendar-table{width:100%;min-width:980px;border-collapse:collapse;font-size:13px}
-    .calendar-table th,.calendar-table td{padding:10px 11px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
-    .calendar-table th{position:sticky;top:0;background:var(--brand);color:#fff;z-index:1}
-    .calendar-table tr:hover td{background:#f7fbfb}
+    .calendar-list{display:grid;gap:10px}
+    .calendar-item{display:grid;grid-template-columns:130px 1fr;gap:12px;padding:13px;background:#fff;border:1px solid var(--line);border-left:5px solid var(--brand)}
+    .calendar-item:hover{background:#f8fcfb}
+    .calendar-item-main{display:grid;gap:8px}
+    .calendar-item-title{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+    .calendar-item-title strong{color:var(--ink);font-size:15px}
+    .calendar-item-meta{display:grid;grid-template-columns:1.25fr 1fr 1fr auto;gap:8px;align-items:start}
+    .calendar-meta-box{padding:8px 9px;background:#f7fbfb;border:1px solid var(--line);font-size:12.5px;line-height:1.5;color:var(--ink-soft)}
+    .calendar-meta-box b{display:block;color:var(--brand);font-size:11px;margin-bottom:2px}
+    .calendar-status{display:grid;grid-template-columns:1fr 1fr;gap:5px;min-width:132px}
+    .calendar-status button{padding:8px 9px;border:1px solid var(--line);background:#fff;color:var(--ink-soft);border-radius:6px;cursor:pointer;font:inherit;font-size:12px;font-weight:800}
+    .calendar-status button.active[data-status="done"]{color:#fff;background:var(--brand);border-color:var(--brand)}
+    .calendar-status button.active[data-status="pending"]{color:#fff;background:var(--gold);border-color:var(--gold)}
+    .calendar-source-note{margin-bottom:12px;padding:10px 12px;background:#fff9ef;border:1px solid #ead6b6;color:#6f4d1e;font-size:13px;line-height:1.6}
     .freq-badge,.dept-badge{display:inline-block;white-space:nowrap;padding:3px 8px;border-radius:999px;font-weight:800;font-size:12px}
     .freq-badge{color:#fff;background:var(--gold)}
     .dept-badge{color:var(--brand);background:#e8f3f2;border:1px solid #cde0dd}
     .calendar-note{color:var(--ink-soft);line-height:1.55}
-    .calendar-groups{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-    .calendar-group{padding:14px;background:#fff;border:1px solid var(--line);border-top:5px solid var(--gold)}
+    .calendar-groups{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    .calendar-group{padding:14px;background:#fff;border:1px solid var(--line);border-top:5px solid var(--gold);min-height:98px}
     .calendar-group h4{display:flex;justify-content:space-between;gap:10px;color:var(--brand)}
-    .calendar-group ul{padding-left:1rem;font-size:13px}
+    .calendar-group p{margin-top:8px;color:var(--ink-soft);font-size:13px;line-height:1.5}
     .equipment-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
     .equipment-card{padding:13px;background:#fff;border:1px solid var(--line);border-left:5px solid var(--gold)}
     .equipment-card h4{color:var(--brand);margin-bottom:6px}
     .equipment-card p{color:var(--ink-soft);font-size:13px;line-height:1.55}
     .equipment-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
     .equipment-meta span{padding:3px 7px;background:#f7fbfb;border:1px solid var(--line);font-size:12px;color:var(--ink)}
+    .equip-menu{display:grid;grid-template-columns:220px 1fr;gap:14px}
+    .equip-menu-list{display:grid;gap:7px;align-content:start}
+    .equip-menu-list button{display:flex;justify-content:space-between;gap:8px;width:100%;padding:10px 12px;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:6px;cursor:pointer;font:inherit;text-align:left}
+    .equip-menu-list button.active{color:#fff;background:var(--brand);border-color:var(--brand)}
+    .equip-item-list{display:grid;gap:10px}
+    .equip-list-item{display:grid;grid-template-columns:120px 1fr;gap:10px;padding:12px;background:#fff;border:1px solid var(--line);border-left:5px solid var(--gold)}
+    .equip-list-item h4{color:var(--brand);margin-bottom:4px}
     /* ── doc modal ── */
     .doc-modal{position:fixed;inset:0;z-index:30;display:none;background:rgba(15,55,50,.44);padding:28px}
     .doc-modal.open{display:grid;place-items:center}
@@ -227,7 +238,7 @@
       .training-split{grid-template-columns:1fr}
       .dept-flow{flex-direction:column}
       .dept-flow-arrow{transform:rotate(90deg)}
-      .calendar-controls,.calendar-summary,.calendar-groups,.calendar-lanes,.calendar-checklist,.equipment-grid{grid-template-columns:1fr}
+      .calendar-controls,.calendar-summary,.calendar-groups,.calendar-lanes,.calendar-item,.calendar-item-meta,.equipment-grid,.equip-menu,.equip-list-item{grid-template-columns:1fr}
       .pipe-hdr{padding:10px 6px}
       .pipe-node{width:36px;height:36px;font-size:17px}
       .pipe-lbl{font-size:9.5px}
@@ -268,7 +279,7 @@
         <h2 id="pageTitle">品質手冊</h2>
         <p class="eyebrow" id="pageTag">核心制度</p>
       </div>
-      <div class="status"><span id="dbDot" class="dot"></span><span id="dbStatus">Q&A 本機暫存</span></div>
+      <div class="status"><span id="dbDot" class="dot"></span><span id="dbStatus">Q&A 連線中</span></div>
     </div>
     <section class="hero">
       <p class="eyebrow" id="pageTag2"></p>
@@ -412,7 +423,9 @@ const sections = [
       {freq:"發生時啟動",dept:"文管",data:"文件制修訂、廢止或變更申請資料",form:"FR42-02 文件制/修訂申請單、文件首頁",owner:"文管 / 原權責部門",source:"DP42-01、DP12-04",note:"新增文件、文件不合時宜、偏差調查後需變更流程、DM/DP/WI 文件修訂時啟動。"},
       {freq:"發生時啟動",dept:"文管",data:"品質系統文件總覽表更新",form:"FR10-01 文件總覽表",owner:"文管",source:"FR10-01",note:"有新增、移除文件時更新，確保教材、現場文件與清冊同步。"},
       {freq:"發生時啟動",dept:"人事",data:"組織各職稱指派名單更新",form:"FR22-01 組織各職稱指派名單",owner:"人事 / GDP 權責人",source:"DP22-01、FR10-01",note:"有新進人員、員工離職或職務異動時重新確認，不等年度彙整。"},
+      {freq:"發生時啟動",dept:"人事 / GDP 權責人",data:"組織圖暨員工職務說明書更新",form:"WI22-01 組織圖暨員工職務說明書",owner:"人事 / GDP 權責人",source:"DP22-01、WI22-01、FR10-01",note:"有新進人員、員工離職或組織架構異動時同步更新組織圖與職務說明書，確保與 FR22-01 組織各職稱指派名單一致；異動應通知相關人員。"},
       {freq:"發生時啟動",dept:"人事",data:"門禁授權資料更新",form:"FR25-02 門禁同意授權書",owner:"人事 / 倉管",source:"WI25-01、FR10-01",note:"有新進人員、員工離職或門禁權限異動時更新授權，避免未授權人員進入倉儲區。"},
+      {freq:"發生時啟動",dept:"倉管",data:"病媒防治管制點設置分佈圖更新",form:"WI25-04 病媒防治管制點設置分佈圖",owner:"倉管",source:"DP25-02、WI25-04、FR10-01",note:"倉儲區域規劃異動、設備移位或防治器具放置位置調整時更新，確保圖面與現場實際位置一致，供稽核查閱。"},
       {freq:"發生時啟動",dept:"品保",data:"電腦化系統授權資料更新",form:"FR35-02 電腦化系統授權書",owner:"品保 / 系統管理者",source:"DP35-01、FR10-01",note:"有新進人員、員工離職或系統權限異動時更新，確保帳號權限可追溯。"},
       {freq:"發生時啟動",dept:"倉管",data:"儲位編號或儲區資訊更新",form:"WI32-03 儲位編號原則",owner:"倉管",source:"DP32-01、FR10-01",note:"有更換儲位或儲區配置異動時更新，並確認標示、系統與現場一致。"},
       {freq:"發生時啟動",dept:"倉管",data:"GDP 相關設備清單更新",form:"FR34-02 GDP 相關設備清單",owner:"倉管 / 品保",source:"DP34-01、FR10-01",note:"新增、更換或移除設備時更新，並確認保養、校驗與確效資料是否同步。"},
@@ -462,6 +475,8 @@ const sections = [
       {freq:"每年",dept:"倉管",data:"儲存條件確認",form:"WI55-01 儲存條件",owner:"倉管 / 管理藥師",source:"DP55-01、FR10-01",note:"每年確認儲存條件、現場標示與產品保存條件一致。"},
       {freq:"每年",dept:"品保",data:"進銷存電腦化系統確效報告確認",form:"FR57-01 進銷存電腦化系統確效報告書",owner:"品保 / 系統管理者",source:"DP35-01、FR10-01",note:"每年一次確認系統備份、復原與權限設定資料。"},
       {freq:"每年",dept:"採購",data:"委外廠商合約、評鑑與名冊資料",form:"FR72-01、FR72-02、FR72-04",owner:"採購 / 品保",source:"DP72-01、FR10-01",note:"每年確認委外廠商合約、定期評鑑與符合 GDP 評鑑結果。"},
+      {freq:"每年",dept:"倉管 / 品保",data:"廢棄物銷毀：報廢藥品清運通知與銷毀紀錄",form:"FR56-01 銷毀藥品紀錄表",owner:"倉管",source:"DP56-01",note:"當年度如確認有報廢品（回收、過期、退貨、偽禁等），應於 11 月 1 日前通知委外處理廠商（良衛環保），待雙方簽約後於 12 月底前完成清運銷毀；無報廢品項當年度不辦理。填寫 FR56-01 銷毀藥品紀錄表，保存 5 年。"},
+      {freq:"每年",dept:"文管",data:"品質紀錄保存年限審查與超期紀錄銷毀",form:"品質紀錄各類表單（使用單位保管當年，跨年度轉文管彙整裝訂成冊）",owner:"文管",source:"DP42-02",note:"每年底審查各類品質紀錄（已填寫表單）是否超過 5 年保存期限；超期紀錄確認後由保存單位銷毀；當年度表單由使用單位保管，跨年度移交文管彙整歸檔。"},
       {freq:"每三年",dept:"GDP 權責人",data:"品質手冊、SMF 與品質系統基礎文件再確認",form:"DM10-01、WI10-01、DP12-01、FR12-01",owner:"GDP 權責人 / 品保",source:"FR10-01",note:"FR10-01 時程索引列為三年一次；若內容、組織、場所或 GDP 核備資料異動，仍需即時更新。"},
       {freq:"每三年",dept:"品保",data:"儲存環境溫度測繪報告",form:"溫度測繪報告",owner:"品保 / 倉管",source:"DP33-01",note:"無環境重大變更時每三年執行，每次於夏季及冬季各測量七天；重大事件或環境變更時不等三年。"}
     ],
@@ -666,7 +681,7 @@ const sopLibrary = {
   "DP12-01":{title:"DP12-01 品質管理系統程序書",file:"第一章品質手冊/DP12-01 品質管理系統程序書.docx",content:["建立品質管理系統，確保藥品採購、存放、供應符合 GDP。","若程序發生偏差，需調查不符合處並文件化。","人員認知不足時，須依教育訓練程序補訓並評鑑合格。"]},
   "DP12-02":{title:"DP12-02 偏差管理作業程序",file:"第一章品質手冊/DP12-02 偏差管理作業程序.docx",content:["適用於任何與 GDP 品質相關之作業偏差。","發現 GDP 作業活動不符規範時，填寫 FR12-03 偏差事件處理報告單提報。","品管負責偏差調查、分類、後續處理與歸檔；GDP 權責主管負責後續追蹤與審核。","調查需評估風險影響、根本原因與建議解決方案。"]},
   "DP12-03":{title:"DP12-03 矯正與預防作業程序書",file:"第一章品質手冊/DP12-03 矯正與預防作業程序書.docx",content:["CAPA 用於消除實際或潛在不符合原因，避免再次發生。","若相同偏差再次發生，須正式啟動偏差與矯正預防流程。","改善需有責任歸屬、執行追蹤與有效性確認。"]},
-  "DP14-01":{title:"DP14-01 管理階層檢討作業程序",file:"第一章品質手冊/DP14-01 管理階層檢討作業程序.docx",content:["管理階層定期檢討品質系統規劃、執行性缺失、品質績效與改善需求。","管審應納入內外部稽核、申訴、回收、退回、偏差、CAPA、委外績效等資訊。"]},
+  "DP14-01":{title:"DP14-01 管理階層檢討作業程序",file:"第一章品質手冊/DP14-01 管理階層檢討作業程序.docx",content:["管理階層每年年底至少執行一次系統性審查，確認 GDP 品質管理系統是否符合法規、適切實務作業，並有效達成品質政策要求。","收集三類資料：①倉庫資料（採購、進貨、儲存、訂貨、揀貨）②運輸資料（外部物流收貨、轉運、送貨、簽收及品質檢討報告）③管理資料（客訴、回收/模擬回收、退回品、偏差CAPA、變更管制、自我查核、風險評估及外部查核結果）。","評估項目涵蓋：品質目標達成度、客訴/退回/回收/偏差/CAPA/變更/委外/自我查核/外部查核各類統計、新法規影響、可增進品質系統之改革及商業環境與目標變更。","監督評估結果填寫 FR14-01 管理階層檢討及監督報告，交權責主管審查後撰寫 FR14-02 管理階層檢討及監督評鑑報告，合併報告轉交相關單位主管傳閱簽核。","紀錄保存：FR14-02 評鑑報告回傳文管歸檔，保存 5 年。"]},
   "DP22-01":{title:"DP22-01 組織與職掌標準作業程序",file:"第二章人事/DP22-01組織與職掌標準作業程序.docx",content:["規定公司組織架構與各職位 GDP 相關職責與授權範圍。","各職位人員應依職務說明書執行 GDP 活動，並了解代理人制度。","組織架構異動需更新職掌說明與相關 SOP，並通知相關人員。"]},
   "DP24-01":{title:"DP24-01 員工教育訓練作業程序",file:"第二章人事/DP24-01員工教育訓練作業程序.docx",content:["參與 GDP 活動人員需在開始執行作業前達到所界定能力。","職前與持續訓練需留下紀錄（FR24-02），並評估訓練有效性。","外部訓練紀錄保存於 FR24-01，GDP 權責人需每年至少參加一次。","偽禁仿冒藥識別與特定條件藥品處理需有相對應訓練且有合格紀錄。","測驗不合格者需完成補訓後再次評鑑，達合格門檻才可獨立作業。"]},
   "DP25-01":{title:"DP25-01 人員衛生暨環境清潔作業程序書",file:"第二章人事/DP25-01人員衛生暨環境清潔作業程序書.docx",content:["規定人員健康、衛生行為、個人清潔與適當著裝要求。","門禁管制：未獲授權人員不得進入倉儲作業區（FR25-02 門禁授權書）。","環境清潔程序確保倉庫衛生，病媒防治依 DP25-02 執行並記錄。"]},
@@ -683,7 +698,17 @@ const sopLibrary = {
   "DP64-01":{title:"DP64-01 偽禁仿冒藥作業程序書",file:"第六章申訴、退回、疑似偽、禁藥及藥品回收/DP64-01偽禁仿冒藥作業程序書.docx",content:["疑似偽禁仿冒藥需立即上呈管理藥師。","判定疑似時應停止銷售、移入非符合區並通知主管機關與上市許可持有廠商。","相關人員需接受藥品識別訓練並有合格紀錄。"]},
   "DP65-01":{title:"DP65-01 藥品回收管理程序書",file:"第六章申訴、退回、疑似偽、禁藥及藥品回收/DP65-01藥品回收管理程序書.docx",content:["回收作業需能立即啟動並通知相關客戶。","運銷紀錄應使負責回收人員易於取得，包含客戶、批號與數量。","模擬回收應選擇配送多家醫療院所的同批號藥品。"]},
   "DP72-01":{title:"DP72-01 委外作業程序書",file:"第七章委外作業/DP72-01委外作業程序書.docx",content:["委外活動需評估受託者適任性與能力，並以合約與品質協議界定責任。","應定期監測受託物流績效並識別必要改善事項。","委外活動不免除公司對 GDP 符合性的責任。"]},
-  "DP82-01":{title:"DP82-01 內部稽核作業程序書",file:"第八章自我審查/DP82-01 內部稽核作業程序書.docx",content:["內部稽核用於監測 GDP 原則執行與符合性，並提出必要矯正措施。","稽核前需準備查檢表並通知被稽核單位。","不符合事項需開立 CAPA，責任單位改善後由品保確認有效性。","稽核報告需歸檔，紀錄保存期限依 5 年規定保存。"]}
+  "DP82-01":{title:"DP82-01 內部稽核作業程序書",file:"第八章自我審查/DP82-01 內部稽核作業程序書.docx",content:["內部稽核用於監測 GDP 原則執行與符合性，並提出必要矯正措施。","稽核前需準備查檢表並通知被稽核單位。","不符合事項需開立 CAPA，責任單位改善後由品保確認有效性。","稽核報告需歸檔，紀錄保存期限依 5 年規定保存。"]},
+  "DP12-04":{title:"DP12-04 變更管制作業程序書",file:"第一章品質手冊/DP12-04 變更管制作業程序書.docx",content:["適用於 GDP 品質系統文件變更（文件修訂）與工程變更（作業場所、確效設備或電腦化系統異動）。","申請者填寫 FR12-05 變更管制需求單，說明變更範圍、風險評估與預期目標；品保負責評估，GDP 權責主管核准並確認通報主管機關需求。","重大變更（倉儲場所、關鍵設備或電腦化系統異動）需執行風險評估；次要變更對品質影響較小，仍需文件化記錄。","偏差調查後發現更適合作業方式時，可依調查結果提案啟動變更管制，確保流程持續改善且可追溯。"]},
+  "DP15-01":{title:"DP15-01 品質風險作業程序書",file:"第一章品質手冊/DP15-01 品質風險作業程序書.docx",content:["針對藥品物流特性（特殊儲存條件、季節溫差、簽據管理等）評估潛在風險與效應，降低危害使用者安全之風險因子。","風險小組由管理藥師召集，成員涵蓋品管、倉管、業務、採購，執行風險鑑別→分析→評估→管制→溝通完整流程。","風險識別範疇包括：人員認知不足、儲區規劃、備用電源、儲位放置、預冷不均、常閉管控、緊急應變等。","每年依客戶抱怨、報廢退貨等資訊審視風險管理結果，填寫 FR15-01、FR15-02 風險追蹤紀錄表。"]},
+  "DP25-02":{title:"DP25-02 病媒蟲鼠防治作業程序書",file:"第二章人事/DP25-02 病媒蟲鼠防治作業程序書.docx",content:["防治廠區及廠房蟑螂、囓齒動物（鼠）、蚊蠅、螞蟻孳生，維護倉儲環境衛生安全，符合 GDP 規範。","防治器具（蟑螂屋、捕鼠器、誘蟻餌、捕蟲燈）最低每季（3 個月）更換一次，填寫 FR25-05 病媒防治器具更換紀錄表；達異常條件或器具失效時立即更換。","每月彙整偵測報告（FR25-03），記錄捕獲數量；發現異常立即提出改善措施或加強防治策略。","廠區出入口無作業時應隨時關閉；通風口及排氣口裝設濾網；由品管部委外定期清潔消毒。"]},
+  "DP32-01":{title:"DP32-01 作業場所規劃作業程序書",file:"第三章作業場所及設備/DP32-01作業場所規劃作業程序書.docx",content:["廠區依 WI32-02 規劃收貨區、作業區（驗收/貼標/理貨/打包）、倉儲區、非符合品區、出貨區、退貨區等功能分區。","非符合品（疑似偽/禁藥、過期、回收、退回、拒用藥品）需與可銷售品實體隔離，存放於非符合品區。","儲存條件（溫度、照明、清潔）需貼於明顯處，裝設儲區溫度顯示器；一般西藥依說明書要求，特殊性藥品依法規處理。","門禁進出管制依 WI25-01；訪客需廠內人員全程陪同；設立環境監測，入侵時自動啟動警鈴。"]},
+  "DP34-01":{title:"DP34-01 關鍵設備作業程序書",file:"第三章作業場所及設備/DP34-01關鍵設備作業程序書.docx",content:["關鍵設備（發電機、冷藏設備、空調、溫濕度監控系統、門禁等）進廠後需依 DP36-01 執行 4Q 確效，合格後登錄 FR34-02 GDP 相關設備清單。","溫度偵測器依 DP34-02 量測儀器程序校正；電池每 3 個月更換，更換後依中原標準時間重新校正時間。","定期保養依 WI34-01 設備維護保養說明書執行，每次填寫 FR34-03 設備定期保養維修紀錄表。","設備故障或異常需填寫 FR12-03 偏差事件報告單，調查後啟動 CAPA；委外物流嘉里醫藥每季提供 1 筆運輸過程溫度記錄。"]},
+  "DP34-02":{title:"DP34-02 量測儀器作業程序書",file:"第三章作業場所及設備/DP34-02量測儀器作業程序書.docx",content:["確保倉儲量測設備（溫度計、溫濕度記錄器）精密度與準確度在允收範圍內，維持國際量測追溯性（TAF/ILAC-MRA）。","新添購儀器須有 TAF 認證（ISO 17025）實驗室合格校驗報告；校正均委外執行，每年 12 月底安排一次外部校正。","校正結果需在允收基準內；儀器合格後列冊管理，校正報告依文件管制保存 5 年。","監督量測儀器若使用電腦軟體，軟體應在初次使用前確認；變更後需再確認，確認程度與風險程度成比例。"]},
+  "DP35-01":{title:"DP35-01 電腦化系統作業程序書",file:"第三章作業場所及設備/DP35-01電腦化系統作業程序書.docx",content:["影響儲存運銷的電腦化系統（溫度監控、門禁警報、進銷存系統）使用前需確效（依 DP36-01 4Q 確效），確保準確、持續且可再現地達到預期結果。","僅授權人員可輸入或修改系統資料，授權名單記錄於 FR35-02 電腦化系統授權書，人員異動時立即更新。","資料/數據需每月定期備份（含自動備份），同時異地分開保存，期限至少 5 年。","系統操作說明書（含使用目的、安全措施、系統連結方式）需依版本更新，並依 DP42-01 執行文件修訂記錄。"]},
+  "DP36-01":{title:"DP36-01 驗證確效作業程序書",file:"第三章作業場所及設備/DP36-01驗證確效作業程序書.docx",content:["關鍵設備開始使用前需執行 4Q 確效：設計確認（DQ）、安裝確認（IQ）、操作確認（OQ）、性能確認（PQ）。","確效團隊由品管部負責查核確認，倉管部負責操作；參與人員需受過相關訓練。","確效報告依合作廠商格式（4Q 確效報告），由品保保存 5 年；設備重大維修、遷移或環境重大變更後需評估再確效，不等例行週期。","量測設備校正狀況（設備名稱、校驗日期）需記錄於確效文件，確保量測數據可追溯。"]},
+  "WI25-01":{title:"WI25-01 門禁進出管制規定",file:"第二章人事/WI25-01門禁進出管制規定.docx",content:["進入管制區需酒精消毒雙手後從人流門進入；不得攜帶食物、飲料等物品入內。","到訪人員需由廠內員工全程陪同，不可單獨行動；門禁採刷卡磁扣感應系統，授權名單記錄於 FR25-02 門禁同意授權書。","門禁系統具備進出紀錄留存與異常自動記錄功能（非授權進入時自動保存紀錄）；下班時由最後離開人員確認所有對外門關妥。","無作業需求時儲區對外感應門一律關閉；上班時有作業需求感應門開啟屬正常行為，倉庫人員仍應隨手關門。"]},
+  "DP56-01":{title:"DP56-01 廢棄物管理作業程序書",file:"第五章作業/DP56-01廢棄物管理作業程序書.docx",content:["適用於作業所得之可燃性廢棄物、不可燃廢棄物及藥品廢棄物（回收、過期、退貨、偽禁等）；藥品廢棄物收集處須設立專區且上鎖管控，並與合格倉儲區實體隔離。","要報廢的藥品應貼上標示並移入非符合品區，禁止任意取拿；委由良衛環保工程股份有限公司執行清運銷毀作業。","當年度如確認有報廢品，應於 11 月 1 日前通知廠商，待雙方簽約後於 12 月底前完成清運銷毀；無報廢品項當年度不辦理簽約。","所有銷毀作業填寫 FR56-01 銷毀藥品紀錄表（記載藥品名稱、批號、數量、銷毀日期、簽署人等），依 GDP 規定保存至少 5 年。"]}
 };
 
 const visualAssets = {
@@ -711,8 +736,11 @@ const qaStore = {
       this.db  = fsMod.getFirestore(this.app);
       this.mode = "firestore";
       document.getElementById("dbDot").classList.add("connected");
-      document.getElementById("dbStatus").textContent = "Q&A 已連接 Firestore";
-    } catch(e){ console.warn("Firestore 初始化失敗，改用本機儲存",e); }
+      document.getElementById("dbStatus").textContent = "Q&A 已連接你的 Firebase";
+    } catch(e){
+      console.warn("Firestore 初始化失敗，改用本機儲存",e);
+      document.getElementById("dbStatus").textContent = "Q&A 本機暫存";
+    }
   },
   key(id){ return `gdp-qa:${id}`; },
   async list(id){
@@ -911,28 +939,23 @@ function collectionCalendarSection(s){
   const items=s.collectionCalendar;
   const freqs=[...new Set(items.map(x=>x.freq))];
   const depts=["GDP 權責人","管理藥師","品保","倉管","採購","業務","文管","人事"];
-  const clearItem=(x)=>`
-    <tr data-freq="${esc(x.freq)}" data-dept="${esc(x.dept)}">
-      <td><span class="freq-badge">${esc(x.freq)}</span></td>
-      <td><span class="dept-badge">${esc(x.dept)}</span></td>
-      <td><strong>${esc(x.data)}</strong><div class="calendar-note">${esc(x.note)}</div></td>
-      <td>${esc(x.form)}</td>
-      <td>${esc(x.owner)}</td>
-      <td>${esc(x.source)}</td>
-    </tr>`;
-  const laneOrder=["發生時啟動","每日","每月","每兩個月","每季","每半年","每年","每三年"];
-  const lanes=laneOrder.map(freq=>{
-    const laneItems=items.filter(x=>x.freq===freq).slice(0,5);
-    return `<article class="calendar-lane">
-      <h4>${esc(freq)}</h4>
-      <ul>${laneItems.map(x=>`<li>${esc(x.dept)}｜${esc(x.data)}</li>`).join("")}</ul>
+  const clearItem=(x,i)=>`
+    <article class="calendar-item" data-freq="${esc(x.freq)}" data-dept="${esc(x.dept)}">
+      <div><span class="freq-badge">${esc(x.freq)}</span></div>
+      <div class="calendar-item-main">
+        <div class="calendar-item-title"><span class="dept-badge">${esc(x.dept)}</span><strong>${esc(x.data)}</strong></div>
+        <div class="calendar-note">${esc(x.note)}</div>
+        <div class="calendar-item-meta">
+          <div class="calendar-meta-box"><b>表單/紀錄</b>${esc(x.form)}</div>
+          <div class="calendar-meta-box"><b>負責人</b>${esc(x.owner)}</div>
+          <div class="calendar-meta-box"><b>來源</b>${esc(x.source)}</div>
+          <div class="calendar-status" data-calendar-status="${i}" aria-label="收件狀態">
+            <button type="button" data-status="done">已完成</button>
+            <button type="button" data-status="pending">未完成</button>
+          </div>
+        </div>
+      </div>
     </article>`;
-  }).join("");
-  const checks=items.filter(x=>["發生時啟動","每日","每月","每兩個月","每季","每半年","每年","每三年"].includes(x.freq)).slice(0,12).map((x,i)=>`
-    <label class="calendar-check">
-      <input type="checkbox" data-calendar-check="${i}">
-      <span><strong>${esc(x.freq)}｜${esc(x.dept)}</strong>${esc(x.data)}<br>${esc(x.form)}</span>
-    </label>`).join("");
   const table=`<div class="calendar-controls">
       <label>依頻率篩選<select id="calendarFreq"><option value="">全部頻率</option>${freqs.map(f=>`<option value="${esc(f)}">${esc(f)}</option>`).join("")}</select></label>
       <label>依部門篩選<select id="calendarDept"><option value="">全部部門</option>${depts.map(d=>`<option value="${esc(d)}">${esc(d)}</option>`).join("")}</select></label>
@@ -943,26 +966,18 @@ function collectionCalendarSection(s){
       <div class="calendar-kpi"><strong>${items.filter(x=>x.freq==="發生時啟動").length}</strong><span>發生時啟動</span></div>
       <div class="calendar-kpi"><strong>${items.filter(x=>x.freq==="每三年").length}</strong><span>三年節點</span></div>
     </div>
-    <div class="calendar-lanes">${lanes}</div>
-    <div class="calendar-table-wrap"><table class="calendar-table">
-      <thead><tr><th>時間點</th><th>收件部門</th><th>資料名稱與啟動節點</th><th>表單/紀錄</th><th>負責人</th><th>來源</th></tr></thead>
-      <tbody id="calendarRows">${items.map(clearItem).join("")}</tbody>
-    </table></div>`;
+    <div class="calendar-source-note">本頁不把資料夾內所有文件做成另一份清單；只列有收件、啟動或核對責任的文件。完整來源放在每一筆卡片的「來源」欄，避免與頻率與 SOP 區塊重複。</div>
+    <div class="calendar-list" id="calendarRows">${items.map(clearItem).join("")}</div>`;
   const groups=freqs.map(freq=>{
     const groupItems=items.filter(x=>x.freq===freq);
+    const deptCount=new Set(groupItems.flatMap(x=>String(x.dept).split("/").map(d=>d.trim()).filter(Boolean))).size;
     return `<article class="calendar-group">
       <h4>${esc(freq)}<span>${groupItems.length} 項</span></h4>
-      <ul>${groupItems.map(x=>`<li><strong>${esc(x.dept)}</strong>：${esc(x.data)}</li>`).join("")}</ul>
+      <p>${deptCount} 個責任部門需要在此頻率提交或確認資料；明細已整合在上方核對卡片。</p>
     </article>`;
   }).join("");
-  const equipment=(s.equipmentCalendar||[]).map(x=>`<article class="equipment-card">
-    <h4>${esc(x.equipment)}</h4>
-    <p><strong>${esc(x.freq)}</strong>｜${esc(x.task)}</p>
-    <div class="equipment-meta"><span>${esc(x.owner)}</span><span>${esc(x.form)}</span><span>${esc(x.source)}</span></div>
-  </article>`).join("");
   return panel("資料收件核對台",table,"wide")+
-    panel("本月收件勾選",`<div class="calendar-checklist">${checks}</div>`,"wide")+
-    panel("依頻率分組",`<div class="calendar-groups">${groups}</div>`,"");
+    panel("收件節奏摘要",`<div class="calendar-groups">${groups}</div>`,"");
 }
 function equipmentOnlySection(s){
   const src=sections.find(x=>x.id===s.equipmentRef);
@@ -971,25 +986,22 @@ function equipmentOnlySection(s){
   const freqOrder=["每月","每季","每半年","每年","每三年","發生時啟動"];
   const byFreq={};
   eq.forEach(x=>{if(!byFreq[x.freq])byFreq[x.freq]=[];byFreq[x.freq].push(x);});
-  const freqTable=freqOrder.map(freq=>{
+  const menu=freqOrder.map((freq,i)=>{
     const items=byFreq[freq];if(!items||!items.length)return "";
-    return `<div class="equip-freq-group">
-      <div class="equip-freq-lbl">${esc(freq)}</div>
-      <table class="info-table">
-        <thead><tr><th>設備</th><th>作業項目</th><th>負責人</th><th>表單</th></tr></thead>
-        <tbody>${items.map(x=>`<tr><td><strong>${esc(x.equipment)}</strong></td><td>${esc(x.task)}</td><td>${esc(x.owner)}</td><td>${esc(x.form)}</td></tr>`).join("")}</tbody>
-      </table>
-    </div>`;
+    return `<button type="button" class="${i===0?"active":""}" data-equip-freq="${esc(freq)}"><span>${esc(freq)}</span><strong>${items.length}</strong></button>`;
   }).join("");
-  const cards=eq.map(x=>`<article class="equipment-card">
-    <h4>${esc(x.equipment)}</h4>
-    <p><strong>${esc(x.freq)}</strong>｜${esc(x.task)}</p>
-    <div class="equipment-meta"><span>${esc(x.owner)}</span><span>${esc(x.form)}</span><span>${esc(x.source)}</span></div>
+  const list=eq.map(x=>`<article class="equip-list-item" data-equip-item="${esc(x.freq)}">
+    <div><span class="freq-badge">${esc(x.freq)}</span></div>
+    <div>
+      <h4>${esc(x.equipment)}</h4>
+      <p>${esc(x.task)}</p>
+      <div class="equipment-meta"><span>${esc(x.owner)}</span><span>${esc(x.form)}</span><span>${esc(x.source)}</span></div>
+    </div>
   </article>`).join("");
-  return panel("依頻率：保養/校驗計畫",`<div class="equip-freq-list">${freqTable}</div>`,"wide")+
-    panel("設備保養卡片總覽",`<div class="equipment-grid">${cards}</div>`,"wide");
+  return panel("關鍵設備條列式選單",`<div class="equip-menu"><div class="equip-menu-list">${menu}</div><div class="equip-item-list">${list}</div></div>`,"wide");
 }
 function docButtons(s){
+  if(["collection-calendar","equipment-calendar"].includes(s.id)) return "";
   const docs=s.pills.filter(p=>sopLibrary[p]);
   if(!docs.length) return "";
   return `<article class="panel"><h3>本頁相關 SOP</h3><div class="pill-row">${docs.map(c=>pillMarkup(c)).join("")}</div><p class="note" style="margin-top:10px">點擊文件編號開啟 SOP 學習重點面板。</p></article>`;
@@ -1142,11 +1154,18 @@ function initSwipePanels(){
 function bindCalendarFilters(){
   const freq=document.getElementById("calendarFreq");
   const dept=document.getElementById("calendarDept");
-  const rows=[...document.querySelectorAll("#calendarRows tr")];
-  document.querySelectorAll("[data-calendar-check]").forEach(box=>{
-    const key=`gdp-calendar-check-${box.dataset.calendarCheck}`;
-    box.checked=localStorage.getItem(key)==="1";
-    box.addEventListener("change",()=>localStorage.setItem(key,box.checked?"1":"0"));
+  const rows=[...document.querySelectorAll("#calendarRows [data-freq]")];
+  document.querySelectorAll("[data-calendar-status]").forEach(group=>{
+    const key=`gdp-calendar-status-${group.dataset.calendarStatus}`;
+    const saved=localStorage.getItem(key)||"pending";
+    const buttons=[...group.querySelectorAll("button")];
+    buttons.forEach(btn=>{
+      btn.classList.toggle("active",btn.dataset.status===saved);
+      btn.addEventListener("click",()=>{
+        localStorage.setItem(key,btn.dataset.status);
+        buttons.forEach(x=>x.classList.toggle("active",x===btn));
+      });
+    });
   });
   if(!freq||!dept||!rows.length) return;
   function apply(){
@@ -1160,6 +1179,17 @@ function bindCalendarFilters(){
   }
   freq.addEventListener("change",apply);
   dept.addEventListener("change",apply);
+}
+function bindEquipmentMenu(){
+  const buttons=[...document.querySelectorAll("[data-equip-freq]")];
+  const items=[...document.querySelectorAll("[data-equip-item]")];
+  if(!buttons.length||!items.length) return;
+  function show(freq){
+    buttons.forEach(btn=>btn.classList.toggle("active",btn.dataset.equipFreq===freq));
+    items.forEach(item=>{ item.style.display=item.dataset.equipItem===freq?"":"none"; });
+  }
+  buttons.forEach(btn=>btn.addEventListener("click",()=>show(btn.dataset.equipFreq)));
+  show(buttons[0].dataset.equipFreq);
 }
 function bindAuditFocus(){
   const detail=document.getElementById("auditDetail");
@@ -1249,6 +1279,7 @@ async function showSection(id){
   document.getElementById("mobileMenu").value=id;
   initSwipePanels();
   bindCalendarFilters();
+  bindEquipmentMenu();
   bindAuditFocus();
   bindQaForm(id);
   bindDocButtons();
