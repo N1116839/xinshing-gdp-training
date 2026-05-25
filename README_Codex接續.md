@@ -1262,6 +1262,11 @@ G:\我的雲端硬碟\2026codex\codex-skills-lazy-pack
 
 ### 下一輪優先順序
 ```
+0. 移除頁面頂部 pagePills 文件 pill（DP/FR 編號列）：
+   - 每個部門頁頂部仍顯示 pagePills（例如人事頁：DP22-01、DP24-01、DP25-01、FR24-01、FR24-02）。
+   - 下方「部門文件閱讀地圖」已包含這些文件，pagePills 重複。
+   - 做法：在 showSection() 將 pagePills 設為空，或移除 pagePills DOM 區塊。
+   - 注意：pagePills 在某些頁面可能有其他角色，改前先確認。
 1. 視覺化=互動式：加入真正的 HTML 互動元素
    - 三欄規範對照：改為可左右拖動或滑桿控制的比較面板
    - 稽查重點：翻卡記憶（flip card）或選擇題互動
