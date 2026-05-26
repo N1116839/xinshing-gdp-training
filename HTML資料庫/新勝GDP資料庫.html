@@ -352,6 +352,14 @@
     .kb-sop-refs{padding:8px 14px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px;color:var(--muted)}
     .kb-answer-meta{padding:5px 14px;background:#f9f9f9;border-top:1px solid var(--line);font-size:11px;color:var(--muted)}
     .kb-no-result{padding:16px;font-size:14px;color:var(--ink);width:100%}
+    .kb-result-summary{padding:10px 14px;background:#fff8ef;border-bottom:1px solid #ead6b6;color:#6f4d1e;font-size:13px;line-height:1.6}
+    .kb-hit-list{display:grid;gap:10px;padding:12px;background:#f7fbfb}
+    .kb-hit-card{padding:12px;background:#fff;border:1px solid var(--line);border-left:5px solid var(--brand)}
+    .kb-hit-card h4{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 6px;color:var(--brand);font-size:15px}
+    .kb-hit-card p{margin:0;color:var(--ink-soft);font-size:13px;line-height:1.65}
+    .kb-hit-type{display:inline-flex;padding:2px 7px;background:#e8f3f2;border:1px solid #cde0dd;border-radius:999px;color:var(--brand);font-size:11px;font-weight:800}
+    .kb-hit-meta{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;color:var(--ink);font-size:12px}
+    .kb-hit-meta span{padding:3px 7px;background:#f7fbfb;border:1px solid var(--line)}
     .kb-form{display:flex;gap:8px;margin-top:4px}
     .kb-form input{flex:1;padding:9px 12px;border:1px solid var(--line);border-radius:6px;font:inherit;font-size:14px}
     .kb-form input:focus{outline:none;border-color:var(--brand)}
@@ -614,7 +622,7 @@ const sections = [
       {freq:"每年",dept:"倉管 / 品保",data:"廢棄物銷毀：報廢藥品清運通知與銷毀紀錄",form:"FR56-01 銷毀藥品紀錄表",owner:"倉管",source:"DP56-01",note:"當年度如確認有報廢品（回收、過期、退貨、偽禁等），應於 11 月 1 日前通知委外處理廠商（良衛環保），待雙方簽約後於 12 月底前完成清運銷毀；無報廢品項當年度不辦理。填寫 FR56-01 銷毀藥品紀錄表，保存 5 年。"},
       {freq:"每年",dept:"文管",data:"品質紀錄保存年限審查與超期紀錄銷毀",form:"品質紀錄各類表單（使用單位保管當年，跨年度轉文管彙整裝訂成冊）",owner:"文管",source:"DP42-02",note:"每年底審查各類品質紀錄（已填寫表單）是否超過 5 年保存期限；超期紀錄確認後由保存單位銷毀；當年度表單由使用單位保管，跨年度移交文管彙整歸檔。"},
       {freq:"每三年",dept:"GDP 權責人",data:"品質手冊、SMF 與品質系統基礎文件再確認",form:"DM10-01、WI10-01、DP12-01、FR12-01",owner:"GDP 權責人 / 品保",source:"FR10-01",note:"FR10-01 時程索引列為三年一次；若內容、組織、場所或 GDP 核備資料異動，仍需即時更新。"},
-      {freq:"每三年",dept:"品保",data:"儲存環境溫度測繪報告",form:"溫度測繪報告",owner:"品保 / 倉管",source:"DP33-01",note:"無環境重大變更時每三年執行，每次於夏季及冬季各測量七天；重大事件或環境變更時不等三年。"}
+      {freq:"每三年",dept:"品保",data:"儲存環境溫度測繪報告",form:"溫度測繪報告",owner:"品保 / 倉管",source:"DP33-01",note:"無環境重大變更時每三年執行；目前資料索引只寫「夏季、冬季各測量七天」，未明定月份，實際月份需回 DP33-01、測繪計畫或核准報告確認；重大事件或環境變更時不等三年。"}
     ],
     equipmentCalendar:[
       {freq:"每月",equipment:"UPS 不斷電系統",task:"功能與保養檢查",owner:"倉管",form:"FR34-03",source:"DP34-01 / FR10-01"},
@@ -627,7 +635,7 @@ const sections = [
       {freq:"每月",equipment:"溫控警報系統",task:"燈光、蜂鳴器、警示通報測試",owner:"倉管",form:"FR34-03",source:"DP33-01 / FR10-01"},
       {freq:"每半年",equipment:"門禁警報系統",task:"保養檢查",owner:"倉管",form:"FR34-03",source:"FR10-01"},
       {freq:"每年",equipment:"溫度計、溫濕度記錄器",task:"外部校正",owner:"品保",form:"外部校正報告",source:"DP34-02"},
-      {freq:"每三年",equipment:"倉儲環境",task:"夏季與冬季溫度測繪",owner:"品保 / 倉管",form:"溫度測繪報告",source:"DP33-01"},
+      {freq:"每三年",equipment:"倉儲環境",task:"夏季、冬季溫度測繪（月份依核准測繪計畫/報告）",owner:"品保 / 倉管",form:"溫度測繪報告",source:"DP33-01"},
       {freq:"發生時啟動",equipment:"倉儲環境或關鍵設備",task:"環境變更、重大事件、重大維修、遷移後再測繪或再確效評估",owner:"品保 / 倉管",form:"溫度測繪報告、4Q 確效報告",source:"DP33-01 / DP36-01"}
     ],
     schedule:[["發生時啟動","偏差、CAPA、客訴、退回、偽禁仿冒藥、藥品回收、文件/人員/儲位/設備/委外異動、新品項與新供應商都不等到月結。"],["固定週期","每日、每月、每兩月、每季、每半年、每年、每三年為目前索引表或 SOP 可追溯的收件節奏。"],["資料來源原則","FR10-01 有時程NEW 可作索引，但頁面內容仍以 SOP 原文核對；若索引與 SOP 不一致，應回報公司修正。"]],
@@ -641,13 +649,13 @@ const sections = [
     standards:{
       picsgdp:["關鍵設備需建立並維護足以確保其正確運作的系統","溫度記錄設備、警報系統等需定期校正，並有校正紀錄","設備保養需有計畫與紀錄，異常需文件化並評估對 GDP 的影響","確效確保設備與系統持續符合既定規格"],
       taiwan:["西藥優良運銷準則第三章規定作業場所及設備要求","量測儀器需定期校正並保存校正報告（DP34-02）","電腦化系統需驗證確效，確保資料完整性（DP35-01）","倉儲環境溫度需定期測繪，確保儲存條件均一（DP33-01）"],
-      company:["關鍵設備清單（FR34-02）涵蓋 UPS、分離式冷氣、柴油發電機、溫控警報、門禁警報","設備定期保養維修記錄填 FR34-03，倉管負責日常保養","溫度計與溫濕度記錄器每年 12 月底外部校正，報告保存 5 年","倉儲環境每三年執行夏/冬季溫度測繪各 7 天；重大事件不等三年"],
+      company:["關鍵設備清單（FR34-02）涵蓋 UPS、分離式冷氣、柴油發電機、溫控警報、門禁警報","設備定期保養維修記錄填 FR34-03，倉管負責日常保養","溫度計與溫濕度記錄器每年 12 月底外部校正，報告保存 5 年","倉儲環境每三年執行夏/冬季溫度測繪各 7 天；月份依核准測繪計畫或報告確認，重大事件不等三年"],
       docs:["DP34-01 關鍵設備作業程序書（FR34-02 設備清單、FR34-03 保養紀錄）","DP34-02 量測儀器作業程序書（外部校正報告）","DP33-01 溫度監視作業程序書（溫度測繪報告）","DP36-01 驗證確效作業程序書（4Q 確效報告）"]
     },
-    focus:["UPS、冷氣、柴油發電機、溫控警報每月必查；門禁警報每半年保養；設備異常需提報 FR12-03 偏差，調查後執行 CAPA。","量測儀器（溫度計、溫濕度記錄器）每年外部校正，電池每季更換並依中原標準時間重新校正；校正報告保存 5 年。","倉儲環境溫度測繪：無重大事件每三年一次（夏/冬各 7 天）；環境變更或重大維修後立即重新測繪，不等週期。"],
+    focus:["UPS、冷氣、柴油發電機、溫控警報每月必查；門禁警報每半年保養；設備異常需提報 FR12-03 偏差，調查後執行 CAPA。","量測儀器（溫度計、溫濕度記錄器）每年外部校正，電池每季更換並依中原標準時間重新校正；校正報告保存 5 年。","倉儲環境溫度測繪：無重大事件每三年一次（夏/冬各 7 天）；目前資料未明定月份，需回測繪計畫或報告確認。"],
     equipmentRef:"collection-calendar",
-    schedule:[["每月","UPS / 分離式冷氣外觀 / 柴油發電機發動 / 溫控警報功能測試。"],["每季","冷氣濾網保養、柴油量電池確認、溫度計電池更換與時間校正。"],["每半年","門禁警報系統保養檢查。"],["每年","冷氣外機鰭片、柴油引擎檢查、量測儀器外部校正（12 月底）。"],["每三年","倉儲環境夏/冬季溫度測繪（各 7 天）。"],["重大事件/環境變更","立即評估是否需再確效或重新測繪，不等例行週期。"]],
-    audit:["FR34-02 設備清單是否涵蓋所有 GDP 關鍵設備，且與現場一致。","FR34-03 保養紀錄是否依計畫頻率執行，每次有日期、執行人與結果。","量測儀器外部校正報告是否在有效期內，校正結果在合格範圍。","校正報告是否保存 5 年，且可即時提供。","電池更換後是否即時校正時間至中原標準時間。","溫度測繪報告是否完整，夏/冬兩季各 7 天且結果分布均勻。","重大事件時是否啟動即時再確效評估，不等三年例行週期。","設備異常是否有偏差提報（FR12-03）與後續 CAPA 追蹤紀錄。"],
+    schedule:[["每月","UPS / 分離式冷氣外觀 / 柴油發電機發動 / 溫控警報功能測試。"],["每季","冷氣濾網保養、柴油量電池確認、溫度計電池更換與時間校正。"],["每半年","門禁警報系統保養檢查。"],["每年","冷氣外機鰭片、柴油引擎檢查、量測儀器外部校正（12 月底）。"],["每三年","倉儲環境夏/冬季溫度測繪（各 7 天；月份依核准文件確認）。"],["重大事件/環境變更","立即評估是否需再確效或重新測繪，不等例行週期。"]],
+    audit:["FR34-02 設備清單是否涵蓋所有 GDP 關鍵設備，且與現場一致。","FR34-03 保養紀錄是否依計畫頻率執行，每次有日期、執行人與結果。","量測儀器外部校正報告是否在有效期內，校正結果在合格範圍。","校正報告是否保存 5 年，且可即時提供。","電池更換後是否即時校正時間至中原標準時間。","溫度測繪報告是否完整，夏/冬兩季各 7 天；若要回答月份，需回核准測繪計畫或報告。","重大事件時是否啟動即時再確效評估，不等三年例行週期。","設備異常是否有偏差提報（FR12-03）與後續 CAPA 追蹤紀錄。"],
     qa:true
   },
   {
@@ -850,7 +858,7 @@ const sopLibrary = {
   "DP15-01":{title:"DP15-01 品質風險作業程序書",file:"第一章品質手冊/DP15-01 品質風險作業程序書.docx",content:["針對藥品物流特性（特殊儲存條件、季節溫差、簽據管理等）評估潛在風險與效應，降低危害使用者安全之風險因子。","風險小組由管理藥師召集，成員涵蓋品管、倉管、業務、採購，執行風險鑑別→分析→評估→管制→溝通完整流程。","風險識別範疇包括：人員認知不足、儲區規劃、備用電源、儲位放置、預冷不均、常閉管控、緊急應變等。","每年依客戶抱怨、報廢退貨等資訊審視風險管理結果，填寫 FR15-01、FR15-02 風險追蹤紀錄表。"]},
   "DP25-02":{title:"DP25-02 病媒蟲鼠防治作業程序書",file:"第二章人事/DP25-02 病媒蟲鼠防治作業程序書.docx",content:["防治廠區及廠房蟑螂、囓齒動物（鼠）、蚊蠅、螞蟻孳生，維護倉儲環境衛生安全，符合 GDP 規範。","防治器具（蟑螂屋、捕鼠器、誘蟻餌、捕蟲燈）最低每季（3 個月）更換一次，填寫 FR25-05 病媒防治器具更換紀錄表；達異常條件或器具失效時立即更換。","每月彙整偵測報告（FR25-03），記錄捕獲數量；發現異常立即提出改善措施或加強防治策略。","廠區出入口無作業時應隨時關閉；通風口及排氣口裝設濾網；由品管部委外定期清潔消毒。"]},
   "DP32-01":{title:"DP32-01 作業場所規劃作業程序書",file:"第三章作業場所及設備/DP32-01作業場所規劃作業程序書.docx",content:["廠區依 WI32-02 規劃收貨區、作業區（驗收/貼標/理貨/打包）、倉儲區、非符合品區、出貨區、退貨區等功能分區。","非符合品（疑似偽/禁藥、過期、回收、退回、拒用藥品）需與可銷售品實體隔離，存放於非符合品區。","儲存條件（溫度、照明、清潔）需貼於明顯處，裝設儲區溫度顯示器；一般西藥依說明書要求，特殊性藥品依法規處理。","門禁進出管制依 WI25-01；訪客需廠內人員全程陪同；設立環境監測，入侵時自動啟動警鈴。"]},
-  "DP34-01":{title:"DP34-01 關鍵設備作業程序書",file:"第三章作業場所及設備/DP34-01關鍵設備作業程序書.docx",content:["關鍵設備（發電機、冷藏設備、空調、溫濕度監控系統、門禁等）進廠後需依 DP36-01 執行 4Q 確效，合格後登錄 FR34-02 GDP 相關設備清單。","溫度偵測器依 DP34-02 量測儀器程序校正；電池每 3 個月更換，更換後依中原標準時間重新校正時間。","定期保養依 WI34-01 設備維護保養說明書執行，每次填寫 FR34-03 設備定期保養維修紀錄表。","設備故障或異常需填寫 FR12-03 偏差事件報告單，調查後啟動 CAPA；委外物流嘉里醫藥每季提供 1 筆運輸過程溫度記錄。"]},
+  "DP34-01":{title:"DP34-01 關鍵設備作業程序書",file:"第三章作業場所及設備/DP34-01關鍵設備作業程序書.docx",content:["關鍵設備程序涵蓋發電機、空調、溫濕度監控系統、門禁等設備；本公司實際設備應回 FR34-02 GDP 相關設備清單確認，不可從程序泛稱推論有冷藏倉。","溫度偵測器依 DP34-02 量測儀器程序校正；電池每 3 個月更換，更換後依中原標準時間重新校正時間。","定期保養依 WI34-01 設備維護保養說明書執行，每次填寫 FR34-03 設備定期保養維修紀錄表。","設備故障或異常需填寫 FR12-03 偏差事件報告單，調查後啟動 CAPA；委外物流嘉里醫藥每季提供 1 筆運輸過程溫度記錄。"]},
   "DP34-02":{title:"DP34-02 量測儀器作業程序書",file:"第三章作業場所及設備/DP34-02量測儀器作業程序書.docx",content:["確保倉儲量測設備（溫度計、溫濕度記錄器）精密度與準確度在允收範圍內，維持國際量測追溯性（TAF/ILAC-MRA）。","新添購儀器須有 TAF 認證（ISO 17025）實驗室合格校驗報告；校正均委外執行，每年 12 月底安排一次外部校正。","校正結果需在允收基準內；儀器合格後列冊管理，校正報告依文件管制保存 5 年。","監督量測儀器若使用電腦軟體，軟體應在初次使用前確認；變更後需再確認，確認程度與風險程度成比例。"]},
   "DP35-01":{title:"DP35-01 電腦化系統作業程序書",file:"第三章作業場所及設備/DP35-01電腦化系統作業程序書.docx",content:["影響儲存運銷的電腦化系統（溫度監控、門禁警報、進銷存系統）使用前需確效（依 DP36-01 4Q 確效），確保準確、持續且可再現地達到預期結果。","僅授權人員可輸入或修改系統資料，授權名單記錄於 FR35-02 電腦化系統授權書，人員異動時立即更新。","資料/數據需每月定期備份（含自動備份），同時異地分開保存，期限至少 5 年。","系統操作說明書（含使用目的、安全措施、系統連結方式）需依版本更新，並依 DP42-01 執行文件修訂記錄。"]},
   "DP36-01":{title:"DP36-01 驗證確效作業程序書",file:"第三章作業場所及設備/DP36-01驗證確效作業程序書.docx",content:["關鍵設備開始使用前需執行 4Q 確效：設計確認（DQ）、安裝確認（IQ）、操作確認（OQ）、性能確認（PQ）。","確效團隊由品管部負責查核確認，倉管部負責操作；參與人員需受過相關訓練。","確效報告依合作廠商格式（4Q 確效報告），由品保保存 5 年；設備重大維修、遷移或環境重大變更後需評估再確效，不等例行週期。","量測設備校正狀況（設備名稱、校驗日期）需記錄於確效文件，確保量測數據可追溯。"]},
@@ -948,6 +956,62 @@ const annualDataGovernance = [
   {title:"年度保存",body:"收件狀態應以年度為單位保存，避免 2026 年完成狀態覆蓋 2027 年資料。後續資料路徑需加入年度層級。"},
   {title:"公司接管",body:"目前 Firebase 在個人專案；正式使用前應改由公司可管理帳號持有，並設定至少兩位管理者。"},
   {title:"交接備份",body:"每年結案後應匯出狀態、收件清單與 Q&A；交接資料需包含 Firebase 專案、rules、部署指令與管理者清單。"}
+];
+
+const projectSourceFiles = [
+  "第一章品質手冊/DM10-01 品質手冊.docx",
+  "第一章品質手冊/DP12-01 品質管理系統程序書.docx",
+  "第一章品質手冊/DP12-02 偏差管理作業程序.docx",
+  "第一章品質手冊/DP12-03 矯正與預防作業程序書.docx",
+  "第一章品質手冊/DP12-04 變更管制作業程序書.docx",
+  "第一章品質手冊/DP14-01 管理階層檢討作業程序.docx",
+  "第一章品質手冊/DP15-01 品質風險作業程序書.docx",
+  "第一章品質手冊/FR10-01 新勝GDP品質系統文件總覽表(有時程NEW).xlsx",
+  "第一章品質手冊/FR15-01 風險分析報告.docx",
+  "第一章品質手冊/FR15-02 風險追蹤紀錄表.docx",
+  "第一章品質手冊/WI10-01 SMF廠商基本資料.docx",
+  "第二章人事/DP22-01組織與職掌標準作業程序.docx",
+  "第二章人事/DP24-01員工教育訓練作業程序.docx",
+  "第二章人事/DP25-01人員衛生暨環境清潔作業程序書.docx",
+  "第二章人事/DP25-02 病媒蟲鼠防治作業程序書.docx",
+  "第二章人事/FR57-01 進銷存電腦化系統確效報告書(正航).docx",
+  "第二章人事/WI22-01組織圖暨員工職務說明書.docx",
+  "第二章人事/WI25-01門禁進出管制規定.docx",
+  "第二章人事/WI25-04 病媒防治管制點設置分佈圖.docx",
+  "第三章作業場所及設備/DP32-01作業場所規劃作業程序書.docx",
+  "第三章作業場所及設備/DP33-01溫度監視作業程序書.docx",
+  "第三章作業場所及設備/DP34-01關鍵設備作業程序書.docx",
+  "第三章作業場所及設備/DP34-02量測儀器作業程序書.docx",
+  "第三章作業場所及設備/DP35-01電腦化系統作業程序書.docx",
+  "第三章作業場所及設備/DP36-01驗證確效作業程序書.docx",
+  "第三章作業場所及設備/FR33-01 溫度記錄表.docx",
+  "第三章作業場所及設備/FR34-02 GDP 相關設備清單.docx",
+  "第三章作業場所及設備/FR34-03 設備定期保養維修紀錄表(UPS不斷電系統).xlsx",
+  "第三章作業場所及設備/FR34-03 設備定期保養維修紀錄表(分離式冷氣).xlsx",
+  "第三章作業場所及設備/FR34-03 設備定期保養維修紀錄表(門禁警報系統).xlsx",
+  "第三章作業場所及設備/FR34-03 設備定期保養維修紀錄表(柴油發電機).xlsx",
+  "第三章作業場所及設備/FR34-03 設備定期保養維修紀錄表(溫控警報系統).xlsx",
+  "第三章作業場所及設備/廠區示意圖115.png",
+  "第四章文件管理/DP42-01文件管制作業程序書.docx",
+  "第四章文件管理/DP42-02品質紀錄作業程序書.docx",
+  "第四章文件管理/FR42-02 文件制修訂申請單.docx",
+  "第四章文件管理/FR42-03 文件首頁.docx",
+  "第四章文件管理/FR42-06 文件銷毀紀錄表.docx",
+  "第五章作業/DP52-01藥品供應商評鑑作業程序.docx",
+  "第五章作業/DP53-01客戶認可審查程序書.docx",
+  "第五章作業/DP54-01藥品進出貨管理程序書.docx",
+  "第五章作業/DP55-01產品儲存作業程序書.docx",
+  "第五章作業/DP56-01廢棄物管理作業程序書.docx",
+  "第五章作業/DP57-01訂單、撿貨及配銷管理程序書.docx",
+  "第五章作業/FR57-01 進銷存電腦化系統確效報告書(正航).docx",
+  "第六章申訴、退回、疑似偽、禁藥及藥品回收/DP62-01客訴管理作業程序書.docx",
+  "第六章申訴、退回、疑似偽、禁藥及藥品回收/DP63-01退回品管理作業程序書.docx",
+  "第六章申訴、退回、疑似偽、禁藥及藥品回收/DP64-01偽禁仿冒藥作業程序書.docx",
+  "第六章申訴、退回、疑似偽、禁藥及藥品回收/DP65-01藥品回收管理程序書.docx",
+  "第七章委外作業/DP72-01委外作業程序書.docx",
+  "第八章自我審查/DP82-01 內部稽核作業程序書.docx",
+  "簡報資料/新勝醫藥_GDP合規簡報.pptx",
+  "HTML資料庫/新勝GDP資料庫.html"
 ];
 
 /* ═══════════════════════════════════════════════
@@ -1088,26 +1152,143 @@ const calendarStatusStore = {
 
 const kbStore = {
   cache:null,
+  localCache:null,
+  normalize(text){
+    return String(text||"").toLowerCase().replace(/[？?！!，,。.、\s]/g,"");
+  },
+  queryTerms(query){
+    const raw=String(query||"").trim();
+    const compact=this.normalize(raw);
+    const codes=raw.match(/[A-Za-z]{2}\d{2}-\d{2}|[A-Za-z]{2}\d{2}|[A-Za-z]{2}\d{2}-\d{2}/g)||[];
+    const words=raw.split(/[\s,，、。?？!！()（）/]+/).map(x=>x.trim()).filter(x=>x.length>=2);
+    const intent=[];
+    if(/夏季|冬季|月份|幾月|幾個月/.test(raw)) intent.push("夏季冬季月份");
+    if(/冷藏|冷藏倉|冷鏈|常溫|倉庫/.test(raw)) intent.push("常溫倉庫冷藏倉");
+    if(/正航|正行|系統|溫控|溫度監控/.test(raw)) intent.push("正航溫度監控系統");
+    return [...new Set([compact,...codes.map(c=>this.normalize(c)),...words.map(w=>this.normalize(w)),...intent].filter(Boolean))];
+  },
+  codeFromText(text){
+    const m=String(text||"").match(/[A-Z]{2}\d{2}-\d{2}/);
+    return m?m[0]:"";
+  },
+  localDocs(){
+    if(this.localCache) return this.localCache;
+    const docs=[];
+    Object.entries(sopLibrary).forEach(([code,doc])=>{
+      docs.push({
+        id:`sop-${code}`,
+        sourceType:"SOP 摘要",
+        topic:doc.title||code,
+        international:"此筆來自本頁已整理的 SOP/WI/FR 摘要索引。",
+        taiwan:"請依文件編號回到正式核准文件確認完整條文。",
+        xinshing:(doc.content||[]).join(" "),
+        sop_ref:[code],
+        file:doc.file||"",
+        keywords:[code,doc.title,doc.file,...(doc.content||[])].filter(Boolean)
+      });
+    });
+    sections.forEach(s=>{
+      const texts=[
+        s.title,s.tag,s.lead,
+        ...(s.pills||[]),...(s.focus||[]),...(s.audit||[]),
+        ...(s.schedule||[]).flat(),
+        ...(s.standards?Object.values(s.standards).flat():[]),
+        ...(s.collectionCalendar||[]).flatMap(x=>[x.freq,x.dept,x.data,x.form,x.owner,x.source,x.note]),
+        ...(s.equipmentRef||[]).flatMap(x=>[x.freq,x.equipment,x.task,x.owner,x.form,x.source])
+      ].filter(Boolean);
+      docs.push({
+        id:`section-${s.id}`,
+        sourceType:"頁面資料",
+        topic:s.title,
+        international:"此筆來自頁面中的法規與作業對照。",
+        taiwan:"此筆來自頁面中的台灣 GDP 與公司資料整理。",
+        xinshing:texts.join(" "),
+        sop_ref:(s.pills||[]).filter(p=>sopLibrary[p]),
+        file:"",
+        keywords:texts
+      });
+    });
+    Object.entries(departmentDocumentMaps).forEach(([id,map])=>{
+      docs.push({
+        id:`docmap-${id}`,
+        sourceType:"部門文件地圖",
+        topic:`${map.intro||id}`,
+        international:"此筆來自部門文件閱讀地圖。",
+        taiwan:"用於協助新人知道同部門應優先閱讀哪些文件。",
+        xinshing:(map.groups||[]).flatMap(g=>[g.label,g.note,...(g.docs||[])]).join(" "),
+        sop_ref:(map.groups||[]).flatMap(g=>g.docs||[]).map(x=>this.codeFromText(x)).filter(code=>sopLibrary[code]),
+        file:"",
+        keywords:[map.intro,...(map.groups||[]).flatMap(g=>[g.label,g.note,...(g.docs||[])])].filter(Boolean)
+      });
+    });
+    projectSourceFiles.forEach(path=>{
+      const name=path.split("/").pop();
+      const code=this.codeFromText(name);
+      docs.push({
+        id:`file-${path}`,
+        sourceType:"資料夾檔案",
+        topic:name,
+        international:"此筆代表資料夾內實際存在的來源檔案。",
+        taiwan:"HTML 可先依檔名與已整理摘要查到此資料；完整內容請回原始檔。",
+        xinshing:`檔案位置：${path}`,
+        sop_ref:code&&sopLibrary[code]?[code]:[],
+        file:path,
+        keywords:[path,name,code].filter(Boolean)
+      });
+    });
+    docs.push({
+      id:"clarify-temperature-mapping",
+      sourceType:"查詢校正",
+      topic:"溫度測繪、冷藏倉與溫控系統說明",
+      international:"GDP 要求儲存環境有適當溫度監測、紀錄、校正與異常處理。",
+      taiwan:"目前資料索引寫到倉儲環境每三年執行夏季與冬季測繪各 7 天，但未明定夏季/冬季是哪幾個月份。",
+      xinshing:"本頁不得推論公司有冷藏倉，也不得寫成使用正航系統做溫度監控。已知資料應表述為：常溫倉庫、分離式冷氣、UPS、溫控警報、溫度計與溫濕度記錄器；正航相關資料屬進銷存電腦化系統確效/備份，不等於溫度監控系統。",
+      sop_ref:["DP33-01","DP34-01","DP34-02","DP35-01","DP55-01"],
+      file:"第三章作業場所及設備/DP33-01溫度監視作業程序書.docx",
+      keywords:["溫度測繪","夏季","冬季","月份","冷藏倉","常溫倉庫","正航","正行","溫控","溫度監控","溫濕度記錄器","DP33-01","DP34-01","DP35-01"]
+    });
+    this.localCache=docs;
+    return docs;
+  },
   async load(){
     if(this.cache) return this.cache;
-    this.cache=[];
+    this.cache=this.localDocs().slice();
     if(!qaStore.db) return this.cache;
     try{
       const {collection,getDocs}=qaStore.firebase;
       const snap=await getDocs(collection(qaStore.db,"gdpKnowledgeBase"));
-      snap.docs.forEach(d=>this.cache.push(Object.assign({id:d.id},d.data())));
+      snap.docs.forEach(d=>this.cache.push(Object.assign({id:`firestore-${d.id}`,sourceType:"Firestore KB"},d.data())));
     }catch(e){ console.warn("GDP知識庫讀取失敗",e); }
     return this.cache;
   },
   async search(query){
     const docs=await this.load();
-    const q=String(query).replace(/[？?！!，,。.、\s]/g,"");
+    const terms=this.queryTerms(query);
+    const compact=this.normalize(query);
     const scored=docs.map(doc=>{
-      const kw=Array.isArray(doc.keywords)?doc.keywords:[];
-      const score=kw.filter(k=>q.includes(String(k))).length;
+      const hay=[
+        doc.topic,doc.international,doc.taiwan,doc.xinshing,doc.file,
+        ...(Array.isArray(doc.keywords)?doc.keywords:[]),
+        ...(Array.isArray(doc.sop_ref)?doc.sop_ref:[])
+      ].map(x=>this.normalize(x)).join("|");
+      let score=0;
+      if(compact&&hay.includes(compact)) score+=12;
+      terms.forEach(term=>{
+        if(!term) return;
+        if(hay.includes(term)) score+=term.length>=6?6:3;
+        if(term.includes("夏季冬季月份")&&/溫度測繪|測繪|dp3301/.test(hay)) score+=10;
+        if(term.includes("常溫倉庫冷藏倉")&&/倉庫|常溫|冷藏|儲存/.test(hay)) score+=8;
+        if(term.includes("正航溫度監控系統")&&/正航|溫度|電腦化系統|dp3501|fr5701/.test(hay)) score+=8;
+      });
       return {doc,score};
     }).filter(x=>x.score>0).sort((a,b)=>b.score-a.score);
-    return scored.length?scored[0].doc:null;
+    const seen=new Set();
+    return scored.filter(x=>{
+      const key=x.doc.topic||x.doc.id;
+      if(seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    }).slice(0,8).map(x=>Object.assign({score:x.score},x.doc));
   }
 };
 
@@ -1162,8 +1343,8 @@ const analyticsStore = {
         const docKey=String(data.targetId).replace(/[^A-Za-z0-9\-]/g,"").slice(0,60)||"unknown";
         await setDoc(doc(qaStore.db,"gdpDocStats",docKey),{
           docId:data.targetId,
-          docLabel:data.targetLabel||data.targetId,
-          count:increment(1),
+          title:data.targetLabel||data.targetId,
+          openCount:increment(1),
           lastOpenedAt:serverTimestamp()
         },{merge:true});
       }
@@ -1209,7 +1390,7 @@ const analyticsStore = {
       const users=uSnap.docs.map(d=>d.data()).sort((a,b)=>(b.eventCount||0)-(a.eventCount||0)).slice(0,8);
       const questions=qSnap.docs.map(d=>d.data()).sort((a,b)=>(b.count||0)-(a.count||0)).slice(0,8);
       const reviews=rSnap.docs.map(d=>d.data()).sort((a,b)=>String(b.quarter||"").localeCompare(String(a.quarter||""))).slice(0,4);
-      const docs=dSnap.docs.map(d=>d.data()).sort((a,b)=>(b.count||0)-(a.count||0)).slice(0,8);
+      const docs=dSnap.docs.map(d=>d.data()).sort((a,b)=>(b.openCount||0)-(a.openCount||0)).slice(0,8);
       return {users,questions,reviews,docs};
     }catch(e){ console.warn("排行榜讀取失敗",e); return empty; }
   }
@@ -1309,7 +1490,7 @@ function auditChecklistFor(item){
     [/到貨|驗收|入庫|品名.*批號|批號.*效期|點收/,["FR54-01 到貨點收驗收紀錄已填寫品名、批號、效期、數量、溫度與外觀確認。","供應商核准狀態已在到貨前確認，驗收不合格品已進入非符合區。","到貨紀錄與採購單、系統紀錄三方一致，且與作業同步完成，無事後補填。"]],
     [/供應商|客戶/,["清冊為最新版，資格文件仍在有效期限內。","新增、停用或異動有審查與核准紀錄。","採購、業務、品保與 GDP 權責人的責任分工清楚。"]],
     [/出貨|揀貨|配送|銷貨單|客戶.*地址/,["FR57-01~FR57-03 出貨紀錄含客戶名、地址、品名、批號、效期、數量與日期。","揀貨時確認 FEFO 先到期先出，批號清楚，標示完整。","配送標示單與客戶簽收紀錄可作為配送完成與流向紀錄可追溯的佐證。"]],
-    [/溫度測繪|測繪|測繪報告/,["每三年針對倉庫執行環境溫度測繪，夏季與冬季各測量七天。","測繪結果用來確認溫度計設置位置與倉庫儲存環境是否合理。","環境、貨架或重大事件異動後需評估是否重新測繪，並留下書面紀錄。"]],
+    [/溫度測繪|測繪|測繪報告/,["每三年針對倉庫執行環境溫度測繪；目前資料索引只寫夏季與冬季各測量七天，未明定月份。","測繪結果用來確認溫度計設置位置與倉庫儲存環境是否合理。","環境、貨架或重大事件異動後需評估是否重新測繪，並留下書面紀錄。"]],
     [/保存溫度|溫度|警報/,["溫度紀錄（FR33-01）可追溯倉庫儲存環境，異常區間需有處理說明。","每年度針對溫度計、溫濕度記錄器安排外部校正，校正報告保存 5 年。","本公司為單一倉庫，資料不得寫成冷藏倉，也不得寫成使用正航系統做溫度監控。"]],
     [/非符合|隔離.*標示|偽禁仿冒|假藥|回收/,["非符合品區域有明確標示，實體隔離，無混入正常庫存的風險。","偽禁仿冒藥已依 DP64-01 立即停止銷售並上呈管理藥師。","回收計畫啟動、客戶通知、庫存回報與成果報告（FR65-01~03）均可提出。"]],
     [/文件.*制定|審查.*核准|發行章|文管.*控管|作廢文件/,["正式文件已蓋發行章，由文管控管，現場不使用未核准版本。","作廢文件已回收或標示，避免誤用舊版 SOP。","年度 12 月完成各單位文件修改意見徵詢（FR42-02），屆期文件已製作銷毀紀錄（FR42-06）。"]],
@@ -1611,8 +1792,27 @@ function kbAnswerHtml(doc){
     ${sopRefs}
   </div>`;
 }
+function kbResultsHtml(results,query){
+  const cards=results.map(doc=>{
+    const sopRefs=Array.isArray(doc.sop_ref)&&doc.sop_ref.length
+      ?`<div class="kb-hit-meta"><span>相關文件</span>${doc.sop_ref.map(s=>sopLibrary[s]?pillMarkup(s):`<span>${esc(s)}</span>`).join("")}</div>`:"";
+    const file=doc.file?`<div class="kb-hit-meta"><span>來源：${esc(doc.file)}</span></div>`:"";
+    const body=doc.xinshing||doc.taiwan||doc.international||"";
+    return `<article class="kb-hit-card">
+      <h4><span class="kb-hit-type">${esc(doc.sourceType||"資料")}</span>${esc(doc.topic||"未命名資料")}</h4>
+      <p>${esc(String(body).slice(0,260))}${String(body).length>260?"...":""}</p>
+      ${file}
+      ${sopRefs}
+    </article>`;
+  }).join("");
+  return `<div class="kb-answer-card">
+    <div class="kb-answer-topic">查詢「${esc(query)}」的相關資料</div>
+    <div class="kb-result-summary">已同時搜尋 Firestore 知識庫、本頁 SOP 摘要、部門文件地圖、年度行事曆與資料夾檔名索引；顯示前 ${results.length} 筆最相關結果。</div>
+    <div class="kb-hit-list">${cards}</div>
+  </div>`;
+}
 function kbSection(){
-  const quickQuestions=["倉庫多久盤點一次","溫度超標怎麼處理","供應商怎麼評鑑","藥品回收要怎麼做","偏差要怎麼處理","教育訓練合格標準","文件要保存幾年","藥品過期了怎麼辦","客訴要怎麼處理","內部稽核多久一次"];
+  const quickQuestions=["倉庫多久盤點一次","溫度測繪夏季冬季是哪幾個月","正航是不是溫度監控系統","公司有沒有冷藏倉","溫度超標怎麼處理","供應商怎麼評鑑","藥品回收要怎麼做","偏差要怎麼處理","教育訓練合格標準","內部稽核多久一次"];
   const quickBtns=quickQuestions.map(q=>`<button type="button" class="kb-quick" data-q="${esc(q)}">${esc(q)}？</button>`).join("");
   return [
     panel("常見問題快速查詢",`<p style="font-size:13px;color:var(--muted);margin-bottom:14px">點擊常見問題，或在下方輸入自定義問題後按查詢。</p><div class="kb-quick-btns">${quickBtns}</div>`,"wide"),
@@ -1732,17 +1932,17 @@ function bindKbForm(){
     const loading=document.createElement("div");
     loading.className="kb-bubble bot kb-loading";loading.textContent="查詢中…";box.appendChild(loading);
     box.scrollTop=box.scrollHeight;
-    const doc=await kbStore.search(q);
-    analyticsStore.log("kb_search",{sectionId:"gdp-kb",question:q,status:doc?"found":"not_found"});
+    const results=await kbStore.search(q);
+    analyticsStore.log("kb_search",{sectionId:"gdp-kb",question:q,status:results.length?"found":"not_found"});
     loading.remove();
-    if(doc){
+    if(results.length){
       const el=document.createElement("div");
       el.className="kb-bubble bot";
-      el.innerHTML=kbAnswerHtml(doc);
+      el.innerHTML=kbResultsHtml(results,q);
       box.appendChild(el);
       el.querySelectorAll("[data-doc]").forEach(b=>b.addEventListener("click",()=>openDoc(b.dataset.doc)));
     }else{
-      box.insertAdjacentHTML("beforeend",`<div class="kb-bubble bot kb-notfound">找不到相關資料。請嘗試其他關鍵字，或聯繫 QA 人員。</div>`);
+      box.insertAdjacentHTML("beforeend",`<div class="kb-bubble bot kb-notfound">資料庫目前找不到命中資料。請先確認該 SOP/WI/FR 是否已放入專案資料夾並同步到 Firestore。</div>`);
     }
     box.scrollTop=box.scrollHeight;
   }
@@ -1759,7 +1959,7 @@ async function renderUsageStats(){
     ? data.questions.map(x=>`<div class="rank-row"><span>${esc(x.question||"未命名問題")}</span><strong>${Number(x.count||0)}</strong></div>`).join("")
     : `<span class="note">尚無查詢紀錄。</span>`;
   dEl.innerHTML=data.docs?.length
-    ? data.docs.map(x=>`<div class="rank-row"><span>${esc(x.docId||x.docLabel||"未命名文件")}</span><strong>${Number(x.count||0)}</strong></div>`).join("")
+    ? data.docs.map(x=>`<div class="rank-row"><span>${esc(x.docId||x.title||"未命名文件")}</span><strong>${Number(x.openCount||0)}</strong></div>`).join("")
     : `<span class="note">尚無文件開啟紀錄。</span>`;
   rEl.innerHTML=data.reviews.length
     ? data.reviews.map(x=>`<div class="rank-row"><span>${esc(x.quarter||"未命名季度")}｜${esc(x.status||"待更新")}</span><strong>追蹤</strong></div>`).join("")

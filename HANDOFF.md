@@ -130,3 +130,42 @@ Firebase 功能狀態：
 - 資料夾內有重複資料時以最新資料為主
 - 修正時應統一一次性修正，不能只修復一個地方
 - 溫度超標：每 5 分鐘記錄一次（非 15 分鐘）；每年針對量測儀器做外部校正；每三年或重大變更時針對倉庫環境做溫度測繪
+
+## 2026-05-26 第四次開工：資料夾全量索引與新 skill
+
+使用者已明確同意：Firebase 專案 `xinshing-gdp-training-20260525` 作為正式資料庫，可將本機資料夾內 SOP/WI/FR/表單/簡報文字摘要與檔名索引批次上傳至 Firestore `gdpKnowledgeBase`。
+
+已完成：
+
+- 新增 `Firebase設定/sync-gdp-knowledge.ps1`，可重跑「專案來源檔 → 抽文字 → 分段 → Firestore」同步。
+- 已同步來源檔 58 個，Firestore 文件 79 筆，失敗 0。
+- 已新增官方法規來源索引：
+  - `official-pics-gdp-pe011`：PIC/S publications / PE 011 GDP Guide。
+  - `official-taiwan-gdp-rule`：食藥署 GDP 專區「西藥優良運銷準則」公告頁。
+- 已建立本機 Codex skill：`C:\Users\user\.codex\skills\html-evidence-training-builder`
+  - 內含 `SKILL.md`
+  - `references/gdp-html-checklist.md`
+  - `scripts/sync-gdp-knowledge.ps1`
+
+注意：
+
+- 同步資料以來源檔文字為主；國際法規/台灣法規欄位若來源檔未直接支持，不得用模型推論補成公司做法。
+- PowerShell 5 會把無 BOM UTF-8 腳本中的中文常數解析錯亂；同步腳本控制文字已改為 ASCII，抽出的文件內容仍保留中文。
+- `python` / `py` 在此環境不可用，因此 skill 以手動結構建立，未跑 `quick_validate.py`；已做檔案結構與 frontmatter 檢查。
+
+## 2026-05-26 收工：永久網址與授權規則
+
+永久公開網址：
+
+```text
+https://n1116839.github.io/xinshing-gdp-training/
+```
+
+不要再請使用者使用本機 `file://` 深層網址作為長期網址。GitHub Pages 根網址應保持穩定，`index.html` 負責導向實際 HTML。
+
+使用者授權規則：
+
+- 使用者指定「上傳 github」時，代表可直接 commit/push 當前相關變更，不需再問一次。
+- 使用者指定「更新第二大腦」時，代表可直接寫入第二大腦專案筆記、踩坑紀錄與知識庫紀錄。
+- 使用者指定「使用 fire 資料庫 / Firebase / Firestore」時，代表可直接執行必要的 Firestore 同步、rules 部署或資料寫入。
+- 若工具層要求 sandbox escalation，仍依工具機制提出，但專案紀錄不可再寫「等使用者明確說同意推送後再執行」。

@@ -1395,3 +1395,56 @@ Firebase 功能狀態：
 - 多媒體與滾動特效：互動式圖表、可點擊視覺化、scroll trigger、必要時使用滾動載入或互動影音。
 
 下次開工判斷：這是未完成事項，不是已完成修正。修 GDP 智慧查詢前，先備份 Firestore 資料，再批次核對資料庫內容與 SOP 文件。
+
+## 2026-05-26 Codex 接續：智慧查詢改為完整索引，Firestore 上傳待明確確認
+
+本次使用者要求「資料夾內有多少資料，資料庫就應該有多少資料；使用者輸入關鍵字，就要跳出相關回應」。
+
+已在 `HTML資料庫/新勝GDP資料庫.html` 調整：
+
+- 智慧查詢不再只依賴少數 Firestore KB；已建立完整搜尋索引，來源包含 Firestore、本頁 SOP 摘要、頁面資料、部門文件閱讀地圖、年度行事曆、資料夾檔名索引。
+- 查詢結果改為列出多筆相關資料，不再只回傳單一答案。
+- 新增溫度測繪、冷藏倉、正航/正行溫控系統的校正資料：不得推論有冷藏倉，不得把正航進銷存/備份寫成溫度監控系統。
+- 溫度測繪文字改為：目前資料只寫夏季與冬季各測量七天，未明定月份；月份需回 DP33-01、測繪計畫或核准報告確認。
+- 修正 `gdpDocStats` 寫入欄位，使熱門文件排行榜符合 Firestore rules（`title/openCount/lastOpenedAt`）。
+
+嘗試直接批次寫入 Firestore `gdpKnowledgeBase` 時，Codex 安全審查判定這會把本機 SOP/WI/FR 摘要與檔名上傳到 Firebase，屬資料外傳風險，已被阻擋。後續若要執行上傳，需由使用者再次明確確認：
+
+- Firebase 專案 `xinshing-gdp-training-20260525` 是正式要承載這些 SOP/WI/FR 摘要與檔名索引的資料庫。
+- 可將專案資料夾內的文件索引、摘要、頁面資料與部門地圖批次寫入 Firestore `gdpKnowledgeBase`。
+
+確認後再執行 Firestore 同步；不要繞過安全審查。
+
+## 2026-05-26 Codex 接續：使用者同意後已完成 Firestore 全量索引
+
+使用者已明確同意：Firebase 專案 `xinshing-gdp-training-20260525` 是正式資料庫，允許將本機資料夾內 SOP/WI/FR/表單/簡報文字摘要與檔名索引批次上傳至 Firestore `gdpKnowledgeBase`。
+
+本次完成：
+
+- 新增同步腳本：`Firebase設定/sync-gdp-knowledge.ps1`
+- 已同步來源檔 58 個，Firestore 文件 79 筆，失敗 0。
+- 同步內容包含來源檔名、相對路徑、文件編號、可抽取文字、分段資訊與更新時間。
+- 已補入官方法規來源索引：
+  - `official-pics-gdp-pe011`：PIC/S publications / PE 011 GDP Guide。
+  - `official-taiwan-gdp-rule`：食藥署 GDP 專區「西藥優良運銷準則」公告頁。
+- 新增 Codex skill：`C:\Users\user\.codex\skills\html-evidence-training-builder`
+  - 用途：當使用者提供資料並要求製作 HTML 教材/資料庫時，固定執行可追溯索引、文字優先、再視覺互動與 image2/imagegen 規劃。
+  - 已打包同步腳本到 skill 的 `scripts/sync-gdp-knowledge.ps1`。
+
+注意：
+
+- 不可把國際法規/台灣法規缺口用公司做法推論補齊；缺法規就查官方來源並標 URL。
+- 公司做法只依本機 SOP/WI/FR/表單/簡報來源，不可自行想像。
+- 後續若修改任一來源檔或 HTML 內的資料摘要，需重跑 `Firebase設定/sync-gdp-knowledge.ps1`。
+
+## 2026-05-26 收工補記：永久網址與授權規則
+
+本專案公開使用網址以 GitHub Pages 根網址為準，不再請使用者記本機 `file://` 或含中文檔名的深層網址：
+
+```text
+https://n1116839.github.io/xinshing-gdp-training/
+```
+
+GitHub Pages 入口 `index.html` 會導向 `HTML資料庫/新勝GDP資料庫.html`。後續更新時應維持根網址不變，避免另開新網址造成使用者 404。
+
+使用者已明確授權：當使用者指定「上傳 github」、「更新第二大腦」、「使用 fire 資料庫 / Firebase / Firestore」等任務時，視為已授權 Codex 執行對應 push、第二大腦寫入、Firebase/Firestore 同步或部署，不需再等待額外確認。若工具層仍要求 sandbox escalation，依工具規則送出必要申請，但回覆與接續文件不得再寫成「等使用者明確說同意推送後才可執行」。
