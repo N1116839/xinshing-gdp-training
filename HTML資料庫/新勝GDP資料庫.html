@@ -1191,6 +1191,12 @@ const kbStore = {
     const m=String(text||"").match(/[A-Z]{2}\d{2}-\d{2}/);
     return m?m[0]:"";
   },
+  isUnsafeSourceDoc(doc){
+    const file=String(doc.file||doc.topic||"");
+    const body=String(doc.xinshing||"");
+    return /新勝GDP資料庫\.html|HTML資料庫\/新勝GDP資料庫\.html/i.test(file)
+      || /<div class=|function\s+\w+\(|const\s+\w+\s*=|<\/button>|<\/div>/i.test(body);
+  },
   localDocs(){
     if(this.localCache) return this.localCache;
     const docs=[];
@@ -1419,7 +1425,10 @@ const kbStore = {
     try{
       const {collection,getDocs}=qaStore.firebase;
       const snap=await withTimeout(getDocs(collection(qaStore.db,"gdpKnowledgeBase")),6000,"GDP知識庫讀取");
-      snap.docs.forEach(d=>this.cache.push(Object.assign({id:`firestore-${d.id}`,sourceType:"Firestore KB"},d.data())));
+      snap.docs.forEach(d=>{
+        const data=Object.assign({id:`firestore-${d.id}`,sourceType:"Firestore KB"},d.data());
+        if(!this.isUnsafeSourceDoc(data)) this.cache.push(data);
+      });
     }catch(e){ console.warn("GDP知識庫讀取失敗",e); }
     return this.cache;
   },
