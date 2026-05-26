@@ -149,7 +149,7 @@ function Write-FirestoreDoc {
 }
 
 $includeExt = @('.docx','.xlsx','.pptx','.md','.html')
-$exclude = '\\.git\\|\\outputs\\|\\preview_|\\visual_check_|\\.claude\\|HTML資料庫\\assets\\|HTML資料庫\\新勝GDP資料庫\.html$'
+$exclude = '\\.git\\|\\outputs\\|\\preview_|\\visual_check_|\\.claude\\|HTML資料庫\\|Firebase設定\\|README|HANDOFF|AGENTS|index\.html$|\.nojekyll$'
 $files = Get-ChildItem -LiteralPath $ProjectRoot -Recurse -File |
   Where-Object { $includeExt -contains $_.Extension.ToLowerInvariant() -and $_.FullName -notmatch $exclude } |
   Sort-Object FullName
