@@ -71,8 +71,29 @@
 - 流程步驟點擊展開詳情
 - 稽查重點互動核對：視覺化豐富化（含互動型態：表單輸入、微互動、Accordion/Modal/Tabs、scroll trigger）
 
-**E. 未完成的待辦**
+**E. 重複區塊整合**
 - 重複區塊整合（各部門頁面中重複出現的行事曆/表單區塊）
+- 文件清單三處重複（pagePills + 文件地圖 + docButtons），只保留一處
+- eyebrow 字體 16px → 18px（0249477 已改，但被回退）
+
+**F. GDP KB 全量逐章逐題校對（長期工作，最重要）**
+- **前一輪 AI 明確說明：不應把 2026-05-26 的同步當成整個資料庫已全部完成。**
+- 目前 Firestore KB 71 筆為自動同步文字摘要，不一定符合三階回覆格式，且未逐筆驗證正確性
+- 必須逐章（第一章品管 → 第八章）逐題測試，每章至少 5 組不同性質問題
+- 每題需回 SOP/WI/FR 原文核對答案正確性
+- 如有錯誤，需同時修正 Firestore 與 HTML fallback
+- 已知錯誤模式（不可再犯）：
+  - 出現冷藏倉 / 冷鏈 → 公司無冷藏倉
+  - 溫度記錄每 15 分鐘 → 應為每 5 分鐘
+  - 內部稽核每 6 個月 → 應為每年 12 月（依 DP82-01）
+  - 溫度測繪每年 → 應為每三年（夏 7-9 月、冬隔年 1-3 月）
+  - 進貨主文件誤用 DP52 → 應為 DP54-01 / FR54-01
+
+**KB-1. clarify-* 條目指令語清除（最優先執行）**
+- `clarify-temperature-mapping`、`clarify-internal-audit-frequency`、`clarify-storage` 等 clarify-* 條目
+- `taiwan` / `xinshing` 欄位仍含指令語（「不可寫成…」「目前資料索引…」）
+- 修正方案：逐筆審查，三個欄位只放正式教材內容
+- 注意：b6507f9 的 HTML fallback 修正被 git revert 回退，但 Firestore 端是否乾淨需確認
 
 ## 踩坑點（2026-05-26 第三次補記）
 - Firestore rules 部署：使用 MCP tool `firebase_deploy(only:"firestore:rules")` 即可，不需要手動 CLI；`firebase_deploy_status` 可查狀態
