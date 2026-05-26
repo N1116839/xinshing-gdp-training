@@ -442,6 +442,13 @@ window.GDP_FIREBASE_CONFIG = {
   appId: "1:177484921581:web:a685952f6372dee5fe6ae4"
 };
 
+function withTimeout(promise, ms, label){
+  return Promise.race([
+    promise,
+    new Promise((_, reject)=>setTimeout(()=>reject(new Error(`${label} timeout`)), ms))
+  ]);
+}
+
 /* ═══════════════════════════════════════════════
    SECTIONS DATA
 ═══════════════════════════════════════════════ */
@@ -1194,7 +1201,10 @@ const kbStore = {
         ...(s.schedule||[]).flat(),
         ...(s.standards?Object.values(s.standards).flat():[]),
         ...(s.collectionCalendar||[]).flatMap(x=>[x.freq,x.dept,x.data,x.form,x.owner,x.source,x.note]),
-        ...(s.equipmentRef||[]).flatMap(x=>[x.freq,x.equipment,x.task,x.owner,x.form,x.source])
+        ...(Array.isArray(s.equipmentRef)?s.equipmentRef:[]).flatMap(x=>[x.freq,x.equipment,x.task,x.owner,x.form,x.source]),
+        ...(typeof s.equipmentRef==="string"
+          ? ((sections.find(x=>x.id===s.equipmentRef)?.equipmentCalendar)||[]).flatMap(x=>[x.freq,x.equipment,x.task,x.owner,x.form,x.source])
+          : [])
       ].filter(Boolean);
       docs.push({
         id:`section-${s.id}`,
@@ -1256,7 +1266,7 @@ const kbStore = {
     if(!qaStore.db) return this.cache;
     try{
       const {collection,getDocs}=qaStore.firebase;
-      const snap=await getDocs(collection(qaStore.db,"gdpKnowledgeBase"));
+      const snap=await withTimeout(getDocs(collection(qaStore.db,"gdpKnowledgeBase")),6000,"GDP知識庫讀取");
       snap.docs.forEach(d=>this.cache.push(Object.assign({id:`firestore-${d.id}`,sourceType:"Firestore KB"},d.data())));
     }catch(e){ console.warn("GDP知識庫讀取失敗",e); }
     return this.cache;
@@ -1932,17 +1942,23 @@ function bindKbForm(){
     const loading=document.createElement("div");
     loading.className="kb-bubble bot kb-loading";loading.textContent="查詢中…";box.appendChild(loading);
     box.scrollTop=box.scrollHeight;
-    const results=await kbStore.search(q);
-    analyticsStore.log("kb_search",{sectionId:"gdp-kb",question:q,status:results.length?"found":"not_found"});
-    loading.remove();
-    if(results.length){
-      const el=document.createElement("div");
-      el.className="kb-bubble bot";
-      el.innerHTML=kbResultsHtml(results,q);
-      box.appendChild(el);
-      el.querySelectorAll("[data-doc]").forEach(b=>b.addEventListener("click",()=>openDoc(b.dataset.doc)));
-    }else{
-      box.insertAdjacentHTML("beforeend",`<div class="kb-bubble bot kb-notfound">資料庫目前找不到命中資料。請先確認該 SOP/WI/FR 是否已放入專案資料夾並同步到 Firestore。</div>`);
+    try{
+      const results=await kbStore.search(q);
+      analyticsStore.log("kb_search",{sectionId:"gdp-kb",question:q,status:results.length?"found":"not_found"});
+      loading.remove();
+      if(results.length){
+        const el=document.createElement("div");
+        el.className="kb-bubble bot";
+        el.innerHTML=kbResultsHtml(results,q);
+        box.appendChild(el);
+        el.querySelectorAll("[data-doc]").forEach(b=>b.addEventListener("click",()=>openDoc(b.dataset.doc)));
+      }else{
+        box.insertAdjacentHTML("beforeend",`<div class="kb-bubble bot kb-notfound">資料庫目前找不到命中資料。請先確認該 SOP/WI/FR 是否已放入專案資料夾並同步到 Firestore。</div>`);
+      }
+    }catch(e){
+      console.warn("GDP智慧查詢失敗",e);
+      loading.remove();
+      box.insertAdjacentHTML("beforeend",`<div class="kb-bubble bot kb-notfound">查詢暫時無法完成。請稍後再試，或確認網路與 Firebase 連線狀態。</div>`);
     }
     box.scrollTop=box.scrollHeight;
   }

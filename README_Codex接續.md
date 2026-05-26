@@ -1448,3 +1448,18 @@ https://n1116839.github.io/xinshing-gdp-training/
 GitHub Pages 入口 `index.html` 會導向 `HTML資料庫/新勝GDP資料庫.html`。後續更新時應維持根網址不變，避免另開新網址造成使用者 404。
 
 使用者已明確授權：當使用者指定「上傳 github」、「更新第二大腦」、「使用 fire 資料庫 / Firebase / Firestore」等任務時，視為已授權 Codex 執行對應 push、第二大腦寫入、Firebase/Firestore 同步或部署，不需再等待額外確認。若工具層仍要求 sandbox escalation，依工具規則送出必要申請，但回覆與接續文件不得再寫成「等使用者明確說同意推送後才可執行」。
+
+## 2026-05-26 Codex 接續：修正 GDP 智慧查詢卡在「查詢中」
+
+本次針對 `HTML資料庫/新勝GDP資料庫.html` 修正智慧查詢未生效：
+
+- 主因：搜尋索引建立時直接對 `s.equipmentRef` 執行 `.flatMap()`，但部分頁面使用 `equipmentRef:"collection-calendar"` 字串參照年度行事曆設備資料，導致查詢拋出 TypeError，畫面停在「查詢中」。
+- 已改為同時支援 `equipmentRef` 陣列與字串參照；字串參照會回到對應 section 的 `equipmentCalendar` 建立索引。
+- 已在 Firestore `gdpKnowledgeBase` 讀取加上 6 秒 timeout。Firestore 無回應時會保留本頁 SOP 摘要、頁面資料、部門文件地圖、行事曆與檔名索引，不再讓畫面無限等待。
+- 已在智慧查詢 UI 加上 try/catch；若查詢仍失敗，會移除「查詢中」並顯示錯誤提示。
+
+已驗證：
+
+- JavaScript 語法檢查通過。
+- 本機搜尋「溫度測繪夏季冬季是哪幾個月？」回傳 5 筆，第一筆為 `DP33-01 溫度監視作業程序書`。
+- 模擬 Firestore 無回應時，約 6 秒後仍回傳本機 fallback 結果，不再卡住。
