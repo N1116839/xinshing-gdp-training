@@ -319,7 +319,7 @@
     .kb-quick-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
     .kb-quick{padding:7px 14px;border:1px solid var(--line);background:#fff;border-radius:6px;cursor:pointer;font:inherit;font-size:13px;color:var(--ink)}
     .kb-quick:hover{background:var(--bg);border-color:var(--brand);color:var(--brand)}
-    .kb-messages{display:flex;flex-direction:column;gap:14px;max-height:480px;overflow-y:auto;padding:4px 0}
+    .kb-messages{display:flex;flex-direction:column;gap:14px;min-height:120px;padding:4px 0}
     .kb-msg{display:flex;width:100%}
     .kb-msg-user{justify-content:flex-end}
     .kb-msg-user>span{background:var(--brand);color:#fff;padding:10px 14px;border-radius:12px 12px 2px 12px;max-width:75%;font-size:14px}
@@ -1276,22 +1276,40 @@ function standardsSwipe(standards){
     </div>
   </div>`;
 }
-function deptFlowHtml(steps){
-  return `<div class="dept-flow">${steps.map(([num,title,desc,doc],i)=>`
-    <div class="dept-step">
-      <div class="dept-step-num">${num}</div>
-      <div class="dept-step-body">
-        <strong>${title}</strong>
-        <span>${desc}</span>
-        ${doc?`<small>${doc}</small>`:""}
+function deptFlowSwipe(steps){
+  const palette=["#0f5b50","#2f7c74","#0a4d8a","#5a3a9a","#7b3f00","#26705d","#b8832f","#173c3a"];
+  const uid=`df${Math.random().toString(36).slice(2,8)}`;
+  const pipeSteps=steps.map(([num,title,,],i)=>
+    `<div class="pipe-step${i===0?" active":""}" data-col="${i}" style="--sw-col:${palette[i%palette.length]}">
+      <div class="pipe-node" style="font-size:13px;font-weight:800">${esc(num)}</div>
+      <div class="pipe-lbl">${esc(title)}</div>
+    </div>${i<steps.length-1?'<div class="pipe-arrow">›</div>':''}`).join("");
+  const panes=steps.map(([num,title,desc,doc],i)=>
+    `<div class="slide-pane">
+      <div class="slide-hd" style="background:${palette[i%palette.length]}">
+        <span class="slide-hd-icon" style="font-size:14px;font-weight:800;min-width:36px;text-align:center">${esc(num)}</span>${esc(title)}
       </div>
-    </div>${i<steps.length-1?`<div class="dept-flow-arrow">▶</div>`:""}`).join("")}
+      <div style="padding:22px 20px;background:#f7fbfb;min-height:120px">
+        <p style="font-size:15px;line-height:1.8;color:var(--ink);white-space:pre-line;margin:0">${esc(desc)}</p>
+        ${doc?`<div style="margin-top:14px"><span class="freq-badge">📋 ${esc(doc)}</span></div>`:""}
+      </div>
+    </div>`).join("");
+  const dots=steps.map((_,i)=>`<span class="slide-dot${i===0?" active":""}"></span>`).join("");
+  return `<div class="swipe-panel" data-uid="${uid}">
+    <div class="pipe-hdr">${pipeSteps}</div>
+    <div class="pipe-progress"><div class="pipe-progress-fill" style="width:${Math.round(100/steps.length)}%"></div></div>
+    <div class="slide-vp"><div class="slide-track" id="${uid}">${panes}</div></div>
+    <div class="slide-nav">
+      <button class="slide-btn slide-prev" disabled>‹ 上一步</button>
+      <div class="slide-dots">${dots}</div>
+      <button class="slide-btn slide-next">下一步 ›</button>
+    </div>
   </div>`;
 }
 function deptFlowSection(s){
   if(!s.deptFlow) return "";
   const flows=Array.isArray(s.deptFlow)?s.deptFlow:[s.deptFlow];
-  return flows.map(f=>panel(f.title,deptFlowHtml(f.steps),"")).join("");
+  return flows.map(f=>panel(f.title,deptFlowSwipe(f.steps),"wide")).join("");
 }
 function trainingTable(info){
   if(!info) return "";
@@ -1436,33 +1454,20 @@ function kbAnswerHtml(doc){
 function kbSection(){
   const quickQuestions=["倉庫多久盤點一次","溫度超標怎麼處理","供應商怎麼評鑑","藥品回收要怎麼做","偏差要怎麼處理","教育訓練合格標準","文件要保存幾年","藥品過期了怎麼辦","客訴要怎麼處理","內部稽核多久一次"];
   const quickBtns=quickQuestions.map(q=>`<button type="button" class="kb-quick" data-q="${esc(q)}">${esc(q)}？</button>`).join("");
-  return `<div class="kb-wrap">
-    <article class="panel wide">
-      <h3>常見問題快速查詢</h3>
-      <p style="font-size:13px;color:var(--muted)">點擊常見問題或在下方輸入自定義問題。</p>
-      <div class="kb-quick-btns">${quickBtns}</div>
-    </article>
-    <article class="panel wide">
-      <h3>查詢結果</h3>
-      <div class="kb-messages" id="kbMessages">
-        <p style="color:var(--muted);font-size:14px">尚未查詢。輸入問題後按「查詢」或點擊上方快速問題。</p>
-      </div>
-      <form class="kb-form" id="kbForm" style="margin-top:14px">
-        <input type="text" id="kbInput" name="q" placeholder="例如：藥品過期了怎麼辦？" autocomplete="off" maxlength="100">
-        <button type="submit" class="primary">查詢</button>
-      </form>
-    </article>
-  </div>`;
+  return [
+    panel("常見問題快速查詢",`<p style="font-size:13px;color:var(--muted);margin-bottom:14px">點擊常見問題，或在下方輸入自定義問題後按查詢。系統自動比對 PIC/S GDP 國際規範、台灣食藥署規定與新勝醫藥做法，給出三層次回覆。</p><div class="kb-quick-btns">${quickBtns}</div>`,"wide"),
+    panel("查詢結果",`<div class="kb-messages" id="kbMessages"><p style="color:var(--muted);font-size:14px">尚未查詢。點擊上方常見問題或輸入問題後按「查詢」。</p></div><form class="kb-form" id="kbForm" style="margin-top:16px"><input type="text" id="kbInput" name="q" placeholder="例如：藥品過期了怎麼辦？" autocomplete="off" maxlength="100"><button type="submit" class="primary">查詢</button></form>`,"wide")
+  ].join("");
 }
 function renderContent(s){
   if(s.id==="gdp-kb") return kbSection();
-  const capaFlow=`<div class="flow">
-    <div class="step"><small>01</small><strong>發現</strong><span>異常、缺漏、溫度超標或程序不符。</span></div>
-    <div class="step"><small>02</small><strong>隔離/通報</strong><span>保護藥品與紀錄，通知權責角色。</span></div>
-    <div class="step"><small>03</small><strong>調查</strong><span>確認根本原因、影響範圍與風險。</span></div>
-    <div class="step"><small>04</small><strong>改善</strong><span>執行 CAPA、補正文件或變更管制。</span></div>
-    <div class="step"><small>05</small><strong>確認</strong><span>品保追蹤有效性，文件化結案。</span></div>
-  </div>`;
+  const capaFlow=deptFlowSwipe([
+    ["01","發現","異常、缺漏、溫度超標或程序不符。\n任何人員發現都應立即提報，不得拖延。",""],
+    ["02","隔離/通報","立即隔離問題藥品，貼上非符合標示。\n通知品保、倉管及 GDP 權責人。","FR12-03"],
+    ["03","調查","確認根本原因、影響範圍與風險等級。\n品保負責調查並完成偏差事件處理報告單。","DP12-02"],
+    ["04","改善","依調查結論執行 CAPA 改善措施。\n補正文件、變更管制或人員再訓練。","FR12-04"],
+    ["05","確認","品保追蹤 CAPA 有效性並文件化結案。\n重大事件需提交管理階層檢討。","DP14-01"]
+  ]);
   return [
     panel("視覺導讀",visualIntro(s),""),
     s.coreBrief ? panel("本頁定位",coreBriefHtml(s),"wide") : "",
@@ -1787,7 +1792,9 @@ async function showSection(id){
   document.getElementById("pageTag").textContent=s.tag;
   document.getElementById("pageTag2").textContent=s.tag;
   document.getElementById("pageLead").textContent=s.lead;
-  document.getElementById("pagePills").innerHTML=s.pills.map(pillMarkup).join("");
+  const pillEl=document.getElementById("pagePills");
+  pillEl.innerHTML=departmentDocumentMaps[s.id]?"":s.pills.map(pillMarkup).join("");
+  pillEl.style.display=pillEl.innerHTML?"":"none";
   document.querySelector(".hero").style.setProperty("--hero-image",`url("${visualAssets[s.id]||"assets/gdp-training-hero.png"}")`);
   document.getElementById("content").innerHTML=renderContent(s);
   document.querySelectorAll(".nav-button").forEach(b=>b.classList.toggle("active",b.dataset.section===id));
