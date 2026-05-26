@@ -315,6 +315,37 @@
     .doc-pill-icon{font-size:18px;flex-shrink:0;padding-top:1px}
     .doc-pill-label{font-size:14px;font-weight:700;color:#7b3f00;line-height:1.45}
     @media(max-width:960px){.doc-pill-grid{grid-template-columns:1fr}.company-action-card,.spec-rule-card{padding:11px 14px}}
+    .kb-wrap{display:grid;gap:16px}
+    .kb-quick-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .kb-quick{padding:7px 14px;border:1px solid var(--line);background:#fff;border-radius:6px;cursor:pointer;font:inherit;font-size:13px;color:var(--ink)}
+    .kb-quick:hover{background:var(--bg);border-color:var(--brand);color:var(--brand)}
+    .kb-messages{display:flex;flex-direction:column;gap:14px;max-height:480px;overflow-y:auto;padding:4px 0}
+    .kb-msg{display:flex;width:100%}
+    .kb-msg-user{justify-content:flex-end}
+    .kb-msg-user>span{background:var(--brand);color:#fff;padding:10px 14px;border-radius:12px 12px 2px 12px;max-width:75%;font-size:14px}
+    .kb-loading>span{color:var(--muted);font-style:italic;font-size:14px;padding:8px 0}
+    .kb-answer-card{background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden;width:100%}
+    .kb-answer-topic{padding:10px 14px;background:var(--brand);color:#fff;font-weight:700;font-size:14px}
+    .kb-answer-row{display:grid;grid-template-columns:130px 1fr;border-top:1px solid var(--line)}
+    .kb-answer-label{padding:12px 14px;font-size:12px;font-weight:700;display:flex;flex-direction:column;gap:3px;border-right:1px solid var(--line)}
+    .kb-answer-label.intl{background:#e8f3f2;color:var(--brand)}
+    .kb-answer-label.tw{background:#fff9ef;color:#7a5c1a}
+    .kb-answer-label.co{background:#f4f0fa;color:#5a3a9a}
+    .kb-answer-label small{font-weight:400;font-size:11px;color:var(--muted)}
+    .kb-answer-body{padding:12px 14px;font-size:13px;line-height:1.65;color:var(--ink)}
+    .kb-sop-refs{padding:8px 14px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px;color:var(--muted)}
+    .kb-answer-meta{padding:5px 14px;background:#f9f9f9;border-top:1px solid var(--line);font-size:11px;color:var(--muted)}
+    .kb-no-result{padding:16px;font-size:14px;color:var(--ink);width:100%}
+    .kb-form{display:flex;gap:8px;margin-top:4px}
+    .kb-form input{flex:1;padding:9px 12px;border:1px solid var(--line);border-radius:6px;font:inherit;font-size:14px}
+    .kb-form input:focus{outline:none;border-color:var(--brand)}
+    @media(max-width:960px){.kb-answer-row{grid-template-columns:1fr}.kb-answer-label{border-right:none;border-bottom:1px solid var(--line)}}
+    .kb-bubble{max-width:90%;padding:10px 14px;border-radius:12px;font-size:14px;line-height:1.6;word-break:break-word}
+    .kb-bubble.user{align-self:flex-end;background:var(--brand);color:#fff;border-radius:12px 12px 2px 12px}
+    .kb-bubble.bot{align-self:flex-start;background:#f5f5f5;border-radius:2px 12px 12px 12px;padding:0;overflow:hidden;width:100%;max-width:100%}
+    .kb-bubble.bot .kb-answer-card{border:none;border-radius:0}
+    .kb-bubble.kb-loading{color:var(--muted);font-style:italic;background:#f5f5f5;align-self:flex-start;border-radius:2px 12px 12px 12px}
+    .kb-bubble.kb-notfound{background:#fff5f5;color:#c0392b;align-self:flex-start;border-radius:2px 12px 12px 12px;border:1px solid #f5c6cb}
   </style>
 </head>
 <body>
@@ -734,6 +765,17 @@ const sections = [
     schedule:[["文件核准後","登錄文件總覽表、確認版次、發行正式文件。"],["每年12月","向相關單位徵詢文件修改意見，進行定期審查。"],["每年第一個星期","挑出屆保管期限之作廢文件，依程序簽核銷毀。"]],
     audit:["正式文件是否經制定、審查、核准、登錄與發行。","紙本正式文件是否加蓋發行章並由文管控管。","電子檔是否僅供查閱，不取代正式簽核依據。","文件修訂後是否完成教育訓練與考核才生效。","文件總覽表是否反映最新版編號、版次與狀態。","每年 12 月是否徵詢文件修改意見並執行定期審查。","作廢文件是否移除、歸檔並依期限銷毀。","品質紀錄是否至少保存 5 年，跨年度由文管保管並可索引。"],
     qa:true
+  },
+  {
+    id:"gdp-kb",
+    group:"GDP 知識庫",
+    title:"GDP 智慧查詢",
+    tag:"依問題自動查詢法規與公司做法",
+    lead:"輸入問題，自動比對 PIC/S GDP 國際規範、台灣食藥署 GDP 規範與新勝醫藥做法，給出三層次回覆。資料由公司人員定期更新。",
+    pills:[],
+    focus:[],
+    standards:{picsgdp:[],taiwan:[],company:[],docs:[]},
+    qa:false
   }
 ];
 
@@ -930,6 +972,7 @@ const qaStore = {
 const calendarStatusStore = {
   sectionId:"collection-calendar",
   cache:null,
+  _unsub:null,
   key(itemId){ return `gdp-calendar-status-${itemId}`; },
   fallbackKey(index){ return `gdp-calendar-status-${index}`; },
   docId(itemId){ return itemId; },
@@ -972,6 +1015,54 @@ const calendarStatusStore = {
         updatedAt:serverTimestamp()
       },{merge:true});
     }catch(e){ console.warn("行事曆狀態同步失敗，已保留本機狀態",e); }
+  },
+  subscribe(onChange){
+    if(this._unsub){ this._unsub(); this._unsub=null; }
+    if(!qaStore.db) return;
+    try{
+      const {collection,onSnapshot} = qaStore.firebase;
+      this._unsub = onSnapshot(
+        collection(qaStore.db,"gdpTrainingCalendarStatus",this.sectionId,"items"),
+        snap=>{
+          snap.docChanges().forEach(ch=>{
+            if(ch.type==="added"||ch.type==="modified"){
+              const d=ch.doc.data();
+              if(d.status==="done"||d.status==="pending"){
+                if(this.cache) this.cache.set(d.itemId,d.status);
+                localStorage.setItem(this.key(d.itemId),d.status);
+                onChange(d.itemId,d.status);
+              }
+            }
+          });
+        },
+        err=>console.warn("行事曆狀態即時監聽失敗",err)
+      );
+    }catch(e){ console.warn("行事曆狀態訂閱失敗",e); }
+  }
+};
+
+const kbStore = {
+  cache:null,
+  async load(){
+    if(this.cache) return this.cache;
+    this.cache=[];
+    if(!qaStore.db) return this.cache;
+    try{
+      const {collection,getDocs}=qaStore.firebase;
+      const snap=await getDocs(collection(qaStore.db,"gdpKnowledgeBase"));
+      snap.docs.forEach(d=>this.cache.push(Object.assign({id:d.id},d.data())));
+    }catch(e){ console.warn("GDP知識庫讀取失敗",e); }
+    return this.cache;
+  },
+  async search(query){
+    const docs=await this.load();
+    const q=String(query).replace(/[？?！!，,。.、\s]/g,"");
+    const scored=docs.map(doc=>{
+      const kw=Array.isArray(doc.keywords)?doc.keywords:[];
+      const score=kw.filter(k=>q.includes(String(k))).length;
+      return {doc,score};
+    }).filter(x=>x.score>0).sort((a,b)=>b.score-a.score);
+    return scored.length?scored[0].doc:null;
   }
 };
 
@@ -1321,7 +1412,50 @@ function evidenceMap(s){
     <div class="metric"><strong>可追溯</strong><span>批號、流向、責任清楚</span></div>
   </div>`;
 }
+function kbAnswerHtml(doc){
+  const sopRefs=Array.isArray(doc.sop_ref)&&doc.sop_ref.length
+    ?`<div class="kb-sop-refs">相關 SOP：${doc.sop_ref.map(s=>pillMarkup(s)).join("")}</div>`:""
+  return `<div class="kb-answer-card">
+    <div class="kb-answer-topic">${esc(doc.topic||"")}</div>
+    <div class="kb-answer-row">
+      <div class="kb-answer-label intl">國際法規<small>PIC/S GDP</small></div>
+      <div class="kb-answer-body">${esc(doc.international||"")}</div>
+    </div>
+    <div class="kb-answer-row">
+      <div class="kb-answer-label tw">台灣食藥署<small>GDP 規範</small></div>
+      <div class="kb-answer-body">${esc(doc.taiwan||"")}</div>
+    </div>
+    <div class="kb-answer-row">
+      <div class="kb-answer-label co">新勝做法<small>可由公司更新</small></div>
+      <div class="kb-answer-body">${esc(doc.xinshing||"")}</div>
+    </div>
+    ${sopRefs}
+    <div class="kb-answer-meta">資料更新：${esc(doc.updated_at||"—")}　更新者：${esc(doc.updated_by||"—")}</div>
+  </div>`;
+}
+function kbSection(){
+  const quickQuestions=["倉庫多久盤點一次","溫度超標怎麼處理","供應商怎麼評鑑","藥品回收要怎麼做","偏差要怎麼處理","教育訓練合格標準","文件要保存幾年","藥品過期了怎麼辦","客訴要怎麼處理","內部稽核多久一次"];
+  const quickBtns=quickQuestions.map(q=>`<button type="button" class="kb-quick" data-q="${esc(q)}">${esc(q)}？</button>`).join("");
+  return `<div class="kb-wrap">
+    <article class="panel wide">
+      <h3>常見問題快速查詢</h3>
+      <p style="font-size:13px;color:var(--muted)">點擊常見問題或在下方輸入自定義問題。</p>
+      <div class="kb-quick-btns">${quickBtns}</div>
+    </article>
+    <article class="panel wide">
+      <h3>查詢結果</h3>
+      <div class="kb-messages" id="kbMessages">
+        <p style="color:var(--muted);font-size:14px">尚未查詢。輸入問題後按「查詢」或點擊上方快速問題。</p>
+      </div>
+      <form class="kb-form" id="kbForm" style="margin-top:14px">
+        <input type="text" id="kbInput" name="q" placeholder="例如：藥品過期了怎麼辦？" autocomplete="off" maxlength="100">
+        <button type="submit" class="primary">查詢</button>
+      </form>
+    </article>
+  </div>`;
+}
 function renderContent(s){
+  if(s.id==="gdp-kb") return kbSection();
   const capaFlow=`<div class="flow">
     <div class="step"><small>01</small><strong>發現</strong><span>異常、缺漏、溫度超標或程序不符。</span></div>
     <div class="step"><small>02</small><strong>隔離/通報</strong><span>保護藥品與紀錄，通知權責角色。</span></div>
@@ -1415,6 +1549,34 @@ function bindQaForm(id){
 ═══════════════════════════════════════════════ */
 function bindDocButtons(){
   document.querySelectorAll("[data-doc]").forEach(b=>b.addEventListener("click",()=>openDoc(b.dataset.doc)));
+}
+function bindKbForm(){
+  const form=document.getElementById("kbForm");
+  const input=document.getElementById("kbInput");
+  const box=document.getElementById("kbMessages");
+  if(!form||!input||!box) return;
+  async function doQuery(q){
+    if(!q) return;
+    input.value="";
+    box.insertAdjacentHTML("beforeend",`<div class="kb-bubble user">${esc(q)}</div>`);
+    const loading=document.createElement("div");
+    loading.className="kb-bubble bot kb-loading";loading.textContent="查詢中…";box.appendChild(loading);
+    box.scrollTop=box.scrollHeight;
+    const doc=await kbStore.search(q);
+    loading.remove();
+    if(doc){
+      const el=document.createElement("div");
+      el.className="kb-bubble bot";
+      el.innerHTML=kbAnswerHtml(doc);
+      box.appendChild(el);
+      el.querySelectorAll("[data-doc]").forEach(b=>b.addEventListener("click",()=>openDoc(b.dataset.doc)));
+    }else{
+      box.insertAdjacentHTML("beforeend",`<div class="kb-bubble bot kb-notfound">找不到相關資料。請嘗試其他關鍵字，或聯繫 QA 人員。</div>`);
+    }
+    box.scrollTop=box.scrollHeight;
+  }
+  form.addEventListener("submit",e=>{e.preventDefault();doQuery(input.value.trim());});
+  document.querySelectorAll(".kb-quick").forEach(btn=>btn.addEventListener("click",()=>doQuery(btn.dataset.q)));
 }
 function openDoc(code){
   const doc=sopLibrary[code];if(!doc) return;
@@ -1589,7 +1751,7 @@ function renderNav(){
   const nav=document.getElementById("nav");
   const mob=document.getElementById("mobileMenu");
   nav.innerHTML="";mob.innerHTML="";
-  const navGroups=["GDP核心","新人部門","年度行事曆"];
+  const navGroups=["GDP核心","新人部門","年度行事曆","GDP 知識庫"];
   navGroups.forEach(group=>{
     const groupSections=sections.filter(s=>s.group===group);
     if(!groupSections.length) return;
@@ -1638,6 +1800,7 @@ async function showSection(id){
   bindAuditFocus();
   bindQaForm(id);
   bindDocButtons();
+  bindKbForm();
   await renderQa(id);
   window.history.replaceState(null,"",`#${id}`);
 }

@@ -15,5 +15,12 @@ service cloud.firestore {
         && request.resource.data.itemIndex is int
         && request.resource.data.status in ['done','pending'];
     }
+    match /gdpKnowledgeBase/{docId} {
+      allow read: if true;
+      allow write: if request.resource.data.keys().hasAll(['keywords','topic','international','taiwan','xinshing'])
+        && request.resource.data.topic is string
+        && request.resource.data.topic.size() <= 100
+        && request.resource.data.keywords is list;
+    }
   }
 }
