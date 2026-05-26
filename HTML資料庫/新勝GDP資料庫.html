@@ -1028,8 +1028,7 @@ const projectSourceFiles = [
   "第六章申訴、退回、疑似偽、禁藥及藥品回收/DP65-01藥品回收管理程序書.docx",
   "第七章委外作業/DP72-01委外作業程序書.docx",
   "第八章自我審查/DP82-01 內部稽核作業程序書.docx",
-  "簡報資料/新勝醫藥_GDP合規簡報.pptx",
-  "HTML資料庫/新勝GDP資料庫.html"
+  "簡報資料/新勝醫藥_GDP合規簡報.pptx"
 ];
 
 /* ═══════════════════════════════════════════════
@@ -1185,6 +1184,7 @@ const kbStore = {
     if(/正航|正行|系統|溫控|溫度監控/.test(raw)) intent.push("正航溫度監控系統");
     if(/病媒|蟲鼠|鼠|蟑螂|捕鼠|捕蟲|蚊蠅|螞蟻/.test(raw)) intent.push("病媒蟲鼠防治");
     if(/內部稽核|內稽|稽核多久|多久一次|每年|半年/.test(raw)) intent.push("內部稽核頻率");
+    if(/進出貨|進貨|出貨|收貨|驗收|揀貨|配銷|配送|流程/.test(raw)) intent.push("進出貨管制");
     return [...new Set([compact,...codes.map(c=>this.normalize(c)),...words.map(w=>this.normalize(w)),...intent].filter(Boolean))];
   },
   codeFromText(text){
@@ -1271,8 +1271,8 @@ const kbStore = {
       sourceType:"查詢校正",
       topic:"溫度測繪、冷藏倉與溫控系統說明",
       international:"GDP 要求儲存環境有適當溫度監測、紀錄、校正與異常處理。",
-      taiwan:"目前資料索引寫到倉儲環境每三年執行夏季與冬季測繪各 7 天，但未明定夏季/冬季是哪幾個月份。",
-      xinshing:"本頁不得推論公司有冷藏倉，也不得寫成使用正航系統做溫度監控。已知資料應表述為：常溫倉庫、分離式冷氣、UPS、溫控警報、溫度計與溫濕度記錄器；正航相關資料屬進銷存電腦化系統確效/備份，不等於溫度監控系統。",
+      taiwan:"台灣 GDP 要求藥品儲存環境維持核准保存條件，並以溫度監測、設備校正、異常處理與紀錄保存證明倉儲條件受控。",
+      xinshing:"新勝醫藥目前資料顯示為常溫倉庫管理，溫度測繪每三年執行，夏季與冬季各測量 7 天；現有資料未明定夏季/冬季月份。倉儲設備包含分離式冷氣、UPS、溫控警報、溫度計與溫濕度記錄器。正航相關資料屬進銷存電腦化系統確效/備份，不是溫度監控系統。",
       sop_ref:["DP33-01","DP34-01","DP34-02","DP35-01","DP55-01"],
       file:"第三章作業場所及設備/DP33-01溫度監視作業程序書.docx",
       keywords:["溫度測繪","夏季","冬季","月份","冷藏倉","常溫倉庫","正航","正行","溫控","溫度監控","溫濕度記錄器","DP33-01","DP34-01","DP35-01"]
@@ -1294,7 +1294,7 @@ const kbStore = {
       topic:"內部稽核頻率與紀錄",
       international:"PIC/S GDP 要求批發商維持品質系統並定期執行自我檢查或內部稽核，以確認 GDP 作業持續符合規範並追蹤矯正預防措施。",
       taiwan:"台灣 GDP 要求業者建立品質系統、文件與紀錄，並確認作業符合 GDP 要求；內部稽核結果與後續改善應可追溯。",
-      xinshing:"新勝醫藥依 DP82-01 每年 12 月實施內部品質稽核活動。稽核規劃需包含稽核準則、範圍、行程及先前稽核結果；FR82-01 為年度內部品質稽核計畫，FR82-02 為內部稽核查檢表，FR82-03 為內部稽核報告。不可寫成每 6 個月一次。",
+      xinshing:"新勝醫藥依 DP82-01 每年 12 月實施內部品質稽核活動。稽核規劃需包含稽核準則、範圍、行程及先前稽核結果；FR82-01 為年度內部品質稽核計畫，FR82-02 為內部稽核查檢表，FR82-03 為內部稽核報告。本教材以每年 12 月為內部稽核頻率依據。",
       sop_ref:["DP82-01","FR82-01","FR82-02","FR82-03"],
       file:"第八章內部稽核/DP82-01 內部品質稽核作業程序書.docx",
       keywords:["內部稽核","內部品質稽核","稽核多久一次","每年","12月","FR82-01","FR82-02","FR82-03","DP82-01"]
@@ -1327,7 +1327,7 @@ const kbStore = {
       topic:"藥品儲存條件與倉儲管制要求",
       international:"PIC/S GDP 要求倉儲環境需符合產品規格保存條件；需有溫度監測、警報、紀錄與異常處理；庫存需定期盤點並依 FEFO 原則出貨；隔離品需有明確標示與實體或電子區隔。",
       taiwan:"台灣 GDP 要求室溫藥品儲存於 ≤25°C 環境；需有溫度監控設備、校正紀錄；近效期藥品需優先出貨（FEFO）；退貨、不合格品與一般品需有效隔離，不得混儲。",
-      xinshing:"新勝醫藥室溫藥品儲存溫度 ≤25°C，警戒線 23.5°C；依 DP33-01 每日記錄溫濕度，異常警報需填寫 FR33-01；依 DP55-01 執行庫存管理，每兩個月盤點一次（FR55-03）；隔離品放置隔離區並標示 FR55-02；不可推論公司有冷藏倉。",
+      xinshing:"新勝醫藥以常溫倉庫管理藥品，室溫藥品儲存溫度 ≤25°C，警戒線 23.5°C；依 DP33-01 每日記錄溫濕度，異常警報需填寫 FR33-01；依 DP55-01 執行庫存管理，每兩個月盤點一次（FR55-03）；隔離品放置隔離區並標示 FR55-02。",
       sop_ref:["DP33-01","DP55-01","FR33-01","FR55-02","FR55-03"],
       file:"第三章作業場所及設備/DP33-01溫度監視作業程序書.docx",
       keywords:["儲存","倉儲","溫度","溫控","25度","FEFO","先進先出","盤點","隔離","DP33-01","DP55-01","FR33-01","FR55-02","FR55-03","冷藏","常溫","倉庫"]
@@ -1448,8 +1448,10 @@ const kbStore = {
         if(term.includes("正航溫度監控系統")&&/正航|溫度|電腦化系統|dp3501|fr5701/.test(hay)){ score+=8; strongHit=true; }
         if(term.includes("病媒蟲鼠防治")&&/病媒|蟲鼠|dp2502|fr2503|fr2505|wi2504/.test(hay)){ score+=14; strongHit=true; }
         if(term.includes("內部稽核頻率")&&/內部稽核|內部品質稽核|dp8201|fr8201|fr8202|fr8203|每年|12月/.test(hay)){ score+=14; strongHit=true; }
+        if(term.includes("進出貨管制")&&/進出貨|進貨|出貨|收貨|驗收|揀貨|配銷|配送|dp5201|dp5401|dp5701/.test(hay)){ score+=14; strongHit=true; }
       });
-      if(doc.sourceType==="查詢校正"&&strongHit) score+=28;
+      if(doc.sourceType==="查詢校正"&&strongHit) score+=45;
+      if(["SOP 摘要","部門文件地圖","資料夾檔案"].includes(doc.sourceType)) score-=shortQuery?6:3;
       if(shortQuery&&!strongHit&&score<6) score=0;
       return {doc,score,strongHit};
     }).filter(x=>x.score>0).sort((a,b)=>b.score-a.score);
@@ -1469,6 +1471,7 @@ const kbStore = {
 const analyticsStore = {
   visitorKey:"gdp-visitor-id",
   nameKey:"gdp-visitor-name",
+  localStatsKey:"gdp-local-usage-stats",
   visitorId(){
     let id=localStorage.getItem(this.visitorKey);
     if(!id){
@@ -1487,7 +1490,65 @@ const analyticsStore = {
   quarterKey(date=new Date()){
     return `${date.getFullYear()}-Q${Math.floor(date.getMonth()/3)+1}`;
   },
+  localData(){
+    return JSON.parse(localStorage.getItem(this.localStatsKey)||'{"users":{},"questions":{},"docs":{},"reviews":{}}');
+  },
+  saveLocalData(data){
+    localStorage.setItem(this.localStatsKey,JSON.stringify(data));
+  },
+  localLog(eventType,data={}){
+    const store=this.localData();
+    const visitorId=this.visitorId();
+    const displayName=this.displayName();
+    const quarter=this.quarterKey();
+    const user=store.users[visitorId]||{visitorId,displayName,eventCount:0,questionCount:0,replyCount:0,calendarDoneCount:0,queryCount:0,docOpenCount:0};
+    user.displayName=displayName;
+    user.eventCount+=1;
+    if(eventType==="question") user.questionCount+=1;
+    if(eventType==="reply") user.replyCount+=1;
+    if(eventType==="calendar_status"&&data.status==="done") user.calendarDoneCount+=1;
+    if(eventType==="kb_search") user.queryCount+=1;
+    if(eventType==="doc_open") user.docOpenCount+=1;
+    store.users[visitorId]=user;
+    if(eventType==="kb_search"&&data.question){
+      const qid=this.questionKey(data.question);
+      const row=store.questions[qid]||{question:data.question,count:0};
+      row.question=data.question;
+      row.count+=1;
+      store.questions[qid]=row;
+    }
+    if(eventType==="doc_open"&&data.targetId){
+      const docKey=String(data.targetId).replace(/[^A-Za-z0-9\-]/g,"").slice(0,60)||"unknown";
+      const row=store.docs[docKey]||{docId:data.targetId,title:data.targetLabel||data.targetId,openCount:0};
+      row.title=data.targetLabel||data.targetId;
+      row.openCount+=1;
+      store.docs[docKey]=row;
+    }
+    if(!store.reviews[quarter]){
+      store.reviews[quarter]={quarter,status:"待更新",scope:["PIC/S GDP 國際規範","台灣食藥署 GDP 規範","新勝 SOP/WI/FR 最新版"]};
+    }
+    this.saveLocalData(store);
+  },
+  localLeaderboards(){
+    const store=this.localData();
+    return {
+      users:Object.values(store.users||{}).sort((a,b)=>(b.eventCount||0)-(a.eventCount||0)).slice(0,8),
+      questions:Object.values(store.questions||{}).sort((a,b)=>(b.count||0)-(a.count||0)).slice(0,8),
+      reviews:Object.values(store.reviews||{}).sort((a,b)=>String(b.quarter||"").localeCompare(String(a.quarter||""))).slice(0,4),
+      docs:Object.values(store.docs||{}).sort((a,b)=>(b.openCount||0)-(a.openCount||0)).slice(0,8)
+    };
+  },
+  mergeLocal(remote){
+    const local=this.localLeaderboards();
+    return {
+      users:remote.users.length?remote.users:local.users,
+      questions:remote.questions.length?remote.questions:local.questions,
+      reviews:remote.reviews.length?remote.reviews:local.reviews,
+      docs:remote.docs.length?remote.docs:local.docs
+    };
+  },
   async log(eventType,data={}){
+    this.localLog(eventType,data);
     if(!qaStore.db) return;
     try{
       const {collection,doc,addDoc,setDoc,serverTimestamp,increment}=qaStore.firebase;
@@ -1530,14 +1591,20 @@ const analyticsStore = {
           lastAskedAt:serverTimestamp()
         },{merge:true});
       }
-    }catch(e){ console.warn("使用統計寫入失敗",e); }
+    }catch(e){ console.warn("使用統計寫入失敗，已保留本機統計",e); }
   },
   questionKey(q){
     const raw=String(q||"").trim().toLowerCase().replace(/[？?！!，,。.、\s]/g,"").slice(0,60)||"empty";
     return encodeURIComponent(raw).replace(/%/g,"").slice(0,90);
   },
   async ensureQuarterReview(){
-    if(!qaStore.db) return;
+    if(!qaStore.db){
+      const local=this.localLeaderboards();
+      if(!local.reviews.some(x=>x.quarter===this.quarterKey())){
+        this.localLog("page_view",{sectionId:"gdp-kb",targetLabel:"GDP 智慧查詢"});
+      }
+      return;
+    }
     try{
       const {doc,setDoc,serverTimestamp}=qaStore.firebase;
       const quarter=this.quarterKey();
@@ -1552,7 +1619,7 @@ const analyticsStore = {
   },
   async leaderboards(){
     const empty={users:[],questions:[],reviews:[],docs:[]};
-    if(!qaStore.db) return empty;
+    if(!qaStore.db) return this.localLeaderboards();
     try{
       const {collection,getDocs}=qaStore.firebase;
       const [uSnap,qSnap,rSnap,dSnap]=await Promise.all([
@@ -1565,8 +1632,8 @@ const analyticsStore = {
       const questions=qSnap.docs.map(d=>d.data()).sort((a,b)=>(b.count||0)-(a.count||0)).slice(0,8);
       const reviews=rSnap.docs.map(d=>d.data()).sort((a,b)=>String(b.quarter||"").localeCompare(String(a.quarter||""))).slice(0,4);
       const docs=dSnap.docs.map(d=>d.data()).sort((a,b)=>(b.openCount||0)-(a.openCount||0)).slice(0,8);
-      return {users,questions,reviews,docs};
-    }catch(e){ console.warn("排行榜讀取失敗",e); return empty; }
+      return this.mergeLocal({users,questions,reviews,docs});
+    }catch(e){ console.warn("排行榜讀取失敗，改用本機統計",e); return this.localLeaderboards(); }
   }
 };
 
@@ -1983,9 +2050,15 @@ function kbAnswerHtml(doc){
     ${sopRefs}
   </div>`;
 }
+function isTrainingAnswer(doc){
+  if(!doc) return false;
+  if(doc.sourceType==="查詢校正") return true;
+  const text=[doc.international,doc.taiwan,doc.xinshing].join(" ");
+  return !/(此筆來自|此筆代表|詳見本頁|回原始檔|文件編號：|協助新人知道)/.test(text);
+}
 function kbResultsHtml(results,query){
-  const primary=results[0];
-  const related=results.slice(1);
+  const primary=results.find(isTrainingAnswer)||results[0];
+  const related=results.filter(doc=>doc!==primary);
   const cards=related.map(doc=>{
     const sopRefs=Array.isArray(doc.sop_ref)&&doc.sop_ref.length
       ?`<div class="kb-hit-meta"><span>相關文件</span>${doc.sop_ref.map(s=>sopLibrary[s]?pillMarkup(s):`<span>${esc(s)}</span>`).join("")}</div>`:"";
@@ -2157,7 +2230,7 @@ function bindKbForm(){
     box.scrollTop=box.scrollHeight;
     try{
       const results=await kbStore.search(q);
-      analyticsStore.log("kb_search",{sectionId:"gdp-kb",question:q,status:results.length?"found":"not_found"});
+      await analyticsStore.log("kb_search",{sectionId:"gdp-kb",question:q,status:results.length?"found":"not_found"});
       loading.remove();
       if(results.length){
         const el=document.createElement("div");
@@ -2173,6 +2246,7 @@ function bindKbForm(){
       loading.remove();
       box.insertAdjacentHTML("beforeend",`<div class="kb-bubble bot kb-notfound">查詢暫時無法完成。請稍後再試，或確認網路與 Firebase 連線狀態。</div>`);
     }
+    renderUsageStats();
     box.scrollTop=box.scrollHeight;
   }
   form.addEventListener("submit",e=>{e.preventDefault();doQuery(input.value.trim());});
@@ -2187,12 +2261,8 @@ async function renderUsageStats(){
   const connected=!!qaStore.db;
   if(statusEl){
     statusEl.innerHTML=connected
-      ? `<span class="dot connected"></span>已連線 Firestore｜資料即時同步`
-      : `<span class="dot"></span>未連線 Firestore｜僅顯示本機統計`;
-  }
-  if(!connected){
-    const offline=`<span class="note" style="color:var(--warn)">尚未連線 Firebase，統計資料無法載入。<br>請確認網路與 Firebase 設定後重新整理頁面。</span>`;
-    qEl.innerHTML=offline; dEl.innerHTML=offline; rEl.innerHTML=offline; return;
+      ? `<span class="dot connected"></span>已連線 Firestore｜同步資料優先，必要時顯示本機即時統計`
+      : `<span class="dot"></span>未連線 Firestore｜目前顯示本機即時統計`;
   }
   qEl.innerHTML=`<span class="note">載入中…</span>`;
   dEl.innerHTML=`<span class="note">載入中…</span>`;
@@ -2213,7 +2283,9 @@ async function renderUsageStats(){
 }
 function openDoc(code){
   const doc=sopLibrary[code];if(!doc) return;
-  analyticsStore.log("doc_open",{sectionId:current,targetId:code,targetLabel:doc.title});
+  analyticsStore.log("doc_open",{sectionId:current,targetId:code,targetLabel:doc.title}).then(()=>{
+    if(current==="gdp-kb") renderUsageStats();
+  });
   document.getElementById("docTitle").textContent=`${code}｜${doc.title}`;
   document.getElementById("docBody").innerHTML=`
     <div><h3>文件位置</h3><p>${esc(doc.file)}</p></div>
