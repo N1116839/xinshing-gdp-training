@@ -1310,4 +1310,8 @@ G:\我的雲端硬碟\2026codex\codex-skills-lazy-pack
 - 目前 Git remote：`origin https://github.com/N1116839/xinshing-gdp-training.git`。
 - 目前分支追蹤 `origin/codex/gdp-html-training-pages`。
 - 工作區仍有大量未追蹤原始資料；這些是專案資料來源，不屬於本次收工提交範圍。
+
+### 本次踩坑
+- GitHub push 會把內部接續紀錄送到外部 remote；即使使用者要求收工，若工具安全審核擋下，必須回報原因並取得使用者明確同意後再推送。
+- 不可用其他方式繞過安全審核；正確流程是先完成本地 commit、記錄領先遠端狀態，再等待使用者授權 push。
 ```
