@@ -44,15 +44,15 @@
     .hero{position:relative;display:grid;gap:18px;margin-bottom:22px;min-height:300px;padding:34px;background:rgba(255,255,255,.88);border:1px solid var(--line);box-shadow:var(--shadow);overflow:hidden;isolation:isolate}
     .hero::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(247,251,251,.98) 0%,rgba(247,251,251,.88) 42%,rgba(247,251,251,.28) 76%),var(--hero-image,url("assets/gdp-training-hero.png")) center right/cover no-repeat;z-index:-2}
     .hero::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:7px;background:linear-gradient(90deg,var(--brand),var(--gold));z-index:-1}
-    .eyebrow{margin:0;color:var(--gold);font-weight:700;font-size:14px}
+    .eyebrow{margin:0;color:var(--gold);font-weight:700;font-size:16px}
     h2{margin:0;color:var(--brand);font-size:clamp(28px,4vw,46px);line-height:1.12}
     .lead{max-width:980px;margin:0;color:var(--ink-soft);font-size:17px;line-height:1.8}
     .hero .lead{max-width:680px;color:#315753;font-weight:600}
     .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
     .panel{grid-column:span 12;padding:22px;background:var(--panel);border:1px solid var(--line);box-shadow:0 8px 22px rgba(20,64,61,.06)}
     .half{grid-column:span 6}.third{grid-column:span 4}.wide{grid-column:span 12}
-    h3{margin:0 0 14px;color:var(--brand);font-size:20px;line-height:1.35}
-    h4{margin:0 0 8px;color:var(--ink);font-size:15px}
+    h3{margin:0 0 14px;color:var(--brand);font-size:22px;line-height:1.35}
+    h4{margin:0 0 8px;color:var(--ink);font-size:16px}
     ul,ol{margin:0;padding-left:1.25rem;color:var(--ink-soft);line-height:1.75}
     li+li{margin-top:4px}
     .pill-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
@@ -203,8 +203,8 @@
     .dept-sched-pane.active{display:block}
     .ds-item{padding:12px 0;border-bottom:1px solid var(--line-soft,#e8eeed)}
     .ds-item:last-child{border-bottom:0}
-    .ds-item-title{font-weight:700;font-size:15px;color:var(--ink);margin-bottom:4px}
-    .ds-item-note{font-size:13px;color:var(--muted,#5a7070);margin-bottom:7px;line-height:1.55}
+    .ds-item-title{font-weight:700;font-size:16px;color:var(--ink);margin-bottom:4px}
+    .ds-item-note{font-size:14px;color:var(--muted,#5a7070);margin-bottom:7px;line-height:1.55}
     .ds-item-meta{display:flex;flex-wrap:wrap;gap:5px}
     .ds-item-meta span{background:#f7fbfb;border:1px solid var(--line);border-radius:4px;padding:3px 8px;font-size:12px;color:var(--ink)}
     @media(max-width:700px){.dept-sched{grid-template-columns:1fr}}
@@ -217,12 +217,23 @@
     .doc-close{color:#fff;background:transparent;border:1px solid rgba(255,255,255,.55);border-radius:6px;cursor:pointer;font:inherit;padding:5px 10px}
     /* ── evidence / metric ── */
     .evidence-map{display:grid;grid-template-columns:1.05fr .75fr 1.05fr;gap:12px;align-items:stretch}
-    .evidence-node{min-height:120px;padding:14px;background:#eef7f7;border:1px solid var(--line)}
+    .evidence-node{min-height:120px;padding:14px;background:#eef7f7;border:1px solid var(--line);transition:background .2s,border-color .2s}
+    .evidence-node.clickable{cursor:pointer}
+    .evidence-node.clickable:hover{background:#e2f3f1;border-color:var(--brand-2)}
+    .evidence-node.open{background:#fff8ef;border-color:#d49435}
     .evidence-node.center{display:grid;place-items:center;color:#fff;text-align:center;background:var(--brand);border-color:var(--brand);font-weight:800}
     .evidence-node h4{color:var(--brand)}
+    .em-toggle{float:right;font-size:12px;color:var(--brand);background:#ddeeed;padding:2px 7px;border-radius:20px;font-weight:700}
+    .em-detail{border-top:1px solid var(--line);padding-top:10px;margin-top:10px;animation:fadeIn .2s}
     .metric-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
-    .metric{padding:12px;text-align:center;background:#fff9ef;border:1px solid #ead6b6}
+    .metric{padding:12px;text-align:center;background:#fff9ef;border:1px solid #ead6b6;transition:background .2s,border-color .2s}
+    .metric.clickable{cursor:pointer}
+    .metric.clickable:hover{background:#fff0d0;border-color:#c9a350}
+    .metric.active{background:#0f5b50;border-color:#0f5b50}
+    .metric.active strong,.metric.active span{color:#fff}
     .metric strong{display:block;color:var(--gold);font-size:22px;line-height:1}
+    .em-tip-box{margin-top:10px;padding:12px 16px;background:#fff9ef;border:1px solid #ead6b6;border-left:4px solid var(--gold);line-height:1.7;animation:fadeIn .2s}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
     /* ── timeline ── */
     .timeline{display:grid;gap:8px}
     .time-item{display:grid;grid-template-columns:90px 1fr;gap:12px;align-items:start;padding:10px;background:#f7fbfb;border-left:4px solid var(--gold)}
@@ -1188,8 +1199,8 @@ const kbStore = {
         id:`sop-${code}`,
         sourceType:"SOP 摘要",
         topic:doc.title||code,
-        international:"此筆來自本頁已整理的 SOP/WI/FR 摘要索引。",
-        taiwan:"請依文件編號回到正式核准文件確認完整條文。",
+        international:`PIC/S GDP 要求相關作業建立並維持標準化程序，確保品質與可追溯性。文件編號：${code}。`,
+        taiwan:`台灣 GDP（西藥優良運銷準則）要求依核准程序執行作業並留存紀錄。文件編號：${code}，${doc.title||""}。`,
         xinshing:(doc.content||[]).join(" "),
         sop_ref:[code],
         file:doc.file||"",
@@ -1197,11 +1208,18 @@ const kbStore = {
       });
     });
     sections.forEach(s=>{
+      const picsgdpArr=(s.standards?.picsgdp||[]);
+      const taiwanArr=(s.standards?.taiwan||[]);
+      const companyArr=(s.standards?.company||[]);
+      const picsgdpContent=picsgdpArr.slice(0,5).join("；");
+      const taiwanContent=taiwanArr.slice(0,5).join("；");
+      const companyContent=companyArr.slice(0,5).join("；");
       const texts=[
         s.title,s.tag,s.lead,
         ...(s.pills||[]),...(s.focus||[]),...(s.audit||[]),
         ...(s.schedule||[]).flat(),
-        ...(s.standards?Object.values(s.standards).flat():[]),
+        ...picsgdpArr,...taiwanArr,...companyArr,
+        ...(s.standards?.docs||[]),
         ...(s.collectionCalendar||[]).flatMap(x=>[x.freq,x.dept,x.data,x.form,x.owner,x.source,x.note]),
         ...(Array.isArray(s.equipmentRef)?s.equipmentRef:[]).flatMap(x=>[x.freq,x.equipment,x.task,x.owner,x.form,x.source]),
         ...(typeof s.equipmentRef==="string"
@@ -1212,9 +1230,9 @@ const kbStore = {
         id:`section-${s.id}`,
         sourceType:"頁面資料",
         topic:s.title,
-        international:"此筆來自頁面中的法規與作業對照。",
-        taiwan:"此筆來自頁面中的台灣 GDP 與公司資料整理。",
-        xinshing:texts.join(" "),
+        international:picsgdpContent||"PIC/S GDP 相關作業要求詳見本頁法規對照。",
+        taiwan:taiwanContent||"台灣 GDP 規範詳見本頁法規對照。",
+        xinshing:companyContent||texts.slice(0,6).join(" "),
         sop_ref:(s.pills||[]).filter(p=>sopLibrary[p]),
         file:"",
         keywords:texts
@@ -1280,6 +1298,116 @@ const kbStore = {
       sop_ref:["DP82-01","FR82-01","FR82-02","FR82-03"],
       file:"第八章內部稽核/DP82-01 內部品質稽核作業程序書.docx",
       keywords:["內部稽核","內部品質稽核","稽核多久一次","每年","12月","FR82-01","FR82-02","FR82-03","DP82-01"]
+    });
+    docs.push({
+      id:"clarify-personnel-training",
+      sourceType:"查詢校正",
+      topic:"人員資格與教育訓練要求",
+      international:"PIC/S GDP 要求所有人員需具備執行其職責所需之資格、訓練與經驗；訓練記錄需保存且可供稽查；高風險職務需定期複訓評估。",
+      taiwan:"台灣 GDP（西藥優良運銷準則）規定各職務人員需完成職前訓練及年度持續訓練，並有考核紀錄；GDP 權責人需具相關科系學歷並有 3 年以上經驗；管理藥師需持藥師執照。",
+      xinshing:"新勝醫藥依 DP24-01 執行員工教育訓練，每年由人事規劃訓練計畫，訓練後以 FR24-03 記錄合格情形；職前訓練完成後方可獨立執行 GDP 作業；訓練紀錄至少保存 5 年；考核不合格需補訓。",
+      sop_ref:["DP24-01","FR24-03","DP22-01"],
+      file:"第二章人事/DP24-01 員工教育訓練作業程序書.docx",
+      keywords:["人員","訓練","教育訓練","資格","職前訓練","年度訓練","考核","DP24-01","FR24-03","GDP權責人","管理藥師","藥師","執照"]
+    });
+    docs.push({
+      id:"clarify-inbound-outbound",
+      sourceType:"查詢校正",
+      topic:"進出貨管制與驗收要求",
+      international:"PIC/S GDP 要求所有進貨需驗收、確認來源合法性、確認外觀完整與文件正確；出貨前需核對訂單、批號與數量；進出貨紀錄需可追溯。",
+      taiwan:"台灣 GDP 要求藥品進貨需核對許可證字號、品名、批號、有效期、數量與外觀；出貨需依核准訂單執行，不得出貨給未核准客戶；進出貨紀錄需完整保存。",
+      xinshing:"新勝醫藥依 DP52-01 收貨時核對品名、批號、有效期、數量與外觀，異常填寫偏差；出貨依 DP57-01 核對揀貨單、客戶資格與訂單；隔離品以 FR55-02 標示並放置隔離區，未通過驗收品不得出貨。",
+      sop_ref:["DP52-01","DP57-01","FR55-02","DP55-01"],
+      file:"第五章進出貨/DP52-01 藥品採購與收貨作業程序書.docx",
+      keywords:["進貨","出貨","收貨","驗收","揀貨","訂單","批號","有效期","隔離","DP52-01","DP57-01","FR55-02","進出貨"]
+    });
+    docs.push({
+      id:"clarify-storage",
+      sourceType:"查詢校正",
+      topic:"藥品儲存條件與倉儲管制要求",
+      international:"PIC/S GDP 要求倉儲環境需符合產品規格保存條件；需有溫度監測、警報、紀錄與異常處理；庫存需定期盤點並依 FEFO 原則出貨；隔離品需有明確標示與實體或電子區隔。",
+      taiwan:"台灣 GDP 要求室溫藥品儲存於 ≤25°C 環境；需有溫度監控設備、校正紀錄；近效期藥品需優先出貨（FEFO）；退貨、不合格品與一般品需有效隔離，不得混儲。",
+      xinshing:"新勝醫藥室溫藥品儲存溫度 ≤25°C，警戒線 23.5°C；依 DP33-01 每日記錄溫濕度，異常警報需填寫 FR33-01；依 DP55-01 執行庫存管理，每兩個月盤點一次（FR55-03）；隔離品放置隔離區並標示 FR55-02；不可推論公司有冷藏倉。",
+      sop_ref:["DP33-01","DP55-01","FR33-01","FR55-02","FR55-03"],
+      file:"第三章作業場所及設備/DP33-01溫度監視作業程序書.docx",
+      keywords:["儲存","倉儲","溫度","溫控","25度","FEFO","先進先出","盤點","隔離","DP33-01","DP55-01","FR33-01","FR55-02","FR55-03","冷藏","常溫","倉庫"]
+    });
+    docs.push({
+      id:"clarify-supplier",
+      sourceType:"查詢校正",
+      topic:"供應商資格審查與評鑑",
+      international:"PIC/S GDP 要求批發商只能從具合法資格的供應商採購；需定期評估供應商適任性、績效與 GDP 合規狀態；供應商清冊需維持最新版；異常績效需有記錄與改善追蹤。",
+      taiwan:"台灣 GDP 規定藥品只能從持有合法藥商許可的供應商取得；需建立供應商清冊並定期複查；採購前確認供應商許可文件仍有效；供應商稽核或評鑑資料需可提供稽查。",
+      xinshing:"新勝醫藥依 DP52-01 審查供應商，採購前確認許可文件，每年由採購執行供應商評鑑（FR52-01）；供應商清冊由採購維護，異動需核准並更新；清冊應與 SMF（WI10-01）一致。",
+      sop_ref:["DP52-01","FR52-01","WI10-01"],
+      file:"第五章進出貨/DP52-01 藥品採購與收貨作業程序書.docx",
+      keywords:["供應商","供應商審查","供應商評鑑","採購","許可文件","供應商清冊","DP52-01","FR52-01","WI10-01","資格審查"]
+    });
+    docs.push({
+      id:"clarify-customer-order",
+      sourceType:"查詢校正",
+      topic:"客戶資格認可與訂單管理",
+      international:"PIC/S GDP 要求批發商只能供貨給具合法資格的客戶（藥局、醫療機構、其他合法批發商）；需建立客戶清冊並定期複查；訂單需核對客戶資格與品項許可。",
+      taiwan:"台灣 GDP 規定藥品只能銷售給持有合法執照的藥商或醫療機構；客戶清冊需定期更新，確認執照仍有效；可疑或未核准客戶的訂單需拒絕並記錄。",
+      xinshing:"新勝醫藥依 DP53-01 審查客戶資格，客戶清冊由業務維護，每年向業務收客戶認可審查紀錄（FR53-01）；訂單依 DP57-01 處理，揀貨前核對客戶資格；未核准客戶不得出貨，需填偏差紀錄。",
+      sop_ref:["DP53-01","DP57-01","FR53-01"],
+      file:"第五章進出貨/DP53-01 客戶認可審查程序書.docx",
+      keywords:["客戶","客戶資格","訂單","客戶清冊","認可","藥局","診所","DP53-01","DP57-01","FR53-01","客戶認可"]
+    });
+    docs.push({
+      id:"clarify-return-recall",
+      sourceType:"查詢校正",
+      topic:"退回藥品與藥品回收作業",
+      international:"PIC/S GDP 要求退回藥品不得自動回入銷售庫存；需評估退回藥品的儲存條件是否有中斷，經調查並核准後方可重新上架；回收需能在 24 小時內追溯所有受影響批號並通知相關方。",
+      taiwan:"台灣 GDP 要求退回藥品需隔離存放，評估品質後決定是否可再銷售；強制回收需依食藥署通知執行，且需有回收記錄與稽查配合；回收完成後提交回收結果報告。",
+      xinshing:"退回藥品依 DP63-01 放置隔離區（FR55-02 標示），由品保評估後決定處置；強制回收依 DP65-01 執行，管理藥師主辦，業務聯繫客戶；回收紀錄用 FR65-01，每次回收完成後提交回收結果報告。",
+      sop_ref:["DP63-01","DP65-01","FR55-02","FR65-01"],
+      file:"第六章客戶服務/DP63-01 退回藥品管理程序書.docx",
+      keywords:["退回","退貨","回收","藥品回收","強制回收","隔離","DP63-01","DP65-01","FR65-01","FR55-02","回收報告"]
+    });
+    docs.push({
+      id:"clarify-deviation-capa",
+      sourceType:"查詢校正",
+      topic:"偏差管理與矯正預防措施（CAPA）",
+      international:"PIC/S GDP 要求偏差需立即識別、記錄、調查原因並進行風險評估；CAPA 需包含根本原因分析、改善措施、責任人、期限與有效性確認；重複偏差需升級處理。",
+      taiwan:"台灣 GDP 要求不符合事項需文件化並追蹤改善；CAPA 結案需有有效性驗證；偏差與 CAPA 紀錄需可在稽查時提出；品質績效指標需定期彙整納入管理審查。",
+      xinshing:"偏差發生時填寫 FR12-03 偏差事件處理報告單，品保調查原因並進行風險評估；需 CAPA 時填寫 FR12-04 矯正與預防處理單，定期追蹤到結案；偏差管制一覽表（FR12-02）由品保維護，納入年度管理審查報告。",
+      sop_ref:["DP12-02","DP12-03","FR12-02","FR12-03","FR12-04"],
+      file:"第一章品質管理/DP12-02 偏差管理作業程序書.docx",
+      keywords:["偏差","CAPA","矯正","預防","不符合","不符合事項","根本原因","FR12-03","FR12-04","FR12-02","DP12-02","DP12-03","改善"]
+    });
+    docs.push({
+      id:"clarify-document-control",
+      sourceType:"查詢校正",
+      topic:"文件管制與紀錄保存要求",
+      international:"PIC/S GDP 要求所有 GDP 相關文件需有版次控制、核准記錄與異動追蹤；只有最新版文件可在現場使用；廢止文件需標記並移除；紀錄需可追溯、即時填寫且至少保存 5 年。",
+      taiwan:"台灣 GDP 規定品質紀錄至少保存 5 年；文件需有核准日期、版次與生效日期；現場使用文件須為核准最新版；填寫紀錄不得事後補填或篡改。",
+      xinshing:"文件管制依 DP42-01，文件制修訂用 FR42-02 申請單，核准後由文管統一發布並收回舊版；紀錄依 DP42-02 管理，填寫需即時、不得事後補填，保存期限至少 5 年；電子文件依 DP42-03 備份管理。",
+      sop_ref:["DP42-01","DP42-02","DP42-03","FR42-02"],
+      file:"第四章文件管制/DP42-01 文件管制作業程序書.docx",
+      keywords:["文件","文件管制","文件版次","版次","紀錄","記錄保存","保存年限","5年","FR42-02","DP42-01","DP42-02","DP42-03","文管"]
+    });
+    docs.push({
+      id:"clarify-outsourcing",
+      sourceType:"查詢校正",
+      topic:"委外作業管理（物流與運輸）",
+      international:"PIC/S GDP 要求委外活動需有書面合約與品質協議，清楚界定雙方責任；委外方需具備 GDP 合規能力，委外前需評估並定期績效監測；委外不免除委託方的品質責任。",
+      taiwan:"台灣 GDP 規定委外運輸需與物流業者簽訂合約書與品質協議書；委外方需持有合法許可；委外活動的品質績效需定期監測並保存紀錄；委外相關資料需在稽查時可提供。",
+      xinshing:"新勝醫藥委外運輸給嘉里醫藥物流股份有限公司，雙方有合約書與品質協議書（依 DP72-01）；每季收嘉里運輸過程溫度紀錄 1 筆；委外物流異常需依偏差程序處理；委外相關文件由採購或品保維護。",
+      sop_ref:["DP72-01","WI10-01"],
+      file:"第七章委外作業/DP72-01 委外作業程序書.docx",
+      keywords:["委外","委外作業","委外運輸","物流","嘉里","嘉里醫藥物流","品質協議","合約","DP72-01","運輸","合約書","績效監測"]
+    });
+    docs.push({
+      id:"clarify-falsified-medicines",
+      sourceType:"查詢校正",
+      topic:"偽禁仿冒藥品識別與通報",
+      international:"PIC/S GDP 要求批發商建立程序識別偽藥與非法藥品；疑似偽藥需立即隔離並通報主管機關，不得繼續銷售；供應鏈中的任何相關方需收到通知；識別訓練需定期執行。",
+      taiwan:"台灣 GDP 及藥事法規定疑似偽禁仿冒藥品需立即向食藥署通報；不得出貨或退回給原供應商；隔離存放並保存所有相關批次紀錄以備稽查；管理藥師負責判斷與通報。",
+      xinshing:"新勝醫藥依 DP64-01 管理疑似偽禁仿冒藥品；管理藥師負責識別判斷，疑似品立即隔離（FR55-02 標示）並通報食藥署；相關批次紀錄全數保存；每年訓練人員識別偽藥特徵，考核分數需 ≥70 分。",
+      sop_ref:["DP64-01","FR55-02"],
+      file:"第六章客戶服務/DP64-01 偽禁仿冒藥品管理程序書.docx",
+      keywords:["偽藥","偽禁仿冒","仿冒藥","禁藥","偽禁仿冒藥","DP64-01","通報","食藥署","識別","管理藥師","隔離","FR55-02"]
     });
     this.localCache=docs;
     return docs;
@@ -1801,22 +1929,39 @@ function equipmentOnlySection(s){
 }
 function docButtons(s){
   if(["collection-calendar","equipment-calendar"].includes(s.id)) return "";
+  if(departmentDocumentMaps[s.id]) return "";
   const docs=s.pills.filter(p=>sopLibrary[p]);
   if(!docs.length) return "";
   return `<article class="panel"><h3>本頁相關 SOP</h3><div class="pill-row">${docs.map(c=>pillMarkup(c)).join("")}</div><p class="note" style="margin-top:10px">點擊文件編號開啟 SOP 學習重點面板。</p></article>`;
 }
 function evidenceMap(s){
-  return `<div class="evidence-map">
-    <div class="evidence-node"><span class="slide-label">A</span><h4>現場作業</h4><ul><li>人員知道自己的步驟</li><li>作業與紀錄同步完成</li><li>異常立即通報</li></ul></div>
-    <div class="evidence-node center">${s.title}<br>稽查證據鏈</div>
-    <div class="evidence-node"><span class="slide-label">B</span><h4>文件與紀錄</h4><ul><li>最新版 SOP 與表單</li><li>簽核、日期、版次完整</li><li>可追溯批號與責任人</li></ul></div>
+  const uid=`em-${s.id}`;
+  const focusItems=(s.focus||[]).slice(0,4);
+  const auditItems=(s.audit||[]).slice(0,6);
+  const focusHtml=focusItems.length?`<ul>${focusItems.map(x=>`<li style="font-size:13px">${esc(x)}</li>`).join("")}</ul>`:`<p style="font-size:13px;color:var(--ink-soft)">詳見本頁重點說明。</p>`;
+  const auditHtml=auditItems.length?`<ul>${auditItems.map(x=>`<li style="font-size:13px">${esc(x)}</li>`).join("")}</ul>`:`<p style="font-size:13px;color:var(--ink-soft)">詳見本頁稽查查檢表。</p>`;
+  return `<div class="evidence-map" id="${uid}">
+    <div class="evidence-node clickable" data-em-node="${uid}-A">
+      <span class="slide-label">A</span>
+      <h4>現場作業 <span class="em-toggle">▶ 展開</span></h4>
+      <ul><li>人員知道自己的步驟</li><li>作業與紀錄同步完成</li><li>異常立即通報</li></ul>
+      <div id="${uid}-A-detail" class="em-detail" style="display:none">${focusHtml}</div>
+    </div>
+    <div class="evidence-node center">${esc(s.title)}<br><span style="font-size:12px;opacity:.85">稽查證據鏈</span><br><span style="font-size:11px;opacity:.7;margin-top:6px;display:block">點擊兩側節點展開細節</span></div>
+    <div class="evidence-node clickable" data-em-node="${uid}-B">
+      <span class="slide-label">B</span>
+      <h4>文件與紀錄 <span class="em-toggle">▶ 展開</span></h4>
+      <ul><li>最新版 SOP 與表單</li><li>簽核、日期、版次完整</li><li>可追溯批號與責任人</li></ul>
+      <div id="${uid}-B-detail" class="em-detail" style="display:none">${auditHtml}</div>
+    </div>
   </div>
-  <div class="metric-strip">
-    <div class="metric"><strong>即時</strong><span>作業發生即紀錄</span></div>
-    <div class="metric"><strong>完整</strong><span>欄位、簽名、日期齊全</span></div>
-    <div class="metric"><strong>正確</strong><span>資料與現場一致</span></div>
-    <div class="metric"><strong>可追溯</strong><span>批號、流向、責任清楚</span></div>
-  </div>`;
+  <div class="metric-strip" id="${uid}-metrics">
+    <div class="metric clickable" data-em-tip="作業當下即填寫紀錄，不事後補填。稽查員現場看到的紀錄，應反映真實作業順序與時間點。"><strong>即時</strong><span>作業發生即紀錄</span></div>
+    <div class="metric clickable" data-em-tip="每個欄位、簽名與日期都不可空白。欄位留空視為資料不完整，等同作業未執行。"><strong>完整</strong><span>欄位、簽名、日期齊全</span></div>
+    <div class="metric clickable" data-em-tip="紀錄內容需與現場實際作業相符。數字、批號、操作人員與設備資訊應一致且可核實。"><strong>正確</strong><span>資料與現場一致</span></div>
+    <div class="metric clickable" data-em-tip="任何問題都能往回追查：批號→供應商→入庫→儲位→出貨→客戶，責任人清楚可識別。"><strong>可追溯</strong><span>批號、流向、責任清楚</span></div>
+  </div>
+  <div id="${uid}-tip" class="em-tip-box" style="display:none"></div>`;
 }
 function kbAnswerHtml(doc){
   const sopRefs=Array.isArray(doc.sop_ref)&&doc.sop_ref.length
@@ -1864,7 +2009,7 @@ function kbSection(){
   return [
     panel("常見問題快速查詢",`<p style="font-size:13px;color:var(--muted);margin-bottom:14px">點擊常見問題，或在下方輸入自定義問題後按查詢。</p><div class="kb-quick-btns">${quickBtns}</div>`,"wide"),
     panel("查詢結果",`<div class="kb-messages" id="kbMessages"><p style="color:var(--muted);font-size:14px">尚未查詢。點擊上方常見問題或輸入問題後按「查詢」。</p></div><form class="kb-form" id="kbForm" style="margin-top:16px"><input type="text" id="kbInput" name="q" placeholder="例如：藥品過期了怎麼辦？" autocomplete="off" maxlength="100"><button type="submit" class="primary">查詢</button></form>`,"wide"),
-    panel("使用統計與季度更新追蹤",`<div class="stats-grid">
+    panel("使用統計與季度更新追蹤",`<div class="status" id="statsStatus" style="margin-bottom:14px"><span class="dot"></span>連線確認中…</div><div class="stats-grid">
       <div class="stats-card"><h4>問題排行榜</h4><div id="questionRank" class="rank-list"><span class="note">讀取中...</span></div></div>
       <div class="stats-card"><h4>熱門文件排行榜</h4><div id="docRank" class="rank-list"><span class="note">讀取中...</span></div></div>
       <div class="stats-card"><h4>季度法規更新</h4><div id="reviewRank" class="rank-list"><span class="note">讀取中...</span></div></div>
@@ -1967,6 +2112,37 @@ function bindQaForm(id){
 function bindDocButtons(){
   document.querySelectorAll("[data-doc]").forEach(b=>b.addEventListener("click",()=>openDoc(b.dataset.doc)));
 }
+function bindEvidenceMap(){
+  document.querySelectorAll("[data-em-node]").forEach(node=>{
+    node.addEventListener("click",()=>{
+      const detailId=node.dataset.emNode+"-detail";
+      const detail=document.getElementById(detailId);
+      const toggle=node.querySelector(".em-toggle");
+      if(!detail) return;
+      const isOpen=detail.style.display!=="none";
+      detail.style.display=isOpen?"none":"";
+      node.classList.toggle("open",!isOpen);
+      if(toggle) toggle.textContent=isOpen?"▶ 展開":"▼ 收起";
+    });
+  });
+  document.querySelectorAll("[data-em-tip]").forEach(metric=>{
+    metric.addEventListener("click",()=>{
+      const strip=metric.closest(".metric-strip");
+      if(!strip) return;
+      const tipBox=strip.nextElementSibling;
+      if(!tipBox||!tipBox.classList.contains("em-tip-box")) return;
+      const wasActive=metric.classList.contains("active");
+      strip.querySelectorAll(".metric").forEach(m=>m.classList.remove("active"));
+      if(wasActive){ tipBox.style.display="none"; tipBox.innerHTML=""; }
+      else{
+        metric.classList.add("active");
+        const label=metric.querySelector("strong")?.textContent||"";
+        tipBox.style.display="";
+        tipBox.innerHTML=`<strong style="color:var(--gold)">${esc(label)}</strong>：${esc(metric.dataset.emTip)}`;
+      }
+    });
+  });
+}
 function bindKbForm(){
   const form=document.getElementById("kbForm");
   const input=document.getElementById("kbInput");
@@ -2006,17 +2182,34 @@ async function renderUsageStats(){
   const qEl=document.getElementById("questionRank");
   const dEl=document.getElementById("docRank");
   const rEl=document.getElementById("reviewRank");
+  const statusEl=document.getElementById("statsStatus");
   if(!qEl||!dEl||!rEl) return;
+  const connected=!!qaStore.db;
+  if(statusEl){
+    statusEl.innerHTML=connected
+      ? `<span class="dot connected"></span>已連線 Firestore｜資料即時同步`
+      : `<span class="dot"></span>未連線 Firestore｜僅顯示本機統計`;
+  }
+  if(!connected){
+    const offline=`<span class="note" style="color:var(--warn)">尚未連線 Firebase，統計資料無法載入。<br>請確認網路與 Firebase 設定後重新整理頁面。</span>`;
+    qEl.innerHTML=offline; dEl.innerHTML=offline; rEl.innerHTML=offline; return;
+  }
+  qEl.innerHTML=`<span class="note">載入中…</span>`;
+  dEl.innerHTML=`<span class="note">載入中…</span>`;
+  rEl.innerHTML=`<span class="note">載入中…</span>`;
   const data=await analyticsStore.leaderboards();
   qEl.innerHTML=data.questions.length
-    ? data.questions.map(x=>`<div class="rank-row"><span>${esc(x.question||"未命名問題")}</span><strong>${Number(x.count||0)}</strong></div>`).join("")
-    : `<span class="note">尚無查詢紀錄。</span>`;
+    ? data.questions.map((x,i)=>`<div class="rank-row"><span><strong style="color:var(--gold);min-width:1.6em;display:inline-block">${i+1}.</strong>${esc(x.question||"未命名問題")}</span><strong>${Number(x.count||0)} 次</strong></div>`).join("")
+    : `<span class="note">尚無查詢紀錄。開始使用智慧查詢後，熱門問題將顯示於此。</span>`;
   dEl.innerHTML=data.docs?.length
-    ? data.docs.map(x=>`<div class="rank-row"><span>${esc(x.docId||x.title||"未命名文件")}</span><strong>${Number(x.openCount||0)}</strong></div>`).join("")
-    : `<span class="note">尚無文件開啟紀錄。</span>`;
+    ? data.docs.map((x,i)=>`<div class="rank-row"><span><strong style="color:var(--gold);min-width:1.6em;display:inline-block">${i+1}.</strong>${esc(x.title||x.docId||"未命名文件")}</span><strong>${Number(x.openCount||0)} 次</strong></div>`).join("")
+    : `<span class="note">尚無文件開啟紀錄。點擊 SOP 按鈕開啟文件後，熱門文件將顯示於此。</span>`;
   rEl.innerHTML=data.reviews.length
-    ? data.reviews.map(x=>`<div class="rank-row"><span>${esc(x.quarter||"未命名季度")}｜${esc(x.status||"待更新")}</span><strong>追蹤</strong></div>`).join("")
-    : `<span class="note">尚無季度更新紀錄。</span>`;
+    ? data.reviews.map(x=>{
+        const statusColor=x.status==="已更新"?"var(--ok)":x.status==="更新中"?"var(--gold)":"var(--warn)";
+        return `<div class="rank-row"><span>${esc(x.quarter||"未命名季度")}</span><strong style="color:${statusColor}">${esc(x.status||"待更新")}</strong></div>`;
+      }).join("")
+    : `<span class="note">尚無季度更新紀錄。系統將於首次連線時自動建立當季追蹤項目。</span>`;
 }
 function openDoc(code){
   const doc=sopLibrary[code];if(!doc) return;
@@ -2284,6 +2477,7 @@ async function showSection(id){
   bindAuditFocus();
   bindQaForm(id);
   bindDocButtons();
+  bindEvidenceMap();
   bindKbForm();
   if(id==="gdp-kb") renderUsageStats();
   await renderQa(id);
