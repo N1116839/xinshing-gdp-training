@@ -1172,6 +1172,8 @@ const kbStore = {
     if(/夏季|冬季|月份|幾月|幾個月/.test(raw)) intent.push("夏季冬季月份");
     if(/冷藏|冷藏倉|冷鏈|常溫|倉庫/.test(raw)) intent.push("常溫倉庫冷藏倉");
     if(/正航|正行|系統|溫控|溫度監控/.test(raw)) intent.push("正航溫度監控系統");
+    if(/病媒|蟲鼠|鼠|蟑螂|捕鼠|捕蟲|蚊蠅|螞蟻/.test(raw)) intent.push("病媒蟲鼠防治");
+    if(/內部稽核|內稽|稽核多久|多久一次|每年|半年/.test(raw)) intent.push("內部稽核頻率");
     return [...new Set([compact,...codes.map(c=>this.normalize(c)),...words.map(w=>this.normalize(w)),...intent].filter(Boolean))];
   },
   codeFromText(text){
@@ -1257,6 +1259,28 @@ const kbStore = {
       file:"第三章作業場所及設備/DP33-01溫度監視作業程序書.docx",
       keywords:["溫度測繪","夏季","冬季","月份","冷藏倉","常溫倉庫","正航","正行","溫控","溫度監控","溫濕度記錄器","DP33-01","DP34-01","DP35-01"]
     });
+    docs.push({
+      id:"clarify-pest-control",
+      sourceType:"查詢校正",
+      topic:"病媒蟲鼠防治與紀錄要求",
+      international:"PIC/S GDP 關注倉儲環境的清潔、污染防止與害蟲防治；病媒管理應能以程序、現場配置與紀錄證明倉儲環境受控。",
+      taiwan:"台灣 GDP 要求藥品儲存場所維持清潔、避免污染與交叉污染，並建立必要的衛生與病媒防治管理；稽查時通常會確認程序、紀錄、異常處理與現場防治設施是否一致。",
+      xinshing:"新勝醫藥依 DP25-02 執行病媒蟲鼠防治，防治對象包含蟑螂、鼠、蚊蠅與螞蟻。防治器具包含蟑螂屋、捕鼠器、誘蟻餌、捕蟲燈，最低每季更換一次並填寫 FR25-05；每月彙整 FR25-03 病媒防治偵測報告；倉儲區域或器具位置異動時更新 WI25-04 病媒防治管制點設置分佈圖；若發現異常，需立即提出改善措施或加強防治策略。",
+      sop_ref:["DP25-02","FR25-03","FR25-05","WI25-04"],
+      file:"第二章人事/DP25-02 病媒蟲鼠防治作業程序書.docx",
+      keywords:["病媒","病媒防治","蟲鼠","蟑螂","捕鼠器","捕蟲燈","誘蟻餌","蚊蠅","螞蟻","FR25-03","FR25-05","WI25-04","DP25-02"]
+    });
+    docs.push({
+      id:"clarify-internal-audit-frequency",
+      sourceType:"查詢校正",
+      topic:"內部稽核頻率與紀錄",
+      international:"PIC/S GDP 要求批發商維持品質系統並定期執行自我檢查或內部稽核，以確認 GDP 作業持續符合規範並追蹤矯正預防措施。",
+      taiwan:"台灣 GDP 要求業者建立品質系統、文件與紀錄，並確認作業符合 GDP 要求；內部稽核結果與後續改善應可追溯。",
+      xinshing:"新勝醫藥依 DP82-01 每年 12 月實施內部品質稽核活動。稽核規劃需包含稽核準則、範圍、行程及先前稽核結果；FR82-01 為年度內部品質稽核計畫，FR82-02 為內部稽核查檢表，FR82-03 為內部稽核報告。不可寫成每 6 個月一次。",
+      sop_ref:["DP82-01","FR82-01","FR82-02","FR82-03"],
+      file:"第八章內部稽核/DP82-01 內部品質稽核作業程序書.docx",
+      keywords:["內部稽核","內部品質稽核","稽核多久一次","每年","12月","FR82-01","FR82-02","FR82-03","DP82-01"]
+    });
     this.localCache=docs;
     return docs;
   },
@@ -1275,30 +1299,42 @@ const kbStore = {
     const docs=await this.load();
     const terms=this.queryTerms(query);
     const compact=this.normalize(query);
+    const shortQuery=compact.length>0&&compact.length<=2;
     const scored=docs.map(doc=>{
-      const hay=[
-        doc.topic,doc.international,doc.taiwan,doc.xinshing,doc.file,
-        ...(Array.isArray(doc.keywords)?doc.keywords:[]),
-        ...(Array.isArray(doc.sop_ref)?doc.sop_ref:[])
-      ].map(x=>this.normalize(x)).join("|");
+      const titleHay=[doc.topic,doc.file].map(x=>this.normalize(x)).join("|");
+      const keywordHay=[...(Array.isArray(doc.keywords)?doc.keywords:[]),...(Array.isArray(doc.sop_ref)?doc.sop_ref:[])].map(x=>this.normalize(x)).join("|");
+      const bodyHay=[doc.international,doc.taiwan,doc.xinshing].map(x=>this.normalize(x)).join("|");
+      const hay=[titleHay,keywordHay,bodyHay].join("|");
       let score=0;
-      if(compact&&hay.includes(compact)) score+=12;
+      let strongHit=false;
+      if(compact&&titleHay.includes(compact)){ score+=18; strongHit=true; }
+      if(compact&&keywordHay.includes(compact)){ score+=14; strongHit=true; }
+      if(compact&&bodyHay.includes(compact)) score+=shortQuery?2:6;
       terms.forEach(term=>{
         if(!term) return;
-        if(hay.includes(term)) score+=term.length>=6?6:3;
-        if(term.includes("夏季冬季月份")&&/溫度測繪|測繪|dp3301/.test(hay)) score+=10;
-        if(term.includes("常溫倉庫冷藏倉")&&/倉庫|常溫|冷藏|儲存/.test(hay)) score+=8;
-        if(term.includes("正航溫度監控系統")&&/正航|溫度|電腦化系統|dp3501|fr5701/.test(hay)) score+=8;
+        if(titleHay.includes(term)){ score+=term.length>=6?10:6; strongHit=true; }
+        if(keywordHay.includes(term)){ score+=term.length>=6?8:5; strongHit=true; }
+        if(bodyHay.includes(term)) score+=shortQuery?1:(term.length>=6?4:2);
+        if(term.includes("夏季冬季月份")&&/溫度測繪|測繪|dp3301/.test(hay)){ score+=10; strongHit=true; }
+        if(term.includes("常溫倉庫冷藏倉")&&/倉庫|常溫|冷藏|儲存/.test(hay)){ score+=8; strongHit=true; }
+        if(term.includes("正航溫度監控系統")&&/正航|溫度|電腦化系統|dp3501|fr5701/.test(hay)){ score+=8; strongHit=true; }
+        if(term.includes("病媒蟲鼠防治")&&/病媒|蟲鼠|dp2502|fr2503|fr2505|wi2504/.test(hay)){ score+=14; strongHit=true; }
+        if(term.includes("內部稽核頻率")&&/內部稽核|內部品質稽核|dp8201|fr8201|fr8202|fr8203|每年|12月/.test(hay)){ score+=14; strongHit=true; }
       });
-      return {doc,score};
+      if(doc.sourceType==="查詢校正"&&strongHit) score+=28;
+      if(shortQuery&&!strongHit&&score<6) score=0;
+      return {doc,score,strongHit};
     }).filter(x=>x.score>0).sort((a,b)=>b.score-a.score);
+    const maxScore=scored[0]?.score||0;
     const seen=new Set();
     return scored.filter(x=>{
       const key=x.doc.topic||x.doc.id;
       if(seen.has(key)) return false;
       seen.add(key);
+      if(shortQuery&&["頁面資料","部門文件地圖"].includes(x.doc.sourceType)&&this.normalize(x.doc.topic).length>18) return false;
+      if(maxScore>=20&&x.score<Math.max(shortQuery?18:8,maxScore*(shortQuery?0.55:0.35))) return false;
       return true;
-    }).slice(0,8).map(x=>Object.assign({score:x.score},x.doc));
+    }).slice(0,shortQuery?5:8).map(x=>Object.assign({score:x.score},x.doc));
   }
 };
 
@@ -1803,7 +1839,9 @@ function kbAnswerHtml(doc){
   </div>`;
 }
 function kbResultsHtml(results,query){
-  const cards=results.map(doc=>{
+  const primary=results[0];
+  const related=results.slice(1);
+  const cards=related.map(doc=>{
     const sopRefs=Array.isArray(doc.sop_ref)&&doc.sop_ref.length
       ?`<div class="kb-hit-meta"><span>相關文件</span>${doc.sop_ref.map(s=>sopLibrary[s]?pillMarkup(s):`<span>${esc(s)}</span>`).join("")}</div>`:"";
     const file=doc.file?`<div class="kb-hit-meta"><span>來源：${esc(doc.file)}</span></div>`:"";
@@ -1815,11 +1853,10 @@ function kbResultsHtml(results,query){
       ${sopRefs}
     </article>`;
   }).join("");
-  return `<div class="kb-answer-card">
-    <div class="kb-answer-topic">查詢「${esc(query)}」的相關資料</div>
-    <div class="kb-result-summary">已同時搜尋 Firestore 知識庫、本頁 SOP 摘要、部門文件地圖、年度行事曆與資料夾檔名索引；顯示前 ${results.length} 筆最相關結果。</div>
-    <div class="kb-hit-list">${cards}</div>
-  </div>`;
+  const relatedHtml=related.length
+    ? `<div class="kb-result-summary">另列 ${related.length} 筆相關來源，供追溯原始 SOP、表單或頁面索引。</div><div class="kb-hit-list">${cards}</div>`
+    : `<div class="kb-result-summary">目前只顯示最高相關答案；未列出低相關泛命中文件。</div>`;
+  return `${kbAnswerHtml(primary)}${relatedHtml}`;
 }
 function kbSection(){
   const quickQuestions=["倉庫多久盤點一次","溫度測繪夏季冬季是哪幾個月","正航是不是溫度監控系統","公司有沒有冷藏倉","溫度超標怎麼處理","供應商怎麼評鑑","藥品回收要怎麼做","偏差要怎麼處理","教育訓練合格標準","內部稽核多久一次"];
