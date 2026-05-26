@@ -1,0 +1,61 @@
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+*.local
+*.secret
+
+# Local agent and editor state
+.codex/
+.claude/
+.agents/
+.vscode/
+.idea/
+
+# Dependencies
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Build and cache output
+dist/
+build/
+.next/
+.nuxt/
+.vite/
+.cache/
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Project-generated output
+outputs/
+簡報資料/
+
+# Internal SOP source folders stay local unless explicitly approved for publishing.
+第一章品質手冊/
+第二章人事/
+第三章作業場所及設備/
+第四章文件管理/
+第五章作業/
+第六章申訴、退回、疑似偽、禁藥及藥品回收/
+第七章委外作業/
+第八章自我審查/
+
+# Original office deliverables stay local by default.
+*.pptx
+
+# Office temporary files
+~$*
