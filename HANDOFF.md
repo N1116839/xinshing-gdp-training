@@ -14,6 +14,11 @@
 4. 流程視覺化：deptFlowSwipe() 互動 swipe panel，取代靜態 dept-flow
 5. CAPA 共同處理閉環改用 deptFlowSwipe
 6. KB Q&A 冗餘文字清除（lead / panel 說明 / 更新者 meta）
+7. Firestore 內容錯字修正（2026-05-26）：
+   - document-retention：現実→現行、保存期满→保存期滿、換第→換廠、蒲毀→銷毀
+   - document-retention keywords 新增「文件要保存」→ 快速按鈕查詢恢復正常
+   - training-requirements：崇能門溺→合格門檻、再訓罰→再訓練、測驗門檻統一 70 分
+   - complaint-handling：偧假袽袽/偐假袽機兢則（亂碼）→ 正確繁中、業務接包→接獲
 
 ## 下次待辦（使用者明確要求，按優先順序確認後再動工）
 **A. 全站互動性升級** — 使用者不滿意現有流程頁視覺化，要求加入：
@@ -33,6 +38,9 @@
 - UI 裡不可放「資料由公司人員定期更新」「更新者：system」等 meta 說明文字
 - pagePills 在有 departmentDocumentMaps 的頁面已隱藏；不需在兩處顯示同樣文件
 - kbSection 用 panel() 直接放入 .grid，不可用 kb-wrap 包裝（會縮成 1 欄）
+- KB 快速按鈕 keyword 匹配：按鈕 data-q 的完整字串必須是 keyword 的超字串（.includes()）
+  例如「文件要保存幾年」含"要"，原 keyword"文件保存"無法命中 → 要在 Firestore 加 "文件要保存"
+- Firestore seed data 有 AI 生成亂碼（如「偧假袽袽」「崇能門溺」）需人工核對所有欄位
 
 ## 環境
 - 主檔：G:\我的雲端硬碟\2026codex\AI測試\gdp_internal_training.html
