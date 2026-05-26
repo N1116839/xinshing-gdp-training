@@ -180,25 +180,6 @@
     .calendar-group{padding:14px;background:#fff;border:1px solid var(--line);border-top:5px solid var(--gold);min-height:98px}
     .calendar-group h4{display:flex;justify-content:space-between;gap:10px;color:var(--brand)}
     .calendar-group p{margin-top:8px;color:var(--ink-soft);font-size:13px;line-height:1.5}
-    .cal-view-toggle{display:flex;gap:8px}
-    .cal-view-toggle button{padding:7px 16px;border:1px solid var(--line);background:#fff;color:var(--ink-soft);border-radius:6px;cursor:pointer;font:inherit;font-size:13px;font-weight:700}
-    .cal-view-toggle button.active{background:var(--brand);color:#fff;border-color:var(--brand)}
-    .cal-top-bar{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-    .cal-wrapper-freq{display:grid;grid-template-columns:220px 1fr;grid-template-areas:"topbar topbar" "freqnav items";gap:14px}
-    .cal-wrapper-freq .cal-top-bar{grid-area:topbar}
-    .cal-wrapper-freq #calFreqNav{grid-area:freqnav}
-    .cal-wrapper-freq #calMonthGrid{display:none!important}
-    .cal-wrapper-freq #calItemList{grid-area:items;display:grid;gap:10px;align-content:start}
-    .cal-wrapper-month{display:grid;gap:14px}
-    .cal-wrapper-month #calFreqNav{display:none!important}
-    .cal-wrapper-month #calMonthGrid{display:grid!important;grid-template-columns:repeat(4,1fr);gap:8px}
-    .cal-wrapper-month #calItemList{display:grid;gap:10px;align-content:start}
-    .cal-month-grid button{padding:10px 8px;border:1px solid var(--line);background:#fff;border-radius:6px;cursor:pointer;font:inherit;font-size:14px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px}
-    .cal-month-grid button strong{font-size:22px;color:var(--brand);line-height:1}
-    .cal-month-grid button.active,.cal-month-grid button:hover{border-color:var(--brand);background:#f4faf9}
-    .cal-month-grid button.active strong{color:var(--ink)}
-    .cal-month-grid .event-btn strong{color:var(--gold)}
-    .cal-month-grid .event-btn{border-top:4px solid var(--gold)}
     .equipment-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
     .equipment-card{padding:13px;background:#fff;border:1px solid var(--line);border-left:5px solid var(--gold)}
     .equipment-card h4{color:var(--brand);margin-bottom:6px}
@@ -283,8 +264,6 @@
       .dept-flow{flex-direction:column}
       .dept-flow-arrow{transform:rotate(90deg)}
       .calendar-controls,.calendar-summary,.calendar-groups,.calendar-lanes,.calendar-item,.calendar-item-meta,.equipment-grid,.equip-menu,.equip-list-item{grid-template-columns:1fr}
-      .cal-wrapper-freq{grid-template-columns:1fr;grid-template-areas:"topbar" "freqnav" "items"}
-      .cal-wrapper-month #calMonthGrid{grid-template-columns:repeat(3,1fr)!important}
       .pipe-hdr{padding:10px 6px}
       .pipe-node{width:36px;height:36px;font-size:17px}
       .pipe-lbl{font-size:9.5px}
@@ -1250,17 +1229,6 @@ function respMatrix(s){
     <tbody>${rows.map(([act,...cells])=>`<tr><td>${act}</td>${cells.map(c=>`<td class="${c==="主辦"?"r":"s"}">${c}</td>`).join("")}</tr>`).join("")}</tbody>
   </table></div>`;
 }
-function freqToMonths(freq){
-  switch(freq){
-    case "每日":case "每月": return [1,2,3,4,5,6,7,8,9,10,11,12];
-    case "每兩個月": return [1,3,5,7,9,11];
-    case "每季": return [3,6,9,12];
-    case "每半年": return [6,12];
-    case "每年":case "每三年": return [12];
-    case "發生時啟動": return [0];
-    default: return [];
-  }
-}
 function collectionCalendarSection(s){
   if(!s.collectionCalendar) return "";
   const items=s.collectionCalendar;
@@ -1271,16 +1239,15 @@ function collectionCalendarSection(s){
   const activeFreqs=freqOrder.filter(f=>byFreq[f]&&byFreq[f].length);
   const firstFreq=activeFreqs[0]||"";
   const menu=activeFreqs.map(freq=>`<button type="button" class="${freq===firstFreq?"active":""}" data-cal-freq="${esc(freq)}"><span>${esc(freq)}</span><strong>${byFreq[freq].length}</strong></button>`).join("");
-  const deptFilter=`<div style="display:flex;align-items:center;gap:8px">
+  const deptFilter=`<div style="margin-bottom:12px;display:flex;align-items:center;gap:8px">
     <label style="font-size:13px;font-weight:700;color:var(--ink-soft);white-space:nowrap">部門篩選</label>
-    <select id="calendarDept" style="padding:6px 10px;border:1px solid var(--line);border-radius:6px;font:inherit;font-size:13px;color:var(--ink)">
+    <select id="calendarDept" style="padding:6px 10px;border:1px solid var(--line);border-radius:6px;font:inherit;font-size:13px;color:var(--ink);flex:1">
       <option value="">全部部門</option>${depts.map(d=>`<option value="${esc(d)}">${esc(d)}</option>`).join("")}
     </select>
   </div>`;
   const list=items.map((x,i)=>{
     const itemId=stableCalendarItemId(x,i);
-    const months=freqToMonths(x.freq).join(",");
-    return `<article class="equip-list-item" data-cal-item="${esc(x.freq)}" data-cal-dept="${esc(x.dept)}" data-cal-months="${months}"${x.freq===firstFreq?"":" style=\"display:none\""}>
+    return `<article class="equip-list-item" data-cal-item="${esc(x.freq)}" data-cal-dept="${esc(x.dept)}"${x.freq===firstFreq?"":" style=\"display:none\""}>
       <div>
         <span class="freq-badge">${esc(x.freq)}</span>
         <span class="dept-badge" style="margin-top:6px;display:block">${esc(x.dept)}</span>
@@ -1306,21 +1273,11 @@ function collectionCalendarSection(s){
     <div class="metric"><strong style="color:var(--brand)">${((byFreq["每季"]||[]).length+(byFreq["每半年"]||[]).length+(byFreq["每年"]||[]).length)}</strong><span>每季∕半年∕年</span></div>
     <div class="metric"><strong style="color:var(--gold)">${items.length}</strong><span>共計節點</span></div>
   </div>`;
-  const monthNames=["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
-  const monthBtns=monthNames.map((name,i)=>{
-    const m=i+1;
-    const count=items.filter(x=>freqToMonths(x.freq).includes(m)).length;
-    return `<button type="button" data-cal-month="${m}"><span>${name}</span><strong>${count}</strong></button>`;
-  }).join("");
-  const eventCount=(byFreq["發生時啟動"]||[]).length;
-  const viewToggle=`<div class="cal-view-toggle"><button type="button" class="active" data-cal-view="freq">頻率視圖</button><button type="button" data-cal-view="month">月份視圖</button></div>`;
   return panel("資料收件核對台",
     kpiHtml+
-    `<div class="cal-wrapper-freq" id="calWrapper">
-      <div class="cal-top-bar">${viewToggle}${deptFilter}</div>
-      <div id="calFreqNav" class="equip-menu-list">${menu}</div>
-      <div id="calMonthGrid" class="cal-month-grid">${monthBtns}<button type="button" class="event-btn" data-cal-month="0"><span>事件觸發</span><strong>${eventCount}</strong></button></div>
-      <div id="calItemList" class="equip-item-list">${list}</div>
+    `<div class="equip-menu">
+      <div class="equip-menu-list" id="calMenuList">${menu}</div>
+      <div id="calItemList">${deptFilter}<div class="equip-item-list">${list}</div></div>
     </div>`,
     "wide");
 }
@@ -1538,56 +1495,13 @@ function bindCalendarFilters(){
       item.style.display=fOk&&dOk?"":"none";
     });
   }
-  function applyMonthFilter(month,activeDept){
-    const m=Number(month);
-    calItems.forEach(item=>{
-      const months=item.dataset.calMonths?item.dataset.calMonths.split(",").map(Number):[];
-      const mOk=months.includes(m);
-      const dOk=!activeDept||String(item.dataset.calDept).split("/").map(d=>d.trim()).some(d=>d===activeDept||d.includes(activeDept));
-      item.style.display=mOk&&dOk?"":"none";
-    });
-  }
   menuBtns.forEach(btn=>btn.addEventListener("click",()=>applyCalFilter(btn.dataset.calFreq,deptSel?.value||"")));
   if(deptSel){
     deptSel.addEventListener("change",()=>{
-      const wrapper=document.getElementById("calWrapper");
-      if(wrapper&&wrapper.classList.contains("cal-wrapper-month")){
-        const activeMonthBtn=document.querySelector("[data-cal-month].active");
-        if(activeMonthBtn) applyMonthFilter(activeMonthBtn.dataset.calMonth,deptSel.value);
-      } else {
-        const active=menuBtns.find(b=>b.classList.contains("active"))||menuBtns[0];
-        applyCalFilter(active?.dataset.calFreq||"",deptSel.value);
-      }
+      const active=menuBtns.find(b=>b.classList.contains("active"))||menuBtns[0];
+      applyCalFilter(active?.dataset.calFreq||"",deptSel.value);
     });
   }
-  const viewBtns=[...document.querySelectorAll("[data-cal-view]")];
-  const wrapper=document.getElementById("calWrapper");
-  if(viewBtns.length&&wrapper){
-    viewBtns.forEach(btn=>{
-      btn.addEventListener("click",()=>{
-        viewBtns.forEach(b=>b.classList.toggle("active",b===btn));
-        const isMonth=btn.dataset.calView==="month";
-        wrapper.className=isMonth?"cal-wrapper-month":"cal-wrapper-freq";
-        if(isMonth){
-          const firstMonthBtn=document.querySelector("[data-cal-month]");
-          if(firstMonthBtn){
-            document.querySelectorAll("[data-cal-month]").forEach(b=>b.classList.remove("active"));
-            firstMonthBtn.classList.add("active");
-            applyMonthFilter(firstMonthBtn.dataset.calMonth,deptSel?.value||"");
-          }
-        } else {
-          const activeFreqBtn=menuBtns.find(b=>b.classList.contains("active"))||menuBtns[0];
-          applyCalFilter(activeFreqBtn?.dataset.calFreq||"",deptSel?.value||"");
-        }
-      });
-    });
-  }
-  document.querySelectorAll("[data-cal-month]").forEach(btn=>{
-    btn.addEventListener("click",()=>{
-      document.querySelectorAll("[data-cal-month]").forEach(b=>b.classList.toggle("active",b===btn));
-      applyMonthFilter(btn.dataset.calMonth,deptSel?.value||"");
-    });
-  });
   applyCalFilter(menuBtns[0]?.dataset.calFreq||"","");
 }
 const deptIdMap={
