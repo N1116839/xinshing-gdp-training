@@ -44,7 +44,23 @@
     .hero{position:relative;display:grid;gap:18px;margin-bottom:22px;min-height:300px;padding:34px;background:rgba(255,255,255,.88);border:1px solid var(--line);box-shadow:var(--shadow);overflow:hidden;isolation:isolate}
     .hero::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(247,251,251,.98) 0%,rgba(247,251,251,.88) 42%,rgba(247,251,251,.28) 76%),var(--hero-image,url("assets/gdp-training-hero.png")) center right/cover no-repeat;z-index:-2}
     .hero::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:7px;background:linear-gradient(90deg,var(--brand),var(--gold));z-index:-1}
-    .eyebrow{margin:0;color:var(--gold);font-weight:700;font-size:16px}
+    .eyebrow{margin:0;color:var(--gold);font-weight:700;font-size:18px}
+    .audit-check-item{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;margin:4px 0;background:#f7fbfb;border:1px solid var(--line);border-radius:6px;cursor:pointer;font-size:14px;line-height:1.55;transition:background .15s,border-color .15s}
+    .audit-check-item:hover{background:#e8f4f2}
+    .audit-check-item input[type=checkbox]{margin-top:2px;accent-color:var(--brand);width:16px;height:16px;flex-shrink:0}
+    .audit-check-item.checked{background:#e2f3ef;border-color:var(--brand-2);text-decoration:line-through;color:var(--ink-soft)}
+    .audit-done{margin-top:14px;padding:10px 14px;background:#0f5b50;color:#fff;border-radius:6px;font-weight:700;text-align:center;font-size:14px;display:none}
+    .flow-check-item{display:flex;align-items:center;gap:9px;margin-top:14px;padding:10px 14px;background:#fff9ef;border:1px solid #ead6b6;border-radius:6px;cursor:pointer;font-size:14px;font-weight:600;color:var(--ink)}
+    .flow-check-item:hover{background:#fff0d8}
+    .flow-check-item input[type=checkbox]{accent-color:#b8832f;width:16px;height:16px;flex-shrink:0}
+    .flow-check-item.checked{background:#e8f4f2;border-color:var(--brand-2);color:var(--brand);text-decoration:none}
+    .evidence-selfcheck{margin-top:16px;padding:14px 16px;background:#f7fbfb;border:1px solid var(--line);border-top:3px solid var(--brand)}
+    .evidence-selfcheck h5{margin:0 0 10px;font-size:14px;color:var(--brand);font-weight:700}
+    .evidence-selfcheck .sc-item{display:flex;align-items:center;gap:10px;padding:7px 10px;margin:3px 0;background:#fff;border:1px solid var(--line);border-radius:6px;cursor:pointer;font-size:13px;transition:background .15s}
+    .evidence-selfcheck .sc-item:hover{background:#e8f4f2}
+    .evidence-selfcheck .sc-item input[type=checkbox]{accent-color:var(--brand);width:15px;height:15px;flex-shrink:0}
+    .evidence-selfcheck .sc-item.checked{background:#e2f3ef;border-color:var(--brand-2);color:var(--ink-soft);text-decoration:line-through}
+    .evidence-selfcheck .sc-done{display:none;margin-top:10px;padding:8px 12px;background:#0f5b50;color:#fff;border-radius:6px;text-align:center;font-size:13px;font-weight:700}
     h2{margin:0;color:var(--brand);font-size:clamp(28px,4vw,46px);line-height:1.12}
     .lead{max-width:980px;margin:0;color:var(--ink-soft);font-size:17px;line-height:1.8}
     .hero .lead{max-width:680px;color:#315753;font-weight:600}
@@ -1686,10 +1702,13 @@ function auditChecklistFor(item){
   return hit ? hit[1] : ["指出此重點對應的 SOP、WI、FR 或清冊。","確認現場紀錄能支持畫面上的說法。","說明資料缺漏時的補正部門與處理路徑。"];
 }
 function auditDetailHtml(no,item,heading="先確認這一點"){
+  const checks=auditChecklistFor(item);
+  const checkHtml=checks.map((x,i)=>`<label class="audit-check-item" data-idx="${i}"><input type="checkbox">${esc(x)}</label>`).join("");
   return `<small>稽查重點 ${String(no).padStart(2,"0")}</small>
       <h4>${heading}</h4>
       <p>${esc(item)}</p>
-      <ul>${auditChecklistFor(item).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`;
+      <div class="audit-checklist">${checkHtml}</div>
+      <div class="audit-done">✓ 全部核對完成</div>`;
 }
 function auditSlides(s){
   if(!s.audit||!s.audit.length) return "";
@@ -1799,7 +1818,7 @@ function deptFlowSwipe(steps){
       <div class="pipe-node" style="font-size:13px;font-weight:800">${esc(num)}</div>
       <div class="pipe-lbl">${esc(title)}</div>
     </div>${i<steps.length-1?'<div class="pipe-arrow">›</div>':''}`).join("");
-  const panes=steps.map(([num,title,desc,doc],i)=>
+  const panes=steps.map(([num,title,desc,doc,selfCheck],i)=>
     `<div class="slide-pane">
       <div class="slide-hd" style="background:${palette[i%palette.length]}">
         <span class="slide-hd-icon" style="font-size:14px;font-weight:800;min-width:36px;text-align:center">${esc(num)}</span>${esc(title)}
@@ -1807,6 +1826,7 @@ function deptFlowSwipe(steps){
       <div style="padding:22px 20px;background:#f7fbfb;min-height:120px">
         <p style="font-size:15px;line-height:1.8;color:var(--ink);white-space:pre-line;margin:0">${esc(desc)}</p>
         ${doc?`<div style="margin-top:14px"><span class="freq-badge">📋 ${esc(doc)}</span></div>`:""}
+        ${selfCheck?`<label class="flow-check-item"><input type="checkbox" onchange="this.closest('.flow-check-item').classList.toggle('checked',this.checked)">${esc(selfCheck)}</label>`:""}
       </div>
     </div>`).join("");
   const dots=steps.map((_,i)=>`<span class="slide-dot${i===0?" active":""}"></span>`).join("");
@@ -1928,11 +1948,7 @@ function equipmentOnlySection(s){
   return panel("關鍵設備時間核對台",`<p class="lead" style="font-size:15px">這一頁跟年度資料收件行事曆一樣，先依時間點篩選，再看該找誰、收什麼設備保養/校驗/確效證據，以及對應哪份 SOP 或表單。</p><div class="equip-menu"><div class="equip-menu-list">${menu}</div><div class="equip-item-list">${list}</div></div>`,"wide");
 }
 function docButtons(s){
-  if(["collection-calendar","equipment-calendar"].includes(s.id)) return "";
-  if(departmentDocumentMaps[s.id]) return "";
-  const docs=s.pills.filter(p=>sopLibrary[p]);
-  if(!docs.length) return "";
-  return `<article class="panel"><h3>本頁相關 SOP</h3><div class="pill-row">${docs.map(c=>pillMarkup(c)).join("")}</div><p class="note" style="margin-top:10px">點擊文件編號開啟 SOP 學習重點面板。</p></article>`;
+  return "";
 }
 function evidenceMap(s){
   const uid=`em-${s.id}`;
@@ -1961,7 +1977,15 @@ function evidenceMap(s){
     <div class="metric clickable" data-em-tip="紀錄內容需與現場實際作業相符。數字、批號、操作人員與設備資訊應一致且可核實。"><strong>正確</strong><span>資料與現場一致</span></div>
     <div class="metric clickable" data-em-tip="任何問題都能往回追查：批號→供應商→入庫→儲位→出貨→客戶，責任人清楚可識別。"><strong>可追溯</strong><span>批號、流向、責任清楚</span></div>
   </div>
-  <div id="${uid}-tip" class="em-tip-box" style="display:none"></div>`;
+  <div id="${uid}-tip" class="em-tip-box" style="display:none"></div>
+  <div class="evidence-selfcheck">
+    <h5>自我核對：我能做到以下四點嗎？</h5>
+    <label class="sc-item"><input type="checkbox">作業發生時即時填寫紀錄，不事後補填</label>
+    <label class="sc-item"><input type="checkbox">所有欄位、簽名與日期均已填寫完整</label>
+    <label class="sc-item"><input type="checkbox">紀錄內容與現場實際作業完全一致</label>
+    <label class="sc-item"><input type="checkbox">批號、流向與責任人可完整追溯</label>
+    <div class="sc-done">✓ 四項全達標——稽查員看到你的紀錄會滿意！</div>
+  </div>`;
 }
 function kbAnswerHtml(doc){
   const sopRefs=Array.isArray(doc.sop_ref)&&doc.sop_ref.length
@@ -2019,11 +2043,11 @@ function kbSection(){
 function renderContent(s){
   if(s.id==="gdp-kb") return kbSection();
   const capaFlow=deptFlowSwipe([
-    ["01","發現","異常、缺漏、溫度超標或程序不符。\n任何人員發現都應立即提報，不得拖延。",""],
-    ["02","隔離/通報","立即隔離問題藥品，貼上非符合標示。\n通知品保、倉管及 GDP 權責人。","FR12-03"],
-    ["03","調查","確認根本原因、影響範圍與風險等級。\n品保負責調查並完成偏差事件處理報告單。","DP12-02"],
-    ["04","改善","依調查結論執行 CAPA 改善措施。\n補正文件、變更管制或人員再訓練。","FR12-04"],
-    ["05","確認","品保追蹤 CAPA 有效性並文件化結案。\n重大事件需提交管理階層檢討。","DP14-01"]
+    ["01","發現","異常、缺漏、溫度超標或程序不符。\n任何人員發現都應立即提報，不得拖延。","","我知道什麼情況需要立即提報偏差"],
+    ["02","隔離/通報","立即隔離問題藥品，貼上非符合標示。\n通知品保、倉管及 GDP 權責人。","FR12-03","我能說出隔離步驟與通報對象"],
+    ["03","調查","確認根本原因、影響範圍與風險等級。\n品保負責調查並完成偏差事件處理報告單。","DP12-02","我了解根本原因分析流程"],
+    ["04","改善","依調查結論執行 CAPA 改善措施。\n補正文件、變更管制或人員再訓練。","FR12-04","我知道 CAPA 改善措施的填寫要點"],
+    ["05","確認","品保追蹤 CAPA 有效性並文件化結案。\n重大事件需提交管理階層檢討。","DP14-01","我能說明 CAPA 有效性確認與結案方式"]
   ]);
   return [
     panel("視覺導讀",visualIntro(s),""),
@@ -2140,6 +2164,22 @@ function bindEvidenceMap(){
         tipBox.style.display="";
         tipBox.innerHTML=`<strong style="color:var(--gold)">${esc(label)}</strong>：${esc(metric.dataset.emTip)}`;
       }
+    });
+  });
+  document.querySelectorAll(".evidence-selfcheck .sc-item").forEach(label=>{
+    label.addEventListener("change",()=>{
+      label.classList.toggle("checked",label.querySelector("input").checked);
+      const sc=label.closest(".evidence-selfcheck");
+      const all=sc.querySelectorAll(".sc-item");
+      const done=[...all].every(l=>l.querySelector("input").checked);
+      const doneEl=sc.querySelector(".sc-done");
+      if(doneEl) doneEl.style.display=done?"":"none";
+    });
+    label.addEventListener("click",e=>{
+      if(e.target.tagName==="INPUT") return;
+      const cb=label.querySelector("input");
+      cb.checked=!cb.checked;
+      cb.dispatchEvent(new Event("change",{bubbles:true}));
     });
   });
 }
@@ -2372,14 +2412,33 @@ function bindAuditFocus(){
   const detail=document.getElementById("auditDetail");
   const cards=[...document.querySelectorAll("[data-audit-item]")];
   if(!detail||!cards.length) return;
+  function bindCheckboxes(){
+    detail.querySelectorAll(".audit-check-item").forEach(label=>{
+      label.addEventListener("change",()=>{
+        label.classList.toggle("checked",label.querySelector("input").checked);
+        const all=detail.querySelectorAll(".audit-check-item");
+        const done=[...all].every(l=>l.querySelector("input").checked);
+        const doneEl=detail.querySelector(".audit-done");
+        if(doneEl) doneEl.style.display=done?"":"none";
+      });
+      label.addEventListener("click",e=>{
+        if(e.target.tagName==="INPUT") return;
+        const cb=label.querySelector("input");
+        cb.checked=!cb.checked;
+        cb.dispatchEvent(new Event("change",{bubbles:true}));
+      });
+    });
+  }
   cards.forEach(card=>{
     card.addEventListener("click",()=>{
       cards.forEach(c=>c.classList.remove("active"));
       card.classList.add("active");
       const no=String(card.dataset.auditNo||"").padStart(2,"0");
       detail.innerHTML=auditDetailHtml(no,card.dataset.auditItem,"核對這一點");
+      bindCheckboxes();
     });
   });
+  bindCheckboxes();
 }
 
 /* ═══════════════════════════════════════════════
