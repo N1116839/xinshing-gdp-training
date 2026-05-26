@@ -31,12 +31,20 @@
 - 問題：documentMapSection() 的 `<li>` 只顯示文字，無點擊行為
 - 修法：將每個文件名稱解析出 SOP 編號，渲染為可點擊的 pill button（data-doc 觸發 openDoc）
 
-**C. GDP 智慧查詢 — 多數關鍵字查無資料**
-- 確認缺少的知識庫文件（需新增 Firestore gdpKnowledgeBase 文件）：
-  - 關鍵設備：設備校驗、保養、UPS、冷氣（DP34-01、DP35-01）
-  - 進出貨流程：收貨驗收、出貨揀貨（DP54-01、DP57-01）
-  - 其他可能缺的主題：溫度超標處理、委外物流、偽禁仿冒藥、廢棄物銷毀
-- 現有 10 筆 seed 涵蓋：盤點/溫度/供應商/回收/效期/偏差/客訴/訓練/內稽/文件保存
+**C. GDP 智慧查詢 — Firestore KB 必須覆蓋 sopLibrary 全部 33 份文件**
+- 使用者要求：資料夾有多少文件，知識庫就要有多少條目（一份 SOP = 一筆 KB 文件）
+- 現有 10 筆（inventory-cycle, temperature-monitoring, supplier-qualification, drug-recall,
+  expiry-date-management, deviation-management, complaint-handling, training-requirements,
+  internal-audit, document-retention）
+- 待補齊 23 筆（對照 sopLibrary）：
+  DM10-01, WI10-01, DP12-01, DP12-03(CAPA), DP12-04(變更), DP14-01(管審),
+  DP15-01(風險), DP22-01(組職), DP25-01(人員衛生), DP25-02(病媒),
+  DP32-01(場所規劃), DP34-01(關鍵設備), DP34-02(量測儀器), DP35-01(電腦化系統),
+  DP36-01(確效), DP42-01(文件管制), DP53-01(客戶認可), DP54-01(進出貨),
+  DP56-01(廢棄物), DP57-01(訂單揀貨), DP63-01(退回品), DP64-01(偽禁仿冒),
+  DP72-01(委外), WI25-01(門禁)
+- 每筆格式：topic, keywords[], international, taiwan, xinshing, sop_ref[]
+- 內容依據：sopLibrary 內各文件的 content[] 陣列（已有中文摘要可直接參考）
 
 **D. 全站互動性升級** — 使用者不滿意現有流程頁視覺化：
 - Scroll fade-in：元素進入畫面時滑入顯現
