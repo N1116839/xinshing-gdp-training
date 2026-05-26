@@ -362,6 +362,26 @@
     .kb-bubble.bot .kb-answer-card{border:none;border-radius:0}
     .kb-bubble.kb-loading{color:var(--muted);font-style:italic;background:#f5f5f5;align-self:flex-start;border-radius:2px 12px 12px 12px}
     .kb-bubble.kb-notfound{background:#fff5f5;color:#c0392b;align-self:flex-start;border-radius:2px 12px 12px 12px;border:1px solid #f5c6cb}
+    /* ── hero focus list ── */
+    .hero-focus{list-style:none;padding:0;margin:0;width:100%;display:grid;gap:5px}
+    .hero-focus li{font-size:14px;line-height:1.7;color:#315753;padding-left:18px;position:relative}
+    .hero-focus li::before{content:"▸";position:absolute;left:0;color:var(--gold);font-size:12px;top:4px}
+    /* ── standards swipe 2-column ── */
+    .spec-rule-grid{display:grid;grid-template-columns:repeat(2,1fr)}
+    .spec-rule-grid .spec-rule-card:nth-child(odd){border-right:1px solid var(--line)}
+    .company-action-grid{display:grid;grid-template-columns:repeat(2,1fr)}
+    .company-action-grid .company-action-card:nth-child(odd){border-right:1px solid var(--line)}
+    @media(max-width:960px){
+      .spec-rule-grid,.company-action-grid{grid-template-columns:1fr}
+      .spec-rule-grid .spec-rule-card:nth-child(odd),.company-action-grid .company-action-card:nth-child(odd){border-right:none}
+    }
+    /* ── dept filter button row ── */
+    .dept-filter-wrap{margin-bottom:12px}
+    .dept-filter-lbl{font-size:13px;font-weight:700;color:var(--ink-soft);margin-bottom:6px}
+    .dept-filter-btns{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:6px;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+    .dept-filter-btns::-webkit-scrollbar{display:none}
+    .dept-filter-btn{flex-shrink:0;padding:5px 12px;border:1px solid var(--line);border-radius:20px;background:#fff;cursor:pointer;font:inherit;font-size:13px;color:var(--ink);white-space:nowrap;transition:all .15s}
+    .dept-filter-btn.active,.dept-filter-btn:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
   </style>
 </head>
 <body>
@@ -442,7 +462,7 @@ const sections = [
       {dir:"安全",goal:"防止偽藥進入供應鏈",kpi:"偽藥識別訓練合格分數 ≥ 70 分",icon:"🛡️"},
       {dir:"應變",goal:"有效處理藥品緊急異常事件",kpi:"緊急應變演練有效處理時間 < 12 小時",icon:"⚡"},
       {dir:"交付",goal:"合理時間內正確運送給顧客",kpi:"訂單逾期率 < 1%、打單錯誤率 < 1%",icon:"📦"},
-      {dir:"品質",goal:"藥品品質之維持",kpi:"室溫藥品 ≤ 25°C，冷鏈藥品 2～8°C",icon:"🌡️"}
+      {dir:"品質",goal:"藥品品質之維持",kpi:"室溫藥品 ≤ 25°C（警戒線 23.5°C）",icon:"🌡️"}
     ],
     schedule:[["每年","內部稽核、管理階層檢討、品質系統有效性回顧。"],["異常發生時","立即提報偏差，品保調查原因，GDP 權責主管追蹤與審核。"],["文件異動時","完成修訂、核准、訓練與考核後，文件才可生效。"]],
     audit:["品質系統是否涵蓋組織架構、程序、流程、資源與必要活動。","GDP 權責人是否有正式任命、職責、授權與代理安排。","偏差是否即時提報、文件化、調查並完成風險評估。","CAPA 是否有原因分析、責任單位、期限、有效性確認與結案紀錄。","變更是否經風險評估、核准、訓練與文件版次管制。","管理階層是否定期檢討品質系統績效與資源需求。","內部稽核是否依計畫執行，缺失是否追蹤改善。","品質紀錄是否完整、即時、可追溯且依期限保存。"],
@@ -477,7 +497,7 @@ const sections = [
         ["作業範圍","一般藥品＋高關注藥品（無輸入、無零售）"],
         ["委外運輸","嘉里醫藥物流股份有限公司（合約書＋品質協議書）"],
         ["24hr 緊急聯絡","鄭振宏 0930656906 ／ 代理 黃獻逸 0932037129"],
-        ["溫度管制","室溫藥品 ≤ 25°C，冷鏈藥品 2～8°C"]
+        ["溫度管制","室溫藥品 ≤ 25°C（警戒線 23.5°C）"]
       ],
       staffQual:[
         {role:"GDP 權責主管",edu:"相關科系",exp:"≥ 3 年",mustTrain:"DM10-01、DP12-01、DP14-01"},
@@ -1138,6 +1158,15 @@ const analyticsStore = {
       if(eventType==="kb_search") counters.queryCount=increment(1);
       if(eventType==="doc_open") counters.docOpenCount=increment(1);
       await setDoc(doc(qaStore.db,"gdpUserStats",visitorId),counters,{merge:true});
+      if(eventType==="doc_open"&&data.targetId){
+        const docKey=String(data.targetId).replace(/[^A-Za-z0-9\-]/g,"").slice(0,60)||"unknown";
+        await setDoc(doc(qaStore.db,"gdpDocStats",docKey),{
+          docId:data.targetId,
+          docLabel:data.targetLabel||data.targetId,
+          count:increment(1),
+          lastOpenedAt:serverTimestamp()
+        },{merge:true});
+      }
       if(eventType==="kb_search"&&data.question){
         const qid=this.questionKey(data.question);
         await setDoc(doc(qaStore.db,"gdpQuestionStats",qid),{
@@ -1167,19 +1196,21 @@ const analyticsStore = {
     }catch(e){ console.warn("季度更新追蹤寫入失敗",e); }
   },
   async leaderboards(){
-    const empty={users:[],questions:[],reviews:[]};
+    const empty={users:[],questions:[],reviews:[],docs:[]};
     if(!qaStore.db) return empty;
     try{
       const {collection,getDocs}=qaStore.firebase;
-      const [uSnap,qSnap,rSnap]=await Promise.all([
+      const [uSnap,qSnap,rSnap,dSnap]=await Promise.all([
         getDocs(collection(qaStore.db,"gdpUserStats")),
         getDocs(collection(qaStore.db,"gdpQuestionStats")),
-        getDocs(collection(qaStore.db,"gdpRegulationReview"))
+        getDocs(collection(qaStore.db,"gdpRegulationReview")),
+        getDocs(collection(qaStore.db,"gdpDocStats"))
       ]);
       const users=uSnap.docs.map(d=>d.data()).sort((a,b)=>(b.eventCount||0)-(a.eventCount||0)).slice(0,8);
       const questions=qSnap.docs.map(d=>d.data()).sort((a,b)=>(b.count||0)-(a.count||0)).slice(0,8);
       const reviews=rSnap.docs.map(d=>d.data()).sort((a,b)=>String(b.quarter||"").localeCompare(String(a.quarter||""))).slice(0,4);
-      return {users,questions,reviews};
+      const docs=dSnap.docs.map(d=>d.data()).sort((a,b)=>(b.count||0)-(a.count||0)).slice(0,8);
+      return {users,questions,reviews,docs};
     }catch(e){ console.warn("排行榜讀取失敗",e); return empty; }
   }
 };
@@ -1223,7 +1254,13 @@ function documentMapSection(s){
     <article class="doc-map-card">
       <small>${esc(g.note)}</small>
       <strong>${esc(g.label)}</strong>
-      <ul>${g.docs.map(d=>`<li>${esc(d)}</li>`).join("")}</ul>
+      <ul>${g.docs.map(d=>{
+        const m=d.match(/^([A-Z]{2}\d{2}-\d{2})/);
+        const dc=m&&sopLibrary[m[1]]?m[1]:null;
+        return dc
+          ? `<li><button class="pill doc-pill" type="button" data-doc="${dc}" style="width:100%;text-align:left;min-height:32px;font-size:13px;margin:2px 0">${esc(d)}</button></li>`
+          : `<li>${esc(d)}</li>`;
+      }).join("")}</ul>
     </article>`).join("");
   return `<p class="lead" style="font-size:15px">${esc(map.intro)}</p><div class="doc-map-grid">${cards}</div>`;
 }
@@ -1271,7 +1308,7 @@ function auditChecklistFor(item){
     [/客戶.*資格|合格客戶|認可審查|藥局|診所|販賣業藥商/,["FR53-01 合格客戶清單為最新版，每年由業務主管發給業務核對。","FR53-02 客戶認可審查紀錄可追溯核准日期、許可文件與 GDP 資格確認。","客戶資格過期或未確認者是否暫停出貨，有無補正與通知紀錄。"]],
     [/到貨|驗收|入庫|品名.*批號|批號.*效期|點收/,["FR54-01 到貨點收驗收紀錄已填寫品名、批號、效期、數量、溫度與外觀確認。","供應商核准狀態已在到貨前確認，驗收不合格品已進入非符合區。","到貨紀錄與採購單、系統紀錄三方一致，且與作業同步完成，無事後補填。"]],
     [/供應商|客戶/,["清冊為最新版，資格文件仍在有效期限內。","新增、停用或異動有審查與核准紀錄。","採購、業務、品保與 GDP 權責人的責任分工清楚。"]],
-    [/出貨|揀貨|配送|銷貨單|客戶.*地址/,["FR57-01~FR57-03 出貨紀錄含客戶名、地址、品名、批號、效期、數量與日期。","揀貨時確認 FEFO 先到期先出，批號清楚，標示完整。","配送標示單與客戶簽收紀錄可作為配送完成與冷鏈完整的佐證。"]],
+    [/出貨|揀貨|配送|銷貨單|客戶.*地址/,["FR57-01~FR57-03 出貨紀錄含客戶名、地址、品名、批號、效期、數量與日期。","揀貨時確認 FEFO 先到期先出，批號清楚，標示完整。","配送標示單與客戶簽收紀錄可作為配送完成與流向紀錄可追溯的佐證。"]],
     [/溫度測繪|測繪|測繪報告/,["每三年針對倉庫執行環境溫度測繪，夏季與冬季各測量七天。","測繪結果用來確認溫度計設置位置與倉庫儲存環境是否合理。","環境、貨架或重大事件異動後需評估是否重新測繪，並留下書面紀錄。"]],
     [/保存溫度|溫度|警報/,["溫度紀錄（FR33-01）可追溯倉庫儲存環境，異常區間需有處理說明。","每年度針對溫度計、溫濕度記錄器安排外部校正，校正報告保存 5 年。","本公司為單一倉庫，資料不得寫成冷藏倉，也不得寫成使用正航系統做溫度監控。"]],
     [/非符合|隔離.*標示|偽禁仿冒|假藥|回收/,["非符合品區域有明確標示，實體隔離，無混入正常庫存的風險。","偽禁仿冒藥已依 DP64-01 立即停止銷售並上呈管理藥師。","回收計畫啟動、客戶通知、庫存回報與成果報告（FR65-01~03）均可提出。"]],
@@ -1332,7 +1369,12 @@ function standardsSwipe(standards){
     const items=standards[t.key]||[];
     if(!items.length) return `<div style="padding:20px 18px;color:#aaa;font-size:14px">—</div>`;
     if(t.key==="docs"){
-      return `<div class="doc-pill-grid">${items.map(item=>`<div class="doc-pill-card"><span class="doc-pill-icon">📄</span><span class="doc-pill-label">${hl(item)}</span></div>`).join("")}</div>`;
+      return `<div class="doc-pill-grid">${items.map(item=>{
+        const m=item.match(/([A-Z]{2}\d{2}-\d{2})/);
+        const dc=m?m[1]:null;
+        const clickable=dc&&sopLibrary[dc];
+        return `<div class="doc-pill-card"${clickable?` data-doc="${dc}" tabindex="0" role="button"`:""}><span class="doc-pill-icon">📄</span><span class="doc-pill-label">${hl(item)}</span></div>`;
+      }).join("")}</div>`;
     }
     if(t.key==="company"){
       const ci=txt=>{
@@ -1340,7 +1382,7 @@ function standardsSwipe(standards){
         if(/回收|模擬回收/.test(txt)) return "🔄";
         if(/隔離|非符合/.test(txt)) return "🚨";
         if(/退回|退貨|報廢/.test(txt)) return "↩️";
-        if(/溫度|警戒|冷鏈|溫控|溫濕度|溫度計/.test(txt)) return "🌡️";
+        if(/溫度|警戒|溫控|溫濕度|溫度計/.test(txt)) return "🌡️";
         if(/進貨|收貨|驗收|入庫/.test(txt)) return "📦";
         if(/揀貨|出貨|配送/.test(txt)) return "🚚";
         if(/紀錄|記錄|保存|保管/.test(txt)) return "📋";
@@ -1357,18 +1399,18 @@ function standardsSwipe(standards){
         if(/資格|認可|核准|許可/.test(txt)) return "✔️";
         return "✅";
       };
-      return items.map((item,i)=>`<div class="company-action-card">
+      return `<div class="company-action-grid">${items.map((item,i)=>`<div class="company-action-card">
         <div class="company-action-icon">${ci(item)}</div>
         <div>
           <div class="company-action-no">公司做法 ${String(i+1).padStart(2,"0")}</div>
           <div class="company-action-text">${hl(item)}</div>
         </div>
-      </div>`).join("");
+      </div>`).join("")}</div>`;
     }
-    return items.map((item,i)=>`<div class="spec-rule-card">
+    return `<div class="spec-rule-grid">${items.map((item,i)=>`<div class="spec-rule-card">
       <div class="spec-rule-num" style="background:${t.col}">${String(i+1).padStart(2,"0")}</div>
       <div class="spec-rule-text">${hl(item)}</div>
-    </div>`).join("");
+    </div>`).join("")}</div>`;
   }
   const uid=`sw${Math.random().toString(36).slice(2,8)}`;
   const arrows=tabs.map((_,i)=>i<tabs.length-1?`<div class="pipe-arrow">›</div>`:"").join("");
@@ -1466,11 +1508,12 @@ function collectionCalendarSection(s){
   const activeFreqs=freqOrder.filter(f=>byFreq[f]&&byFreq[f].length);
   const firstFreq=activeFreqs[0]||"";
   const menu=activeFreqs.map(freq=>`<button type="button" class="${freq===firstFreq?"active":""}" data-cal-freq="${esc(freq)}"><span>${esc(freq)}</span><strong>${byFreq[freq].length}</strong></button>`).join("");
-  const deptFilter=`<div style="margin-bottom:12px;display:flex;align-items:center;gap:8px">
-    <label style="font-size:13px;font-weight:700;color:var(--ink-soft);white-space:nowrap">部門篩選</label>
-    <select id="calendarDept" style="padding:6px 10px;border:1px solid var(--line);border-radius:6px;font:inherit;font-size:13px;color:var(--ink);flex:1">
-      <option value="">全部部門</option>${depts.map(d=>`<option value="${esc(d)}">${esc(d)}</option>`).join("")}
-    </select>
+  const deptFilter=`<div class="dept-filter-wrap">
+    <div class="dept-filter-lbl">部門篩選</div>
+    <div class="dept-filter-btns" id="calDeptBtns">
+      <button type="button" class="dept-filter-btn active" data-dept="">全部部門</button>
+      ${depts.map(d=>`<button type="button" class="dept-filter-btn" data-dept="${esc(d)}">${esc(d)}</button>`).join("")}
+    </div>
   </div>`;
   const list=items.map((x,i)=>{
     const itemId=stableCalendarItemId(x,i);
@@ -1576,7 +1619,7 @@ function kbSection(){
     panel("查詢結果",`<div class="kb-messages" id="kbMessages"><p style="color:var(--muted);font-size:14px">尚未查詢。點擊上方常見問題或輸入問題後按「查詢」。</p></div><form class="kb-form" id="kbForm" style="margin-top:16px"><input type="text" id="kbInput" name="q" placeholder="例如：藥品過期了怎麼辦？" autocomplete="off" maxlength="100"><button type="submit" class="primary">查詢</button></form>`,"wide"),
     panel("使用統計與季度更新追蹤",`<div class="stats-grid">
       <div class="stats-card"><h4>問題排行榜</h4><div id="questionRank" class="rank-list"><span class="note">讀取中...</span></div></div>
-      <div class="stats-card"><h4>使用者排行榜</h4><div id="userRank" class="rank-list"><span class="note">讀取中...</span></div></div>
+      <div class="stats-card"><h4>熱門文件排行榜</h4><div id="docRank" class="rank-list"><span class="note">讀取中...</span></div></div>
       <div class="stats-card"><h4>季度法規更新</h4><div id="reviewRank" class="rank-list"><span class="note">讀取中...</span></div></div>
     </div>`,"wide")
   ].join("");
@@ -1592,9 +1635,8 @@ function renderContent(s){
   ]);
   return [
     panel("視覺導讀",visualIntro(s),""),
-    s.coreBrief ? panel("本頁定位",coreBriefHtml(s),"wide") : "",
+    docButtons(s),
     panel("規範到現場：四層對照",standardsSwipe(s.standards),"wide"),
-    panel("學習重點",list(s.focus),"wide"),
     departmentDocumentMaps[s.id] ? panel("部門文件閱讀地圖",documentMapSection(s),"wide") : "",
     deptScheduleSection(s),
     s.id==="collection-calendar" ? panel("年度保存與交接策略",annualGovernanceSection(),"wide") : "",
@@ -1606,8 +1648,8 @@ function renderContent(s){
     s.equipmentRef ? equipmentOnlySection(s) : "",
     deptFlowSection(s),
     auditSlides(s),
-    panel("稽查時最常看的證據鏈",evidenceMap(s),"half"),
-    panel("不符合 GDP 流程時的共同處理閉環",capaFlow,""),
+    panel("稽查時最常看的證據鏈",evidenceMap(s),"wide"),
+    panel("不符合 GDP 流程時的共同處理閉環",capaFlow,"wide"),
     panel("部門 Q&A 討論區",qaHtml(s),"")
   ].filter(Boolean).join("");
 }
@@ -1619,9 +1661,8 @@ function qaHtml(s){
   return `<div class="qa-layout">
     <div class="qa-ask-col">
       <h4 style="margin-bottom:12px">提出問題</h4>
-      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">看到不懂的段落、文件編號或實務情境，直接留言。管理者回覆後會顯示在右側。</p>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">看到不懂的段落、文件編號或實務情境，直接留言，問題將永久保留供大家參考。</p>
       <form id="qaForm">
-        <label>提問人<input name="name" placeholder="姓名或部門" required></label>
         <label>問題內容<textarea name="question" placeholder="例如：DP54-01 的收貨時間限制是什麼？" required style="min-height:90px"></textarea></label>
         <div class="actions"><button class="primary" type="submit">送出問題</button><span class="note">儲存至「${esc(s.title)}」。</span></div>
       </form>
@@ -1643,17 +1684,19 @@ async function renderQa(id){
     <div class="qa-card">
       <div class="meta"><strong>${esc(item.name)}</strong><span>${fmtDate(item.createdAt)}</span></div>
       <div>${esc(item.question)}</div>
-      ${(item.replies||[]).map(r=>`<div class="reply"><strong>${esc(r.name)}</strong>：${esc(r.answer)}</div>`).join("")}
+      ${(item.replies||[]).map(r=>`<div class="reply">${r.name&&r.name!=="匿名使用者"?`<strong>${esc(r.name)}</strong>：`:""}${esc(r.answer)}</div>`).join("")}
       <form class="replyForm" data-id="${item.id}">
-        <label>管理者回覆<input name="answer" placeholder="輸入回覆"></label>
-        <button class="secondary" type="submit">回覆</button>
+        <div style="display:flex;gap:8px">
+          <input name="answer" placeholder="輸入回覆內容" style="flex:1">
+          <button class="secondary" type="submit" style="white-space:nowrap">回覆</button>
+        </div>
       </form>
     </div>`).join("");
   document.querySelectorAll(".replyForm").forEach(f=>{
     f.addEventListener("submit",async e=>{
       e.preventDefault();
       const ans=f.answer.value.trim();if(!ans)return;
-      await qaStore.reply(id,f.dataset.id,{name:"管理者",answer:ans});
+      await qaStore.reply(id,f.dataset.id,{name:"匿名使用者",answer:ans});
       await renderQa(id);
     });
   });
@@ -1663,9 +1706,9 @@ function bindQaForm(id){
   if(!f) return;
   f.addEventListener("submit",async e=>{
     e.preventDefault();
-    const name=f.name.value.trim(),question=f.question.value.trim();
-    if(!name||!question) return;
-    await qaStore.add(id,{name,question,sectionId:id});
+    const question=f.question.value.trim();
+    if(!question) return;
+    await qaStore.add(id,{name:"匿名使用者",question,sectionId:id});
     f.reset();
     await renderQa(id);
   });
@@ -1708,16 +1751,16 @@ function bindKbForm(){
 }
 async function renderUsageStats(){
   const qEl=document.getElementById("questionRank");
-  const uEl=document.getElementById("userRank");
+  const dEl=document.getElementById("docRank");
   const rEl=document.getElementById("reviewRank");
-  if(!qEl||!uEl||!rEl) return;
+  if(!qEl||!dEl||!rEl) return;
   const data=await analyticsStore.leaderboards();
   qEl.innerHTML=data.questions.length
     ? data.questions.map(x=>`<div class="rank-row"><span>${esc(x.question||"未命名問題")}</span><strong>${Number(x.count||0)}</strong></div>`).join("")
     : `<span class="note">尚無查詢紀錄。</span>`;
-  uEl.innerHTML=data.users.length
-    ? data.users.map(x=>`<div class="rank-row"><span>${esc(x.displayName||"匿名使用者")}</span><strong>${Number(x.eventCount||0)}</strong></div>`).join("")
-    : `<span class="note">尚無使用紀錄。</span>`;
+  dEl.innerHTML=data.docs?.length
+    ? data.docs.map(x=>`<div class="rank-row"><span>${esc(x.docId||x.docLabel||"未命名文件")}</span><strong>${Number(x.count||0)}</strong></div>`).join("")
+    : `<span class="note">尚無文件開啟紀錄。</span>`;
   rEl.innerHTML=data.reviews.length
     ? data.reviews.map(x=>`<div class="rank-row"><span>${esc(x.quarter||"未命名季度")}｜${esc(x.status||"待更新")}</span><strong>追蹤</strong></div>`).join("")
     : `<span class="note">尚無季度更新紀錄。</span>`;
@@ -1793,23 +1836,26 @@ function bindCalendarFilters(){
   });
   const menuBtns=[...document.querySelectorAll("[data-cal-freq]")];
   const calItems=[...document.querySelectorAll("[data-cal-item]")];
-  const deptSel=document.getElementById("calendarDept");
+  const deptBtns=[...document.querySelectorAll("#calDeptBtns [data-dept]")];
   if(!menuBtns.length||!calItems.length) return;
-  function applyCalFilter(activeFreq,activeDept){
+  function activeDept(){
+    return (deptBtns.find(b=>b.classList.contains("active"))?.dataset.dept)||"";
+  }
+  function applyCalFilter(activeFreq,dept){
     menuBtns.forEach(btn=>btn.classList.toggle("active",btn.dataset.calFreq===activeFreq));
     calItems.forEach(item=>{
       const fOk=item.dataset.calItem===activeFreq;
-      const dOk=!activeDept||String(item.dataset.calDept).split("/").map(d=>d.trim()).some(d=>d===activeDept||d.includes(activeDept));
+      const dOk=!dept||String(item.dataset.calDept).split("/").map(d=>d.trim()).some(d=>d===dept||d.includes(dept));
       item.style.display=fOk&&dOk?"":"none";
     });
   }
-  menuBtns.forEach(btn=>btn.addEventListener("click",()=>applyCalFilter(btn.dataset.calFreq,deptSel?.value||"")));
-  if(deptSel){
-    deptSel.addEventListener("change",()=>{
-      const active=menuBtns.find(b=>b.classList.contains("active"))||menuBtns[0];
-      applyCalFilter(active?.dataset.calFreq||"",deptSel.value);
-    });
-  }
+  menuBtns.forEach(btn=>btn.addEventListener("click",()=>applyCalFilter(btn.dataset.calFreq,activeDept())));
+  deptBtns.forEach(btn=>btn.addEventListener("click",()=>{
+    deptBtns.forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    const active=menuBtns.find(b=>b.classList.contains("active"))||menuBtns[0];
+    applyCalFilter(active?.dataset.calFreq||"",btn.dataset.dept);
+  }));
   applyCalFilter(menuBtns[0]?.dataset.calFreq||"","");
 }
 const deptIdMap={
@@ -1964,8 +2010,13 @@ async function showSection(id){
   document.getElementById("pageTag2").textContent=s.tag;
   document.getElementById("pageLead").textContent=s.lead;
   const pillEl=document.getElementById("pagePills");
-  pillEl.innerHTML=departmentDocumentMaps[s.id]?"":s.pills.map(pillMarkup).join("");
-  pillEl.style.display=pillEl.innerHTML?"":"none";
+  const hidePills=departmentDocumentMaps[s.id]||["collection-calendar","equipment-calendar"].includes(s.id)||!s.focus?.length;
+  if(hidePills){
+    pillEl.innerHTML="";pillEl.style.display="none";
+  }else{
+    pillEl.innerHTML=`<ul class="hero-focus">${s.focus.map(f=>`<li>${esc(f)}</li>`).join("")}</ul>`;
+    pillEl.style.display="";
+  }
   document.querySelector(".hero").style.setProperty("--hero-image",`url("${visualAssets[s.id]||"assets/gdp-training-hero.png"}")`);
   document.getElementById("content").innerHTML=renderContent(s);
   document.querySelectorAll(".nav-button").forEach(b=>b.classList.toggle("active",b.dataset.section===id));

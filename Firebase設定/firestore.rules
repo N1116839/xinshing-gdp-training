@@ -1,0 +1,63 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /gdpTrainingQa/{sectionId}/items/{itemId} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasAll(['name','question','sectionId','createdAt']) && request.resource.data.name is string && request.resource.data.name.size() <= 50 && request.resource.data.question is string && request.resource.data.question.size() <= 1000;
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['replies']);
+    }
+    match /gdpTrainingCalendarStatus/{sectionId}/items/{itemId} {
+      allow read: if true;
+      allow create, update: if request.resource.data.keys().hasOnly(['sectionId','itemId','itemIndex','status','updatedAt'])
+        && request.resource.data.keys().hasAll(['sectionId','itemId','itemIndex','status','updatedAt'])
+        && request.resource.data.sectionId == sectionId
+        && request.resource.data.itemId == itemId
+        && request.resource.data.itemIndex is int
+        && request.resource.data.status in ['done','pending'];
+    }
+    match /gdpKnowledgeBase/{docId} {
+      allow read: if true;
+      allow write: if request.resource.data.keys().hasAll(['keywords','topic','international','taiwan','xinshing'])
+        && request.resource.data.topic is string
+        && request.resource.data.topic.size() <= 100
+        && request.resource.data.keywords is list;
+    }
+    match /gdpUsageEvents/{eventId} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['eventType','visitorId','displayName','sectionId','targetId','targetLabel','question','status','quarter','createdAt'])
+        && request.resource.data.keys().hasAll(['eventType','visitorId','displayName','sectionId','quarter','createdAt'])
+        && request.resource.data.eventType in ['page_view','question','reply','calendar_status','kb_search','doc_open']
+        && request.resource.data.visitorId is string
+        && request.resource.data.visitorId.size() <= 80
+        && request.resource.data.displayName is string
+        && request.resource.data.displayName.size() <= 50;
+    }
+    match /gdpUserStats/{visitorId} {
+      allow read: if true;
+      allow create, update: if request.resource.data.keys().hasOnly(['visitorId','displayName','eventCount','questionCount','replyCount','calendarDoneCount','queryCount','docOpenCount','updatedAt'])
+        && request.resource.data.visitorId == visitorId
+        && request.resource.data.displayName is string
+        && request.resource.data.displayName.size() <= 50;
+    }
+    match /gdpQuestionStats/{questionId} {
+      allow read: if true;
+      allow create, update: if request.resource.data.keys().hasOnly(['question','count','lastAskedAt'])
+        && request.resource.data.question is string
+        && request.resource.data.question.size() <= 100;
+    }
+    match /gdpRegulationReview/{quarterId} {
+      allow read: if true;
+      allow create, update: if request.resource.data.keys().hasOnly(['quarter','status','scope','note','updatedAt'])
+        && request.resource.data.quarter == quarterId
+        && request.resource.data.status in ['待更新','更新中','已更新']
+        && request.resource.data.scope is list;
+    }
+    match /gdpDocStats/{docId} {
+      allow read: if true;
+      allow create, update: if request.resource.data.keys().hasOnly(['docId','title','openCount','lastOpenedAt'])
+        && request.resource.data.docId == docId
+        && request.resource.data.title is string
+        && request.resource.data.title.size() <= 100;
+    }
+  }
+}
