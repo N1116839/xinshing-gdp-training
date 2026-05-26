@@ -44,23 +44,7 @@
     .hero{position:relative;display:grid;gap:18px;margin-bottom:22px;min-height:300px;padding:34px;background:rgba(255,255,255,.88);border:1px solid var(--line);box-shadow:var(--shadow);overflow:hidden;isolation:isolate}
     .hero::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(247,251,251,.98) 0%,rgba(247,251,251,.88) 42%,rgba(247,251,251,.28) 76%),var(--hero-image,url("assets/gdp-training-hero.png")) center right/cover no-repeat;z-index:-2}
     .hero::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:7px;background:linear-gradient(90deg,var(--brand),var(--gold));z-index:-1}
-    .eyebrow{margin:0;color:var(--gold);font-weight:700;font-size:18px}
-    .audit-check-item{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;margin:4px 0;background:#f7fbfb;border:1px solid var(--line);border-radius:6px;cursor:pointer;font-size:14px;line-height:1.55;transition:background .15s,border-color .15s}
-    .audit-check-item:hover{background:#e8f4f2}
-    .audit-check-item input[type=checkbox]{margin-top:2px;accent-color:var(--brand);width:16px;height:16px;flex-shrink:0}
-    .audit-check-item.checked{background:#e2f3ef;border-color:var(--brand-2);text-decoration:line-through;color:var(--ink-soft)}
-    .audit-done{margin-top:14px;padding:10px 14px;background:#0f5b50;color:#fff;border-radius:6px;font-weight:700;text-align:center;font-size:14px;display:none}
-    .flow-check-item{display:flex;align-items:center;gap:9px;margin-top:14px;padding:10px 14px;background:#fff9ef;border:1px solid #ead6b6;border-radius:6px;cursor:pointer;font-size:14px;font-weight:600;color:var(--ink)}
-    .flow-check-item:hover{background:#fff0d8}
-    .flow-check-item input[type=checkbox]{accent-color:#b8832f;width:16px;height:16px;flex-shrink:0}
-    .flow-check-item.checked{background:#e8f4f2;border-color:var(--brand-2);color:var(--brand);text-decoration:none}
-    .evidence-selfcheck{margin-top:16px;padding:14px 16px;background:#f7fbfb;border:1px solid var(--line);border-top:3px solid var(--brand)}
-    .evidence-selfcheck h5{margin:0 0 10px;font-size:14px;color:var(--brand);font-weight:700}
-    .evidence-selfcheck .sc-item{display:flex;align-items:center;gap:10px;padding:7px 10px;margin:3px 0;background:#fff;border:1px solid var(--line);border-radius:6px;cursor:pointer;font-size:13px;transition:background .15s}
-    .evidence-selfcheck .sc-item:hover{background:#e8f4f2}
-    .evidence-selfcheck .sc-item input[type=checkbox]{accent-color:var(--brand);width:15px;height:15px;flex-shrink:0}
-    .evidence-selfcheck .sc-item.checked{background:#e2f3ef;border-color:var(--brand-2);color:var(--ink-soft);text-decoration:line-through}
-    .evidence-selfcheck .sc-done{display:none;margin-top:10px;padding:8px 12px;background:#0f5b50;color:#fff;border-radius:6px;text-align:center;font-size:13px;font-weight:700}
+    .eyebrow{margin:0;color:var(--gold);font-weight:700;font-size:16px}
     h2{margin:0;color:var(--brand);font-size:clamp(28px,4vw,46px);line-height:1.12}
     .lead{max-width:980px;margin:0;color:var(--ink-soft);font-size:17px;line-height:1.8}
     .hero .lead{max-width:680px;color:#315753;font-weight:600}
@@ -1285,10 +1269,10 @@ const kbStore = {
     docs.push({
       id:"clarify-temperature-mapping",
       sourceType:"查詢校正",
-      topic:"溫度測繪、溫控系統與倉庫環境說明",
-      international:"PIC/S GDP 要求倉儲環境有適當溫度監測設備、警報系統、定期校正與異常處理程序；環境條件需能以文件證明符合藥品保存規範；重大設施變更後需重新確認環境符合性。",
-      taiwan:"台灣 GDP 要求藥品儲存環境符合產品保存條件；溫度計與溫濕度記錄器需定期外部校正；倉庫環境需定期執行溫度測繪，夏季與冬季各量測 7 天，確認儲存區溫度分佈符合規定；若有重大事件或環境變更，應重新執行測繪。",
-      xinshing:"新勝醫藥為常溫倉庫（無冷藏倉），室溫藥品儲存溫度 ≤25°C，警戒線 23.5°C；依 DP33-01 以溫濕度記錄器每 5 分鐘自動記錄，溫度異常觸發警報需填寫 FR33-01；溫度計與溫濕度記錄器每年送外部單位校正（DP34-01）；每三年針對倉庫執行夏季與冬季各 7 天環境溫度測繪；正航系統屬電腦化系統確效與進銷存管理，非溫度監控系統。",
+      topic:"溫度測繪、冷藏倉與溫控系統說明",
+      international:"GDP 要求儲存環境有適當溫度監測、紀錄、校正與異常處理。",
+      taiwan:"目前資料索引寫到倉儲環境每三年執行夏季與冬季測繪各 7 天，但未明定夏季/冬季是哪幾個月份。",
+      xinshing:"本頁不得推論公司有冷藏倉，也不得寫成使用正航系統做溫度監控。已知資料應表述為：常溫倉庫、分離式冷氣、UPS、溫控警報、溫度計與溫濕度記錄器；正航相關資料屬進銷存電腦化系統確效/備份，不等於溫度監控系統。",
       sop_ref:["DP33-01","DP34-01","DP34-02","DP35-01","DP55-01"],
       file:"第三章作業場所及設備/DP33-01溫度監視作業程序書.docx",
       keywords:["溫度測繪","夏季","冬季","月份","冷藏倉","常溫倉庫","正航","正行","溫控","溫度監控","溫濕度記錄器","DP33-01","DP34-01","DP35-01"]
@@ -1310,7 +1294,7 @@ const kbStore = {
       topic:"內部稽核頻率與紀錄",
       international:"PIC/S GDP 要求批發商維持品質系統並定期執行自我檢查或內部稽核，以確認 GDP 作業持續符合規範並追蹤矯正預防措施。",
       taiwan:"台灣 GDP 要求業者建立品質系統、文件與紀錄，並確認作業符合 GDP 要求；內部稽核結果與後續改善應可追溯。",
-      xinshing:"新勝醫藥依 DP82-01 每年 12 月實施內部品質稽核活動。稽核規劃需包含稽核準則、範圍、行程及先前稽核結果；FR82-01 為年度內部品質稽核計畫，FR82-02 為內部稽核查檢表，FR82-03 為內部稽核報告；稽核結果與後續改善追蹤均需文件化保存。",
+      xinshing:"新勝醫藥依 DP82-01 每年 12 月實施內部品質稽核活動。稽核規劃需包含稽核準則、範圍、行程及先前稽核結果；FR82-01 為年度內部品質稽核計畫，FR82-02 為內部稽核查檢表，FR82-03 為內部稽核報告。不可寫成每 6 個月一次。",
       sop_ref:["DP82-01","FR82-01","FR82-02","FR82-03"],
       file:"第八章內部稽核/DP82-01 內部品質稽核作業程序書.docx",
       keywords:["內部稽核","內部品質稽核","稽核多久一次","每年","12月","FR82-01","FR82-02","FR82-03","DP82-01"]
@@ -1343,7 +1327,7 @@ const kbStore = {
       topic:"藥品儲存條件與倉儲管制要求",
       international:"PIC/S GDP 要求倉儲環境需符合產品規格保存條件；需有溫度監測、警報、紀錄與異常處理；庫存需定期盤點並依 FEFO 原則出貨；隔離品需有明確標示與實體或電子區隔。",
       taiwan:"台灣 GDP 要求室溫藥品儲存於 ≤25°C 環境；需有溫度監控設備、校正紀錄；近效期藥品需優先出貨（FEFO）；退貨、不合格品與一般品需有效隔離，不得混儲。",
-      xinshing:"新勝醫藥為常溫倉庫，室溫藥品儲存溫度 ≤25°C，警戒線 23.5°C；依 DP33-01 以溫濕度記錄器每 5 分鐘自動記錄，異常警報需填寫 FR33-01；依 DP55-01 執行庫存管理，每兩個月盤點一次（FR55-03）；隔離品放置隔離區並以 FR55-02 標示。",
+      xinshing:"新勝醫藥室溫藥品儲存溫度 ≤25°C，警戒線 23.5°C；依 DP33-01 每日記錄溫濕度，異常警報需填寫 FR33-01；依 DP55-01 執行庫存管理，每兩個月盤點一次（FR55-03）；隔離品放置隔離區並標示 FR55-02；不可推論公司有冷藏倉。",
       sop_ref:["DP33-01","DP55-01","FR33-01","FR55-02","FR55-03"],
       file:"第三章作業場所及設備/DP33-01溫度監視作業程序書.docx",
       keywords:["儲存","倉儲","溫度","溫控","25度","FEFO","先進先出","盤點","隔離","DP33-01","DP55-01","FR33-01","FR55-02","FR55-03","冷藏","常溫","倉庫"]
@@ -1702,13 +1686,10 @@ function auditChecklistFor(item){
   return hit ? hit[1] : ["指出此重點對應的 SOP、WI、FR 或清冊。","確認現場紀錄能支持畫面上的說法。","說明資料缺漏時的補正部門與處理路徑。"];
 }
 function auditDetailHtml(no,item,heading="先確認這一點"){
-  const checks=auditChecklistFor(item);
-  const checkHtml=checks.map((x,i)=>`<label class="audit-check-item" data-idx="${i}"><input type="checkbox">${esc(x)}</label>`).join("");
   return `<small>稽查重點 ${String(no).padStart(2,"0")}</small>
       <h4>${heading}</h4>
       <p>${esc(item)}</p>
-      <div class="audit-checklist">${checkHtml}</div>
-      <div class="audit-done">✓ 全部核對完成</div>`;
+      <ul>${auditChecklistFor(item).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`;
 }
 function auditSlides(s){
   if(!s.audit||!s.audit.length) return "";
@@ -1818,7 +1799,7 @@ function deptFlowSwipe(steps){
       <div class="pipe-node" style="font-size:13px;font-weight:800">${esc(num)}</div>
       <div class="pipe-lbl">${esc(title)}</div>
     </div>${i<steps.length-1?'<div class="pipe-arrow">›</div>':''}`).join("");
-  const panes=steps.map(([num,title,desc,doc,selfCheck],i)=>
+  const panes=steps.map(([num,title,desc,doc],i)=>
     `<div class="slide-pane">
       <div class="slide-hd" style="background:${palette[i%palette.length]}">
         <span class="slide-hd-icon" style="font-size:14px;font-weight:800;min-width:36px;text-align:center">${esc(num)}</span>${esc(title)}
@@ -1826,7 +1807,6 @@ function deptFlowSwipe(steps){
       <div style="padding:22px 20px;background:#f7fbfb;min-height:120px">
         <p style="font-size:15px;line-height:1.8;color:var(--ink);white-space:pre-line;margin:0">${esc(desc)}</p>
         ${doc?`<div style="margin-top:14px"><span class="freq-badge">📋 ${esc(doc)}</span></div>`:""}
-        ${selfCheck?`<label class="flow-check-item"><input type="checkbox" onchange="this.closest('.flow-check-item').classList.toggle('checked',this.checked)">${esc(selfCheck)}</label>`:""}
       </div>
     </div>`).join("");
   const dots=steps.map((_,i)=>`<span class="slide-dot${i===0?" active":""}"></span>`).join("");
@@ -1948,7 +1928,11 @@ function equipmentOnlySection(s){
   return panel("關鍵設備時間核對台",`<p class="lead" style="font-size:15px">這一頁跟年度資料收件行事曆一樣，先依時間點篩選，再看該找誰、收什麼設備保養/校驗/確效證據，以及對應哪份 SOP 或表單。</p><div class="equip-menu"><div class="equip-menu-list">${menu}</div><div class="equip-item-list">${list}</div></div>`,"wide");
 }
 function docButtons(s){
-  return "";
+  if(["collection-calendar","equipment-calendar"].includes(s.id)) return "";
+  if(departmentDocumentMaps[s.id]) return "";
+  const docs=s.pills.filter(p=>sopLibrary[p]);
+  if(!docs.length) return "";
+  return `<article class="panel"><h3>本頁相關 SOP</h3><div class="pill-row">${docs.map(c=>pillMarkup(c)).join("")}</div><p class="note" style="margin-top:10px">點擊文件編號開啟 SOP 學習重點面板。</p></article>`;
 }
 function evidenceMap(s){
   const uid=`em-${s.id}`;
@@ -1977,15 +1961,7 @@ function evidenceMap(s){
     <div class="metric clickable" data-em-tip="紀錄內容需與現場實際作業相符。數字、批號、操作人員與設備資訊應一致且可核實。"><strong>正確</strong><span>資料與現場一致</span></div>
     <div class="metric clickable" data-em-tip="任何問題都能往回追查：批號→供應商→入庫→儲位→出貨→客戶，責任人清楚可識別。"><strong>可追溯</strong><span>批號、流向、責任清楚</span></div>
   </div>
-  <div id="${uid}-tip" class="em-tip-box" style="display:none"></div>
-  <div class="evidence-selfcheck">
-    <h5>自我核對：我能做到以下四點嗎？</h5>
-    <label class="sc-item"><input type="checkbox">作業發生時即時填寫紀錄，不事後補填</label>
-    <label class="sc-item"><input type="checkbox">所有欄位、簽名與日期均已填寫完整</label>
-    <label class="sc-item"><input type="checkbox">紀錄內容與現場實際作業完全一致</label>
-    <label class="sc-item"><input type="checkbox">批號、流向與責任人可完整追溯</label>
-    <div class="sc-done">✓ 四項全達標——稽查員看到你的紀錄會滿意！</div>
-  </div>`;
+  <div id="${uid}-tip" class="em-tip-box" style="display:none"></div>`;
 }
 function kbAnswerHtml(doc){
   const sopRefs=Array.isArray(doc.sop_ref)&&doc.sop_ref.length
@@ -2043,11 +2019,11 @@ function kbSection(){
 function renderContent(s){
   if(s.id==="gdp-kb") return kbSection();
   const capaFlow=deptFlowSwipe([
-    ["01","發現","異常、缺漏、溫度超標或程序不符。\n任何人員發現都應立即提報，不得拖延。","","我知道什麼情況需要立即提報偏差"],
-    ["02","隔離/通報","立即隔離問題藥品，貼上非符合標示。\n通知品保、倉管及 GDP 權責人。","FR12-03","我能說出隔離步驟與通報對象"],
-    ["03","調查","確認根本原因、影響範圍與風險等級。\n品保負責調查並完成偏差事件處理報告單。","DP12-02","我了解根本原因分析流程"],
-    ["04","改善","依調查結論執行 CAPA 改善措施。\n補正文件、變更管制或人員再訓練。","FR12-04","我知道 CAPA 改善措施的填寫要點"],
-    ["05","確認","品保追蹤 CAPA 有效性並文件化結案。\n重大事件需提交管理階層檢討。","DP14-01","我能說明 CAPA 有效性確認與結案方式"]
+    ["01","發現","異常、缺漏、溫度超標或程序不符。\n任何人員發現都應立即提報，不得拖延。",""],
+    ["02","隔離/通報","立即隔離問題藥品，貼上非符合標示。\n通知品保、倉管及 GDP 權責人。","FR12-03"],
+    ["03","調查","確認根本原因、影響範圍與風險等級。\n品保負責調查並完成偏差事件處理報告單。","DP12-02"],
+    ["04","改善","依調查結論執行 CAPA 改善措施。\n補正文件、變更管制或人員再訓練。","FR12-04"],
+    ["05","確認","品保追蹤 CAPA 有效性並文件化結案。\n重大事件需提交管理階層檢討。","DP14-01"]
   ]);
   return [
     panel("視覺導讀",visualIntro(s),""),
@@ -2164,22 +2140,6 @@ function bindEvidenceMap(){
         tipBox.style.display="";
         tipBox.innerHTML=`<strong style="color:var(--gold)">${esc(label)}</strong>：${esc(metric.dataset.emTip)}`;
       }
-    });
-  });
-  document.querySelectorAll(".evidence-selfcheck .sc-item").forEach(label=>{
-    label.addEventListener("change",()=>{
-      label.classList.toggle("checked",label.querySelector("input").checked);
-      const sc=label.closest(".evidence-selfcheck");
-      const all=sc.querySelectorAll(".sc-item");
-      const done=[...all].every(l=>l.querySelector("input").checked);
-      const doneEl=sc.querySelector(".sc-done");
-      if(doneEl) doneEl.style.display=done?"":"none";
-    });
-    label.addEventListener("click",e=>{
-      if(e.target.tagName==="INPUT") return;
-      const cb=label.querySelector("input");
-      cb.checked=!cb.checked;
-      cb.dispatchEvent(new Event("change",{bubbles:true}));
     });
   });
 }
@@ -2412,33 +2372,14 @@ function bindAuditFocus(){
   const detail=document.getElementById("auditDetail");
   const cards=[...document.querySelectorAll("[data-audit-item]")];
   if(!detail||!cards.length) return;
-  function bindCheckboxes(){
-    detail.querySelectorAll(".audit-check-item").forEach(label=>{
-      label.addEventListener("change",()=>{
-        label.classList.toggle("checked",label.querySelector("input").checked);
-        const all=detail.querySelectorAll(".audit-check-item");
-        const done=[...all].every(l=>l.querySelector("input").checked);
-        const doneEl=detail.querySelector(".audit-done");
-        if(doneEl) doneEl.style.display=done?"":"none";
-      });
-      label.addEventListener("click",e=>{
-        if(e.target.tagName==="INPUT") return;
-        const cb=label.querySelector("input");
-        cb.checked=!cb.checked;
-        cb.dispatchEvent(new Event("change",{bubbles:true}));
-      });
-    });
-  }
   cards.forEach(card=>{
     card.addEventListener("click",()=>{
       cards.forEach(c=>c.classList.remove("active"));
       card.classList.add("active");
       const no=String(card.dataset.auditNo||"").padStart(2,"0");
       detail.innerHTML=auditDetailHtml(no,card.dataset.auditItem,"核對這一點");
-      bindCheckboxes();
     });
   });
-  bindCheckboxes();
 }
 
 /* ═══════════════════════════════════════════════
