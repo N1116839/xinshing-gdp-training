@@ -771,7 +771,7 @@ const sections = [
     group:"GDP 知識庫",
     title:"GDP 智慧查詢",
     tag:"依問題自動查詢法規與公司做法",
-    lead:"輸入問題，自動比對 PIC/S GDP 國際規範、台灣食藥署 GDP 規範與新勝醫藥做法，給出三層次回覆。資料由公司人員定期更新。",
+    lead:"輸入問題，自動比對 PIC/S GDP 國際規範、台灣食藥署 GDP 規範與新勝醫藥做法。",
     pills:[],
     focus:[],
     standards:{picsgdp:[],taiwan:[],company:[],docs:[]},
@@ -1448,14 +1448,13 @@ function kbAnswerHtml(doc){
       <div class="kb-answer-body">${esc(doc.xinshing||"")}</div>
     </div>
     ${sopRefs}
-    <div class="kb-answer-meta">資料更新：${esc(doc.updated_at||"—")}　更新者：${esc(doc.updated_by||"—")}</div>
   </div>`;
 }
 function kbSection(){
   const quickQuestions=["倉庫多久盤點一次","溫度超標怎麼處理","供應商怎麼評鑑","藥品回收要怎麼做","偏差要怎麼處理","教育訓練合格標準","文件要保存幾年","藥品過期了怎麼辦","客訴要怎麼處理","內部稽核多久一次"];
   const quickBtns=quickQuestions.map(q=>`<button type="button" class="kb-quick" data-q="${esc(q)}">${esc(q)}？</button>`).join("");
   return [
-    panel("常見問題快速查詢",`<p style="font-size:13px;color:var(--muted);margin-bottom:14px">點擊常見問題，或在下方輸入自定義問題後按查詢。系統自動比對 PIC/S GDP 國際規範、台灣食藥署規定與新勝醫藥做法，給出三層次回覆。</p><div class="kb-quick-btns">${quickBtns}</div>`,"wide"),
+    panel("常見問題快速查詢",`<p style="font-size:13px;color:var(--muted);margin-bottom:14px">點擊常見問題，或在下方輸入自定義問題後按查詢。</p><div class="kb-quick-btns">${quickBtns}</div>`,"wide"),
     panel("查詢結果",`<div class="kb-messages" id="kbMessages"><p style="color:var(--muted);font-size:14px">尚未查詢。點擊上方常見問題或輸入問題後按「查詢」。</p></div><form class="kb-form" id="kbForm" style="margin-top:16px"><input type="text" id="kbInput" name="q" placeholder="例如：藥品過期了怎麼辦？" autocomplete="off" maxlength="100"><button type="submit" class="primary">查詢</button></form>`,"wide")
   ].join("");
 }
