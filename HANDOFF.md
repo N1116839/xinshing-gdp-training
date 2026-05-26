@@ -3,7 +3,7 @@
 
 ## 目前狀態
 - 分支：codex/gdp-html-training-pages
-- 最新 commit：3bf2f34
+- 收工前最新 commit：1f1e9fb
 - GitHub Pages：https://n1116839.github.io/xinshing-gdp-training/
 - Firebase：xinshing-gdp-training-20260525（Firestore rules 已部署）
 
@@ -72,3 +72,8 @@
 - 主檔：G:\我的雲端硬碟\2026codex\AI測試\gdp_internal_training.html
 - Firebase rules：G:\我的雲端硬碟\2026codex\AI測試\firestore.rules
 - 預覽 server：npx serve -p 3333（launch.json 已設定）
+
+## Codex 收工補記（2026-05-26）
+- Claude 已完成並提交 `1f1e9fb docs: correct scope of C-item — KB must cover all 33 sopLibrary docs`。
+- 本次收工不新增 SOP/PPT 原始檔到 Git；未追蹤的原始文件、封面圖與 `.claude/` 維持不納入版本控制。
+- 下一次開始前先讀本檔、`README_Codex接續.md` 與第二大腦專案筆記，再由使用者指定 HANDOFF A-E 要先處理哪一項。

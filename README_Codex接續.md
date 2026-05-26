@@ -1291,3 +1291,23 @@ G:\我的雲端硬碟\2026codex\codex-skills-lazy-pack
     - 導覽列左側頻率捷徑（nav-freq-item，應刪除）
     下次區分時要確認是哪一個，不可混淆。
 ```
+
+## 2026-05-26 Claude 收工補記：Firestore KB 與 HANDOFF 接續
+```
+### 已完成
+- Claude 已在 `codex/gdp-html-training-pages` 分支完成多筆 HTML / Firestore / HANDOFF 相關提交，最新已確認提交為 `1f1e9fb docs: correct scope of C-item — KB must cover all 33 sopLibrary docs`。
+- `HANDOFF.md` 已整理目前狀態、GitHub Pages、Firebase 專案、已完成項目、A-E 待辦與踩坑點。
+- Firestore 既有 10 筆 KB 已完成部分錯字與關鍵字修正，包含 document-retention、training-requirements、complaint-handling 等。
+- HANDOFF 已明確修正 C 項範圍：GDP 智慧查詢 Firestore KB 需覆蓋 `sopLibrary` 全部 33 份文件；現有 10 筆，待補 23 筆核心 SOP/WI。
+
+### 下次優先
+1. 先由使用者指定 `HANDOFF.md` A-E 要做哪一項，不自行決定順序。
+2. 若處理 C 項，需依 `sopLibrary` 的 `content[]` 陣列補齊 Firestore KB：一份 SOP/WI 對應一筆 KB 文件。
+3. 補 KB 時維持欄位格式：`topic`、`keywords[]`、`international`、`taiwan`、`xinshing`、`sop_ref[]`。
+4. 未追蹤的大量 SOP、PPT、封面圖、`.claude/` 不要誤加入 Git；只 stage 相關 HTML、Firebase、HANDOFF 或接續文件。
+
+### Git 狀態
+- 目前 Git remote：`origin https://github.com/N1116839/xinshing-gdp-training.git`。
+- 目前分支追蹤 `origin/codex/gdp-html-training-pages`。
+- 工作區仍有大量未追蹤原始資料；這些是專案資料來源，不屬於本次收工提交範圍。
+```
