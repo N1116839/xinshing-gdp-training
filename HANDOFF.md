@@ -1,4 +1,23 @@
 # GDP HTML 教育訓練 HANDOFF
+更新：2026-05-27
+
+## 本輪完成（2026-05-27 收工）
+
+### 本次無 HTML / Firestore 修改
+- 確認昨晚（2026-05-26）進度完整：最後三個 commit 均已 push，未損失任何程式碼
+- 確立 KB 全量校對方向（evidence-based-content 標準）：
+  - 查詢精準命中：問 A 只出現 A，關鍵字覆蓋所有問法，不跨條目污染
+  - 三欄法規標準：有明文寫明文；無明文寫「無明文規定」，不推論
+  - 內容只來自原始 SOP/WI/FR，不補充、不推斷
+  - 論文/報告同標準：來源可公開查閱可下載，不誇大，超出來源不寫
+- 建立 `evidence-based-content` skill（第二大腦 + Google Drive + 本機 Claude 三處同步）
+
+### 下次開工方向
+- F 項：KB 全量校對（套用 evidence-based-content 標準，逐章或逐部門）
+- 由使用者決定從哪章/哪部門開始
+
+---
+
 更新：2026-05-26（第三次）
 
 ## 目前狀態
@@ -42,6 +61,21 @@
 ### Phase 3：Firestore rules 更新
 - `Firebase設定/firestore.rules` 新增 `gdpDocStats` 規則（docId、title、openCount、lastOpenedAt）
 - **尚未部署**：需使用者同意後執行 `firebase deploy --only firestore:rules`
+
+## 本輪完成（2026-05-26 第五次）
+
+| Commit | 內容 |
+|--------|------|
+| e449784 | 更新 AGENTS.md、建立 CLAUDE.md、補 HANDOFF F 項（四台電腦交接修正） |
+| 095b020 | 移除 clarify-storage 冷藏 keyword、project-source-file 評分上限 12、盤點硬排除收緊、閾值 0.35→0.45、clarify-temperature-mapping 明確「沒有冷藏倉」 |
+| 56c81df | 正航查詢意圖比對收緊、新增正航硬排除、移除 xinshing「不是溫度監控系統」AI 推論句 |
+
+### 搜尋邏輯現況
+- 查詢含「盤點」→ 只有含 `盤點|fr5503|dp5501` 的文件通過
+- 查詢含「正航」→ 只有含 `正航|fr5701|dp3501` 的文件通過
+- `project-source-file` 評分上限 12，maxScore≥50 時閾值 0.45（原 0.35）
+- clarify-storage keywords 已移除「冷藏」，改為「室溫、多久盤點、幾個月盤點、庫存管理」
+- clarify-temperature-mapping：xinshing 明確說「沒有冷藏倉」；正航描述改為「確效過的進銷存系統（FR57-01）」
 
 ## 下次待辦（使用者明確要求，按優先順序確認後再動工）
 
