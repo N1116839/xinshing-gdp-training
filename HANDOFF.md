@@ -1,5 +1,51 @@
 # GDP HTML 教育訓練 HANDOFF
-更新：2026-05-27（第二次）
+更新：2026-05-27（第三次）
+
+## 本輪完成（2026-05-27 第三次開工）commit a4545a2
+
+### F 項：KB 全量校對 ✅ DONE（五章全部完成）
+
+逐份讀取原始 docx 核對，依 evidence-based-content 標準，執行以下：
+
+**新增 12 條 clarify 條目（直接從 SOP 原文建立）：**
+| 條目 ID | 章節 | 來源 |
+|---|---|---|
+| clarify-complaint-handling | 6章 | DP62-01 |
+| clarify-receiving-shipping | 5章 | DP54-01 |
+| clarify-waste-disposal | 5章 | DP56-01 |
+| clarify-premises-layout | 3章 | DP32-01 |
+| clarify-validation | 3章 | DP36-01 |
+| clarify-organization | 2章 | DP22-01+WI22-01 |
+| clarify-hygiene-cleaning | 2章 | DP25-01+WI25-01 |
+| clarify-quality-manual | 1章 | DM10-01+WI10-01 |
+| clarify-quality-system | 1章 | DP12-01 |
+| clarify-change-control | 1章 | DP12-04 |
+| clarify-management-review | 1章 | DP14-01 |
+| clarify-quality-risk | 1章 | DP15-01 |
+
+**修正 7 條現有條目（核對後發現錯誤）：**
+- `clarify-falsified-medicines`：移除「FR55-02 標示」（DP64-01 表單：無）、移除「每年訓練≥70分」（非 DP64-01 內容）；補通知上市供應藥品許可持有廠商、依 DP65-01 回收
+- `clarify-storage`：移除 FR55-02、FR55-03（DP55-01 表單：無）
+- `clarify-supplier`：補 FR52-02（合格廠商名冊）、FR52-03（缺失登錄表）；移除「清冊應與 SMF 一致」（非 DP52-01 原文）；補每月食藥署網站查核
+- `clarify-customer-order`：補 FR53-02（客戶認可審查紀錄表）、FR57-03（託運總表）；移除「需填偏差紀錄」（非 DP53-01 原文）
+- `clarify-personnel-training`：補 FR24-01（年度計畫表）、FR24-02（考核表）；補 ≥70 分合格標準（DP24-01 明文）；補三年訓練週期（DP22-01 明文）
+- `clarify-pest-control`：移除「每月彙整 FR25-03」（DP25-02 規定每年至少一次，非每月）；補 FR25-04（病媒防治處理紀錄表）
+- `clarify-deviation-capa`：FR12-02 名稱「偏差管制一覽表」→「偏差事件處理管制表」（DP12-02 原文）
+
+**移除 1 條重複條目：**
+- `clarify-inbound-outbound`：與新建 clarify-receiving-shipping 重複，且有 FR57-01 誤用（正航確效報告非進出貨表單）
+
+**尚未覆蓋的 SOP（仍有 sopLibrary 薄卡，但無 clarify 富條目）：**
+- DP34-01（關鍵設備）、DP34-02（量測儀器）、DP35-01（電腦化系統）
+- DP82-01（內部稽核）—現有 clarify-internal-audit-frequency 但未逐份原文核對
+- 第七章：DP72-01 clarify-outsourcing 已驗證（本輪）
+
+### 下次開工方向
+- 確認使用者要優先做 A/D/E（功能升級）還是繼續補剩餘 clarify 條目（DP34/35/82）
+- 若收到「繼續補 clarify」：讀 DP34-01、DP34-02、DP35-01、DP82-01 建立對應條目
+- 若收到功能升級：從 D 項全站互動性（scroll fade-in / hover / ripple）開始
+
+---
 
 ## 本輪完成（2026-05-27 開工）
 
@@ -10,14 +56,8 @@
 - `auditChecklistFor` 溫度規則：「資料不得寫成冷藏倉…」→ 改為常溫倉庫事實描述
 - `auditChecklistFor` 內部稽核規則：「不是每 6 個月一次」→ 移除，改為依 DP82-01 每年 12 月事實
 
-原始 SOP 核對紀錄（本次讀取）：
-- DP33-01：倉庫溫度電子記錄器與電腦連結，可自動傳送資料；每月底抓取前一月溫度曲線圖（FR33-01）；無明文 5 分鐘間隔
-- DP55-01：每月上班最後一日由倉管整理當月溫度記錄；每兩個月盤點一次
-- DP82-01：每年 12 月實施內部品質稽核；稽核報告歸檔保存 5 年
-
-### 下次開工方向
-- F 項：KB 全量校對（逐章或逐部門，依使用者指定章節開始）
-- 建議優先從第一章（品質手冊/DP12-0x）開始，再依序至第八章
+### 下次開工方向（已完成，見上）
+- ~~F 項：KB 全量校對~~（本次已完成）
 
 ---
 
