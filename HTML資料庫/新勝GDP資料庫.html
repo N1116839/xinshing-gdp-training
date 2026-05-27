@@ -1867,7 +1867,11 @@ function documentMapSection(s){
           : `<li>${esc(d)}</li>`;
       }).join("")}</ul>
     </article>`).join("");
-  return `<p class="lead" style="font-size:15px">${esc(map.intro)}</p><div class="doc-map-grid">${cards}</div>`;
+  return `<p class="lead" style="font-size:15px">${esc(map.intro)}</p>
+  <p style="font-size:13px;color:#7b3f00;background:#fff8f0;border:1px solid #f0e0c8;border-radius:6px;padding:10px 14px;margin:0 0 14px">
+    📋 如需閱讀完整文件，請向<strong>文管部</strong>填單申請調閱。線上平台提供學習指引，完整文件以正式核准版本為準。
+  </p>
+  <div class="doc-map-grid">${cards}</div>`;
 }
 function annualGovernanceSection(){
   return `<div class="governance-grid">${annualDataGovernance.map(x=>`
@@ -1964,8 +1968,7 @@ function standardsSwipe(standards){
   const tabs=[
     {key:"picsgdp",label:"PIC/S GDP",     fullLabel:"PIC/S GDP 國際規範", icon:"🌐",col:"#0a4d8a",bg:"#eef2f9"},
     {key:"taiwan", label:"台灣食藥署",     fullLabel:"台灣食藥署規定",     icon:"🇹🇼",col:"#006437",bg:"#edf5ef"},
-    {key:"company",label:"新勝做法",       fullLabel:"新勝醫藥做法",       icon:"🏢",col:"#0f5b50",bg:"#eaf3f1"},
-    {key:"docs",   label:"參考文件",       fullLabel:"新勝醫藥參考文件",   icon:"📋",col:"#7b3f00",bg:"#fff8f0"}
+    {key:"company",label:"新勝做法",       fullLabel:"新勝醫藥做法",       icon:"🏢",col:"#0f5b50",bg:"#eaf3f1"}
   ];
   function hl(text){
     return text.replace(/([A-Z]{2}\d{2}-\d{2})/g,'<b>$1</b>');
@@ -2471,8 +2474,11 @@ function openDoc(code){
   });
   document.getElementById("docTitle").textContent=`${code}｜${doc.title}`;
   document.getElementById("docBody").innerHTML=`
-    <div><h3>文件位置</h3><p>${esc(doc.file)}</p></div>
-    <div><h3>內訓閱讀重點</h3>${list(doc.content)}</div>`;
+    <div style="padding:8px 0">
+      <p style="font-size:15px;color:#333;margin:0 0 12px">此文件為公司內部管控文件。</p>
+      <p style="font-size:14px;color:#555;margin:0 0 16px">如需閱讀完整內容，請向<strong>文管部</strong>填單申請調閱。</p>
+      <p style="font-size:13px;color:#888;border-top:1px solid #eee;padding-top:12px;margin:0">文件編號：${esc(code)}</p>
+    </div>`;
   document.getElementById("docModal").classList.add("open");
 }
 function closeDoc(){ document.getElementById("docModal").classList.remove("open"); }
