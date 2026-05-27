@@ -1,5 +1,45 @@
 # GDP HTML 教育訓練 HANDOFF
-更新：2026-05-27（第六次）
+更新：2026-05-27（第七次）
+
+## 本輪完成（2026-05-27 第七次開工）commits 47c544b、20a41f1
+
+### KB 搜尋精準度補強：10 筆複合中文關鍵字 ✅ DONE
+
+前一次工作（第六至七次接續）插入 17 筆新 clarify 條目後，搜尋測試發現
+10 筆因複合中文詞組（無空格）無法命中正確條目。本次逐一補強：
+
+| 條目 | 補加複合關鍵字（代表性） |
+|---|---|
+| clarify-smf | GDP主管資格、管理藥師資格、各職稱最低資格 |
+| clarify-access-control | 門禁刷卡1秒、門禁刷卡、授權刷卡 |
+| clarify-ups-maintenance | UPS每月保養、UPS電壓110V |
+| clarify-ac-maintenance | 冷氣濾網每季、每季濾網、空調濾網清洗 |
+| clarify-generator-maintenance | 發電機每月發動、每月發動測試、柴油發電機保養 |
+| clarify-temp-alarm-maintenance | WELL溫控警報每月（完整字串）、溫控警報每月 |
+| clarify-access-alarm-maintenance | 門禁Pegasus每半年、Pegasus每半年、門禁警報每半年 |
+| clarify-record-retention | 品質紀錄保存5年、保存至少5年、5年保存 |
+| clarify-computer-validation | GDPHUB確效、正航確效、正航進銷存確效 |
+| clarify-computer-access-authorization | 系統授權帳號、使用者授權帳號、帳號安全管理 |
+
+**技術根因**：`kbStore.search()` 的 normalize() 將查詢轉小寫後整體當成一個子字串，
+中文連續字串若無空格視為單一詞，必須在 keywords 陣列加入與查詢完全一致的複合字串
+才能命中（`keywordHay.includes(compact)` = true）。
+
+### ⚠️ 未完成（token 耗盡收工）
+
+- **搜尋測試未執行**：每章 5 組、共 40 組測試尚未跑
+- **GitHub Pages 驗收未完成**：20a41f1 已 push，但尚未在瀏覽器驗收關鍵字修改效果
+
+### 下次開工必做
+
+1. 瀏覽器開啟 `https://n1116839.github.io/xinshing-gdp-training/`（等 GH Pages 部署 ~2 min）
+2. DevTools Console 執行批次搜尋腳本（每章 5 組共 40 組）
+3. 確認 10 個原本失敗的查詢均命中正確條目
+4. 記錄通過/未通過，寫入 HANDOFF
+5. 若全過 → 結案「KB 精準搜尋完成 ✅」，詢問使用者下一步（H1 登入系統 or 其他）
+6. 若仍有未過 → 再補關鍵字、commit、push、重跑
+
+---
 
 ## 本輪確認（2026-05-27 第六次開工，換電腦接續）
 
