@@ -1370,7 +1370,7 @@ const kbStore = {
       xinshing:"新勝醫藥為常溫倉庫，室溫藥品儲存溫度 ≤25°C，警戒線 23.5°C；依 DP33-01 及 DP55-01，倉管每月上班最後一日整理當月溫度記錄並記錄於 FR33-01，檢視是否有偏差；溫度異常時立即通知管理藥師，移置藥品至非符合區進行品質評估；依 DP55-01 執行庫存管理，每兩個月盤點一次；不符合品貼上不符合標示後移入非符合區，實體隔離存放。DP55-01 表單：無。",
       sop_ref:["DP33-01","DP55-01","FR33-01"],
       file:"第五章作業/DP55-01產品儲存作業程序書.docx",
-      keywords:["儲存","倉儲","溫度","溫控","25度","FEFO","先進先出","盤點","隔離","DP33-01","DP55-01","FR33-01","常溫","倉庫","室溫","多久盤點","幾個月盤點","庫存管理","不符合","近效期"]
+      keywords:["儲存","倉儲","25度","FEFO","先進先出","盤點","隔離","DP55-01","FR33-01","常溫","倉庫","室溫","多久盤點","幾個月盤點","庫存管理","不符合","近效期","警戒線","23.5"]
     });
     docs.push({
       id:"clarify-supplier",
@@ -2183,7 +2183,7 @@ function kbAnswerHtml(doc){
       <div class="kb-answer-body">${esc(doc.taiwan||"")}</div>
     </div>
     <div class="kb-answer-row">
-      <div class="kb-answer-label co">新勝做法<small>可由公司更新</small></div>
+      <div class="kb-answer-label co">新勝做法</div>
       <div class="kb-answer-body">${esc(doc.xinshing||"")}</div>
     </div>
     ${sopRefs}
