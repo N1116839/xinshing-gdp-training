@@ -166,6 +166,44 @@ const TESTS = [
   { q: '發生度如何評分',           expectId: 'fact-risk-occurrence',        expectHint: '三年' },
   { q: '品質風險多久回顧',         expectId: 'fact-risk-review',            expectHint: '每年' },
   { q: 'FR15-01是什麼',            expectId: 'fact-risk-form',              expectHint: 'FR15-01' },
+
+  // ── 第三章：DP32-01 作業場所規劃 ──
+  { q: '廠區分幾區',               expectId: 'fact-premises-zones',              expectHint: '六區' },
+  { q: '非符合品區要上鎖嗎',       expectId: 'fact-premises-nonconform-isolation', expectHint: '上鎖' },
+  { q: 'FEFO是什麼',               expectId: 'fact-premises-fefo',               expectHint: 'FEFO' },
+  { q: '倉庫可以吃東西嗎',         expectId: 'fact-premises-food-prohibition',    expectHint: '禁止' },
+
+  // ── 第三章：DP33-01 補充 ──
+  { q: '溫度監測器安裝位置',       expectId: 'fact-temp-sensor-location',        expectHint: '最熱點' },
+  { q: '溫度感應器校正依據',       expectId: 'fact-temp-sensor-calibration',     expectHint: 'ISO 17025' },
+
+  // ── 第三章：DP34-01 關鍵設備 ──
+  { q: '關鍵設備有哪些',           expectId: 'fact-equipment-types',             expectHint: '發電機' },
+  { q: '新設備要做4Q嗎',           expectId: 'fact-equipment-acceptance',        expectHint: 'FR34-02' },
+  { q: '溫度計電池多久換',         expectId: 'fact-equipment-battery',           expectHint: '三個月' },
+  { q: '設備保養填什麼表',         expectId: 'fact-equipment-maintenance',       expectHint: 'FR34-03' },
+  { q: '設備故障怎麼辦',           expectId: 'fact-equipment-abnormal',          expectHint: 'DP12-02' },
+
+  // ── 第三章：DP34-02 量測儀器 ──
+  { q: '儀器多久外校一次',         expectId: 'fact-instrument-calibration',      expectHint: '每年' },
+  { q: '校正報告保存幾年',         expectId: 'fact-instrument-record',           expectHint: '5年' },
+  { q: '儀器跌落損壞怎麼辦',       expectId: 'fact-instrument-abnormal',         expectHint: '暫停使用' },
+
+  // ── 第三章：DP35-01 電腦化系統 ──
+  { q: '電腦化系統有哪些',         expectId: 'fact-computer-scope',              expectHint: 'Pegasus' },
+  { q: '誰可以修改電腦系統資料',   expectId: 'fact-computer-authorization',      expectHint: 'FR35-02' },
+  { q: '系統資料多久備份一次',     expectId: 'fact-computer-backup',             expectHint: '每月' },
+
+  // ── 第三章：DP36-01 驗證確效 ──
+  { q: '4Q確效是什麼',             expectId: 'fact-validation-4q',               expectHint: 'DQ' },
+  { q: '確效報告由誰保存',         expectId: 'fact-validation-report',           expectHint: '品保' },
+  { q: '什麼時候要再確效',         expectId: 'fact-validation-revalidation',     expectHint: '遷廠' },
+
+  // ── 第三章：WI25-01 門禁進出管制 ──
+  { q: '進入管制區要做什麼',       expectId: 'fact-access-entry-process',        expectHint: '酒精' },
+  { q: '門禁刷卡幾秒開啟',         expectId: 'fact-access-card',                 expectHint: '1秒' },
+  { q: '訪客要陪同嗎',             expectId: 'fact-access-visitor',              expectHint: '全程陪同' },
+  { q: '門禁異常如何記錄',         expectId: 'fact-access-abnormal-record',      expectHint: '自動保存' },
 ];
 
 async function main() {
