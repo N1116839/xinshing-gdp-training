@@ -644,6 +644,22 @@ commits 已 push，但尚未在瀏覽器驗收本次修改（搜尋演算法 + �
 - 修正方案：逐筆審查，三個欄位只放正式教材內容
 - 注意：b6507f9 的 HTML fallback 修正被 git revert 回退，但 Firestore 端是否乾淨需確認
 
+## 踩坑點（2026-05-28 第十二次補記）
+
+- **KB 查詢結果 UI：「尚未查詢」與「找不到命中資料」同時顯示**
+  查詢執行後用 `insertAdjacentHTML("beforeend")` 附加氣泡，但從未清除初始的 `<p>尚未查詢...</p>`，導致兩個訊息並存。
+  修正方向：在查詢開始時先執行 `box.innerHTML = ""`，再附加 loading → 結果/錯誤。
+  **注意：** 看到此 UI 現象時，不代表 KB 資料有問題，需先確認是真的 0 結果還是 UI 重疊。
+
+- **clarify 條目不可保留專屬 who/when keywords**
+  導入 fact 架構後，clarify 的 keywords 若含「FR54-01由誰填」等具體問法，會因高分蓋過 fact 條目。clarify 只保留廣泛流程型 keywords。
+
+- **fact keywords 必須涵蓋動詞×受詞組合**
+  「何時填FR54-01」和「何時驗收」是不同問法，建立 fact 時需覆蓋「何時填＋表單號碼」交叉組合，不可只寫其一。
+
+- **驗收必須從永久連結（GitHub Pages）執行**
+  本機驗收只是預檢，push 並從 https://n1116839.github.io/xinshing-gdp-training/ 確認才算完成。
+
 ## 踩坑點（2026-05-28 第十一次補記）
 
 - **KB 搜尋根本缺陷：問什麼答什麼從未落實**
