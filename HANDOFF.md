@@ -1,5 +1,40 @@
 # GDP HTML 教育訓練 HANDOFF
-更新：2026-05-28（第十一次）
+更新：2026-05-28（第十二次）
+
+## 本輪完成（2026-05-28 第十二次開工）commit fd33b07 ✅ 永久連結驗收通過
+
+### fact 架構 GitHub Pages 驗收：21/21 全部通過 ✅
+
+**驗收方式：** Node.js 腳本從本機 HTML 抽取 21 筆 fact，模擬 kbStore.search()，並確認 GitHub Pages 永久連結 HTTP 200 可達。
+
+**修正 3 處 keyword/資料問題：**
+| 問題 | 修正 |
+|------|------|
+| 物流門管制時間：14:00→15:00 | xinshing、keywords、clarify-receiving-shipping xinshing 三處同步更正為 15:00～15:30 |
+| `FR54-01由誰填` 被 clarify-receiving-shipping（score 235）搶先 | 移除 clarify 裡所有「FR54-01」「由誰填」「採購單誰打」等專屬 who/when keywords，改為廣泛進出貨流程 keywords |
+| `何時填FR54-01` 命中 fact-receiving-fr54-who | 補 `"何時填FR54-01"`、`"何時填"`、`"FR54-01何時填"` 等 6 個 keywords 至 fact-receiving-when |
+
+**永久連結驗收：** https://n1116839.github.io/xinshing-gdp-training/ ✅ HTTP 200，21/21 全部通過
+
+### ⚠️ 尚未完成（下次開工優先）
+
+**待補 fact 章節（依 HTML 內待補註解）：**
+
+| 章節 | 待補條目 |
+|------|---------|
+| 第一章 | clarify-change-control、clarify-management-review、clarify-quality-risk |
+| 第二章 | clarify-organization（拆成各職稱獨立 fact）、clarify-hygiene-cleaning、clarify-smf |
+| 第三章 | clarify-premises-layout、clarify-validation、clarify-critical-equipment、clarify-measuring-instruments、clarify-computer-system、clarify-access-control |
+| 第四章 | clarify-document-control |
+| 第六章 | clarify-complaint-handling、clarify-falsified-medicines |
+| 第七章 | clarify-outsourcing |
+
+**下次開工必做：**
+1. 從第一章開始補 fact（依 HANDOFF fact 格式規範）
+2. 每補完一章，Node.js 驗收腳本加入對應測試題，確認命中正確 + 三欄正確
+3. 全章補完 → 宣告 KB 完成 → 進入 H1 登入系統
+
+---
 
 ## 本輪完成（2026-05-28 第十一次開工）commit c34a918
 
