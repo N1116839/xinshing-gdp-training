@@ -1801,6 +1801,142 @@ const kbStore = {
       file:"第六章申訴、退回、疑似偽、禁藥及藥品回收/DP65-01藥品回收管理程序書.docx",
       keywords:["藥品回收管理","回收管理","回收等級","第一級回收","第二級回收","第三級回收","回收期限","一個月","兩個月","六個月","24小時通知","發文通知","DP65-01","FR65-01","FR65-02","FR65-03","模擬回收演練","回收演練","模擬演練","每年模擬","回收模擬演練","回收條件","嚴重不良反應","危害程度","回收計畫書","回收成果報告","回收通知單","藥物回收處理辦法","回收封存","回收藥品處置","通知直接銷售對象","回收多久","幾個月回收","多久完成回收","回收幾個月","第一級幾個月","藥品回收幾個月"]
     });
+    // ── FACT 資料（新架構：三資料庫 × 片段回傳，問什麼答什麼）──
+    // 每筆 fact = 一個可獨立回答的事實；keywords 精準不跨主題
+    // 未完成章節見 HANDOFF.md，下次開工依此格式續補
+
+    // ── 進出貨 ──
+    docs.push({id:"fact-purchase-order-who",sourceType:"fact",topic:"採購單由誰建立與列印",
+      international:"PIC/S GDP 未明文規定採購單由何職稱製作，由公司內部自行指定。",
+      taiwan:"食藥署 GDP 未明文規定採購單由何職稱製作，由公司內部自行指定。",
+      xinshing:"採購人員叫貨時於正航建立採購單（8碼日期＋3碼流水，共11碼），每日早上由採購列印後交進貨人員。",
+      sop_ref:["DP54-01"],keywords:["採購單","由誰列印","由誰建立","採購單誰打","採購人員","叫貨","採購單誰","採購單如何","正航採購單","採購單早上","採購單何時列印"]});
+    docs.push({id:"fact-receiving-fr54-who",sourceType:"fact",topic:"FR54-01 到貨驗收紀錄表由誰填寫",
+      international:"PIC/S GDP 未明文規定到貨驗收紀錄由何職稱填寫，由公司內部自行指定。",
+      taiwan:"食藥署 GDP 未明文規定 FR54-01 由何職稱填寫，由公司內部自行指定。",
+      xinshing:"FR54-01 到貨點收驗收紀錄表由進貨人員填寫。",
+      sop_ref:["DP54-01","FR54-01"],keywords:["FR54-01","由誰填","誰填","驗收誰填","驗收由誰","進貨人員","到貨驗收由誰","FR54-01由誰","誰負責驗收","驗收負責人"]});
+    docs.push({id:"fact-receiving-when",sourceType:"fact",topic:"到貨驗收何時進行",
+      international:"PIC/S GDP 要求所有藥品到貨須即時驗收，確認來源合法、貨物完整並測量運輸溫度。",
+      taiwan:"台灣 GDP 要求進貨時立即記錄運輸溫度、核對品名批號效期，不合格品需隔離。",
+      xinshing:"貨品到達時立即由進貨人員測量車廂溫度並填寫 FR54-01；溫度符合規定才進行後續點收（品名、批號、有效期限、外觀）；驗收合格後完成系統入庫。",
+      sop_ref:["DP54-01","FR54-01"],keywords:["到貨驗收什麼時候","何時驗收","什麼時候填","到貨時","到貨立即","驗收時間","到貨驗收流程","收貨流程","驗收步驟"]});
+    docs.push({id:"fact-logistics-door",sourceType:"fact",topic:"物流門管制時間",
+      international:"PIC/S GDP 要求收貨/出貨動線有效區隔，避免混藥。",
+      taiwan:"食藥署 GDP 要求進、出貨動線應有效區隔避免混藥。",
+      xinshing:"嘉里醫藥進貨門管制時間約 14:00～14:30；出貨人員不得同時使用物流門。",
+      sop_ref:["DP54-01"],keywords:["物流門","14點","14:00","14:30","嘉里","進貨門","管制時間","物流門幾點","門管制","幾點管制","進貨時間"]});
+
+    // ── 溫度 ──
+    docs.push({id:"fact-temp-range",sourceType:"fact",topic:"倉庫溫度範圍",
+      international:"PIC/S GDP 要求依產品標示維持適當溫度條件，確保藥品品質不受影響。",
+      taiwan:"台灣 GDP 要求室溫藥品儲存於 ≤25°C 環境，並有溫度監控設備與校正紀錄。",
+      xinshing:"新勝醫藥為常溫倉庫（無冷藏倉），室溫藥品儲存溫度 ≤25°C。",
+      sop_ref:["DP33-01","DP55-01"],keywords:["室溫","幾度","倉庫溫度","溫度範圍","幾度以下","25度","溫度幾度","倉庫幾度","儲存溫度","溫度多少","冷藏倉","常溫"]});
+    docs.push({id:"fact-temp-alarm-threshold",sourceType:"fact",topic:"溫度警戒值",
+      international:"PIC/S GDP 要求溫度超標時須立即調查、記錄，並評估對藥品品質的影響。",
+      taiwan:"食藥署 GDP 無明文規定警戒值設定方式，由公司內部依儲存條件自行訂定。",
+      xinshing:"溫度警戒值設定為儲區規範溫度減 1.5°C（即 23.5°C），高於警戒值即發報通知。",
+      sop_ref:["DP33-01"],keywords:["警戒值","警報何時響","警報什麼時候響","超過警戒值","23.5","發報","警報觸發","警戒","溫度警戒","超標警報","警報條件","發報條件","何時發報"]});
+    docs.push({id:"fact-temp-alarm-test",sourceType:"fact",topic:"溫度警報系統測試頻率",
+      international:"PIC/S GDP 要求警報系統需定期測試以確保功能正常，測試結果需記錄。",
+      taiwan:"食藥署 GDP 無明文規定警報測試頻率，由公司內部自行訂定。",
+      xinshing:"溫度警報功能需每月測試，測試結果填於 FR34-03。",
+      sop_ref:["DP34-01","FR34-03"],keywords:["警報測試","多久測試警報","警報每月","FR34-03","測試警報","警報功能","每月測試","溫控警報測試","WELL溫控","溫控測試頻率"]});
+    docs.push({id:"fact-temp-monthly-record",sourceType:"fact",topic:"溫度記錄 FR33-01 填寫時機",
+      international:"PIC/S GDP 要求持續監測並留存溫度記錄，可在稽查時提出。",
+      taiwan:"台灣 GDP 要求有溫度監測記錄，需可供稽查核實。",
+      xinshing:"每月上班最後一日，倉管抓取前一月整日溫度曲線圖記錄於 FR33-01 溫度記錄表，檢視是否有偏差。",
+      sop_ref:["DP33-01","FR33-01"],keywords:["FR33-01","溫度記錄","月記錄","每月記錄","溫度曲線","月底記錄","倉管溫度","溫度記錄表","每月何時填","溫度記錄何時"]});
+    docs.push({id:"fact-temp-mapping-cycle",sourceType:"fact",topic:"倉庫溫度測繪週期",
+      international:"PIC/S GDP 要求對儲存環境進行溫度測繪，確認溫度分佈均勻符合儲存要求。",
+      taiwan:"食藥署 GDP 無明文規定測繪週期，由公司內部依環境條件自行訂定；重大變更後需重新評估。",
+      xinshing:"每三年（或重大變更後）執行倉庫環境溫度測繪；夏季於 7～9 月、冬季於隔年 1～3 月，每次測量 7 天。",
+      sop_ref:["DP33-01"],keywords:["溫度測繪","測繪","幾年","三年","夏季","冬季","7月","9月","1月","3月","每幾年測繪","測繪週期","溫度測繪多久","測繪夏季冬季","測繪月份"]});
+
+    // ── 庫存盤點 ──
+    docs.push({id:"fact-inventory-cycle",sourceType:"fact",topic:"庫存盤點頻率",
+      international:"PIC/S GDP 要求定期盤點並確認帳面與實物一致；近效期藥品需優先出貨（FEFO）。",
+      taiwan:"台灣 GDP 要求庫存定期盤點，確認儲存數量與系統記錄相符。",
+      xinshing:"依 DP55-01 執行庫存管理，每兩個月全面盤點一次。",
+      sop_ref:["DP55-01"],keywords:["盤點","多久盤點","幾個月盤點","庫存盤點","DP55-01","兩個月","盤點頻率","每幾個月","倉庫盤點","盤點一次","幾個月一次盤點"]});
+    docs.push({id:"fact-nonconform-handling",sourceType:"fact",topic:"不符合品處理方式",
+      international:"PIC/S GDP 要求不合格品需有明確標示與實體或電子區隔，不得與合格品混存。",
+      taiwan:"台灣 GDP 要求退貨、不合格品需有效隔離，不得混儲。",
+      xinshing:"不符合品貼上不符合標示後移入非符合區實體隔離存放；溫度異常藥品立即通知管理藥師，移至非符合區進行品質評估。",
+      sop_ref:["DP55-01","DP33-01"],keywords:["不符合","不符合品","隔離","非符合區","標示","不合格","不合格品隔離","不符合品處理","非符合品","藥品隔離"]});
+
+    // ── 藥品回收 ──
+    docs.push({id:"fact-recall-level-deadline",sourceType:"fact",topic:"藥品回收等級與期限",
+      international:"PIC/S GDP 要求批發商建立回收系統，能快速追溯所有受影響批次並在規定期限內完成。",
+      taiwan:"台灣藥物回收處理辦法：第一級回收自公告次日起 1 個月內完成；第二級 2 個月；第三級 6 個月。",
+      xinshing:"依 DP65-01：第一級（偽藥禁藥或重大健康損害）1 個月；第二級（劣藥或不良藥物）2 個月；第三級（許可證到期或標籤變更）6 個月。",
+      sop_ref:["DP65-01"],keywords:["回收期限","第一級","第二級","第三級","幾個月回收","回收幾個月","多久完成回收","回收完成期限","一個月","兩個月","六個月","回收等級","危害等級","第一級回收"]});
+    docs.push({id:"fact-recall-notify-24h",sourceType:"fact",topic:"藥品回收 24 小時通知",
+      international:"PIC/S GDP 要求回收需能在 24 小時內追溯所有受影響批號並通知相關方。",
+      taiwan:"台灣藥物回收處理辦法：第一/二級回收自公告次日起 24 小時內通知直接銷售對象（醫療機構、藥局、藥商）。",
+      xinshing:"第一/二級回收，業務須於公告次日起 24 小時內通知直接銷售對象，通知單用 FR65-03，通知紀錄保存 5 年。",
+      sop_ref:["DP65-01","FR65-03"],keywords:["24小時","24小時通知","發文通知","第一二級通知","回收通知","通知期限","幾小時通知","一天內通知","回收發通知"]});
+    docs.push({id:"fact-recall-drill",sourceType:"fact",topic:"藥品回收模擬演練頻率",
+      international:"PIC/S GDP 要求回收系統需定期演練，驗證回收作業有效性。",
+      taiwan:"食藥署 GDP 要求定期進行回收演練，確認回收系統可在規定時限內有效執行。",
+      xinshing:"藥品回收模擬演練每年至少 1 次，由管理藥師挑選配送多家院所之同批號藥品為標的（不得只選單一院所批號）；品管彙整模擬回收紀錄成報告。",
+      sop_ref:["DP65-01"],keywords:["模擬回收","演練","回收演練","模擬演練","每年演練","回收模擬演練","演練多久","演練頻率","回收演練幾次","模擬回收多久一次"]});
+    docs.push({id:"fact-return-policy",sourceType:"fact",topic:"退回品處理政策",
+      international:"PIC/S GDP 要求退回藥品不得自動回入銷售庫存，需有風險評估依據才能重新放行。",
+      taiwan:"台灣 GDP 要求退回藥品需隔離存放並有評估紀錄；重新放行需有品質評估依據。",
+      xinshing:"新勝醫藥政策：凡退回品一律直接報廢（無法確認下游客戶運銷條件），置退貨區貼 FR63-02 退回品標籤，依 DP56-01 廢棄物程序銷毀。",
+      sop_ref:["DP63-01","DP56-01","FR63-02"],keywords:["退回","退貨","退回品","一律報廢","退回品處理","退貨政策","退回藥品","退回品標籤","FR63-02","退回品怎麼處理"]});
+
+    // ── CAPA ──
+    docs.push({id:"fact-capa-trigger",sourceType:"fact",topic:"CAPA 觸發情形（六類）",
+      international:"PIC/S GDP 要求識別不符合根本原因並啟動 CAPA；重複偏差需升級處理。",
+      taiwan:"食藥署 GDP 未明文規定 CAPA 所有觸發情境，由公司依 DP12-03 程序書訂定。",
+      xinshing:"CAPA 六類觸發：①偏差再次發生 ②供應商交付問題 ③品質問題/庫存不一致 ④客戶回饋（錯誤/客訴）⑤內部稽核缺失 ⑥管審決議改善事項；首次偏差僅內部檢討，再次才正式啟動 CAPA。",
+      sop_ref:["DP12-03","FR12-04"],keywords:["CAPA","CAPA觸發","CAPA什麼時候開","什麼情況開CAPA","CAPA開立條件","CAPA怎麼開立","何時開CAPA","CAPA觸發情形","開CAPA"]});
+    docs.push({id:"fact-capa-timeline",sourceType:"fact",topic:"CAPA 原因分析期限",
+      international:"PIC/S GDP 要求 CAPA 需在適當時間內完成，並有有效性確認。",
+      taiwan:"台灣 GDP 要求原因分析應於一週內完成，僅可展延一次；CAPA 紀錄保存至少 5 年。",
+      xinshing:"申請者填 FR12-04；原因分析需從產品、過程及品質系統全面分析，應於一週內完成（僅可展延乙次）；CAPA 編號格式：CAPA-□□□-□□（前三碼年碼，後二碼流水號）。",
+      sop_ref:["DP12-03","FR12-04"],keywords:["CAPA期限","原因分析期限","一週","原因分析一週","CAPA多久","CAPA時限","CAPA完成期限","CAPA編號","CAPA格式","CAPA幾天"]});
+
+    // ── 教育訓練 ──
+    docs.push({id:"fact-training-pass-score",sourceType:"fact",topic:"教育訓練合格標準",
+      international:"PIC/S GDP 要求人員需接受適當訓練並有能力執行其職責；訓練有效性需定期評估。",
+      taiwan:"台灣 GDP 要求藥品批發業人員訓練需有合格標準；訓練紀錄需可在稽查時提出。",
+      xinshing:"教育訓練考核合格標準：≥70 分；訓練計畫記錄於 FR24-01 年度計畫表，考核結果記錄於 FR24-02 考核表。",
+      sop_ref:["DP24-01","FR24-01","FR24-02"],keywords:["教育訓練","合格標準","70分","訓練合格","訓練幾分","幾分合格","訓練及格","訓練分數","FR24-01","FR24-02","訓練考核"]});
+    docs.push({id:"fact-training-frequency",sourceType:"fact",topic:"教育訓練頻率",
+      international:"PIC/S GDP 要求人員應定期接受 GDP 相關訓練，確保知識與技能維持最新。",
+      taiwan:"台灣 GDP 要求依職務需求規劃定期訓練，新進人員需完成職前訓練。",
+      xinshing:"依 DP24-01 每年至少一次 GDP 相關訓練；依 DP22-01 每三年一個訓練週期（年度計畫由人事安排，FR24-01 記錄）。",
+      sop_ref:["DP24-01","DP22-01","FR24-01"],keywords:["訓練頻率","多久訓練","訓練多久","教育訓練多久一次","每年訓練","三年訓練","訓練週期","教育訓練幾次","訓練計畫","年度訓練"]});
+
+    // ── 內部稽核 ──
+    docs.push({id:"fact-internal-audit-when",sourceType:"fact",topic:"內部稽核執行時間",
+      international:"PIC/S GDP 要求批發商定期執行自我查核（內部稽核），確認 GDP 合規狀態並有書面報告。",
+      taiwan:"台灣 GDP 要求批發商執行內部稽核，需有稽核計畫、查檢表與報告；缺失需追蹤改善。",
+      xinshing:"依 DP82-01，每年 12 月執行內部品質稽核；FR82-01 為稽核計畫表，FR82-02 為查檢表，FR82-03 為稽核報告；稽核結果納入管理階層檢討（DP14-01）。",
+      sop_ref:["DP82-01","FR82-01","FR82-02","FR82-03"],keywords:["內部稽核","稽核","內部品質稽核","稽核幾月","何時稽核","12月稽核","稽核時間","稽核頻率","多久稽核","每年12月","年度稽核","稽核多久一次"]});
+
+    // ── 文件保存 ──
+    docs.push({id:"fact-record-retention",sourceType:"fact",topic:"品質紀錄保存年限",
+      international:"PIC/S GDP 要求品質紀錄至少保存 5 年或依法規要求保存，供稽查查閱。",
+      taiwan:"台灣 GDP 要求藥品批發業品質紀錄至少保存 5 年，保存到期需依程序審查後銷毀。",
+      xinshing:"依 DP42-02，品質紀錄保存至少 5 年；期滿由文管執行 DP42-02 超期紀錄銷毀程序（每年執行）。",
+      sop_ref:["DP42-02"],keywords:["保存年限","紀錄保存","保存幾年","5年","五年","品質紀錄","保存期限","紀錄幾年","文件保存","保存多久","DP42-02","品質記錄保存"]});
+
+    // ──────────────────────────────────────────────────
+    // 待補（下次開工依上方格式續補）：
+    // 第一章：clarify-change-control、clarify-management-review、clarify-quality-risk
+    // 第二章：clarify-organization（職稱職掌 by 職稱拆分）、clarify-hygiene-cleaning、clarify-smf
+    // 第三章：clarify-premises-layout、clarify-validation、clarify-critical-equipment、
+    //         clarify-measuring-instruments、clarify-computer-system、clarify-access-control
+    // 第四章：clarify-document-control、clarify-record-retention（已有）
+    // 第六章：clarify-complaint-handling、clarify-falsified-medicines
+    // 第七章：clarify-outsourcing
+    // ──────────────────────────────────────────────────
+
     this.localCache=docs;
     return docs;
   },
@@ -1858,6 +1994,7 @@ const kbStore = {
         if(term.includes("庫存盤點儲存管制")&&/庫存|存貨|盤點|dp5501|dm1001|fr5503|儲存/.test(hay)){ score+=18; strongHit=true; }
       });
       if(doc.sourceType==="查詢校正"&&strongHit) score+=45;
+      if(doc.sourceType==="fact"&&strongHit) score+=55;
       if(["SOP 摘要","部門文件地圖","資料夾檔案"].includes(doc.sourceType)) score-=shortQuery?6:3;
       // 原始同步文件（project-source-file）只當兜底，有正式 KB 時不應出現
       if(doc.sourceType==="project-source-file") score=Math.min(score,12);
@@ -2474,6 +2611,16 @@ function isTrainingAnswer(doc){
   return !/(此筆來自|此筆代表|詳見本頁|回原始檔|文件編號：|協助新人知道)/.test(text);
 }
 function kbResultsHtml(results,query){
+  // 新架構：命中 fact 時全部顯示為完整三欄卡（問什麼答什麼）
+  const facts=results.filter(r=>r.sourceType==="fact");
+  if(facts.length){
+    const shown=facts.slice(0,4);
+    const extra=facts.length>4?`<div class="kb-result-summary">另有 ${facts.length-4} 筆相關事實，請縮小查詢範圍。</div>`:"";
+    const nonFact=results.filter(r=>r.sourceType!=="fact"&&isTrainingAnswer(r)).slice(0,1);
+    const refCard=nonFact.length?`<div class="kb-result-summary" style="margin-top:8px">參考來源：${esc(nonFact[0].topic||"")}</div>`:"";
+    return shown.map(f=>kbAnswerHtml(f)).join("")+extra+refCard;
+  }
+  // 舊版邏輯（非 fact 結果維持原有行為）
   const primary=results.find(isTrainingAnswer)||results[0];
   const related=results.filter(doc=>doc!==primary);
   const cards=related.map(doc=>{
