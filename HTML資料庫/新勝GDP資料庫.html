@@ -1800,6 +1800,17 @@ const kbStore = {
       if(compact&&titleHay.includes(compact)){ score+=18; strongHit=true; }
       if(compact&&keywordHay.includes(compact)){ score+=14; strongHit=true; }
       if(compact&&bodyHay.includes(compact)) score+=shortQuery?2:6;
+      // 反向比對：查詢句含有某個 keyword（解決中文長句查詢問題）
+      if(!shortQuery&&compact.length>=4){
+        (Array.isArray(doc.keywords)?doc.keywords:[]).forEach(kw=>{
+          const nkw=this.normalize(kw);
+          if(nkw.length>=4&&compact.includes(nkw)){ score+=nkw.length>=6?10:6; strongHit=true; }
+        });
+        [doc.topic,doc.file].forEach(t=>{
+          const nt=this.normalize(t||"");
+          if(nt.length>=4&&compact.includes(nt)){ score+=8; strongHit=true; }
+        });
+      }
       terms.forEach(term=>{
         if(!term) return;
         if(titleHay.includes(term)){ score+=term.length>=6?10:6; strongHit=true; }
