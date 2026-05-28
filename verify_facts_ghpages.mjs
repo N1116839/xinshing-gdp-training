@@ -143,7 +143,8 @@ const TESTS = [
 
   // ── 第二章：訓練補充 ──
   { q: '職前訓練合格才能上任嗎',   expectId: 'fact-training-preservice',    expectHint: 'FR22-02' },
-  { q: '外部教育訓練怎麼辦',       expectId: 'fact-training-external',      expectHint: '政府官網' },
+  { q: '外部教育訓練怎麼辦',       expectId: 'fact-training-external',      expectHint: '外部檢討會' },
+  { q: '外部教育訓練多久一次',     expectId: 'fact-training-external',      expectHint: '三年' },
   { q: '訓練紀錄存哪',             expectId: 'fact-training-record',        expectHint: 'FR24-03' },
 
   // ── 第一章：變更管制 ──
