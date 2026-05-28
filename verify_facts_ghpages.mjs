@@ -145,6 +145,27 @@ const TESTS = [
   { q: '職前訓練合格才能上任嗎',   expectId: 'fact-training-preservice',    expectHint: 'FR22-02' },
   { q: '外部教育訓練怎麼辦',       expectId: 'fact-training-external',      expectHint: '政府官網' },
   { q: '訓練紀錄存哪',             expectId: 'fact-training-record',        expectHint: 'FR24-03' },
+
+  // ── 第一章：變更管制 ──
+  { q: '何時啟動變更管制',         expectId: 'fact-change-trigger',         expectHint: '偏差' },
+  { q: '重大變更是什麼',           expectId: 'fact-change-level',           expectHint: '會簽' },
+  { q: '填FR12-05',               expectId: 'fact-change-form',            expectHint: 'FR12-05' },
+  { q: '變更逾期怎麼辦',           expectId: 'fact-change-overdue',         expectHint: '三日' },
+  { q: '倉庫搬遷需要通報嗎',       expectId: 'fact-change-notify',          expectHint: '搬遷' },
+
+  // ── 第一章：管理階層檢討 ──
+  { q: '管理階層檢討多久一次',     expectId: 'fact-mgmt-review-freq',       expectHint: '年底' },
+  { q: '管理審查包含什麼項目',     expectId: 'fact-mgmt-review-items',      expectHint: '委外評鑑' },
+  { q: 'FR14-02報告',              expectId: 'fact-mgmt-review-form',       expectHint: 'FR14-02' },
+
+  // ── 第一章：品質風險 ──
+  { q: '風險小組有誰',             expectId: 'fact-risk-team',              expectHint: '倉管' },
+  { q: 'FMEA是什麼',               expectId: 'fact-risk-method',            expectHint: 'FMEA' },
+  { q: '等級A風險怎麼辦',          expectId: 'fact-risk-level-abc',         expectHint: '不可接受' },
+  { q: '嚴重度如何評分',           expectId: 'fact-risk-severity',          expectHint: '歇業' },
+  { q: '發生度如何評分',           expectId: 'fact-risk-occurrence',        expectHint: '三年' },
+  { q: '品質風險多久回顧',         expectId: 'fact-risk-review',            expectHint: '每年' },
+  { q: 'FR15-01是什麼',            expectId: 'fact-risk-form',              expectHint: 'FR15-01' },
 ];
 
 async function main() {
