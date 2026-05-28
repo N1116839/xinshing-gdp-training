@@ -1,5 +1,38 @@
 # GDP HTML 教育訓練 HANDOFF
-更新：2026-05-28（第八次）
+更新：2026-05-28（第九次）
+
+## 本輪完成（2026-05-28 第九次開工）commit 1d98915
+
+### KB 補齊至 48 筆 ✅ DONE
+
+缺漏分析：逐一比對 48 份文件 vs 45 筆 clarify 條目，找出 3 筆缺漏：
+
+| 新增條目 | 對應 SOP | 重點內容 |
+|---------|---------|---------|
+| clarify-capa | DP12-03 矯正與預防作業程序書 | CAPA 六類觸發、FR12-04、CAPA-□□□-□□編號格式、8類措施、一週原因分析期限 |
+| clarify-org-chart | WI22-01 組織圖暨員工職務說明書 | 各職稱完整職掌（GDP主管/管理藥師/業務/品管/人事/文管/倉管/採購） |
+| clarify-drug-recall | DP65-01 藥品回收管理程序書 | 三級危害等級、回收期限（1/2/6個月）、24小時發文通知、模擬演練每年1次 |
+
+- HTML kbStore：45 → **48 筆**（覆蓋全部 48 份文件）
+- Firestore gdpKnowledgeBase：同步新增 3 筆（clarify-capa、clarify-org-chart、clarify-drug-recall），編碼驗證正確
+- Commit 1d98915 ✅、GitHub Pages push ✅
+
+### ⚠️ GitHub Pages 驗收未完成
+
+commit 已 push，但尚未在瀏覽器驗收本次新增 3 筆（搜尋測試）。
+
+### 下次開工必做
+
+1. **GitHub Pages 驗收**：開啟 `https://n1116839.github.io/xinshing-gdp-training/`，測試至少：
+   - 「CAPA 怎麼開立」→ 應命中 clarify-capa
+   - 「各職稱工作內容」→ 應命中 clarify-org-chart
+   - 「回收期限多久」→ 應命中 clarify-drug-recall
+   - 另加 5 個自然語言長句（驗證反向比對仍有效）
+2. **逐章重新測試（新標準）**：每章 10 個問題 × 10 種問法，從第一章開始，重點：PIC/S GDP 與食藥署常見缺失
+3. 若有命中失敗 → 補 keywords 或補條目
+4. 所有章節測試完成 → 宣告 KB 完成，詢問下一步（H1 登入系統 or 其他）
+
+---
 
 ## 本輪完成（2026-05-28 第八次開工）commits 9ecfa45、1b7fd13、6164900、18d1648
 
