@@ -1,5 +1,84 @@
 # GDP HTML 教育訓練 HANDOFF
-更新：2026-05-28（第十次）
+更新：2026-05-28（第十一次）
+
+## 本輪完成（2026-05-28 第十一次開工）commit c34a918
+
+### KB 新架構：三資料庫 × fact 片段回傳 ✅ 實作完成
+
+**核心概念（已由使用者確認）：**
+三個獨立資料庫（國際法規/食藥署/新勝文件），搜尋「溫度警戒值」只回傳警戒值那一句，不回傳整條 SOP 內容。
+
+**程式碼改動：**
+1. `kbStore.search()` 評分：`sourceType:"fact"` 且 strongHit → +55 分（高於 查詢校正 +45）
+2. `kbResultsHtml()` 顯示：命中 fact 時，最多顯示 4 筆完整三欄卡；超過 4 筆提示縮小查詢；舊版 clarify 邏輯保留作兜底
+
+**新增 22 筆 fact 資料（已上線）：**
+
+| 主題 | fact ID | 說明 |
+|------|---------|------|
+| 進出貨 | fact-purchase-order-who | 採購單由誰建立/列印 |
+| 進出貨 | fact-receiving-fr54-who | FR54-01 由誰填 |
+| 進出貨 | fact-receiving-when | 何時填 FR54-01 |
+| 進出貨 | fact-logistics-door | 物流門管制時間 |
+| 溫度 | fact-temp-range | 倉庫溫度範圍 |
+| 溫度 | fact-temp-alarm-threshold | 警戒值 23.5°C |
+| 溫度 | fact-temp-alarm-test | 警報測試頻率（每月）|
+| 溫度 | fact-temp-monthly-record | FR33-01 月記錄 |
+| 溫度 | fact-temp-mapping-cycle | 溫度測繪週期（每三年）|
+| 庫存 | fact-inventory-cycle | 盤點頻率（每兩個月）|
+| 庫存 | fact-nonconform-handling | 不符合品處理 |
+| 回收 | fact-recall-level-deadline | 回收等級與期限 |
+| 回收 | fact-recall-notify-24h | 24 小時通知 |
+| 回收 | fact-recall-drill | 模擬演練（每年 1 次）|
+| 退回 | fact-return-policy | 退回品一律報廢 |
+| CAPA | fact-capa-trigger | CAPA 六類觸發 |
+| CAPA | fact-capa-timeline | 原因分析一週期限 |
+| 訓練 | fact-training-pass-score | 合格標準 ≥70 分 |
+| 訓練 | fact-training-frequency | 每年/每三年訓練週期 |
+| 稽核 | fact-internal-audit-when | 每年 12 月 |
+| 文件 | fact-record-retention | 紀錄保存 5 年 |
+
+**舊版 clarify 條目：保留不刪，作為 fact 未覆蓋主題的兜底。**
+
+### ⚠️ 尚未完成（下次開工優先）
+
+**待補 fact 章節（依 HTML 內待補註解）：**
+
+| 章節 | 待補條目 |
+|------|---------|
+| 第一章 | clarify-change-control、clarify-management-review、clarify-quality-risk |
+| 第二章 | clarify-organization（拆成各職稱獨立 fact）、clarify-hygiene-cleaning、clarify-smf |
+| 第三章 | clarify-premises-layout、clarify-validation、clarify-critical-equipment、clarify-measuring-instruments、clarify-computer-system、clarify-access-control |
+| 第四章 | clarify-document-control |
+| 第六章 | clarify-complaint-handling、clarify-falsified-medicines |
+| 第七章 | clarify-outsourcing |
+
+**fact 格式規範（下次開工必須遵守）：**
+```javascript
+docs.push({
+  id: "fact-[主題]-[面向]",
+  sourceType: "fact",
+  topic: "簡短題目（5-15字）",
+  international: "PIC/S GDP 相關條文一句話",
+  taiwan: "食藥署規定一句話（或「食藥署無明文規定，由公司內部自行訂定」）",
+  xinshing: "新勝做法一句話（含數字/表單號碼/人員職稱，直接可回答的事實）",
+  sop_ref: ["來源SOP"],
+  keywords: ["精準關鍵字","不跨主題","覆蓋各種問法"]
+});
+```
+
+### 下次開工必做
+
+1. **GitHub Pages 驗收**：開啟 `https://n1116839.github.io/xinshing-gdp-training/`，等部署後測試：
+   - 「採購單由誰列印」→ 應命中 fact-purchase-order-who，回傳「採購人員」
+   - 「FR54-01 由誰填」→ 應命中 fact-receiving-fr54-who
+   - 「溫度警戒值是多少」→ 應命中 fact-temp-alarm-threshold，回傳「23.5°C」
+   - 「藥品回收第一級幾個月」→ 應命中 fact-recall-level-deadline
+   - 「模擬演練多久一次」→ 應命中 fact-recall-drill
+2. **驗收通過後**：依上方待補清單續補各章節 fact，從第一章/第二章開始
+3. **每補完一章**：測試至少 5 組查詢，確認命中正確 fact + 三欄內容正確
+
+---
 
 ## 本輪完成（2026-05-28 第十次開工）commit 1a26f3a
 
@@ -28,10 +107,39 @@ https://n1116839.github.io/xinshing-gdp-training/
 
 ### ⚠️ 逐章測試尚未開始
 
+### ⚠️ KB 架構重設計：片段回傳（2026-05-28 使用者確立，尚未動工）
+
+**核心問題：問什麼答什麼**
+
+目前系統搜尋命中後，回傳整條 KB 條目的所有內容。
+
+使用者要求改為「Office 文件搜尋 / Excel VLOOKUP」概念：
+- 搜尋「溫度」→ 只顯示「倉庫室溫 15°C 至 25°C，警戒值 23.5°C」這一句
+- 問「由誰列印」→ 直接顯示「採購人員」，不帶其他資訊
+
+**確認後的新架構（2026-05-28 使用者確認）：**
+
+三個獨立資料庫（國際法規 / 食藥署 / 新勝文件），每筆為一個 fact 片段：
+
+```
+fact: 溫度警戒值
+  keywords: ["警戒值","警報","alarm"]
+  國際法規: "溫度超標須立即調查並記錄"
+  食藥署:   "食藥署無明文規定警戒值"
+  新勝:     "警戒值 23.5°C，每月測試警報"
+```
+
+搜尋命中 → 只顯示該 fact 的三欄，不顯示同份 SOP 的其他 fact。
+
+**影響：48 筆 entry → 約 150-300 個 fact；需重寫 kbStore 資料結構與搜尋邏輯。**
+
+**狀態：架構已確認，尚未動工。**
+
 ### 下次開工必做
 
-1. **逐章重新測試（新標準）**：從第一章品質管理開始，每章 10 個不同問題 × 10 種問法，重點：PIC/S GDP 與食藥署常見缺失
-2. 全章通過 → 宣告 KB 完成，詢問下一步（H1 登入系統 or 其他）
+1. **確認 KB 架構重設計實作方式**（片段回傳 / fact 粒度 / 問句意圖偵測邏輯）
+2. **逐章重新測試（新標準）**：從第一章品質管理開始，每章 10 個不同問題 × 10 種問法，重點：PIC/S GDP 與食藥署常見缺失
+3. 全章通過 → 宣告 KB 完成，詢問下一步（H1 登入系統 or 其他）
 
 ---
 
