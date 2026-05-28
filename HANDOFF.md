@@ -1,5 +1,86 @@
 # GDP HTML 教育訓練 HANDOFF
-更新：2026-05-28（第十二次）
+更新：2026-05-28（第十四次）
+
+## 本輪完成（2026-05-28 第十四次開工）commit 9b82e7e ✅ 本機 58/58 通過
+
+### 第一章 fact 架構完成 ✅
+
+**新增 15 筆 fact（依 DP12-04、DP14-01、DP15-01 原文逐份讀取建立）：**
+
+| 類別 | fact IDs |
+|------|---------|
+| 變更管制（5筆）| fact-change-trigger、fact-change-level、fact-change-form、fact-change-overdue、fact-change-notify |
+| 管理階層檢討（3筆）| fact-mgmt-review-freq、fact-mgmt-review-items、fact-mgmt-review-form |
+| 品質風險（7筆）| fact-risk-team、fact-risk-method、fact-risk-level-abc、fact-risk-severity、fact-risk-occurrence、fact-risk-review、fact-risk-form |
+
+**keyword 清理：**
+- `clarify-change-control`：從 14 個關鍵字縮窄至 7 個（移除重大變更/次要變更/通報/食藥署/搬遷等，由 fact 負責）
+- `clarify-management-review`：從 17 個縮窄至 8 個（移除年底/申訴/回收/偏差/CAPA/委外/品質目標等）
+- `clarify-quality-risk`：從 18 個縮窄至 8 個（移除嚴重度/發生度/RPN/風險回顧/等級ABC/危害/風險小組/FMEA等）
+
+**踩坑修正（4 處 keyword 補充）：**
+- 中文查詢中間插詞（「搬遷需要通報」=搬遷+需要+通報，非「搬遷通報」substring）→ 補「倉庫搬遷需要通報嗎」
+- 「管理階層檢討多久一次」中「檢討」在「管理階層」和「多久」之間 → 補「管理階層檢討多久一次」
+- 「等級A風險怎麼辦」中「A風險」打斷「等級A怎麼辦」 → 補「等級A風險怎麼辦」
+- 「品質風險多久回顧」中「多久」在「風險」和「回顧」之間 → 補「品質風險多久回顧」
+
+**驗收：** 本機 58/58 通過（舊 43 題 + 第一章 15 題），已 push GitHub Pages
+
+### ⚠️ 尚未完成（下次開工優先）
+
+| 章節 | 待補 fact 條目 |
+|------|--------------|
+| 第三章 | clarify-premises-layout、clarify-validation、clarify-critical-equipment、clarify-measuring-instruments、clarify-computer-system、clarify-access-control |
+| 第四章 | clarify-document-control |
+| 第六章 | clarify-complaint-handling、clarify-falsified-medicines |
+| 第七章 | clarify-outsourcing |
+
+**下次開工必做：**
+1. 依樣板繼續補第三章 fact（讀 DP33-01/DP34-01/DP34-02/DP35-01/DP36-01 原文）
+2. 每章補完後跑驗收腳本，加入對應章節測試題
+3. 全章完成後 → H1 登入系統
+
+---
+
+## 本輪完成（2026-05-28 第十三次開工）commit b1a79af ✅ 本機 43/43 通過
+
+### 第二章 fact 架構完成 ✅
+
+**新增 20 筆 fact（依 WI22-01、DP25-01、WI10-01 原文逐份讀取建立）：**
+
+| 類別 | fact IDs |
+|------|---------|
+| 組織架構（10筆）| fact-org-gdp-manager、fact-org-pharmacist、fact-org-sales、fact-org-quality、fact-org-warehouse、fact-org-purchasing、fact-org-hr、fact-org-doccontrol、fact-org-deputy、fact-org-emergency-contact |
+| 人員衛生（5筆）| fact-hygiene-handsan、fact-hygiene-incoming-clean、fact-hygiene-daily-cleaning、fact-hygiene-quarterly-ac、fact-hygiene-door-barrier |
+| SMF（2筆）| fact-smf-company-basic、fact-smf-gdp-established |
+| 訓練補充（3筆）| fact-training-preservice、fact-training-external、fact-training-record |
+
+**keyword 清理：**
+- `clarify-org-chart`：移除所有職稱專屬查詢 keywords（現在由個別 fact 負責），保留 WI22-01/組織圖/職務說明書等廣泛查詢
+- `clarify-smf`：移除所有職稱資格 keywords（由個別 fact 負責），保留公司地址/SMF/許可證等
+
+**驗收：** 本機 43/43 通過（舊 21 題 + 第二章 22 題），已 push GitHub Pages
+
+### ⚠️ GitHub Pages 驗收尚待確認（已 push，等部署後需驗收）
+
+**驗收方式：** 部署完成後執行 `node verify_facts_ghpages.mjs`（切換到 GH Pages 模式：把第 134-135 行改為 fetchUrl GH_PAGES_URL）
+
+### ⚠️ 尚未完成（下次開工優先）
+
+| 章節 | 待補 fact 條目 |
+|------|--------------|
+| 第一章 | clarify-change-control、clarify-management-review、clarify-quality-risk |
+| 第三章 | clarify-premises-layout、clarify-validation、clarify-critical-equipment、clarify-measuring-instruments、clarify-computer-system、clarify-access-control |
+| 第四章 | clarify-document-control |
+| 第六章 | clarify-complaint-handling、clarify-falsified-medicines |
+| 第七章 | clarify-outsourcing |
+
+**下次開工必做：**
+1. 第二章 GitHub Pages 驗收確認（`node verify_facts_ghpages.mjs` 在 GH Pages 模式）
+2. 依樣板繼續補第一章 fact（clarify-change-control → fact-change-重大類型、fact-change-minor等）
+3. 每章補完後跑驗收腳本，加入對應章節測試題
+
+---
 
 ## 本輪完成（2026-05-28 第十二次開工）commit fd33b07 ✅ 永久連結驗收通過
 
@@ -796,3 +877,58 @@ https://n1116839.github.io/xinshing-gdp-training/
 - 使用者指定「更新第二大腦」時，代表可直接寫入第二大腦專案筆記、踩坑紀錄與知識庫紀錄。
 - 使用者指定「使用 fire 資料庫 / Firebase / Firestore」時，代表可直接執行必要的 Firestore 同步、rules 部署或資料寫入。
 - 若工具層要求 sandbox escalation，仍依工具機制提出，但專案紀錄不可再寫「等使用者明確說同意推送後再執行」。
+
+## 2026-05-28 智慧查詢精準回答硬性規則：fact 拆解 + 問法測試表 + 批次驗收
+
+使用者確認：要達到「倉庫多久盤點一次」「溫度測繪夏季冬季月份」這種精準回答品質，不能靠一題一題碰運氣反覆修很多次。後續 GDP 智慧查詢必須用以下硬性流程處理。
+
+### 硬性規則
+1. 先拆 fact，再寫搜尋：每個 fact 只回答一件可獨立問題，例如盤點頻率、溫度測繪月份、外部教育訓練來源、訓練紀錄保存。
+2. 每個 fact 固定三欄：PIC/S GDP、台灣 GDP、新勝做法。三欄都只能放正式教材內容；新勝做法要是員工可直接回答稽查員的短答。
+3. 每個 fact 建立時，先設計至少 10 種自然問法，不等使用者查不到才補 keyword。
+4. 每章建立測試表：至少 10 個不同問題，每個問題至少 10 種問法。
+5. 驗收時檢查三件事：第一名是否正確、有沒有多餘不相關結果、新勝做法是否能直接作為稽查應答。
+6. 修正時必須批次歸因，不可亂加 keyword：
+   - 泛命中：收窄 keyword、降低通用詞權重或加硬排除。
+   - 查不到：補自然問法、缺字問法、同義詞與文件編號變體。
+   - 回太長：再拆 fact，不把整段 SOP 塞進一筆。
+   - 答案像 AI 備忘：改成正式三欄教材語氣，備忘寫進第二大腦，不進 KB。
+7. 不宣稱一次到 100%。正確作法是先做一章完整樣板，通過後複製同一流程到其他章，降低反覆修正次數。
+
+### 建議執行順序
+先挑一章做完整樣板，例如第二章人事 / 教育訓練：
+- 回 SOP/WI/FR 拆 fact。
+- 每個 fact 補 10 種問法。
+- 建測試表。
+- 本機預檢。
+- 推送後用 GitHub Pages 永久網址驗收。
+- 通過後再照同一模板擴到其他章。
+
+## 2026-05-28 智慧查詢與前台部門內容同步硬性規則：同一事實多處同步
+
+使用者指出：改智慧查詢時，前台各部門頁面、規範到現場、部門文件閱讀地圖、稽查重點也要同步修改，避免人事頁顯示 A、智慧查詢回答 B。這是硬性規則，不可只修單一區塊。
+
+### 必須同步的範圍
+- GDP 智慧查詢 fact / Firestore / HTML fallback。
+- 各部門頁面的「作法」與重點摘要。
+- 「規範到現場」對照區。
+- 「部門文件閱讀地圖」。
+- 「稽查重點互動核對」。
+- FAQ / 快速問題按鈕與手動搜尋入口。
+
+### 畫面與內容規則
+1. 同一事實只要改一處，就要全站搜尋並同步所有出現處；不可出現 A 區新版、B 區舊版。
+2. 標題必須符合實際內容。若「規範到現場」目前只有 PIC/S GDP、台灣食藥署、新勝做法三層，就不得再標成「四層對照」。標題、節點數、按鈕數、內容欄位必須一致。
+3. 「作法」區改成重點顯示，呈現員工可理解、稽查可回答的短句，不放冗長 SOP 敘述。
+4. 文件連結直接取消，改成純文字文件名稱或文件編號；不要做可點擊文件按鈕，不顯示 SOP 路徑或內部文件細節。
+5. 部門文件閱讀地圖不應像文件連結清單，應改成學習重點或資料準備重點；若仍列文件，只能純文字列示。
+6. 稽查重點區要改成「常見缺失 / 稽查員可能怎麼問 / 公司如何回答 / 要準備什麼證據」的學習格式，不只列靜態查核句。
+7. 修改智慧查詢前，先列出會被同一 fact 影響的前台區塊；修改後要逐項驗收這些區塊是否一致。
+
+### 人事 / 教育訓練頁面方向
+- 作法顯示重點：人員教育訓練規劃、訓練通知、訓練紀錄保存、內部教育訓練、外部教育訓練。
+- 外部教育訓練回答方向：配合政府部門、學術單位及研發機構所舉辦有關 GDP 的人才培訓課程與研討會。
+- 稽查重點應轉為常見缺失與問答，例如：稽查員問「教育訓練怎麼做？」公司回答「分為內部教育訓練與外部教育訓練，並保存訓練紀錄與合格結果」。
+
+### 下次執行提醒
+下次真正修改 HTML / Firestore 時，先從一個部門做完整樣板，建議第二章人事 / 教育訓練。完成後必須檢查智慧查詢、部門頁、規範到現場、文件閱讀地圖、稽查重點、FAQ 是否全部一致，再推送並用 GitHub Pages 永久網址驗收。
