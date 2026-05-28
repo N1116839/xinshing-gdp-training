@@ -1,5 +1,52 @@
 # GDP HTML 教育訓練 HANDOFF
-更新：2026-05-28（第十四次）
+更新：2026-05-28（第十五次）
+
+## 本輪完成（2026-05-28 第十五次開工）commit baf798c ✅ 本機 82/82 通過
+
+### 第三章 fact 架構完成 ✅
+
+**新增 24 筆 fact（依 7 份原文逐份讀取建立）：**
+
+| 來源 | 筆數 | fact IDs |
+|------|------|---------|
+| DP32-01 廠區規劃（4筆）| 4 | fact-premises-zones、fact-premises-nonconform-isolation、fact-premises-fefo、fact-premises-food-prohibition |
+| DP33-01 補充（2筆）| 2 | fact-temp-sensor-location、fact-temp-sensor-calibration |
+| DP34-01 關鍵設備（5筆）| 5 | fact-equipment-types、fact-equipment-acceptance、fact-equipment-battery、fact-equipment-maintenance、fact-equipment-abnormal |
+| DP34-02 量測儀器（3筆）| 3 | fact-instrument-calibration、fact-instrument-record、fact-instrument-abnormal |
+| DP35-01 電腦化系統（3筆）| 3 | fact-computer-scope、fact-computer-authorization、fact-computer-backup |
+| DP36-01 驗證確效（3筆）| 3 | fact-validation-4q、fact-validation-report、fact-validation-revalidation |
+| WI25-01 門禁管制（4筆）| 4 | fact-access-entry-process、fact-access-card、fact-access-visitor、fact-access-abnormal-record |
+
+**clarify keywords 縮窄（6 個）：**
+- clarify-premises-layout：19→11 個（移除六區/收貨區/出貨區等具體問法）
+- clarify-validation：17→6 個（移除4Q/DQ/IQ等由 fact 負責）
+- clarify-critical-equipment：21→15 個（移除電池/設備清單/設備異常等）
+- clarify-measuring-instruments：21→15 個（移除每年校正/暫停使用等）
+- clarify-computer-system：19→12 個（移除授權/備份/FR35-02等）
+- clarify-access-control：24→6 個（由 fact 負責具體門禁問法）
+
+**踩坑修正（2 處 keyword）：**
+- 「非符合品區要上鎖嗎」中「區要」打斷「非符合品」和「上鎖」→ 補「非符合品區要上鎖」+「非符合品區要上鎖嗎」
+- 「誰可以修改電腦系統資料」中「電腦」插入「修改」和「系統」之間 → 補「誰可以修改電腦系統」
+
+**驗收：** 本機 82/82 通過（舊 58 題 + 第三章 24 題），已 push GitHub Pages
+
+### ⚠️ 尚未完成（下次開工優先）
+
+| 章節 | 待補 fact 條目 |
+|------|--------------|
+| 第四章 | clarify-document-control |
+| 第六章 | clarify-complaint-handling、clarify-falsified-medicines |
+| 第七章 | clarify-outsourcing |
+
+**下次開工必做：**
+1. 讀 第四章 SOP 原文（DP42-01文件管制/DP42-02品質記錄）補 fact
+2. 讀 第六章 SOP 原文（DP62-01/DP64-01/DP65-01）補 fact
+3. 讀 第七章 SOP 原文（DP72-01委外）補 fact
+4. 全章補完後跑驗收腳本，加入對應測試題
+5. 全章完成後 → H1 登入系統
+
+---
 
 ## 本輪完成（2026-05-28 第十四次開工）commit 9b82e7e ✅ 本機 58/58 通過
 
