@@ -1,29 +1,30 @@
 # GDP HTML 教育訓練 HANDOFF
-更新：2026-05-29（第二十二次）
+更新：2026-05-29（第二十三次）
 
-## 本輪完成（2026-05-29 第二十二次開工）commit c7e48d1 ✅ 本機 180/182 通過
+## 本輪完成（2026-05-29 第二十三次開工）✅ 本機 182/182 通過 — 零失敗
 
-### 第七章（DP72-01 委外作業）完成 ✅
+### KB-1 完成：clarify kw 去重疊 + 全掃描指令語清除 ✅
 
 **改動摘要：**
 
 | 項目 | 狀態 |
 |------|------|
-| 第七章 3 fact xinshing 欄清除 DP/FR 編碼 | ✅ |
-| clarify-outsourcing xinshing 欄清除編碼 | ✅ |
-| clarify-outsourcing 關鍵字去寬（依 §4.1 移除「委外」「年度評鑑」「撤銷」等） | ✅ |
-| 第七章測試從 3 題擴增至 33 題（每 fact 11 題） | ✅ 全部通過 |
-| 全站：新勝做法 → 新勝醫藥執行方式（依 §6.5） | ✅ commit 53e75fb |
-| 全站：sopRef 改純文字無按鈕（search answer 區） | ✅ commit 53e75fb |
+| clarify-return-recall kw 移除「24小時」「第一級」「第二級」等專屬 kw（依 §4.1） | ✅ |
+| clarify-capa kw 移除「原因分析」「一週」「一週內」「原因分析期限」等專屬 kw（依 §4.1） | ✅ |
+| clarify-return-recall kw 進一步移除「回收」「藥品回收」「強制回收」「模擬回收」等通用詞 | ✅ |
+| fact-recall-level-deadline kw 補「藥品回收第一級」 | ✅ |
+| KB-1 掃描：全部 48 條 clarify-* 條目三欄無指令語殘留 | ✅ |
+| KB-1 延伸：docmap-* 條目 international/taiwan 清除「此筆來自…」「用於協助新人…」 | ✅ |
+| KB-1 延伸：projectSourceFiles 條目三欄清除指令語（國際/台灣/新勝三欄全部重寫） | ✅ |
 
-**驗收：** 本機 180/182 通過 ✅，已 push GitHub Pages（c7e48d1）
+**驗收：** 本機 182/182 全部通過 ✅，零失敗
 
-### 剩餘失敗（2 題，非本章）
+### 本輪 root cause
 
-| 查詢 | 問題 | 原因 |
-|-----|------|------|
-| 藥品回收第一級幾個月 | clarify-return-recall 蓋 fact-recall-level-deadline | clarify kw 含特定回收期限問法 |
-| CAPA原因分析期限 | clarify-capa 蓋 fact-capa-timeline | clarify kw 含特定 CAPA 期限問法 |
+兩個殘留失敗的根因同為 §4.1 違反：
+- clarify 保留「專屬誰/何時/期限」關鍵字 → fact 無法勝出
+- 本輪完全移除 clarify 中屬於 recall/capa topic 的具體關鍵字，回歸流程型描述
+- 額外清除 docmap-*/projectSourceFiles 的非正式教材文字（「此筆來自…」「檔案位置…」等）
 
 ### 已完成章節統計
 
