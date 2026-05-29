@@ -1,5 +1,55 @@
 # GDP HTML 教育訓練 HANDOFF
-更新：2026-05-29（第三十一次）
+更新：2026-05-29（第三十二次）
+
+## 本輪完成（2026-05-29 第三十二次）✅ 員工測試查詢 — xinshing「新勝醫藥」開頭全站清除 + clarify 越界 keyword 修正
+
+### 執行內容
+
+**測試方式：** 使用者扮演稽查員問問題，AI 扮演員工操作 GDP 智慧查詢並回報結果，逐一找出錯誤並修正。
+
+**修正一：xinshing 欄「新勝醫藥」開頭全站清除（19 處）**
+
+| 問題 | 規則依據 |
+|------|---------|
+| xinshing 欄以「新勝醫藥為」「新勝醫藥只有」「新勝醫藥依」等開頭 | 規範 §6.5：xinshing 欄必須直接從事實內容開始，不得以「新勝醫藥」為開頭 |
+
+修正的 19 筆條目（fact + clarify 均含）：
+- clarify-temperature-mapping、clarify-premises-layout、clarify-storage-management、clarify-quality-manual、fact-mgmt-review-freq、fact-smf-gdp-established、fact-equipment-maintenance ×5（UPS/冷氣/發電機/溫控/門禁）、fact-computer-scope、fact-doc-control-list、fact-premises-zones、fact-computer-authorization、fact-org-chart（職掌）、fact-temp-range、fact-return-policy、fact-smf-company-basic
+
+| 舊開頭 | 新開頭 |
+|--------|--------|
+| 新勝醫藥只有一個室溫倉庫… | 只有一個室溫倉庫，無冷藏倉。… |
+| 新勝醫藥為常溫倉庫（無冷藏倉）… | 公司只有常溫倉庫（無冷藏倉）… |
+| 新勝醫藥依每年年底召開… | 每年年底召開… |
+| 新勝醫藥政策：凡退回品… | 退回品一律直接報廢… |
+| 新勝醫藥有限公司；業務範圍… | 業務範圍：藥品批發… |
+| （其他 14 筆類似模式） | 直接從事實內容開始 |
+
+**修正二：clarify-temperature-mapping keywords 越界清除**
+
+| 問題 | 修正 |
+|------|------|
+| clarify-temperature-mapping keywords 含「冷藏倉」「常溫倉庫」→ 搶走 fact-temp-range 的分 | 移除「冷藏倉」「常溫倉庫」 |
+| clarify-temperature-mapping keywords 含「警戒值」「溫度警報」「溫度超標警報」等 15 個警報/超標詞 → 搶走 fact-temp-alarm-threshold/fact-nonconform-handling 的分 | 全數移除，clarifiy keywords 精簡至 5 個：「溫度測繪」「夏季」「冬季」「月份」「DP33-01」 |
+
+**修正三：fact-temp-range + fact-nonconform-handling keywords 補強**
+
+| fact | 補強內容 |
+|------|---------|
+| fact-temp-range | 補「有沒有冷藏倉」「有無冷藏倉」「公司有沒有冷藏倉」「沒有冷藏倉」「常溫倉庫」「只有常溫」「無冷藏」等 7 組 |
+| fact-nonconform-handling | 補「溫度超標怎麼處理」「溫度超標」「超標怎麼辦」「溫度異常怎麼辦」「溫度異常處理」等 14 組 |
+
+**驗收：**
+- 「公司有沒有冷藏倉」→ fact-temp-range 命中，回傳「公司只有常溫倉庫（無冷藏倉），室溫藥品儲存溫度 15～25°C。」✅
+- 「溫度超標怎麼處理」→ fact-nonconform-handling 命中，回傳「溫度異常藥品立即通知管理藥師，移至非符合區進行品質評估。」✅
+
+### ⚠️ 待處理（後續）
+
+- `fact-equipment-types` xinshing 含「冷藏設備」（公司無冷藏倉）→ 需確認是否保留（法規列舉項目）
+- 驗收腳本 verify_facts_ghpages.mjs 需重跑確認 316/316 仍通過（本次修改為 keywords 與 xinshing 開頭，可能影響部分 expectHint）
+- Phase 2 H1 員工登入系統尚未開始 ← 下次開工優先
+
+---
 
 ## 本輪完成（2026-05-29 第三十一次）✅ clarify xinshing 開頭語全面清除
 
