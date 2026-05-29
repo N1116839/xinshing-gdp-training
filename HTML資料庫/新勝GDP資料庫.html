@@ -1323,7 +1323,7 @@ const kbStore = {
       topic:"內部稽核作業（頻率、流程與紀錄）",
       international:"PIC/S GDP 要求批發商維持品質系統並定期執行自我檢查或內部稽核，以確認 GDP 作業持續符合規範並追蹤矯正預防措施；稽核小組應具稽核能力並保持客觀；稽核報告需文件化並追蹤缺失改善。",
       taiwan:"台灣 GDP 要求業者建立品質系統、文件與紀錄，並確認作業符合 GDP 要求；內部稽核結果與後續改善應可追溯；稽核報告需歸檔保存並在管理審查時提報。",
-      xinshing:"每年 12 月實施內部品質稽核。稽核小組由品保擔任，需 GDP 訓練合格、與被稽核部門無直接關係、具至少半年工作經驗；品保單位本身由 GDP 權責人稽核。稽核前應製作計畫表、查檢表（含先前缺失），執行前召開啟始會議，完成後召開結束會議。缺失分主要缺失、次要缺失、建議事項三類；不符合事項開立矯正與預防處理單（CAPA）由責任單位改善。稽核報告呈 GDP 權責人審閱後提報管理審查會議，報告保存 5 年。",
+      xinshing:"每年 12 月執行內部品質稽核。品保擔任稽核小組，需訓練合格、半年以上經驗且不得稽核自己部門。缺失分主要、次要、建議三類，不符合事項開 CAPA 改善。",
       sop_ref:["DP82-01","FR82-01","FR82-02","FR82-03","FR12-04"],
       file:"第八章自我審查/DP82-01 內部稽核作業程序書.docx",
       keywords:["FR82-01","FR82-02","FR82-03","DP82-01","稽核計畫","稽核報告","稽核查檢表","主要缺失","次要缺失","建議事項","稽核小組","缺失改善","FR12-04","稽核流程","品質稽核","自我檢查","稽核紀錄"]
@@ -2542,7 +2542,7 @@ const kbStore = {
         if(term.includes("常溫倉庫冷藏倉")&&/dp5501|dm1001|常溫倉/.test(hay)){ score+=8; strongHit=true; }
         if(term.includes("正航溫度監控系統")&&/正航|fr5701|dp3501/.test(hay)){ score+=8; strongHit=true; }
         if(term.includes("病媒蟲鼠防治")&&/病媒|蟲鼠|dp2502|fr2503|fr2505|wi2504/.test(hay)){ score+=14; strongHit=true; }
-        if(term.includes("內部稽核頻率")&&/內部稽核|內部品質稽核|dp8201|fr8201|fr8202|fr8203/.test(hay)){ score+=14; strongHit=true; }
+        if(term.includes("內部稽核頻率")&&/內部品質稽核|稽核計畫|查檢表|dp8201|fr8201|fr8202|fr8203/.test(hay)){ score+=14; strongHit=true; }
         if(term.includes("進出貨管制")&&/進出貨|進貨|出貨|收貨|驗收|揀貨|配銷|配送|dp5201|dp5401|dp5701/.test(hay)){ score+=14; strongHit=true; }
         if(term.includes("庫存盤點儲存管制")&&/庫存|存貨|盤點|dp5501|dm1001|fr5503/.test(hay)){ score+=18; strongHit=true; }
       });
