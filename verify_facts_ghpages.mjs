@@ -217,8 +217,8 @@ const TESTS = [
   { q: '門禁異常如何記錄',         expectId: 'fact-access-abnormal-record',      expectHint: '自動保存' },
 
   // ── 第四章：文件管制（DP42-01） ──
-  { q: '文件分幾階',               expectId: 'fact-doc-hierarchy',               expectHint: 'DM' },
-  { q: 'DM DP WI FR是什麼',        expectId: 'fact-doc-hierarchy',               expectHint: '程序書' },
+  { q: '文件分幾階',               expectId: 'fact-doc-hierarchy',               expectHint: '四階層' },
+  { q: '文件階層有哪些',           expectId: 'fact-doc-hierarchy',               expectHint: '品質手冊' },
   { q: '重大變更文件幾天簽核',     expectId: 'fact-doc-approval-time',           expectHint: '2個工作天' },
   { q: '一般文件幾天核准',         expectId: 'fact-doc-approval-time',           expectHint: '5個工作天' },
   { q: '文件什麼時候審查',         expectId: 'fact-doc-annual-review',           expectHint: '12月' },
@@ -239,7 +239,7 @@ const TESTS = [
   { q: '紀錄書寫錯誤怎麼辦',        expectId: 'fact-record-writing-rule',         expectHint: '簽認並押日期' },
 
   // ── 第四章：文件階層補充 ──
-  { q: '文件有幾階',               expectId: 'fact-doc-hierarchy',               expectHint: 'DM' },
+  { q: '文件有幾階',               expectId: 'fact-doc-hierarchy',               expectHint: '四階層' },
   { q: '一階文件是什麼',            expectId: 'fact-doc-hierarchy',               expectHint: '品質手冊' },
   { q: '二階文件是什麼',            expectId: 'fact-doc-hierarchy',               expectHint: '程序書' },
   { q: '三階文件叫什麼',            expectId: 'fact-doc-hierarchy',               expectHint: '指導' },
