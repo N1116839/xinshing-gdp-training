@@ -1,5 +1,108 @@
 # GDP HTML 教育訓練 HANDOFF
-更新：2026-05-28（第十六次）
+更新：2026-05-29（第十九次）
+
+## 本輪完成（2026-05-29 第十九次開工）commit 4ef42bc ✅ 本機 124/124 通過
+
+### 第五章 fact 全部補完 → Phase 1 KB 正式宣告完成 ✅
+
+**讀取來源（逐份原文）：** DP52-01、DP53-01、DP54-01、DP55-01、DP56-01、DP57-01
+
+**新增 11 筆 fact：**
+
+| SOP | fact ID |
+|-----|---------|
+| DP52-01 供應商評鑑 | supplier-qualification / supplier-periodic-eval |
+| DP53-01 客戶認可 | customer-qualification / customer-periodic-review |
+| DP54-01 進出貨 | receiving-flow / receiving-time-control |
+| DP55-01 倉儲管理 | storage-near-expiry / storage-inventory |
+| DP56-01 廢棄物 | waste-destruction |
+| DP57-01 揀貨配銷 | picking-verification / transport-temp-record |
+
+**驗收：** 本機 124/124 ✅（GitHub Pages 待部署確認）
+
+**踩坑補記：**
+- 關鍵字「停業客戶」(4字) 需作為獨立 keyword，不能只寫「停業客戶移除」（不是查詢的 substring）
+- 查詢「進出貨幾點管制」與舊 fact-logistics-door 衝突 → 改測試 query 為「嘉里醫藥幾點收貨」更精確
+
+---
+
+### ⚠️ Phase 1 KB 完成狀態確認（全部完成）
+
+| 章節 | SOP 份數 | fact 狀態 |
+|------|---------|----------|
+| 第一章 | 5份 | ✅ 15 筆 |
+| 第二章 | 7份 | ✅ 20 筆 |
+| 第三章 | 7份 | ✅ 24 筆 |
+| 第四章 | 2份 | ✅ 6 筆 |
+| 第五章 | 6份 | ✅ 11 筆（本次新增）|
+| 第六章 | 4份 | ✅ 7 筆 |
+| 第七章 | 1份 | ✅ 3 筆 |
+| 第八章 | 1份 | ✅ 3 筆 |
+
+**Phase 1 KB 正式宣告完成 ✅ 共 89 筆 fact（含組織架構、設備、管制區等輔助 fact）**
+
+---
+
+### 下次開工優先事項
+
+1. **GitHub Pages 驗收** — 確認 124/124 通過（部署需數分鐘）
+2. **Phase 2：H1 員工登入系統**（Phase 1 已完成，可進入）
+   - 需確認：Firebase 設定、gdpUsers collection、登入 UI 設計
+3. **Phase 3 前置準備**（可同步規劃）
+   - admin email 清單、superadmin email（hardcode）、初始職稱清單、Firestore rules 更新
+
+---
+
+## 本輪完成（2026-05-29 第十八次開工）commit ebc5af7 ✅ GitHub Pages 105/105 通過
+
+### 第四/六/七/八章 fact 架構全部補完 ✅
+
+**讀取來源（逐份原文）：** DP42-01、DP42-02、DP62-01、DP63-01、DP64-01、DP65-01、DP72-01、DP82-01（第八章補記）
+
+**新增 16 筆 fact：**
+
+| 章節/SOP | fact IDs |
+|----------|----------|
+| DP42-01 文件管制 | doc-hierarchy / doc-approval-time / doc-annual-review / doc-obsolete / doc-storage-method |
+| DP42-02 品質紀錄 | record-writing-rule |
+| DP62-01 客訴 | complaint-types / complaint-repeat |
+| DP63-01 退回品 | return-label |
+| DP64-01 偽禁藥 | counterfeit-action |
+| DP72-01 委外 | outsourcing-eval-timing / outsourcing-grade / outsourcing-first-eval |
+| DP82-01 內部稽核 | audit-personnel / audit-defect-types |
+
+**驗收：** 本機 105/105 ✅ → GitHub Pages 永久網址 105/105 ✅（commit ebc5af7）
+
+**踩坑補記：**
+- 第八章（DP82-01）從未列入 HANDOFF 待補清單 → 此次使用者主動指出才補入
+- xinshing 文字中的空格（`2 個工作天`）會導致 hint 比對失敗，數字後面不要加空格
+- clarify 寬泛 keywords 會搶分蓋過 fact → 建 fact 後需同步確認 clarify 不干擾
+
+---
+
+### ⚠️ Phase 1 KB 完成狀態確認
+
+| 章節 | SOP 份數 | fact 狀態 |
+|------|---------|----------|
+| 第一章 | DP12-01/03/04、DP14-01、DP15-01（5份）| ✅ 15 筆 |
+| 第二章 | WI22-01、DP22-01、DP24-01、DP25-01/02、WI25-01/04（7份）| ✅ 20 筆 |
+| 第三章 | DP32-01、DP33-01、DP34-01/02、DP35-01、DP36-01、WI25-01（7份）| ✅ 24 筆 |
+| 第四章 | DP42-01、DP42-02（2份）| ✅ 6 筆（本次新增）|
+| 第五章 | DP52-01、DP53-01、DP54-01、DP55-01、DP56-01、DP57-01（6份）| ⚠️ 早期 clarify 條目，無獨立 fact（待評估）|
+| 第六章 | DP62-01、DP63-01、DP64-01、DP65-01（4份）| ✅ 7 筆（含本次）|
+| 第七章 | DP72-01（1份）| ✅ 3 筆（本次新增）|
+| 第八章 | DP82-01（1份）| ✅ 3 筆（本次新增）|
+
+**⚠️ 第五章（供應鏈/進出貨/倉儲）：** 目前靠舊版 clarify 條目兜底，尚未拆成 fact 粒度。是下一階段重點。
+
+---
+
+### 下次開工優先事項
+
+1. **評估第五章是否需補 fact**（DP52-01 供應商、DP53-01 客戶認可、DP54-01 進出貨、DP55-01 倉儲、DP56-01 廢棄物、DP57-01 揀貨配銷）
+2. 若補完第五章 → Phase 1 KB 正式宣告完成 → 進入 H1 員工登入系統
+
+---
 
 ## 本輪完成（2026-05-28 第十七次開工）規範 v2.2 — 三階段藍圖 + 帳號審核設計
 
