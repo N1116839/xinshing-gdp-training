@@ -205,6 +205,40 @@ const TESTS = [
   { q: '門禁刷卡幾秒開啟',         expectId: 'fact-access-card',                 expectHint: '1秒' },
   { q: '訪客要陪同嗎',             expectId: 'fact-access-visitor',              expectHint: '全程陪同' },
   { q: '門禁異常如何記錄',         expectId: 'fact-access-abnormal-record',      expectHint: '自動保存' },
+
+  // ── 第四章：文件管制（DP42-01） ──
+  { q: '文件分幾階',               expectId: 'fact-doc-hierarchy',               expectHint: 'DM' },
+  { q: 'DM DP WI FR是什麼',        expectId: 'fact-doc-hierarchy',               expectHint: '程序書' },
+  { q: '重大變更文件幾天簽核',     expectId: 'fact-doc-approval-time',           expectHint: '2個工作天' },
+  { q: '一般文件幾天核准',         expectId: 'fact-doc-approval-time',           expectHint: '5個工作天' },
+  { q: '文件什麼時候審查',         expectId: 'fact-doc-annual-review',           expectHint: '12月' },
+  { q: '失效文件怎麼處理',         expectId: 'fact-doc-obsolete',                expectHint: '失效章' },
+  { q: '文件存放在哪裡',           expectId: 'fact-doc-storage-method',          expectHint: '發行章' },
+
+  // ── 第四章：品質紀錄（DP42-02） ──
+  { q: '紀錄可以用鉛筆寫嗎',       expectId: 'fact-record-writing-rule',         expectHint: '不得使用鉛筆' },
+  { q: '紀錄塗改怎麼辦',           expectId: 'fact-record-writing-rule',         expectHint: '簽認並押日期' },
+
+  // ── 第六章：客訴（DP62-01） ──
+  { q: '客訴分哪幾類',             expectId: 'fact-complaint-types',             expectHint: '藥品品質' },
+  { q: '運銷品質客訴幾個月結案',   expectId: 'fact-complaint-types',             expectHint: '1個月' },
+  { q: '客訴重複發生怎麼標記',     expectId: 'fact-complaint-repeat',            expectHint: '黃色' },
+  { q: '退回品要貼什麼標籤',       expectId: 'fact-return-label',                expectHint: 'FR63-02' },
+
+  // ── 第六章：偽禁藥（DP64-01） ──
+  { q: '發現疑似偽藥怎麼辦',       expectId: 'fact-counterfeit-action',          expectHint: '管理藥師' },
+  { q: '偽禁藥要隔離嗎',           expectId: 'fact-counterfeit-action',          expectHint: '非符合區' },
+
+  // ── 第七章：委外作業（DP72-01） ──
+  { q: '委外廠商多久評鑑一次',     expectId: 'fact-outsourcing-eval-timing',     expectHint: '年底' },
+  { q: '委外廠商60分怎麼辦',       expectId: 'fact-outsourcing-grade',           expectHint: '暫停交易' },
+  { q: '委外廠商首次評估怎麼做',   expectId: 'fact-outsourcing-first-eval',      expectHint: 'FR72-04' },
+
+  // ── 第八章：內部稽核補充（DP82-01） ──
+  { q: '誰可以做內部稽核',         expectId: 'fact-audit-personnel',             expectHint: '品保' },
+  { q: '稽核人員要有幾年經驗',     expectId: 'fact-audit-personnel',             expectHint: '半年' },
+  { q: '稽核缺失分幾類',           expectId: 'fact-audit-defect-types',          expectHint: '主要缺失' },
+  { q: '稽核缺失開什麼單',         expectId: 'fact-audit-defect-types',          expectHint: 'FR12-04' },
 ];
 
 async function main() {
