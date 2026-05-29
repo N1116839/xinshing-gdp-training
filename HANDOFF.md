@@ -1,7 +1,40 @@
 # GDP HTML 教育訓練 HANDOFF
 更新：2026-05-29（第二十一次）
 
-## 本輪完成（2026-05-29 第二十一次開工）commit 55b7d8f ✅ 本機 150/152 通過
+## 本輪完成（2026-05-29 第二十二次開工）commit c7e48d1 ✅ 本機 180/182 通過
+
+### 第七章（DP72-01 委外作業）完成 ✅
+
+**改動摘要：**
+
+| 項目 | 狀態 |
+|------|------|
+| 第七章 3 fact xinshing 欄清除 DP/FR 編碼 | ✅ |
+| clarify-outsourcing xinshing 欄清除編碼 | ✅ |
+| clarify-outsourcing 關鍵字去寬（依 §4.1 移除「委外」「年度評鑑」「撤銷」等） | ✅ |
+| 第七章測試從 3 題擴增至 33 題（每 fact 11 題） | ✅ 全部通過 |
+| 全站：新勝做法 → 新勝醫藥執行方式（依 §6.5） | ✅ commit 53e75fb |
+| 全站：sopRef 改純文字無按鈕（search answer 區） | ✅ commit 53e75fb |
+
+**驗收：** 本機 180/182 通過 ✅，已 push GitHub Pages（c7e48d1）
+
+### 剩餘失敗（2 題，非本章）
+
+| 查詢 | 問題 | 原因 |
+|-----|------|------|
+| 藥品回收第一級幾個月 | clarify-return-recall 蓋 fact-recall-level-deadline | clarify kw 含特定回收期限問法 |
+| CAPA原因分析期限 | clarify-capa 蓋 fact-capa-timeline | clarify kw 含特定 CAPA 期限問法 |
+
+### 已完成章節統計
+
+| 章節 | fact 數 | 測試題數 | 狀態 |
+|------|--------|---------|------|
+| 第八章（DP82-01 內部稽核） | 3 fact + 1 clarify | 33 | ✅ 全部通過 |
+| 第七章（DP72-01 委外作業） | 3 fact + 1 clarify | 33 | ✅ 全部通過 |
+
+---
+
+## 本輪（2026-05-29 第二十一次開工）commit 55b7d8f ✅ 本機 150/152 通過
 
 ### 搜尋評分重構：分級相關度分取代布林 +55 ✅
 
