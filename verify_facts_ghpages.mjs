@@ -109,7 +109,7 @@ const TESTS = [
   { q: 'FR54-01由誰填',        expectId: 'fact-receiving-fr54-who',    expectHint: '進貨' },
   { q: '何時填FR54-01',        expectId: 'fact-receiving-when',        expectHint: '到達' },
   { q: '物流門管制時間',        expectId: 'fact-logistics-door',        expectHint: '15:00' },
-  { q: '倉庫溫度範圍',         expectId: 'fact-temp-range',            expectHint: '25' },
+  { q: '倉庫溫度範圍',         expectId: 'fact-temp-range',            expectHint: '15～25' },
   { q: '溫度警戒值是多少',      expectId: 'fact-temp-alarm-threshold',  expectHint: '23.5' },
   { q: '警報測試多久一次',      expectId: 'fact-temp-alarm-test',       expectHint: '每月' },
   { q: 'FR33-01月記錄',        expectId: 'fact-temp-monthly-record',   expectHint: '溫度記錄表' },
