@@ -3191,18 +3191,16 @@ function isTrainingAnswer(doc){
   return !/(此筆來自|此筆代表|詳見本頁|回原始檔|文件編號：|協助新人知道)/.test(text);
 }
 function kbResultsHtml(results,query){
-  // 移除查詢校正條目：不在前台顯示
-  const filtered=results.filter(r=>r.sourceType!=="查詢校正");
-  // 新架構：命中 fact 時全部顯示為完整三欄卡（問什麼答什麼）
-  const facts=filtered.filter(r=>r.sourceType==="fact");
+  // 有 fact → 只顯示 fact，不顯示查詢校正
+  const facts=results.filter(r=>r.sourceType==="fact");
   if(facts.length){
     const shown=facts.slice(0,4);
     const extra=facts.length>4?`<div class="kb-result-summary">另有 ${facts.length-4} 筆相關事實，請縮小查詢範圍。</div>`:"";
     return shown.map(f=>kbAnswerHtml(f)).join("")+extra;
   }
-  if(!filtered.length) return `<div class="kb-no-result">資料庫目前找不到命中資料，請換個說法再試。</div>`;
-  // 舊版邏輯（非 fact 結果）
-  const primary=filtered.find(isTrainingAnswer)||filtered[0];
+  // 沒有 fact → 用查詢校正的三欄內容作答，但不顯示標籤與文件連結
+  const primary=results.find(isTrainingAnswer)||results[0];
+  if(!primary) return `<div class="kb-no-result">資料庫目前找不到命中資料，請換個說法再試。</div>`;
   return kbAnswerHtml(primary);
 }
 function kbSection(){
