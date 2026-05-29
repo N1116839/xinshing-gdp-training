@@ -72,9 +72,9 @@
 
 ### ⚠️ 待處理（後續）
 
-- `fact-equipment-types` xinshing 含「冷藏設備」（公司無冷藏倉）→ 需修正
+- ~~`fact-equipment-types` xinshing 含「冷藏設備」~~ → ✅ 已移除（公司無冷藏倉，法規列舉項目不適用，commit 107ae47）
 - ~~clarify 條目 xinshing 大量「新勝醫藥依規定…」開頭語~~ → ✅ 第三十一次已全數清除（25 筆）
-- Phase 2 H1 員工登入系統尚未開始
+- **Phase 2 H1 員工登入系統尚未開始** ← 下次開工優先
 
 ---
 
