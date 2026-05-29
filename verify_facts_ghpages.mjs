@@ -138,7 +138,7 @@ const TESTS = [
   { q: '人事做什麼',               expectId: 'fact-org-hr',                 expectHint: '訓練計畫' },
   { q: '文管工作是什麼',           expectId: 'fact-org-doccontrol',         expectHint: '文件' },
   { q: '代理人制度如何安排',       expectId: 'fact-org-deputy',             expectHint: '組織各職稱指派名單' },
-  { q: '非上班時間怎麼聯絡',       expectId: 'fact-org-emergency-contact',  expectHint: '0930656906' },
+  { q: '非上班時間怎麼聯絡',       expectId: 'fact-org-emergency-contact',  expectHint: '24小時緊急聯絡人' },
 
   // ── 第二章：人員衛生 ──
   { q: '進倉庫前要消毒嗎',         expectId: 'fact-hygiene-handsan',        expectHint: '75%' },
@@ -148,7 +148,7 @@ const TESTS = [
   { q: '管制區入口有什麼設施',     expectId: 'fact-hygiene-door-barrier',   expectHint: '塑膠簾' },
 
   // ── 第二章：SMF ──
-  { q: '公司地址在哪',             expectId: 'fact-smf-company-basic',      expectHint: '中和' },
+  { q: '公司地址在哪',             expectId: 'fact-smf-company-basic',      expectHint: '品質手冊及 SMF' },
   { q: 'GDP制度何時建立',          expectId: 'fact-smf-gdp-established',    expectHint: '111' },
 
   // ── 第二章：訓練補充 ──
