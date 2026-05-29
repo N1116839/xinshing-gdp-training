@@ -2520,7 +2520,17 @@ const kbStore = {
       let score=0;
       let strongHit=false;
       if(compact&&titleHay.includes(compact)){ score+=18; strongHit=true; }
-      if(compact&&keywordHay.includes(compact)){ score+=14; strongHit=true; }
+      if(compact&&keywordHay.includes(compact)){
+        // 短查詢（2 字）時 keyword 子字串匹配（如「委外」命中「委外業者變更」）權重降為 4
+        // 規則：至少 3 個不同 keyword 開頭匹配 compact 才算強匹配
+        if(!shortQuery||compact.length>=3){
+          score+=14; strongHit=true;
+        }else{
+          const matchCount=(Array.isArray(doc.keywords)?doc.keywords:[]).filter(kw=>this.normalize(kw).startsWith(compact)).length;
+          if(matchCount>=3){ score+=14; strongHit=true; }
+          else if(matchCount>=1){ score+=4; }
+        }
+      }
       if(compact&&bodyHay.includes(compact)) score+=shortQuery?2:6;
       // 反向比對：查詢句含有某個 keyword（解決中文長句查詢問題）
       if(!shortQuery&&compact.length>=4){
@@ -3154,8 +3164,6 @@ function evidenceMap(s){
   <div id="${uid}-tip" class="em-tip-box" style="display:none"></div>`;
 }
 function kbAnswerHtml(doc){
-  const sopRefs=Array.isArray(doc.sop_ref)&&doc.sop_ref.length
-    ?`<div class="kb-sop-refs">相關 SOP：${doc.sop_ref.map(s=>`<span class="pill">${s}</span>`).join("")}</div>`:""
   return `<div class="kb-answer-card">
     <div class="kb-answer-topic">${esc(doc.topic||"")}</div>
     <div class="kb-answer-row">
@@ -3170,7 +3178,6 @@ function kbAnswerHtml(doc){
       <div class="kb-answer-label co">執行方式</div>
       <div class="kb-answer-body">${esc(doc.xinshing||"")}</div>
     </div>
-    ${sopRefs}
   </div>`;
 }
 function isTrainingAnswer(doc){
