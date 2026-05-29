@@ -3191,34 +3191,19 @@ function isTrainingAnswer(doc){
   return !/(此筆來自|此筆代表|詳見本頁|回原始檔|文件編號：|協助新人知道)/.test(text);
 }
 function kbResultsHtml(results,query){
+  // 移除查詢校正條目：不在前台顯示
+  const filtered=results.filter(r=>r.sourceType!=="查詢校正");
   // 新架構：命中 fact 時全部顯示為完整三欄卡（問什麼答什麼）
-  const facts=results.filter(r=>r.sourceType==="fact");
+  const facts=filtered.filter(r=>r.sourceType==="fact");
   if(facts.length){
     const shown=facts.slice(0,4);
     const extra=facts.length>4?`<div class="kb-result-summary">另有 ${facts.length-4} 筆相關事實，請縮小查詢範圍。</div>`:"";
-    const nonFact=results.filter(r=>r.sourceType!=="fact"&&isTrainingAnswer(r)).slice(0,1);
-    const refCard=nonFact.length?`<div class="kb-result-summary" style="margin-top:8px">參考來源：${esc(nonFact[0].topic||"")}</div>`:"";
-    return shown.map(f=>kbAnswerHtml(f)).join("")+extra+refCard;
+    return shown.map(f=>kbAnswerHtml(f)).join("")+extra;
   }
-  // 舊版邏輯（非 fact 結果維持原有行為）
-  const primary=results.find(isTrainingAnswer)||results[0];
-  const related=results.filter(doc=>doc!==primary);
-  const cards=related.map(doc=>{
-    const sopRefs=Array.isArray(doc.sop_ref)&&doc.sop_ref.length
-      ?`<div class="kb-hit-meta"><span>相關文件</span>${doc.sop_ref.map(s=>sopLibrary[s]?pillMarkup(s):`<span>${esc(s)}</span>`).join("")}</div>`:"";
-    const file=doc.file?`<div class="kb-hit-meta"><span>來源：${esc(doc.file)}</span></div>`:"";
-    const body=doc.xinshing||doc.taiwan||doc.international||"";
-    return `<article class="kb-hit-card">
-      <h4><span class="kb-hit-type">${esc(doc.sourceType||"資料")}</span>${esc(doc.topic||"未命名資料")}</h4>
-      <p>${esc(String(body).slice(0,260))}${String(body).length>260?"...":""}</p>
-      ${file}
-      ${sopRefs}
-    </article>`;
-  }).join("");
-  const relatedHtml=related.length
-    ? `<div class="kb-result-summary">另列 ${related.length} 筆相關來源，供追溯原始 SOP、表單或頁面索引。</div><div class="kb-hit-list">${cards}</div>`
-    : `<div class="kb-result-summary">目前只顯示最高相關答案；未列出低相關泛命中文件。</div>`;
-  return `${kbAnswerHtml(primary)}${relatedHtml}`;
+  if(!filtered.length) return `<div class="kb-no-result">資料庫目前找不到命中資料，請換個說法再試。</div>`;
+  // 舊版邏輯（非 fact 結果）
+  const primary=filtered.find(isTrainingAnswer)||filtered[0];
+  return kbAnswerHtml(primary);
 }
 function kbSection(){
   const quickQuestions=["倉庫多久盤點一次","溫度測繪夏季冬季是哪幾個月","正航是不是溫度監控系統","公司有沒有冷藏倉","溫度超標怎麼處理","供應商怎麼評鑑","藥品回收要怎麼做","偏差要怎麼處理","教育訓練合格標準","內部稽核多久一次"];
