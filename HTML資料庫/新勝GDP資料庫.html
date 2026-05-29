@@ -1326,7 +1326,7 @@ const kbStore = {
       xinshing:"新勝醫藥依 DP82-01 每年 12 月實施內部品質稽核活動；稽核小組由品保擔任，需完整 GDP 課程訓練合格、與被稽核部門無直接關係、具至少半年工作經驗；品保單位本身由 GDP 權責人進行稽核；稽核計畫需規定準則、範圍、行程及先前稽核結果；稽核執行前召開啟始會議，完成後召開結束會議，缺點類別分為主要缺失、次要缺失、建議事項；發現不符合事項時開立 FR12-04 矯正與預防處理單（CAPA），由責任單位依 DP12-03 執行改善；FR82-01 為內部稽核計畫表，FR82-02 為內部稽核查檢表（含先前內外稽核缺失），FR82-03 為內部稽核報告書；稽核報告呈 GDP 權責人審閱後提報管理審查會議；稽核報告歸檔，保存期限 5 年。",
       sop_ref:["DP82-01","FR82-01","FR82-02","FR82-03","FR12-04"],
       file:"第八章自我審查/DP82-01 內部稽核作業程序書.docx",
-      keywords:["內部稽核","內部品質稽核","稽核多久一次","每年稽核","12月稽核","FR82-01","FR82-02","FR82-03","DP82-01","稽核計畫","稽核報告","稽核查檢表","主要缺失","次要缺失","建議事項","稽核小組","稽核頻率","缺失改善","FR12-04"]
+      keywords:["FR82-01","FR82-02","FR82-03","DP82-01","稽核計畫","稽核報告","稽核查檢表","主要缺失","次要缺失","建議事項","稽核小組","缺失改善","FR12-04","稽核流程","品質稽核","自我檢查","稽核紀錄"]
     });
     docs.push({
       id:"clarify-personnel-training",
@@ -2008,12 +2008,12 @@ const kbStore = {
       international:"PIC/S GDP 要求稽核人員具備足夠能力，且與被稽核部門獨立，確保客觀性。",
       taiwan:"台灣 GDP 要求內部稽核由受過訓練且有能力的人員執行，不得稽核與自身職務直接相關的部門。",
       xinshing:"依 DP82-01：品保負責執行稽核，須完整 GDP 課程訓練合格、工作經驗至少半年，且不得與被稽核部門職務有直接關係；品保單位本身由 GDP 權責人稽核。",
-      sop_ref:["DP82-01","DP24-01"],keywords:["稽核人員","誰做稽核","稽核人員資格","內部稽核誰負責","品保稽核","稽核資格","稽核獨立性","稽核人員經驗","稽核誰執行","品保資格","稽核半年","誰可以做內部稽核","誰可以做內部","誰做內部稽核","稽核人員半年","可以做稽核"]});
+      sop_ref:["DP82-01","DP24-01"],keywords:["稽核人員","誰做稽核","稽核人員資格","內部稽核誰負責","品保稽核","稽核資格","稽核獨立性","稽核人員經驗","稽核誰執行","品保資格","稽核半年","誰可以做內部稽核","誰可以做內部","誰做內部稽核","稽核人員半年","可以做稽核","來執行稽核","誰來執行稽核","稽核要訓練","稽核需要"]});
     docs.push({id:"fact-audit-defect-types",sourceType:"fact",topic:"稽核缺失分類",
       international:"PIC/S GDP 要求稽核發現的不符合事項依嚴重程度分類，並依 CAPA 程序跟催改善。",
       taiwan:"食藥署 GDP 無明文規定缺失分類名稱，由公司內部依 DP82-01 訂定。",
       xinshing:"稽核缺失分三類：主要缺失、次要缺失、建議事項；雙方確認不符合事項後開立 FR12-04 矯正與預防處理單（CAPA），責任單位依 DP12-03 執行改善。",
-      sop_ref:["DP82-01","DP12-03","FR12-04"],keywords:["稽核缺失","稽核缺失分類","主要缺失","次要缺失","建議事項","稽核缺失幾類","稽核不符合","稽核開CAPA","稽核缺失怎麼分","稽核結果"]});
+      sop_ref:["DP82-01","DP12-03","FR12-04"],keywords:["稽核缺失","稽核缺失分類","主要缺失","次要缺失","建議事項","稽核缺失幾類","稽核不符合","稽核開CAPA","稽核缺失怎麼分","稽核結果","缺失開CAPA","缺失分類有哪些"]});
 
     // ── 第五章：供應商評鑑（DP52-01） ──
     docs.push({id:"fact-supplier-qualification",sourceType:"fact",topic:"藥品供應商資格認可條件",
@@ -2539,15 +2539,31 @@ const kbStore = {
         if(keywordHay.includes(term)){ score+=term.length>=6?8:5; strongHit=true; }
         if(bodyHay.includes(term)) score+=shortQuery?1:(term.length>=6?4:2);
         if(term.includes("夏季冬季月份")&&/溫度測繪|測繪|dp3301/.test(hay)){ score+=10; strongHit=true; }
-        if(term.includes("常溫倉庫冷藏倉")&&/倉庫|常溫|冷藏|儲存/.test(hay)){ score+=8; strongHit=true; }
+        if(term.includes("常溫倉庫冷藏倉")&&/dp5501|dm1001|常溫倉/.test(hay)){ score+=8; strongHit=true; }
         if(term.includes("正航溫度監控系統")&&/正航|fr5701|dp3501/.test(hay)){ score+=8; strongHit=true; }
         if(term.includes("病媒蟲鼠防治")&&/病媒|蟲鼠|dp2502|fr2503|fr2505|wi2504/.test(hay)){ score+=14; strongHit=true; }
-        if(term.includes("內部稽核頻率")&&/內部稽核|內部品質稽核|dp8201|fr8201|fr8202|fr8203|每年|12月/.test(hay)){ score+=14; strongHit=true; }
+        if(term.includes("內部稽核頻率")&&/內部稽核|內部品質稽核|dp8201|fr8201|fr8202|fr8203/.test(hay)){ score+=14; strongHit=true; }
         if(term.includes("進出貨管制")&&/進出貨|進貨|出貨|收貨|驗收|揀貨|配銷|配送|dp5201|dp5401|dp5701/.test(hay)){ score+=14; strongHit=true; }
-        if(term.includes("庫存盤點儲存管制")&&/庫存|存貨|盤點|dp5501|dm1001|fr5503|儲存/.test(hay)){ score+=18; strongHit=true; }
+        if(term.includes("庫存盤點儲存管制")&&/庫存|存貨|盤點|dp5501|dm1001|fr5503/.test(hay)){ score+=18; strongHit=true; }
       });
       if(doc.sourceType==="查詢校正"&&strongHit) score+=45;
-      if(doc.sourceType==="fact"&&strongHit) score+=55;
+      if(doc.sourceType==="fact"){
+        let matchScore=0;
+        if(compact&&titleHay.includes(compact)) matchScore+=12;
+        else if(compact&&keywordHay.includes(compact)) matchScore+=10;
+        if(!shortQuery&&compact.length>=4){
+          const kwHits=(Array.isArray(doc.keywords)?doc.keywords:[]).filter(kw=>{
+            const nkw=this.normalize(kw); return nkw.length>=4&&compact.includes(nkw);
+          }).length;
+          matchScore+=Math.min(kwHits,3)*5;
+          const nt=this.normalize(doc.topic||"");
+          if(nt.length>=4&&compact.includes(nt)) matchScore+=6;
+        }
+        let termHits=0;
+        terms.forEach(term=>{ if(term&&term.length>=4&&keywordHay.includes(term)) termHits++; });
+        if(termHits>=2) matchScore+=10; else if(termHits>=1) matchScore+=5;
+        score+=matchScore;
+      }
       if(["SOP 摘要","部門文件地圖","資料夾檔案"].includes(doc.sourceType)) score-=shortQuery?6:3;
       // 原始同步文件（project-source-file）只當兜底，有正式 KB 時不應出現
       if(doc.sourceType==="project-source-file") score=Math.min(score,12);

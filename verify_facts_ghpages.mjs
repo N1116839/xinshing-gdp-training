@@ -65,14 +65,25 @@ function searchDocs(docs, query) {
       if (hay.includes(compact)) score += 5;
     }
 
-    // fact sourceType 加分
+    // fact sourceType 加分（分級相關度分，取代舊版 +55 布林分）
     if (doc.sourceType === 'fact') {
-      // 強命中：compact 包含任何 keyword（≥2字）
-      const strongHit = keywords.some(kw => {
+      const nTopic = normalize(doc.topic || '');
+      let matchScore = 0;
+      // 反向 keyword 命中數
+      let kwHits = 0;
+      for (const kw of keywords) {
         const nkw = normalize(kw);
-        return nkw.length >= 2 && (compact.includes(nkw) || nkw.includes(compact));
-      });
-      if (strongHit) score += 55;
+        if (nkw.length >= 4 && compact.includes(nkw)) kwHits++;
+      }
+      matchScore += Math.min(kwHits, 3) * 5;
+      // 反向 topic 命中
+      if (nTopic.length >= 4 && compact.includes(nTopic)) matchScore += 6;
+      // 直接 keyword 命中
+      if (keywords.some(kw => compact.includes(normalize(kw)))) matchScore += 8;
+      // 完整 keywordHay 命中
+      const kwHay = keywords.map(normalize).join('|');
+      if (kwHay.includes(compact)) matchScore += 10;
+      score += matchScore;
     }
 
     // 反向比對：compact.includes(keyword)，keyword≥4字
@@ -113,7 +124,6 @@ const TESTS = [
   { q: 'CAPA原因分析期限',    expectId: 'fact-capa-timeline',         expectHint: '一週' },
   { q: '訓練合格標準幾分',    expectId: 'fact-training-pass-score',   expectHint: '70' },
   { q: '教育訓練多久一次',    expectId: 'fact-training-frequency',    expectHint: '年' },
-  { q: '內部稽核何時做',      expectId: 'fact-internal-audit-when',   expectHint: '12' },
   { q: '品質紀錄保存幾年',    expectId: 'fact-record-retention',      expectHint: '5' },
 
   // ── 第二章：組織架構 ──
@@ -234,11 +244,42 @@ const TESTS = [
   { q: '委外廠商60分怎麼辦',       expectId: 'fact-outsourcing-grade',           expectHint: '暫停交易' },
   { q: '委外廠商首次評估怎麼做',   expectId: 'fact-outsourcing-first-eval',      expectHint: 'FR72-04' },
 
-  // ── 第八章：內部稽核補充（DP82-01） ──
-  { q: '誰可以做內部稽核',         expectId: 'fact-audit-personnel',             expectHint: '品保' },
-  { q: '稽核人員要有幾年經驗',     expectId: 'fact-audit-personnel',             expectHint: '半年' },
-  { q: '稽核缺失分幾類',           expectId: 'fact-audit-defect-types',          expectHint: '主要缺失' },
-  { q: '稽核缺失開什麼單',         expectId: 'fact-audit-defect-types',          expectHint: 'FR12-04' },
+  // ── 第八章：內部稽核（DP82-01）fact-internal-audit-when ──
+  { q: '內部稽核何時做',          expectId: 'fact-internal-audit-when', expectHint: '12' },
+  { q: '內部稽核幾月',            expectId: 'fact-internal-audit-when', expectHint: '12月' },
+  { q: '稽核多久一次',            expectId: 'fact-internal-audit-when', expectHint: '每年' },
+  { q: '年度稽核什麼時候',        expectId: 'fact-internal-audit-when', expectHint: '12月' },
+  { q: '每年幾月稽核',            expectId: 'fact-internal-audit-when', expectHint: '12月' },
+  { q: '稽核時間',                expectId: 'fact-internal-audit-when', expectHint: '12月' },
+  { q: '稽核頻率是多少',          expectId: 'fact-internal-audit-when', expectHint: '每年' },
+  { q: '12月稽核',                expectId: 'fact-internal-audit-when', expectHint: '12月' },
+  { q: '稽核執行時間',            expectId: 'fact-internal-audit-when', expectHint: '12月' },
+  { q: '內部稽核頻率',            expectId: 'fact-internal-audit-when', expectHint: '每年' },
+  { q: '什麼時候做稽核',          expectId: 'fact-internal-audit-when', expectHint: '每年' },
+  // ── 第八章：內部稽核人員資格（fact-audit-personnel）──
+  { q: '誰可以做內部稽核',        expectId: 'fact-audit-personnel',      expectHint: '品保' },
+  { q: '稽核人員要有幾年經驗',    expectId: 'fact-audit-personnel',      expectHint: '半年' },
+  { q: '內部稽核誰負責',          expectId: 'fact-audit-personnel',      expectHint: '品保' },
+  { q: '稽核人員資格',            expectId: 'fact-audit-personnel',      expectHint: '訓練合格' },
+  { q: '誰做稽核',                expectId: 'fact-audit-personnel',      expectHint: '品保' },
+  { q: '稽核需要什麼資格',        expectId: 'fact-audit-personnel',      expectHint: '訓練合格' },
+  { q: '誰來執行稽核',            expectId: 'fact-audit-personnel',      expectHint: '品保' },
+  { q: '稽核人員半年經驗',        expectId: 'fact-audit-personnel',      expectHint: '半年' },
+  { q: '品保可以做稽核嗎',        expectId: 'fact-audit-personnel',      expectHint: '品保' },
+  { q: '稽核人員工作經驗',        expectId: 'fact-audit-personnel',      expectHint: '半年' },
+  { q: '稽核要訓練嗎',            expectId: 'fact-audit-personnel',      expectHint: '訓練合格' },
+  // ── 第八章：稽核缺失分類（fact-audit-defect-types）──
+  { q: '稽核缺失分幾類',          expectId: 'fact-audit-defect-types',   expectHint: '主要缺失' },
+  { q: '稽核缺失開什麼單',        expectId: 'fact-audit-defect-types',   expectHint: 'FR12-04' },
+  { q: '稽核缺失分類',            expectId: 'fact-audit-defect-types',   expectHint: '主要缺失' },
+  { q: '主要缺失次要缺失',        expectId: 'fact-audit-defect-types',   expectHint: '主要缺失' },
+  { q: '稽核缺失幾類',            expectId: 'fact-audit-defect-types',   expectHint: '三類' },
+  { q: '稽核缺失怎麼分',          expectId: 'fact-audit-defect-types',   expectHint: '主要缺失' },
+  { q: '稽核不符合怎麼辦',        expectId: 'fact-audit-defect-types',   expectHint: 'FR12-04' },
+  { q: '缺失分類有哪些',          expectId: 'fact-audit-defect-types',   expectHint: '建議事項' },
+  { q: '建議事項是什麼',          expectId: 'fact-audit-defect-types',   expectHint: '建議事項' },
+  { q: '稽核結果怎麼處理',        expectId: 'fact-audit-defect-types',   expectHint: 'FR12-04' },
+  { q: '缺失開CAPA',              expectId: 'fact-audit-defect-types',   expectHint: 'FR12-04' },
   // ── 第五章：供應商評鑑（DP52-01） ──
   { q: '國外供應商需要什麼資格',   expectId: 'fact-supplier-qualification',      expectHint: 'PMF' },
   { q: '新供應商怎麼認可',         expectId: 'fact-supplier-qualification',      expectHint: 'FR52-01' },
@@ -300,7 +341,7 @@ async function main() {
     const results = searchDocs(docs, t.q);
     const top = results[0];
     const hit = top && top.id === t.expectId;
-    const hintOk = hit && top.xinshing && top.xinshing.includes(t.expectHint);
+    const hintOk = hit && top.xinshing && normalize(top.xinshing).includes(normalize(t.expectHint));
 
     if (hit && hintOk) {
       pass++;
