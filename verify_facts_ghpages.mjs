@@ -249,8 +249,8 @@ const TESTS = [
   { q: '委外廠商何時評鑑',          expectId: 'fact-outsourcing-eval-timing',     expectHint: '年底' },
   { q: '委外每年評鑑幾次',          expectId: 'fact-outsourcing-eval-timing',     expectHint: '一次' },
   { q: '委外何時可以查核',          expectId: 'fact-outsourcing-eval-timing',     expectHint: '隨時' },
-  { q: '委外首次評估何時做',        expectId: 'fact-outsourcing-eval-timing',     expectHint: '開始前' },
-  { q: '委外評鑑在哪記錄',          expectId: 'fact-outsourcing-eval-timing',     expectHint: '評鑑表' },
+  { q: '首次評估何時做',            expectId: 'fact-outsourcing-eval-timing',     expectHint: '開始前' },
+  { q: '評鑑在哪記錄',              expectId: 'fact-outsourcing-eval-timing',     expectHint: '評鑑表' },
   // ── 第七章：委外廠商評鑑等級（fact-outsourcing-grade）──
   { q: '委外廠商60分怎麼辦',       expectId: 'fact-outsourcing-grade',           expectHint: '暫停交易' },
   { q: '委外廠商A級是什麼',         expectId: 'fact-outsourcing-grade',           expectHint: '增加交易' },
@@ -274,7 +274,7 @@ const TESTS = [
   { q: '委外廠商怎麼列入名冊',      expectId: 'fact-outsourcing-first-eval',      expectHint: '合格' },
   { q: '委外首次評估記錄在哪',      expectId: 'fact-outsourcing-first-eval',      expectHint: '評鑑表' },
   { q: '委外廠商簽約前評估',        expectId: 'fact-outsourcing-first-eval',      expectHint: '評鑑表' },
-  { q: '委外廠商有證書還需要評嗎',  expectId: 'fact-outsourcing-first-eval',      expectHint: '可以取代' },
+  { q: '委外廠商有證書還需要評嗎',  expectId: 'fact-outsourcing-first-eval',      expectHint: '證書取代' },
 
   // ── 第八章：內部稽核（DP82-01）fact-internal-audit-when ──
   { q: '內部稽核何時做',          expectId: 'fact-internal-audit-when', expectHint: '12' },
