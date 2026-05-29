@@ -1,5 +1,50 @@
 # GDP HTML 教育訓練 HANDOFF
-更新：2026-05-29（第三十次）
+更新：2026-05-29（第三十一次）
+
+## 本輪完成（2026-05-29 第三十一次）✅ clarify xinshing 開頭語全面清除
+
+### 執行內容
+
+**問題來源：** clarify 條目 xinshing 欄含「新勝醫藥依規定…」開頭語，無 fact 覆蓋時顯示給員工，語氣像 SOP 敘述而非員工可直接說的回答。
+
+**修改範圍：** 全站掃描，共 25 筆 clarify xinshing 開頭語移除：
+
+| 條目類型 | 舊開頭 | 新開頭 |
+|---------|--------|--------|
+| clarify-validation | 新勝醫藥依規定執行驗證確效管理：凡… | 關鍵設備使用前須完成… |
+| clarify-pest-control | 新勝醫藥依規定執行病媒蟲鼠防治：防治… | 防治對象包含… |
+| clarify-training | 新勝醫藥依規定執行員工教育訓練：每年… | 每年由人事依年度訓練計畫表… |
+| clarify-org-chart | 新勝醫藥依規定建立組織架構，以… | 組織以 GDP 權責主管為領導層… |
+| clarify-hygiene-cleaning | 新勝醫藥依規定管理人員衛生與環境清潔：… | 進入管制區需以酒精消毒雙手… |
+| clarify-supplier-qualification | 新勝醫藥依規定審查供應商：… | 新廠商符合資格認可後，… |
+| clarify-customer-qualification | 新勝醫藥依規定審查客戶：… | 新客戶締結前由業務部評估… |
+| clarify-picking-dispatch | 新勝醫藥依規定管理訂單揀貨與配銷：… | 業務接單（口頭/mail/傳真）後… |
+| clarify-receiving-shipping | 新勝醫藥依規定管理藥品進出貨。… | 【採購單】採購人員叫貨時… |
+| clarify-waste-destruction | 新勝醫藥依規定管理廢棄物：… | 廢棄藥品（回收、過期、退貨…） |
+| clarify-complaint-handling | 新勝醫藥依規定管理客訴：… | 所有品質相關申訴（口頭或書面）… |
+| clarify-quality-system | 新勝醫藥依規定管理品質管理系統：… | 以品質手冊為最高指導原則… |
+| clarify-change-control | 新勝醫藥依規定管理變更管制，分…：… | 變更分文件變更與工程變更兩類… |
+| clarify-quality-risk | 新勝醫藥依規定執行品質風險管理：… | 風險小組由管理藥師、品管… |
+| clarify-falsified-medicines | 新勝醫藥依規定管理疑似偽禁仿冒藥品：… | 任何人員發現疑似偽禁仿冒藥品… |
+| clarify-critical-equipment | 新勝醫藥依規定管理關鍵設備：… | 關鍵設備包括但不限於… |
+| clarify-measuring-instruments | 新勝醫藥依規定管理量測儀器：… | 量測設備指所有用於檢驗… |
+| clarify-computer-system | 新勝醫藥依規定管理電腦化系統：… | 適用系統包括… |
+| clarify-equipment-list | 新勝醫藥依規定建立 GDP 相關設備清單；… | 設備清單（均為 111 年購置）… |
+| clarify-temp-monthly | 新勝醫藥依規定，每月底… | 每月底… |
+| clarify-risk-analysis | 新勝醫藥依規定建立風險分析報告… | 風險分析報告（114/08/25 版）… |
+| clarify-risk-tracking | 新勝醫藥依規定，當年度… | 當年度… |
+| clarify-quality-records | 新勝醫藥依規定管理品質紀錄：… | 填寫需清楚，不得使用鉛筆… |
+| clarify-capa | 新勝醫藥依規定管理矯正與預防措施（CAPA）。… | 觸發情形（六類）… |
+| clarify-return-recall | 新勝醫藥依規定管理藥品回收。… | 【回收條件】… |
+
+**驗收：** 316/316 ✅（commit 18542de，已 push GitHub Pages）
+
+### ⚠️ 待處理（後續）
+
+- `fact-equipment-types` xinshing 含「冷藏設備」（公司無冷藏倉）→ 需修正
+- Phase 2 H1 員工登入系統尚未開始
+
+---
 
 ## 本輪完成（2026-05-29 第三十次）✅ 查詢校正前台移除 + 搜尋顯示邏輯重構
 
@@ -28,7 +73,7 @@
 ### ⚠️ 待處理（後續）
 
 - `fact-equipment-types` xinshing 含「冷藏設備」（公司無冷藏倉）→ 需修正
-- clarify 條目 xinshing 大量「新勝醫藥依規定…」開頭語→ 無 fact 覆蓋時仍會被顯示，後續逐一修正
+- ~~clarify 條目 xinshing 大量「新勝醫藥依規定…」開頭語~~ → ✅ 第三十一次已全數清除（25 筆）
 - Phase 2 H1 員工登入系統尚未開始
 
 ---
