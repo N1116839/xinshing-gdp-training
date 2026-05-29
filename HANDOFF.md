@@ -1,5 +1,59 @@
 # GDP HTML 教育訓練 HANDOFF
-更新：2026-05-29（第二十七次）
+更新：2026-05-29（第二十九次）
+
+## 本輪完成（2026-05-29 第二十九次）✅ 全章搜尋測試 + 三項衝突修正
+
+### 執行內容
+
+**驗收腳本 expectHint 修正（機敏資料清除後遺漏）：**
+- `非上班時間怎麼聯絡` → expectHint 從 `0930656906` 改為 `24小時緊急聯絡人`
+- `公司地址在哪` → expectHint 從 `中和` 改為 `品質手冊及 SMF`
+- 驗收：316/316 ✅
+
+**全章搜尋測試（永久連結實機測試 45 題）：**
+- 第一～八章各 5～8 題，命中正確率高
+- 發現 3 項衝突需修正
+
+**衝突修正：**
+
+| 問題 | 修正 | 結果 |
+|------|------|------|
+| `fact-temp-range` 溫度範圍缺下限 | `≤25°C` → `15～25°C`（DP33-01 原文） | ✅ 修正 |
+| `門禁管制流程` 命中 `clarify-hygiene-cleaning` | 移除 hygiene-cleaning 中的 `"門禁"` kw；access-control 補 5 組精準 kw | ✅ clarify-access-control 126 分勝出 |
+| `藥品回收第一級幾個月` clarify 贏 fact（差 29 分）| fact-recall-level-deadline 補 6 組精準 kw | ✅ fact 116 分勝出 |
+| `模擬回收演練多久一次` clarify 贏 fact（差 13 分）| fact-recall-drill 補 7 組精準 kw | ✅ fact 183 分勝出 |
+
+**commit：** `ad3a931`，已 push GitHub Pages，316/316 驗收通過
+
+### 驗收狀態
+✅ 本機 316/316 通過
+✅ GitHub Pages 永久連結四項修正確認通過
+✅ verify_facts_ghpages.mjs expectHint 已同步
+
+---
+
+## 本輪完成（2026-05-29 第二十八次）✅ clarify-* 全域指令語清除
+
+### 修正內容
+
+掃描全部 48 條 clarify-* 及相關 fact 條目，修正 30+ 處 xinshing 欄 AI 生成痕跡：
+
+| 類型 | 處理方式 | 修正處數 |
+|------|---------|---------|
+| `依執行` / `依管理` / `依審查` / `依建立` 截斷句 | → `依規定＋動詞` | ~22 處 |
+| `表單：無。` / `無對應表單。` meta note | → 移除 | 5 處 |
+| `（）` 空括號殘留 | → 移除或補完 | 2 處 |
+| clarify-return-recall 截斷表單 meta | → 改為完整敘述句 | 1 處 |
+| clarify-document-control `文件管制依：` `品質紀錄依管理：` | → 補「規定辦理」 | 2 處 |
+
+**commit：** `94debe3`，已 push GitHub Pages
+
+### 驗收狀態
+
+⚠️ 本輪為純文字修正（無搜尋邏輯變動），搜尋功能預期不受影響。
+建議下次開工前執行 `node verify_facts_ghpages.mjs` 確認 316/316 仍通過。
+
+---
 
 ## 本輪完成（2026-05-29 第二十七次）✅ 全章校對 + 機敏資料清除 + 搜尋 n-gram 修補
 
