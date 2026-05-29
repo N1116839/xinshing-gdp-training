@@ -239,6 +239,31 @@ const TESTS = [
   { q: '稽核人員要有幾年經驗',     expectId: 'fact-audit-personnel',             expectHint: '半年' },
   { q: '稽核缺失分幾類',           expectId: 'fact-audit-defect-types',          expectHint: '主要缺失' },
   { q: '稽核缺失開什麼單',         expectId: 'fact-audit-defect-types',          expectHint: 'FR12-04' },
+  // ── 第五章：供應商評鑑（DP52-01） ──
+  { q: '國外供應商需要什麼資格',   expectId: 'fact-supplier-qualification',      expectHint: 'PMF' },
+  { q: '新供應商怎麼認可',         expectId: 'fact-supplier-qualification',      expectHint: 'FR52-01' },
+  { q: '供應商每月要做什麼',       expectId: 'fact-supplier-periodic-eval',      expectHint: '食藥署' },
+  { q: '供應商不合格怎麼辦',       expectId: 'fact-supplier-periodic-eval',      expectHint: '撤銷' },
+  // ── 第五章：客戶認可（DP53-01） ──
+  { q: '新客戶怎麼審核',           expectId: 'fact-customer-qualification',      expectHint: 'FR53-02' },
+  { q: '客戶多久評估一次',         expectId: 'fact-customer-periodic-review',    expectHint: '每年' },
+  { q: '停業客戶怎麼從清單移除',   expectId: 'fact-customer-periodic-review',    expectHint: '移除' },
+  // ── 第五章：進出貨管理（DP54-01） ──
+  { q: '收貨驗收流程是什麼',       expectId: 'fact-receiving-flow',              expectHint: 'FR54-01' },
+  { q: '驗收不合格怎麼辦',         expectId: 'fact-receiving-flow',              expectHint: 'FR52-03' },
+  { q: '嘉里醫藥幾點收貨',         expectId: 'fact-receiving-time-control',      expectHint: '14:00' },
+  // ── 第五章：倉儲管理（DP55-01） ──
+  { q: '近效期藥品幾個月貼黃標',   expectId: 'fact-storage-near-expiry',         expectHint: '黃色標籤' },
+  { q: '效期到了藥品怎麼辦',       expectId: 'fact-storage-near-expiry',         expectHint: '非符合區' },
+  { q: '庫存盤點多久一次',         expectId: 'fact-storage-inventory',           expectHint: '2個月' },
+  { q: '盤點發現過期藥品怎麼辦',   expectId: 'fact-storage-inventory',           expectHint: 'DP56-01' },
+  // ── 第五章：廢棄物管理（DP56-01） ──
+  { q: '報廢藥品怎麼銷毀',         expectId: 'fact-waste-destruction',           expectHint: '良衛環保' },
+  { q: '銷毀藥品幾月通知',         expectId: 'fact-waste-destruction',           expectHint: '11月' },
+  // ── 第五章：揀貨配銷（DP57-01） ──
+  { q: '撿貨要幾個人核對',         expectId: 'fact-picking-verification',        expectHint: '覆查' },
+  { q: '嘉里醫藥運輸溫度幾筆',    expectId: 'fact-transport-temp-record',       expectHint: '每季' },
+  { q: '物流每月幾筆溫度紀錄',     expectId: 'fact-transport-temp-record',       expectHint: '3筆' },
 ];
 
 async function main() {
