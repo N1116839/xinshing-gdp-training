@@ -1,5 +1,35 @@
 # GDP HTML 教育訓練 HANDOFF
-更新：2026-05-29（第二十次）
+更新：2026-05-29（第二十一次）
+
+## 本輪完成（2026-05-29 第二十一次開工）commit 55b7d8f ✅ 本機 150/152 通過
+
+### 搜尋評分重構：分級相關度分取代布林 +55 ✅
+
+**改動摘要：**
+
+| 項目 | 狀態 |
+|------|------|
+| `kbStore.search()` +55 布林分 → 分級相關度分 | ✅ 依 reverse kw/topic/term 命中信號數給差異化分數（0～35） |
+| 收窄 3 條過寬意圖 regex | ✅ 2542: `/倉庫|常溫|冷藏|儲存/` → `/dp5501|dm1001|常溫倉/` |
+| | ✅ 2545: 移除 `/每年|12月/` |
+| | ✅ 2547: 移除 `/儲存/` |
+| clarify-internal-audit-frequency 移除重疊 kw | ✅ 移除「內部稽核」「稽核多久一次」「每年稽核」「12月稽核」「稽核頻率」等，回歸流程型描述 |
+| fact-audit-defect-types 補 kw | ✅ 補「缺失開CAPA」「缺失分類有哪些」|
+| verify_facts_ghpages.mjs 同步 | ✅ 分級評分 + hint 正規化比對（解決「12 月」空格問題）|
+| 第八章測試擴增 | ✅ 從 4 題增至 33 題（fact-internal-audit-when: 11, fact-audit-personnel: 11, fact-audit-defect-types: 11）|
+
+**驗收：** 本機 150/152 通過 ✅，已 push GitHub Pages（55b7d8f），待永久連結確認
+
+### 剩餘失敗（2 題，非第八章）
+
+| 查詢 | 問題 | 原因 |
+|-----|------|------|
+| 藥品回收第一級幾個月 | clarify-return-recall 蓋過 fact-recall-level-deadline | clarify kw 含特定回收期限問法 |
+| CAPA原因分析期限 | clarify-capa 蓋過 fact-capa-timeline | clarify kw 含特定 CAPA 期限問法 |
+
+→ 依 §4.1 移除 clarify 專屬 who/when kw 即可修正，留待後續處理。
+
+---
 
 ## 本輪（2026-05-29 第二十次開工）⚠️ 純診斷，無程式碼/資料變更
 
