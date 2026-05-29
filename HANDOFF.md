@@ -1,5 +1,5 @@
 # GDP HTML 教育訓練 HANDOFF
-更新：2026-05-29（第二十三次）
+更新：2026-05-29（第二十四次）
 
 ## 本輪完成（2026-05-29 第二十三次開工）✅ 本機 182/182 通過 — 零失敗
 
@@ -1281,3 +1281,36 @@ https://n1116839.github.io/xinshing-gdp-training/
 
 ### 下次執行提醒
 下次真正修改 HTML / Firestore 時，先從一個部門做完整樣板，建議第二章人事 / 教育訓練。完成後必須檢查智慧查詢、部門頁、規範到現場、文件閱讀地圖、稽查重點、FAQ 是否全部一致，再推送並用 GitHub Pages 永久網址驗收。
+
+---
+
+## 本輪完成（2026-05-29 第二十四次開工）commit 577faad ✅ 本機 316/316 通過
+
+### Chapter 4/6 事實 keyword 補全 + 內文代號安全移除 ✅
+
+**改動摘要：**
+
+| 項目 | 狀態 |
+|------|------|
+| Chapter 4 關鍵字擴充（doc-hierarchy/doc-approval-time/doc-annual-review/doc-obsolete/doc-storage-method/record-writing-rule）| ✅ 316/316 |
+| Chapter 6 關鍵字擴充（complaint-types/complaint-repeat/return-label/counterfeit-action/recall-level-deadline/recall-notify-24h/recall-drill/return-policy）| ✅ 316/316 |
+| clarify kw 再收窄（drug-recall/falsified-medicines/risk-tracking-record/capa）| ✅ 316/316 |
+| 傳統/簡體中文「紀錄/記錄」變體修復 | ✅ 316/316 |
+| hint 不一致修正（FR42-05→銷毀、食藥署→通知主管機關、一律報廢→直接報廢）| ✅ |
+| DM/DP/WI/FR 內文代號全量移除（§39.5 知識安全邊界）| ✅ |
+
+**涉及違規 §39.5 的移除項目：**
+- `fact-doc-hierarchy` xinshing：`一階 DM 品質手冊` 改為純中文
+- `clarify-quality-manual` xinshing：`DM（一階品質手冊）→ DP（二階程序書）…` 改為純中文
+- `clarify-document-overview` xinshing：`（DM、DP、WI、FR）` 改為 `（品質手冊、程序書、作業指導書、表單）`
+- `clarify-document-overview` keywords：移除 standalone `"DM","DP","WI","FR"`
+- `verify_facts_ghpages.mjs`：`expectHint:'DM'` 改為 `'四階層'`，移除 `DM DP WI FR是什麼` 測試題
+
+**驗收：** 本機 316/316 全部通過 ✅，已 push GitHub Pages（577faad）
+
+**踩坑補記：** xinshing 和 keywords 中 standalone 的 DM/DP/WI/FR 屬於 §39.5「可推導出完整文件架構」的違規，需全量掃描而非只修 fact。驗收腳本的 `expectHint:'DM'` 也需同步改。
+
+### 下次開工優先
+1. 若需做 GDP 智慧查詢測試：依 §10.1 標準擴充各章測試題
+2. 若需進入視覺化／互動化：先等 Phase 1 所有項目確認完成
+3. 帳號審核系統（Phase 3）設計已完成，可開始實作
