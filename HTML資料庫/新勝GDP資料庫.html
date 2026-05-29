@@ -2905,7 +2905,7 @@ function standardsSwipe(standards){
   const tabs=[
     {key:"picsgdp",label:"PIC/S GDP",     fullLabel:"PIC/S GDP 國際規範", icon:"🌐",col:"#0a4d8a",bg:"#eef2f9"},
     {key:"taiwan", label:"台灣食藥署",     fullLabel:"台灣食藥署規定",     icon:"🇹🇼",col:"#006437",bg:"#edf5ef"},
-    {key:"company",label:"新勝做法",       fullLabel:"新勝醫藥做法",       icon:"🏢",col:"#0f5b50",bg:"#eaf3f1"}
+    {key:"company",label:"新勝醫藥執行方式",fullLabel:"新勝醫藥執行方式（依內部文件）",icon:"🏢",col:"#0f5b50",bg:"#eaf3f1"}
   ];
   function hl(text){
     return text.replace(/([A-Z]{2}\d{2}-\d{2})/g,'<b>$1</b>');
@@ -3155,7 +3155,7 @@ function evidenceMap(s){
 }
 function kbAnswerHtml(doc){
   const sopRefs=Array.isArray(doc.sop_ref)&&doc.sop_ref.length
-    ?`<div class="kb-sop-refs">相關 SOP：${doc.sop_ref.map(s=>pillMarkup(s)).join("")}</div>`:""
+    ?`<div class="kb-sop-refs">相關 SOP：${doc.sop_ref.map(s=>`<span class="pill">${s}</span>`).join("")}</div>`:""
   return `<div class="kb-answer-card">
     <div class="kb-answer-topic">${esc(doc.topic||"")}</div>
     <div class="kb-answer-row">
@@ -3167,7 +3167,7 @@ function kbAnswerHtml(doc){
       <div class="kb-answer-body">${esc(doc.taiwan||"")}</div>
     </div>
     <div class="kb-answer-row">
-      <div class="kb-answer-label co">新勝做法</div>
+      <div class="kb-answer-label co">新勝醫藥執行方式</div>
       <div class="kb-answer-body">${esc(doc.xinshing||"")}</div>
     </div>
     ${sopRefs}
