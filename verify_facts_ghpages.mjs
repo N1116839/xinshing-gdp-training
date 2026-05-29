@@ -112,7 +112,7 @@ const TESTS = [
   { q: '倉庫溫度範圍',         expectId: 'fact-temp-range',            expectHint: '25' },
   { q: '溫度警戒值是多少',      expectId: 'fact-temp-alarm-threshold',  expectHint: '23.5' },
   { q: '警報測試多久一次',      expectId: 'fact-temp-alarm-test',       expectHint: '每月' },
-  { q: 'FR33-01月記錄',        expectId: 'fact-temp-monthly-record',   expectHint: 'FR33' },
+  { q: 'FR33-01月記錄',        expectId: 'fact-temp-monthly-record',   expectHint: '溫度記錄表' },
   { q: '溫度測繪週期',         expectId: 'fact-temp-mapping-cycle',    expectHint: '三年' },
   { q: '盤點頻率多久一次',     expectId: 'fact-inventory-cycle',       expectHint: '兩個月' },
   { q: '不符合品如何處理',     expectId: 'fact-nonconform-handling',   expectHint: '隔離' },
@@ -137,13 +137,13 @@ const TESTS = [
   { q: '採購職責',                 expectId: 'fact-org-purchasing',         expectHint: '合格廠商' },
   { q: '人事做什麼',               expectId: 'fact-org-hr',                 expectHint: '訓練計畫' },
   { q: '文管工作是什麼',           expectId: 'fact-org-doccontrol',         expectHint: '文件' },
-  { q: '代理人制度如何安排',       expectId: 'fact-org-deputy',             expectHint: 'FR22-01' },
+  { q: '代理人制度如何安排',       expectId: 'fact-org-deputy',             expectHint: '組織各職稱指派名單' },
   { q: '非上班時間怎麼聯絡',       expectId: 'fact-org-emergency-contact',  expectHint: '0930656906' },
 
   // ── 第二章：人員衛生 ──
   { q: '進倉庫前要消毒嗎',         expectId: 'fact-hygiene-handsan',        expectHint: '75%' },
   { q: '入庫前要做什麼清潔',       expectId: 'fact-hygiene-incoming-clean', expectHint: '除塵' },
-  { q: '倉庫清潔多久一次',         expectId: 'fact-hygiene-daily-cleaning', expectHint: 'FR25-01' },
+  { q: '倉庫清潔多久一次',         expectId: 'fact-hygiene-daily-cleaning', expectHint: '每日清潔檢查紀錄表' },
   { q: '冷氣濾網多久清洗',         expectId: 'fact-hygiene-quarterly-ac',   expectHint: '每季' },
   { q: '管制區入口有什麼設施',     expectId: 'fact-hygiene-door-barrier',   expectHint: '塑膠簾' },
 
@@ -152,22 +152,22 @@ const TESTS = [
   { q: 'GDP制度何時建立',          expectId: 'fact-smf-gdp-established',    expectHint: '111' },
 
   // ── 第二章：訓練補充 ──
-  { q: '職前訓練合格才能上任嗎',   expectId: 'fact-training-preservice',    expectHint: 'FR22-02' },
+  { q: '職前訓練合格才能上任嗎',   expectId: 'fact-training-preservice',    expectHint: '職責訓練對照表' },
   { q: '外部教育訓練怎麼辦',       expectId: 'fact-training-external',      expectHint: '外部檢討會' },
   { q: '外部教育訓練多久一次',     expectId: 'fact-training-external',      expectHint: '三年' },
-  { q: '訓練紀錄存哪',             expectId: 'fact-training-record',        expectHint: 'FR24-03' },
+  { q: '訓練紀錄存哪',             expectId: 'fact-training-record',        expectHint: '員工教育訓練紀錄表' },
 
   // ── 第一章：變更管制 ──
   { q: '何時啟動變更管制',         expectId: 'fact-change-trigger',         expectHint: '偏差' },
   { q: '重大變更是什麼',           expectId: 'fact-change-level',           expectHint: '會簽' },
-  { q: '填FR12-05',               expectId: 'fact-change-form',            expectHint: 'FR12-05' },
+  { q: '填FR12-05',               expectId: 'fact-change-form',            expectHint: '變更管制需求單' },
   { q: '變更逾期怎麼辦',           expectId: 'fact-change-overdue',         expectHint: '三日' },
   { q: '倉庫搬遷需要通報嗎',       expectId: 'fact-change-notify',          expectHint: '搬遷' },
 
   // ── 第一章：管理階層檢討 ──
   { q: '管理階層檢討多久一次',     expectId: 'fact-mgmt-review-freq',       expectHint: '年底' },
   { q: '管理審查包含什麼項目',     expectId: 'fact-mgmt-review-items',      expectHint: '委外評鑑' },
-  { q: 'FR14-02報告',              expectId: 'fact-mgmt-review-form',       expectHint: 'FR14-02' },
+  { q: 'FR14-02報告',              expectId: 'fact-mgmt-review-form',       expectHint: '管理階層檢討及監督評鑑報告' },
 
   // ── 第一章：品質風險 ──
   { q: '風險小組有誰',             expectId: 'fact-risk-team',              expectHint: '倉管' },
@@ -176,7 +176,7 @@ const TESTS = [
   { q: '嚴重度如何評分',           expectId: 'fact-risk-severity',          expectHint: '歇業' },
   { q: '發生度如何評分',           expectId: 'fact-risk-occurrence',        expectHint: '三年' },
   { q: '品質風險多久回顧',         expectId: 'fact-risk-review',            expectHint: '每年' },
-  { q: 'FR15-01是什麼',            expectId: 'fact-risk-form',              expectHint: 'FR15-01' },
+  { q: 'FR15-01是什麼',            expectId: 'fact-risk-form',              expectHint: '風險分析報告' },
 
   // ── 第三章：DP32-01 作業場所規劃 ──
   { q: '廠區分幾區',               expectId: 'fact-premises-zones',              expectHint: '六區' },
@@ -190,10 +190,10 @@ const TESTS = [
 
   // ── 第三章：DP34-01 關鍵設備 ──
   { q: '關鍵設備有哪些',           expectId: 'fact-equipment-types',             expectHint: '發電機' },
-  { q: '新設備要做4Q嗎',           expectId: 'fact-equipment-acceptance',        expectHint: 'FR34-02' },
+  { q: '新設備要做4Q嗎',           expectId: 'fact-equipment-acceptance',        expectHint: 'GDP 相關設備清單' },
   { q: '溫度計電池多久換',         expectId: 'fact-equipment-battery',           expectHint: '三個月' },
-  { q: '設備保養填什麼表',         expectId: 'fact-equipment-maintenance',       expectHint: 'FR34-03' },
-  { q: '設備故障怎麼辦',           expectId: 'fact-equipment-abnormal',          expectHint: 'DP12-02' },
+  { q: '設備保養填什麼表',         expectId: 'fact-equipment-maintenance',       expectHint: '設備定期保養維修紀錄表' },
+  { q: '設備故障怎麼辦',           expectId: 'fact-equipment-abnormal',          expectHint: '偏差管理作業程序' },
 
   // ── 第三章：DP34-02 量測儀器 ──
   { q: '儀器多久外校一次',         expectId: 'fact-instrument-calibration',      expectHint: '每年' },
@@ -202,7 +202,7 @@ const TESTS = [
 
   // ── 第三章：DP35-01 電腦化系統 ──
   { q: '電腦化系統有哪些',         expectId: 'fact-computer-scope',              expectHint: 'Pegasus' },
-  { q: '誰可以修改電腦系統資料',   expectId: 'fact-computer-authorization',      expectHint: 'FR35-02' },
+  { q: '誰可以修改電腦系統資料',   expectId: 'fact-computer-authorization',      expectHint: '電腦化系統授權書' },
   { q: '系統資料多久備份一次',     expectId: 'fact-computer-backup',             expectHint: '每月' },
 
   // ── 第三章：DP36-01 驗證確效 ──
@@ -265,9 +265,9 @@ const TESTS = [
   { q: '文管何時徵詢修改意見',      expectId: 'fact-doc-annual-review',           expectHint: '12月' },
   { q: '文件每年審查時間',          expectId: 'fact-doc-annual-review',           expectHint: '12月' },
   { q: '文件定期檢討在何時',        expectId: 'fact-doc-annual-review',           expectHint: '12月' },
-  { q: '文件修改申請填什麼',        expectId: 'fact-doc-annual-review',           expectHint: 'FR42-02' },
+  { q: '文件修改申請填什麼',        expectId: 'fact-doc-annual-review',           expectHint: '文件制/修訂申請單' },
   { q: '徵詢文件修改意見在幾月',    expectId: 'fact-doc-annual-review',           expectHint: '12月' },
-  { q: '文件制修訂申請單',          expectId: 'fact-doc-annual-review',           expectHint: 'FR42-02' },
+  { q: '文件制修訂申請單',          expectId: 'fact-doc-annual-review',           expectHint: '文件制/修訂申請單' },
   { q: '文管何時徵詢文件修改',      expectId: 'fact-doc-annual-review',           expectHint: '12月' },
   { q: '文件審查結果記錄在哪',      expectId: 'fact-doc-annual-review',           expectHint: '修訂紀錄' },
   { q: '文件修改何時申請',          expectId: 'fact-doc-annual-review',           expectHint: '12月' },
@@ -276,13 +276,13 @@ const TESTS = [
   { q: '失效文件如何保存',          expectId: 'fact-doc-obsolete',                expectHint: '失效章' },
   { q: '失效文件保存幾年',          expectId: 'fact-doc-obsolete',                expectHint: '5年' },
   { q: '文件幾時銷毀',              expectId: 'fact-doc-obsolete',                expectHint: '第一週' },
-  { q: '文件銷毀填什麼表',          expectId: 'fact-doc-obsolete',                expectHint: 'FR42-06' },
+  { q: '文件銷毀填什麼表',          expectId: 'fact-doc-obsolete',                expectHint: '文件銷毀紀錄表' },
   { q: '失效文件如何標示',          expectId: 'fact-doc-obsolete',                expectHint: '失效章' },
-  { q: '文件銷毀紀錄表',            expectId: 'fact-doc-obsolete',                expectHint: 'FR42-06' },
+  { q: '文件銷毀紀錄表',            expectId: 'fact-doc-obsolete',                expectHint: '文件銷毀紀錄表' },
   { q: '失效文件一覽表',            expectId: 'fact-doc-obsolete',                expectHint: '銷毀' },
   { q: '失效文件多久銷毀一次',      expectId: 'fact-doc-obsolete',                expectHint: '每年' },
   { q: '文件廢止流程',              expectId: 'fact-doc-obsolete',                expectHint: '失效章' },
-  { q: '文件銷毀申請',              expectId: 'fact-doc-obsolete',                expectHint: 'FR42-06' },
+  { q: '文件銷毀申請',              expectId: 'fact-doc-obsolete',                expectHint: '文件銷毀紀錄表' },
 
   // ── 第四章：文件存放補充 ──
   { q: '正式文件放哪裡',            expectId: 'fact-doc-storage-method',          expectHint: '文件櫃' },
@@ -300,14 +300,14 @@ const TESTS = [
   { q: '客訴分哪幾類',             expectId: 'fact-complaint-types',             expectHint: '藥品品質' },
   { q: '運銷品質客訴幾個月結案',   expectId: 'fact-complaint-types',             expectHint: '1個月' },
   { q: '客訴重複發生怎麼標記',     expectId: 'fact-complaint-repeat',            expectHint: '黃色' },
-  { q: '退回品要貼什麼標籤',       expectId: 'fact-return-label',                expectHint: 'FR63-02' },
+  { q: '退回品要貼什麼標籤',       expectId: 'fact-return-label',                expectHint: '退回品與不合格標籤' },
   { q: '客訴分成幾類',              expectId: 'fact-complaint-types',             expectHint: '藥品品質' },
   { q: '客訴分類方式',              expectId: 'fact-complaint-types',             expectHint: '藥品品質' },
   { q: '藥品品質申訴怎麼辦',        expectId: 'fact-complaint-types',             expectHint: '通知製造商' },
   { q: '運銷品質申訴多久結案',      expectId: 'fact-complaint-types',             expectHint: '1個月' },
   { q: '客訴結案期限',              expectId: 'fact-complaint-types',             expectHint: '1個月' },
-  { q: '客訴登錄在哪裡',            expectId: 'fact-complaint-types',             expectHint: 'FR62-02' },
-  { q: '客訴回覆單',                expectId: 'fact-complaint-types',             expectHint: 'FR62-01' },
+  { q: '客訴登錄在哪裡',            expectId: 'fact-complaint-types',             expectHint: '客戶申訴登錄管制表' },
+  { q: '客訴回覆單',                expectId: 'fact-complaint-types',             expectHint: '客訴回覆單' },
   { q: '客訴分幾種',                expectId: 'fact-complaint-types',             expectHint: '藥品品質' },
 
   // ── 第六章：重複客訴補充 ──
@@ -323,16 +323,16 @@ const TESTS = [
   { q: '客訴哪時候開CAPA',          expectId: 'fact-complaint-repeat',            expectHint: 'CAPA' },
 
   // ── 第六章：退回品補充 ──
-  { q: '退回品如何標示',            expectId: 'fact-return-label',                expectHint: 'FR63-02' },
+  { q: '退回品如何標示',            expectId: 'fact-return-label',                expectHint: '退回品與不合格標籤' },
   { q: '退回品放在哪裡',            expectId: 'fact-return-label',                expectHint: '退貨區' },
   { q: '退回品核對什麼',            expectId: 'fact-return-label',                expectHint: '批號' },
   { q: '退回品效期不符怎麼辦',      expectId: 'fact-return-label',                expectHint: '隔離區' },
   { q: '退貨核對批號效期',          expectId: 'fact-return-label',                expectHint: '批號' },
   { q: '退回品退貨區在哪',          expectId: 'fact-return-label',                expectHint: '退貨區' },
-  { q: '退回品貼什麼標籤',          expectId: 'fact-return-label',                expectHint: 'FR63-02' },
+  { q: '退回品貼什麼標籤',          expectId: 'fact-return-label',                expectHint: '退回品與不合格標籤' },
   { q: '退回品隔離存放',            expectId: 'fact-return-label',                expectHint: '退貨區' },
   { q: '退回品批號核對',            expectId: 'fact-return-label',                expectHint: '批號' },
-  { q: '退回品怎麼處理',            expectId: 'fact-return-label',                expectHint: 'FR63-02' },
+  { q: '退回品怎麼處理',            expectId: 'fact-return-label',                expectHint: '退回品與不合格標籤' },
 
   // ── 第六章：偽禁藥補充 ──
   { q: '發現偽藥通知誰',            expectId: 'fact-counterfeit-action',          expectHint: '管理藥師' },
@@ -363,7 +363,7 @@ const TESTS = [
   { q: '回收通知期限',              expectId: 'fact-recall-notify-24h',           expectHint: '24' },
   { q: '幾小時內通知回收',          expectId: 'fact-recall-notify-24h',           expectHint: '24' },
   { q: '第一二級通知時間',          expectId: 'fact-recall-notify-24h',           expectHint: '24' },
-  { q: '回收通知單填什麼',          expectId: 'fact-recall-notify-24h',           expectHint: 'FR65-03' },
+  { q: '回收通知單填什麼',          expectId: 'fact-recall-notify-24h',           expectHint: '回收通知單' },
   { q: '回收通知保存多久',          expectId: 'fact-recall-notify-24h',           expectHint: '5年' },
   { q: '公告後多久通知客戶',        expectId: 'fact-recall-notify-24h',           expectHint: '24' },
   { q: '回收24小時通知誰',          expectId: 'fact-recall-notify-24h',           expectHint: '直接銷售' },
@@ -387,11 +387,11 @@ const TESTS = [
   { q: '退回品處理方式',            expectId: 'fact-return-policy',                expectHint: '報廢' },
   { q: '退回品為什麼報廢',          expectId: 'fact-return-policy',                expectHint: '無法確認' },
   { q: '退回品可以再賣嗎',          expectId: 'fact-return-policy',                expectHint: '直接報廢' },
-  { q: '退回品銷毀程序',            expectId: 'fact-return-policy',                expectHint: 'DP56-01' },
+  { q: '退回品銷毀程序',            expectId: 'fact-return-policy',                expectHint: '廢棄物程序' },
   { q: '退貨藥品如何處理',          expectId: 'fact-return-policy',                expectHint: '報廢' },
   { q: '退回品一律報廢',            expectId: 'fact-return-policy',                expectHint: '直接報廢' },
   { q: '退貨可以再上架嗎',          expectId: 'fact-return-policy',                expectHint: '報廢' },
-  { q: '退回品怎麼銷毀',            expectId: 'fact-return-policy',                expectHint: 'DP56-01' },
+  { q: '退回品怎麼銷毀',            expectId: 'fact-return-policy',                expectHint: '廢棄物程序' },
   { q: '退回品不重新銷售',          expectId: 'fact-return-policy',                expectHint: '報廢' },
   { q: '退回品最終處置',            expectId: 'fact-return-policy',                expectHint: '銷毀' },
 
@@ -470,22 +470,22 @@ const TESTS = [
   { q: '缺失開CAPA',              expectId: 'fact-audit-defect-types',   expectHint: 'CAPA' },
   // ── 第五章：供應商評鑑（DP52-01） ──
   { q: '國外供應商需要什麼資格',   expectId: 'fact-supplier-qualification',      expectHint: 'PMF' },
-  { q: '新供應商怎麼認可',         expectId: 'fact-supplier-qualification',      expectHint: 'FR52-01' },
+  { q: '新供應商怎麼認可',         expectId: 'fact-supplier-qualification',      expectHint: 'PIC/S GMP核備函' },
   { q: '供應商每月要做什麼',       expectId: 'fact-supplier-periodic-eval',      expectHint: '食藥署' },
   { q: '供應商不合格怎麼辦',       expectId: 'fact-supplier-periodic-eval',      expectHint: '撤銷' },
   // ── 第五章：客戶認可（DP53-01） ──
-  { q: '新客戶怎麼審核',           expectId: 'fact-customer-qualification',      expectHint: 'FR53-02' },
+  { q: '新客戶怎麼審核',           expectId: 'fact-customer-qualification',      expectHint: '客戶認可審查紀錄表' },
   { q: '客戶多久評估一次',         expectId: 'fact-customer-periodic-review',    expectHint: '每年' },
   { q: '停業客戶怎麼從清單移除',   expectId: 'fact-customer-periodic-review',    expectHint: '移除' },
   // ── 第五章：進出貨管理（DP54-01） ──
-  { q: '收貨驗收流程是什麼',       expectId: 'fact-receiving-flow',              expectHint: 'FR54-01' },
-  { q: '驗收不合格怎麼辦',         expectId: 'fact-receiving-flow',              expectHint: 'FR52-03' },
+  { q: '收貨驗收流程是什麼',       expectId: 'fact-receiving-flow',              expectHint: '到貨點收驗收紀錄表' },
+  { q: '驗收不合格怎麼辦',         expectId: 'fact-receiving-flow',              expectHint: '系統入貨' },
   { q: '嘉里醫藥幾點收貨',         expectId: 'fact-receiving-time-control',      expectHint: '14:00' },
   // ── 第五章：倉儲管理（DP55-01） ──
   { q: '近效期藥品幾個月貼黃標',   expectId: 'fact-storage-near-expiry',         expectHint: '黃色標籤' },
   { q: '效期到了藥品怎麼辦',       expectId: 'fact-storage-near-expiry',         expectHint: '非符合區' },
   { q: '庫存盤點多久一次',         expectId: 'fact-storage-inventory',           expectHint: '2個月' },
-  { q: '盤點發現過期藥品怎麼辦',   expectId: 'fact-storage-inventory',           expectHint: 'DP56-01' },
+  { q: '盤點發現過期藥品怎麼辦',   expectId: 'fact-storage-inventory',           expectHint: '廢棄物程序' },
   // ── 第五章：廢棄物管理（DP56-01） ──
   { q: '報廢藥品怎麼銷毀',         expectId: 'fact-waste-destruction',           expectHint: '良衛環保' },
   { q: '銷毀藥品幾月通知',         expectId: 'fact-waste-destruction',           expectHint: '11月' },
