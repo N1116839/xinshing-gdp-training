@@ -1,5 +1,21 @@
 # GDP HTML 教育訓練 HANDOFF
-更新：2026-06-01（第三十三次）
+更新：2026-06-01（第三十四次）
+
+## 本輪完成（2026-06-01 第三十四次）✅ F 全量校對完成（Ch1-8 共 96 筆 fact）+ 7 項問題修正 + 機敏資料清除
+- **Ch1-8 全量校對完成**：逐章逐題比對 SOP 原文，96 筆 fact 全數核對
+  - Ch1 ✅（15 facts，1 FAIL 修正：fact-change-notify 移除無來源舉例）
+  - Ch2 ✅（12 facts，上次完成）
+  - Ch3 ✅（31 facts，上次完成）
+  - Ch4 ✅（7 facts）
+  - Ch5 ✅（17 facts，3 FAIL 修正：fact-purchase-order-who 移除「每日早上」、fact-inventory-cycle 移除重複、fact-logistics-door 確認時間正確保留）
+  - Ch6 ✅（8 facts，1 MINOR 修正：fact-complaint-repeat CAPA 觸發寫法）
+  - Ch7 ✅（3 facts，1 FAIL + 1 MINOR 修正：fact-outsourcing-grade A/D 級、fact-outsourcing-eval-timing 補變更時機）
+  - Ch8 ✅（3 facts）
+- **機敏資料清除**：fact-org-emergency-contact 移除姓名電話（鄭振宏/黃獻逸/0930...），保留制度描述
+- **驗收**：320/320 通過 ✅
+- **剩餘待辦**：C（KB 補 18 筆三階條目）、統計、D/E 互動升級、eyebrow 字體
+- **已修改檔案**：新勝GDP資料庫.html、verify_facts_ghpages.mjs
+- **收工狀態**：未 commit/push
 
 ## 本輪完成（2026-06-01 第三十三次）續✅ F 全量校對啟動 — 溫度測繪錯誤修正 + Personnel 部門 12 條 fact 修正
 - **溫度測繪法規錯誤修正**：fact-temp-mapping-cycle taiwan 欄「食藥署 GDP 無明文規定測繪週期」→ 正確法規內容（至少每三年或重大變更後執行）

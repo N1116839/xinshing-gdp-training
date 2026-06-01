@@ -114,7 +114,11 @@ const TESTS = [
   { q: '警報測試多久一次',      expectId: 'fact-temp-alarm-test',       expectHint: '每月' },
   { q: 'FR33-01月記錄',        expectId: 'fact-temp-monthly-record',   expectHint: '溫度記錄表' },
   { q: '溫度測繪週期',         expectId: 'fact-temp-mapping-cycle',    expectHint: '三年' },
-  { q: '盤點頻率多久一次',     expectId: 'fact-inventory-cycle',       expectHint: '兩個月' },
+  { q: '溫測多久一次',         expectId: 'fact-temp-mapping-cycle',    expectHint: '三年' },
+  { q: '溫測',                 expectId: 'fact-temp-mapping-summer',   expectHint: '7～9' },
+  { q: '夏季溫測幾月份',       expectId: 'fact-temp-mapping-summer',   expectHint: '7～9' },
+  { q: '冬季溫測幾月份',       expectId: 'fact-temp-mapping-winter',   expectHint: '1～3' },
+  { q: '盤點頻率多久一次',     expectId: 'fact-storage-inventory',       expectHint: '2個月' },
   { q: '不符合品如何處理',     expectId: 'fact-nonconform-handling',   expectHint: '隔離' },
   { q: '藥品回收第一級幾個月', expectId: 'fact-recall-level-deadline', expectHint: '1' },
   { q: '24小時通知回收',       expectId: 'fact-recall-notify-24h',     expectHint: '24' },
@@ -162,7 +166,7 @@ const TESTS = [
   { q: '重大變更是什麼',           expectId: 'fact-change-level',           expectHint: '會簽' },
   { q: '填FR12-05',               expectId: 'fact-change-form',            expectHint: '變更管制需求單' },
   { q: '變更逾期怎麼辦',           expectId: 'fact-change-overdue',         expectHint: '三日' },
-  { q: '倉庫搬遷需要通報嗎',       expectId: 'fact-change-notify',          expectHint: '搬遷' },
+  { q: '倉庫搬遷需要通報嗎',       expectId: 'fact-change-notify',          expectHint: '重大工程' },
 
   // ── 第一章：管理階層檢討 ──
   { q: '管理階層檢討多久一次',     expectId: 'fact-mgmt-review-freq',       expectHint: '年底' },
@@ -406,7 +410,7 @@ const TESTS = [
   { q: '委外每年評鑑幾次',          expectId: 'fact-outsourcing-eval-timing',     expectHint: '一次' },
   { q: '委外何時可以查核',          expectId: 'fact-outsourcing-eval-timing',     expectHint: '隨時' },
   { q: '首次評估何時做',            expectId: 'fact-outsourcing-eval-timing',     expectHint: '開始前' },
-  { q: '評鑑在哪記錄',              expectId: 'fact-outsourcing-eval-timing',     expectHint: '評鑑表' },
+  { q: '評鑑在哪記錄',              expectId: 'fact-outsourcing-eval-timing',     expectHint: 'FR72-04' },
   // ── 第七章：委外廠商評鑑等級（fact-outsourcing-grade）──
   { q: '委外廠商60分怎麼辦',       expectId: 'fact-outsourcing-grade',           expectHint: '暫停交易' },
   { q: '委外廠商A級是什麼',         expectId: 'fact-outsourcing-grade',           expectHint: '增加交易' },
