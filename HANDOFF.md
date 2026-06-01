@@ -1,5 +1,24 @@
 # GDP HTML 教育訓練 HANDOFF
-更新：2026-06-01（第四十一次）
+更新：2026-06-01（第四十二次）
+
+## 本輪完成（2026-06-01 第四十二次）✅ 補足 fact 測試題至 ≥10 問法，修正 keyword 競爭失敗
+
+- **補入手動測試題**：
+  - `fact-equipment-ac`：0→10 問法（照明設備保養、鰭片清潔、冷氣機保養紀錄表等）
+  - `fact-supplier-monthly-check`：1→10 問法（違反GMP/GDP查詢、食藥署違規查詢等）
+  - `fact-outsourcing-contract-items`：4→15 問法（合約項目、緊急配送、異常通報等）
+  - `fact-audit-checklist`：2→11 問法（查檢表誰編、稽核要項、FR82-02等）
+- **KB 補關鍵字**：
+  - `fact-equipment-ac`：`照明設備`、`冷氣機保養紀錄表`、`冷氣設備定期保養`
+  - `fact-supplier-monthly-check`：`食藥署查違反GDP`、`查違反GDP`、`違反GMP/GDP紀錄`、`違反GMPGDP紀錄`
+- **修正 4 筆 keyword 競爭**：
+  - `每季清洗室內機照明設備` → `照明設備多久保養一次`（避開「每季清洗」觸發 fact-hygiene-quarterly-ac）
+  - `冷氣機保養紀錄表` → 補 keyword 讓 fact-equipment-ac 勝過 fact-equipment-maintenance
+  - `冷氣設備定期保養` → 同上
+  - `供應商違反GMPGDP紀錄` → 補無斜線版 keyword 解決正規化差異
+- **驗收**：1269/1269 通過（手動 458、自動 811、合規 1），0 失敗
+- **commit**：`9179634`，已 push
+- **永久網址**：https://n1116839.github.io/xinshing-gdp-training/
 
 ## 本輪完成（2026-06-01 第四十一次）✅ v2.7 補強互動等級、拒答、缺失分離與視覺驗收
 
