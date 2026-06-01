@@ -1,5 +1,15 @@
 # GDP HTML 教育訓練 HANDOFF
-更新：2026-05-29（第三十二次）
+更新：2026-06-01（第三十三次）
+
+## 本輪完成（2026-06-01 第三十三次）🛠 KB-1 完成 — 清除 fact + clarify 殘留指令語，xinshing 欄「依規定，新勝醫藥」零殘留
+- 掃描全部 clarify 49 筆 + fact 106 筆，清除 5 處殘留指令語
+  - fact 4 筆：移除「依規定，新勝醫藥」開頭語
+  - clarify 1 筆：移除「新勝醫藥政策：」框架
+  - xinshing 欄「新勝醫藥」僅餘 1 處（clarify-pest-control-map，為廠區描述非指令語）
+- 驗收腳本 verify_facts_ghpages.mjs：316/316 通過 ✅
+- AGENTS.md KB-1 狀態更新為 ✅ 完成
+- **剩餘待辦**：C（KB 補 18 筆三階條目）、F（全量逐章校對）、統計、D/E、eyebrow 字體
+- **收工狀態**：檔案已修改但未 commit/push，待使用者確認後執行
 
 ## 本輪完成（2026-05-29 第三十二次）✅ 員工測試查詢 — xinshing「新勝醫藥」開頭全站清除 + clarify 越界 keyword 修正
 
