@@ -401,6 +401,33 @@
     .dept-filter-btns::-webkit-scrollbar{display:none}
     .dept-filter-btn{flex-shrink:0;padding:5px 12px;border:1px solid var(--line);border-radius:20px;background:#fff;cursor:pointer;font:inherit;font-size:13px;color:var(--ink);white-space:nowrap;transition:all .15s}
     .dept-filter-btn.active,.dept-filter-btn:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
+    /* ── flip cards (L3 稽查重點) ── */
+    .flip-progress{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+    .flip-progress-text{font-size:13px;color:var(--ink-soft)}
+    .flip-progress-bar{flex:1;min-width:120px;max-width:260px;height:6px;background:#dde8e7;border-radius:3px;overflow:hidden}
+    .flip-progress-fill{height:100%;background:var(--brand);border-radius:3px;transition:width .35s}
+    .flip-reset{padding:6px 14px;border:1.5px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;font:inherit;font-size:13px;color:var(--brand);transition:all .15s}
+    .flip-reset:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
+    .flip-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+    .flip-card{height:180px;perspective:900px;cursor:pointer}
+    .flip-card-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+    .flip-card.flipped .flip-card-inner{transform:rotateY(180deg)}
+    .flip-card-front,.flip-card-back{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+    .flip-card-front{background:#f4faf9;border:1.5px solid #cde0dd;border-top:5px solid var(--brand)}
+    .flip-card.flipped .flip-card-front{pointer-events:none}
+    .flip-card-back{background:#0f5b50;border:1.5px solid #0a4d45;transform:rotateY(180deg);color:#e9f5f2}
+    .flip-card-no{font-size:11px;font-weight:800;color:var(--ink-soft);letter-spacing:.05em}
+    .flip-card-front .flip-card-no{color:var(--gold)}
+    .flip-card-back .flip-card-no{color:#a3d9ce;font-size:11px}
+    .flip-card-q{font-size:14px;line-height:1.55;color:var(--ink);flex:1}
+    .flip-card-hint{margin-top:auto;font-size:11.5px;color:#8db8b2;font-weight:700;align-self:flex-end}
+    .flip-card-checklist{list-style:none;padding:0;margin:0;flex:1;overflow:hidden;display:flex;flex-direction:column;gap:5px}
+    .flip-card-checklist li{font-size:12px;line-height:1.5;color:#e9f5f2;padding-left:16px;position:relative}
+    .flip-card-checklist li::before{content:"✓";position:absolute;left:0;color:#f2c56b;font-weight:800}
+    .flip-checked{background:#26705d!important;border-color:#1a5248!important}
+    .flip-checked .flip-card-front{border-top-color:var(--gold)}
+    @media(max-width:680px){.flip-grid{grid-template-columns:1fr 1fr}.flip-card{height:160px}}
+    @media(max-width:420px){.flip-grid{grid-template-columns:1fr}.flip-card{height:auto;min-height:140px}}
   </style>
 </head>
 <body>
@@ -3040,14 +3067,34 @@ function auditDetailHtml(no,item,heading="先確認這一點"){
 }
 function auditSlides(s){
   if(!s.audit||!s.audit.length) return "";
-  const first=s.audit[0];
-  const focus=`<div class="audit-focus">
-    <div class="audit-focus-list">${s.audit.map((item,i)=>`<button class="audit-card ${i===0?"active":""}" type="button" data-audit-no="${i+1}" data-audit-item="${esc(item)}"><strong>${String(i+1).padStart(2,"0")}</strong>${esc(item)}</button>`).join("")}</div>
-    <div class="audit-detail" id="auditDetail">
-      ${auditDetailHtml(1,first)}
+  const total=s.audit.length;
+  const uid=`fc_${s.id}`;
+  const cards=s.audit.map((item,i)=>{
+    const no=String(i+1).padStart(2,"0");
+    const checks=auditChecklistFor(item);
+    const checkHtml=`<ul class="flip-card-checklist">${checks.slice(0,3).map(c=>`<li>${esc(c)}</li>`).join("")}</ul>`;
+    return `<div class="flip-card" data-fc-uid="${uid}" data-fc-idx="${i}" role="button" tabindex="0" aria-label="稽查重點${no}，點擊翻面">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <div class="flip-card-no">稽查重點 ${no}／${total}</div>
+          <div class="flip-card-q">${esc(item)}</div>
+          <div class="flip-card-hint">點擊翻面看確認要點 ▶</div>
+        </div>
+        <div class="flip-card-back">
+          <div class="flip-card-no">確認要點</div>
+          ${checkHtml}
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+  const body=`
+    <div class="flip-progress" id="${uid}-progress">
+      <span class="flip-progress-text" id="${uid}-count">已確認 0 / ${total}</span>
+      <div class="flip-progress-bar"><div class="flip-progress-fill" id="${uid}-bar" style="width:0%"></div></div>
+      <button class="flip-reset" data-fc-reset="${uid}">↩ 重置</button>
     </div>
-  </div>`;
-  return panel("稽查重點互動核對",focus,"wide");
+    <div class="flip-grid">${cards}</div>`;
+  return panel("稽查重點翻卡練習",body,"wide");
 }
 function visualIntro(s){
   const src=visualAssets[s.id]||"assets/gdp-training-hero.png";
@@ -3725,6 +3772,38 @@ function bindAuditFocus(){
     });
   });
 }
+function bindFlipCards(){
+  const allCards=[...document.querySelectorAll(".flip-card[data-fc-uid]")];
+  if(!allCards.length) return;
+  const uids=[...new Set(allCards.map(c=>c.dataset.fcUid))];
+  uids.forEach(uid=>{
+    const cards=allCards.filter(c=>c.dataset.fcUid===uid);
+    const total=cards.length;
+    const countEl=document.getElementById(`${uid}-count`);
+    const barEl=document.getElementById(`${uid}-bar`);
+    const resetBtn=document.querySelector(`[data-fc-reset="${uid}"]`);
+    function updateProgress(){
+      const done=cards.filter(c=>c.classList.contains("flipped")).length;
+      if(countEl) countEl.textContent=`已確認 ${done} / ${total}`;
+      if(barEl) barEl.style.width=`${Math.round(done/total*100)}%`;
+    }
+    cards.forEach(card=>{
+      const activate=()=>{
+        card.classList.toggle("flipped");
+        if(card.classList.contains("flipped")) card.classList.add("flip-checked");
+        else card.classList.remove("flip-checked");
+        updateProgress();
+      };
+      card.addEventListener("click",activate);
+      card.addEventListener("keydown",e=>{ if(e.key===" "||e.key==="Enter"){e.preventDefault();activate();} });
+    });
+    if(resetBtn) resetBtn.addEventListener("click",()=>{
+      cards.forEach(c=>{c.classList.remove("flipped","flip-checked");});
+      updateProgress();
+    });
+    updateProgress();
+  });
+}
 
 /* ═══════════════════════════════════════════════
    NAVIGATION
@@ -3819,6 +3898,7 @@ async function showSection(id){
   bindEquipmentMenu();
   bindDeptSchedTabs();
   bindAuditFocus();
+  bindFlipCards();
   bindQaForm(id);
   bindDocButtons();
   bindEvidenceMap();
