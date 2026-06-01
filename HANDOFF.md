@@ -1,4 +1,28 @@
 # GDP HTML 教育訓練 HANDOFF
+更新：2026-06-01（第四十三次）
+
+## 本輪完成（2026-06-01 第四十三次）✅ 修正常見問題快速查詢三筆長答案 / 混答
+
+- **問題來源**：使用者測試「常見問題快速查詢」發現三題違反「問什麼答什麼」：
+  - `溫度超標怎麼處理` 回成「不符合品處理 + 溫度異常」混合答案。
+  - `運輸溫度如何管控` 回成訂單、揀貨、配銷整段流程。
+  - `委外作業多久評估一次` 回成委外作業完整流程、文件代號與多個表單。
+- **修正內容**：
+  - 新增 `fact-temp-excursion-handling`，專門回答溫度異常 / 溫度超標處理。
+  - `fact-nonconform-handling` 收斂為只回答不符合品標示與隔離，不再混入溫度異常。
+  - `fact-transport-temp-record` 補 `運輸溫度如何管控` 等自然問法，讓快速查詢直接命中運輸溫度紀錄頻率 fact。
+  - `fact-outsourcing-eval-timing` 補 `委外作業多久評估一次` 等自然問法。
+  - 移除 `clarify-order-picking` / `clarify-receiving-shipping` 中越界的 `運輸溫度` 類 keyword，避免流程型查詢校正搶 fact。
+- **驗收**：
+  - 內嵌 JavaScript 語法檢查：`JS_PARSE_OK 1`
+  - `node verify_facts_ghpages.mjs`：`1277/1277` 通過，0 失敗。
+- **注意**：本輪只修改 HTML fallback 與驗收腳本；若 Firestore 端仍保留舊長答案，前端因本機 fact 高分命中且 `kbResultsHtml` 有 fact 時只顯示 fact，可避免舊查詢校正露出。
+
+## 下次開工提醒
+
+1. 繼續檢查「常見問題快速查詢」時，先把所有 quickQuestions 當作固定驗收題；快速按鈕問句本身必須命中 fact，不可只靠 clarify 後備。
+2. 若再出現「問頻率卻回整段流程」，優先檢查是否缺 fact 精準 keyword，或 clarify keywords 保留了應屬於 fact 的 who/when/how many 問法。
+
 更新：2026-06-01（第四十二次）
 
 ## 本輪完成（2026-06-01 第四十二次）✅ 補足 fact 測試題至 ≥10 問法，修正 keyword 競爭失敗

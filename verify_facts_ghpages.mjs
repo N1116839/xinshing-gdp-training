@@ -122,6 +122,7 @@ const TESTS = [
   { q: '冬季溫測幾月份',       expectId: 'fact-temp-mapping-winter',   expectHint: '1～3' },
   { q: '盤點頻率多久一次',     expectId: 'fact-storage-inventory',       expectHint: '2個月' },
   { q: '不符合品如何處理',     expectId: 'fact-nonconform-handling',   expectHint: '隔離' },
+  { q: '溫度超標怎麼處理',     expectId: 'fact-temp-excursion-handling', expectHint: '通知管理藥師' },
   { q: '藥品回收第一級幾個月', expectId: 'fact-recall-level-deadline', expectHint: '1' },
   { q: '24小時通知回收',       expectId: 'fact-recall-notify-24h',     expectHint: '24' },
   { q: '模擬演練多久一次',     expectId: 'fact-recall-drill',          expectHint: '每年' },
@@ -402,6 +403,7 @@ const TESTS = [
   { q: '退回品最終處置',            expectId: 'fact-return-policy',                expectHint: '銷毀' },
 
   // ── 第七章：委外作業（DP72-01）fact-outsourcing-eval-timing ──
+  { q: '委外作業多久評估一次',     expectId: 'fact-outsourcing-eval-timing',     expectHint: '每年年底評鑑' },
   { q: '委外廠商多久評鑑一次',     expectId: 'fact-outsourcing-eval-timing',     expectHint: '每年年底評鑑' },
   { q: '委外評鑑什麼時候',          expectId: 'fact-outsourcing-eval-timing',     expectHint: '每年' },
   { q: '委外多久查核一次',          expectId: 'fact-outsourcing-eval-timing',     expectHint: '每年' },
@@ -499,6 +501,7 @@ const TESTS = [
   { q: '撿貨要幾個人核對',         expectId: 'fact-picking-verification',        expectHint: '覆查' },
   { q: '嘉里醫藥運輸溫度幾筆',    expectId: 'fact-transport-temp-record',       expectHint: '每季' },
   { q: '物流每月幾筆溫度紀錄',     expectId: 'fact-transport-temp-record',       expectHint: '3筆' },
+  { q: '運輸溫度如何管控',          expectId: 'fact-transport-temp-record',       expectHint: '每月至少提供3筆' },
   // ── 第五章：揀貨配銷（DP57-01） ──
   { q: '撿貨要幾個人核對',         expectId: 'fact-picking-verification',        expectHint: '覆查' },
   { q: '嘉里醫藥運輸溫度幾筆',    expectId: 'fact-transport-temp-record',       expectHint: '每季' },
