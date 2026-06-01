@@ -3341,7 +3341,7 @@ function kbResultsHtml(results,query){
   return kbAnswerHtml(primary);
 }
 function kbSection(){
-  const quickQuestions=["倉庫多久盤點一次","溫度測繪夏季冬季是哪幾個月","正航是不是溫度監控系統","溫度超標怎麼處理","供應商怎麼評鑑","藥品回收要怎麼做","偏差要怎麼處理","教育訓練合格標準","內部稽核多久一次","品質系統應包含哪些項目","變更管制怎麼申請","退回品如何處理"];
+  const quickQuestions=["品質系統應包含哪些項目","變更管制怎麼申請","偏差要怎麼處理","溫度測繪夏季冬季是哪幾個月","溫度超標怎麼處理","供應商怎麼評鑑","退回品如何處理","委外作業多久評估一次","運輸溫度如何管控","內部稽核多久一次","倉庫多久盤點一次","教育訓練合格標準"];
   const quickBtns=quickQuestions.map(q=>`<button type="button" class="kb-quick" data-q="${esc(q)}">${esc(q)}？</button>`).join("");
   return [
     panel("常見問題快速查詢",`<p style="font-size:13px;color:var(--muted);margin-bottom:14px">點擊常見問題，或在下方輸入自定義問題後按查詢。</p><div class="kb-quick-btns">${quickBtns}</div>`,"wide"),
