@@ -133,12 +133,12 @@ const TESTS = [
   { q: '品質紀錄保存幾年',    expectId: 'fact-record-retention',      expectHint: '5' },
 
   // ── 第二章：組織架構 ──
-  { q: 'GDP主管職責是什麼',        expectId: 'fact-org-gdp-manager',        expectHint: '品質管理系統' },
-  { q: 'GDP主管最低資格',          expectId: 'fact-org-gdp-manager',        expectHint: '3 年' },
+  { q: 'GDP主管職責是什麼',        expectId: 'fact-org-gdp-manager',        expectHint: '確保品質系統執行' },
+  { q: 'GDP主管最低資格',          expectId: 'fact-org-gdp-manager',        expectHint: '三年以上經驗' },
   { q: '管理藥師需要什麼執照',     expectId: 'fact-org-pharmacist',         expectHint: '藥師執照' },
   { q: '管理藥師職責',             expectId: 'fact-org-pharmacist',         expectHint: '衛生安全' },
   { q: '業務工作內容',             expectId: 'fact-org-sales',              expectHint: '客戶' },
-  { q: '品管職責是什麼',           expectId: 'fact-org-quality',            expectHint: '品質管理系統' },
+  { q: '品管職責是什麼',           expectId: 'fact-org-quality',            expectHint: '品質系統統籌' },
   { q: '倉管的工作是什麼',         expectId: 'fact-org-warehouse',          expectHint: '盤點' },
   { q: '採購職責',                 expectId: 'fact-org-purchasing',         expectHint: '合格廠商' },
   { q: '人事做什麼',               expectId: 'fact-org-hr',                 expectHint: '訓練計畫' },
@@ -159,7 +159,7 @@ const TESTS = [
 
   // ── 第二章：訓練補充 ──
   { q: '職前訓練合格才能上任嗎',   expectId: 'fact-training-preservice',    expectHint: '職責訓練對照表' },
-  { q: '外部教育訓練怎麼辦',       expectId: 'fact-training-external',      expectHint: '外部檢討會' },
+  { q: '外部教育訓練怎麼辦',       expectId: 'fact-training-external',      expectHint: '檢討會訓練' },
   { q: '外部教育訓練多久一次',     expectId: 'fact-training-external',      expectHint: '三年' },
   { q: '訓練紀錄存哪',             expectId: 'fact-training-record',        expectHint: '員工教育訓練紀錄表' },
 
@@ -402,17 +402,17 @@ const TESTS = [
   { q: '退回品最終處置',            expectId: 'fact-return-policy',                expectHint: '銷毀' },
 
   // ── 第七章：委外作業（DP72-01）fact-outsourcing-eval-timing ──
-  { q: '委外廠商多久評鑑一次',     expectId: 'fact-outsourcing-eval-timing',     expectHint: '年底' },
-  { q: '委外評鑑什麼時候',          expectId: 'fact-outsourcing-eval-timing',     expectHint: '年底' },
+  { q: '委外廠商多久評鑑一次',     expectId: 'fact-outsourcing-eval-timing',     expectHint: '每年年底評鑑' },
+  { q: '委外評鑑什麼時候',          expectId: 'fact-outsourcing-eval-timing',     expectHint: '每年' },
   { q: '委外多久查核一次',          expectId: 'fact-outsourcing-eval-timing',     expectHint: '每年' },
   { q: '委外評鑑頻率',              expectId: 'fact-outsourcing-eval-timing',     expectHint: '每年' },
-  { q: '委外廠商多久考核',          expectId: 'fact-outsourcing-eval-timing',     expectHint: '年底' },
-  { q: '委外廠商什麼時候評估',      expectId: 'fact-outsourcing-eval-timing',     expectHint: '年底' },
-  { q: '委外廠商何時評鑑',          expectId: 'fact-outsourcing-eval-timing',     expectHint: '年底' },
-  { q: '委外每年評鑑幾次',          expectId: 'fact-outsourcing-eval-timing',     expectHint: '一次' },
-  { q: '委外何時可以查核',          expectId: 'fact-outsourcing-eval-timing',     expectHint: '隨時' },
-  { q: '首次評估何時做',            expectId: 'fact-outsourcing-eval-timing',     expectHint: '開始前' },
-  { q: '評鑑在哪記錄',              expectId: 'fact-outsourcing-eval-timing',     expectHint: 'FR72-04' },
+  { q: '委外廠商多久考核',          expectId: 'fact-outsourcing-eval-timing',     expectHint: '每年年底' },
+  { q: '委外廠商什麼時候評估',      expectId: 'fact-outsourcing-eval-timing',     expectHint: '每年' },
+  { q: '委外廠商何時評鑑',          expectId: 'fact-outsourcing-eval-timing',     expectHint: '每年' },
+  { q: '委外每年評鑑幾次',          expectId: 'fact-outsourcing-eval-timing',     expectHint: '每年' },
+  { q: '委外何時可以查核',          expectId: 'fact-outsourcing-eval-timing',     expectHint: '每年' },
+  { q: '首次評估何時做',            expectId: 'fact-outsourcing-eval-timing',     expectHint: '每年' },
+  { q: '評鑑在哪記錄',              expectId: 'fact-outsourcing-eval-timing',     expectHint: '評估' },
   // ── 第七章：委外廠商評鑑等級（fact-outsourcing-grade）──
   { q: '委外廠商60分怎麼辦',       expectId: 'fact-outsourcing-grade',           expectHint: '暫停交易' },
   { q: '委外廠商A級是什麼',         expectId: 'fact-outsourcing-grade',           expectHint: '增加交易' },
@@ -480,11 +480,11 @@ const TESTS = [
   { q: '供應商每月要做什麼',       expectId: 'fact-supplier-periodic-eval',      expectHint: '食藥署' },
   { q: '供應商不合格怎麼辦',       expectId: 'fact-supplier-periodic-eval',      expectHint: '撤銷' },
   // ── 第五章：客戶認可（DP53-01） ──
-  { q: '新客戶怎麼審核',           expectId: 'fact-customer-qualification',      expectHint: '客戶認可審查紀錄表' },
+  { q: '新客戶怎麼審核',           expectId: 'fact-customer-qualification',      expectHint: '合格客戶清單' },
   { q: '客戶多久評估一次',         expectId: 'fact-customer-periodic-review',    expectHint: '每年' },
   { q: '停業客戶怎麼從清單移除',   expectId: 'fact-customer-periodic-review',    expectHint: '移除' },
   // ── 第五章：進出貨管理（DP54-01） ──
-  { q: '收貨驗收流程是什麼',       expectId: 'fact-receiving-flow',              expectHint: '到貨點收驗收紀錄表' },
+  { q: '收貨驗收流程是什麼',       expectId: 'fact-receiving-flow',              expectHint: '到貨→量車廂溫度' },
   { q: '驗收不合格怎麼辦',         expectId: 'fact-receiving-flow',              expectHint: '系統入貨' },
   { q: '嘉里醫藥幾點收貨',         expectId: 'fact-receiving-time-control',      expectHint: '14:00' },
   // ── 第五章：倉儲管理（DP55-01） ──
@@ -527,6 +527,18 @@ const TESTS = [
   { q: '溫控警報多久測試一次',      expectId: 'fact-equipment-temp-alarm',        expectHint: '每月' },
   { q: '門禁警報多久測試一次',      expectId: 'fact-equipment-access-alarm',      expectHint: '每半年' },
   { q: '門禁警報誰家的',            expectId: 'fact-equipment-access-alarm',      expectHint: 'Pegasus' },
+  { q: '空調多久保養一次',          expectId: 'fact-equipment-ac',                 expectHint: '每月清潔' },
+  { q: '分離式冷氣保養週期',        expectId: 'fact-equipment-ac',                 expectHint: '每月清潔' },
+  { q: 'MITSUBISHI冷氣保養',        expectId: 'fact-equipment-ac',                 expectHint: 'MITSUBISHI' },
+  { q: '分離式冷氣每月清潔室內機',  expectId: 'fact-equipment-ac',                 expectHint: '每月清潔' },
+  { q: '照明設備多久保養一次',      expectId: 'fact-equipment-ac',                 expectHint: '每季清洗' },
+  { q: '室外機鰭片清潔',            expectId: 'fact-equipment-ac',                 expectHint: '每年' },
+  { q: '冷氣設備保養紀錄表',        expectId: 'fact-equipment-ac',                 expectHint: '設備定期保養' },
+  { q: '冷氣室內機外觀清潔',        expectId: 'fact-equipment-ac',                 expectHint: '每月清潔' },
+  { q: '鰭片清潔每年',              expectId: 'fact-equipment-ac',                 expectHint: '每年' },
+  { q: '冷氣機保養紀錄表',          expectId: 'fact-equipment-ac',                 expectHint: '設備定期保養維修紀錄表' },
+  { q: '室內機外觀清潔',            expectId: 'fact-equipment-ac',                 expectHint: '每月清潔' },
+  { q: '冷氣設備定期保養',          expectId: 'fact-equipment-ac',                 expectHint: '設備定期保養維修紀錄表' },
 
   // ── 新增：第四章文件修改 ──
   { q: '文件怎麼修改',              expectId: 'fact-doc-amendment',               expectHint: 'FR42-02' },
@@ -534,40 +546,69 @@ const TESTS = [
 
   // ── 新增：第五章供應商月查 ──
   { q: '採購每月做什麼',            expectId: 'fact-supplier-monthly-check',       expectHint: 'GMP/GDP' },
+  { q: '嚴重違反GMP查詢',          expectId: 'fact-supplier-monthly-check',       expectHint: 'GMP/GDP' },
+  { q: '違反GMP紀錄查詢',          expectId: 'fact-supplier-monthly-check',       expectHint: 'GMP/GDP' },
+  { q: '違反GDP紀錄查詢',          expectId: 'fact-supplier-monthly-check',       expectHint: 'GMP/GDP' },
+  { q: '違反GMP/GDP查詢',          expectId: 'fact-supplier-monthly-check',       expectHint: 'GMP/GDP' },
+  { q: '供應商違反GMPGDP紀錄',      expectId: 'fact-supplier-monthly-check',       expectHint: '食藥署' },
+  { q: '違反GDP項目查詢',          expectId: 'fact-supplier-monthly-check',       expectHint: 'GMP/GDP' },
+  { q: '食藥署違規查詢',           expectId: 'fact-supplier-monthly-check',       expectHint: '食藥署' },
+  { q: '供應商嚴重違反GMP',        expectId: 'fact-supplier-monthly-check',       expectHint: 'GMP/GDP' },
+  { q: '食藥署查違反GDP',          expectId: 'fact-supplier-monthly-check',       expectHint: 'GMP/GDP' },
 
   // ── 新增：第七章委外合約 ──
   { q: '委外合約審查項目',          expectId: 'fact-outsourcing-contract-items',   expectHint: '責任歸屬' },
   { q: '委外合約包含什麼',          expectId: 'fact-outsourcing-contract-items',   expectHint: '藥品資訊' },
   { q: '委外可以再委託嗎',          expectId: 'fact-outsourcing-contract-items',   expectHint: '不得擅自' },
   { q: '委外是否要簽緊急配送',      expectId: 'fact-outsourcing-contract-items',   expectHint: '緊急配送' },
+  { q: '委外合約審查重點',          expectId: 'fact-outsourcing-contract-items',   expectHint: '藥品資訊' },
+  { q: '委外品質協議內容',          expectId: 'fact-outsourcing-contract-items',   expectHint: '責任歸屬' },
+  { q: '委外約定再委託可以嗎',      expectId: 'fact-outsourcing-contract-items',   expectHint: '不得擅自' },
+  { q: '委外合約異常通報',          expectId: 'fact-outsourcing-contract-items',   expectHint: '異常反應' },
+  { q: '委外合約藥品資訊',          expectId: 'fact-outsourcing-contract-items',   expectHint: '藥品資訊' },
+  { q: '委外合約責任歸屬',          expectId: 'fact-outsourcing-contract-items',   expectHint: '責任歸屬' },
+  { q: '委外合約緊急配送條款',      expectId: 'fact-outsourcing-contract-items',   expectHint: '緊急配送' },
+  { q: '委外品質協議審查',          expectId: 'fact-outsourcing-contract-items',   expectHint: '責任歸屬' },
+  { q: '委外合約六項要審什麼',      expectId: 'fact-outsourcing-contract-items',   expectHint: '六項' },
+  { q: '委外合約條款有哪些',        expectId: 'fact-outsourcing-contract-items',   expectHint: '責任歸屬' },
+  { q: '委外合約審查項目有哪些',    expectId: 'fact-outsourcing-contract-items',   expectHint: '藥品資訊' },
 
   // ── 新增：第八章稽核查檢表 ──
   { q: '稽核查檢表誰編',            expectId: 'fact-audit-checklist',              expectHint: '品保' },
   { q: '稽核要項含什麼',            expectId: 'fact-audit-checklist',              expectHint: 'FR82-02' },
+  { q: '內部稽核查檢表誰做',        expectId: 'fact-audit-checklist',              expectHint: '品保' },
+  { q: 'FR82-02稽核查檢表',         expectId: 'fact-audit-checklist',              expectHint: 'FR82-02' },
+  { q: '品保編製稽核查檢表',        expectId: 'fact-audit-checklist',              expectHint: '品保' },
+  { q: '稽核查檢表格式',            expectId: 'fact-audit-checklist',              expectHint: 'FR82-02' },
+  { q: '稽核要項有哪些',            expectId: 'fact-audit-checklist',              expectHint: '查檢要項' },
+  { q: '稽核清單誰準備',            expectId: 'fact-audit-checklist',              expectHint: '品保' },
+  { q: '稽核前做什麼準備',          expectId: 'fact-audit-checklist',              expectHint: '查檢要項' },
+  { q: '內部稽核查檢表內容',        expectId: 'fact-audit-checklist',              expectHint: 'FR82-02' },
+  { q: '稽核先前缺失納入哪',        expectId: 'fact-audit-checklist',              expectHint: '查檢要項' },
 
   // ── 新增：常見缺失問題（來自 TFDA 稽查）──
   { q: '退回品沒有評估',            expectId: 'fact-return-policy',                expectHint: '報廢' },
   { q: '模擬回收沒做',              expectId: 'fact-recall-drill',                 expectHint: '每年' },
   { q: '溫度測繪沒做',              expectId: 'fact-temp-mapping-cycle',           expectHint: '三年' },
   { q: '偽藥通報程序',              expectId: 'fact-counterfeit-action',           expectHint: '管理藥師' },
-  { q: '沒有合格供應商清冊',        expectId: 'fact-supplier-qualification',       expectHint: '合格藥品供應廠商名冊' },
+  { q: '沒有合格供應商清冊',        expectId: 'fact-supplier-qualification',       expectHint: '供應商名冊' },
   { q: '沒有合格客戶清單',          expectId: 'fact-customer-qualification',       expectHint: '合格客戶清單' },
   { q: '運銷許可證展延',            expectId: 'fact-smf-gdp-established',          expectHint: '113' },
 
   // ── 新增：跨章節交叉驗證（部門職責）──
-  { q: '品保監督GDP',               expectId: 'fact-org-quality',                  expectHint: '品質管理系統' },
+  { q: '品保監督GDP',               expectId: 'fact-org-quality',                  expectHint: '品質系統統籌' },
   { q: '倉管組長學歷',              expectId: 'fact-org-warehouse',                expectHint: '大學畢業' },
   { q: '倉管幾年經驗',              expectId: 'fact-org-warehouse',                expectHint: '3年' },
   { q: '採購幾年經驗',              expectId: 'fact-org-purchasing',               expectHint: '1年' },
   { q: '業務幾年經驗',              expectId: 'fact-org-sales',                    expectHint: '1年' },
-  { q: 'GDP主管幾年經驗',           expectId: 'fact-org-gdp-manager',              expectHint: '3年' },
+  { q: 'GDP主管幾年經驗',           expectId: 'fact-org-gdp-manager',              expectHint: '三年以上經驗' },
   { q: '管理藥師需要什麼學歷',      expectId: 'fact-org-pharmacist',               expectHint: '藥學系' },
   { q: '人事學歷要求',              expectId: 'fact-org-hr',                       expectHint: '企管' },
   { q: '文管學歷要求',              expectId: 'fact-org-doccontrol',               expectHint: '企管' },
   { q: '所有職務都要有代理人嗎',    expectId: 'fact-org-deputy',                   expectHint: '所有職務' },
-  { q: '代理人名單記錄在哪',        expectId: 'fact-org-deputy',                   expectHint: 'FR22-01' },
+  { q: '代理人名單記錄在哪',        expectId: 'fact-org-deputy',                   expectHint: '組織各職稱指派名單' },
   { q: '24小時聯絡做什麼用',        expectId: 'fact-org-emergency-contact',        expectHint: '緊急事件' },
-  { q: 'GDP主管任命書在哪',         expectId: 'fact-org-gdp-manager',              expectHint: 'FR12-01' },
+  { q: 'GDP主管任命書在哪',         expectId: 'fact-org-gdp-manager',              expectHint: '任命書存於人事' },
 
   // ── 新增：文件章節深入驗證 ──
   { q: '誰核准一階文件',            expectId: 'fact-doc-hierarchy',                expectHint: '總經理' },
@@ -600,7 +641,7 @@ const TESTS = [
 
   // ── 新增：部門職責深入 ──
   { q: '業務工作包含什麼',          expectId: 'fact-org-sales',                    expectHint: '客戶開發' },
-  { q: '品管工作包含什麼',          expectId: 'fact-org-quality',                  expectHint: '品質管理系統' },
+  { q: '品管工作包含什麼',          expectId: 'fact-org-quality',                  expectHint: '品質系統統籌' },
   { q: '人事工作包含什麼',          expectId: 'fact-org-hr',                       expectHint: '訓練計畫' },
   { q: '文管工作包含什麼',          expectId: 'fact-org-doccontrol',               expectHint: '文件制修訂' },
   { q: '倉管工作包含什麼',          expectId: 'fact-org-warehouse',                expectHint: '收貨驗收' },
@@ -612,7 +653,7 @@ const TESTS = [
 
   // ── 新增：進出貨深入 ──
   { q: '到貨先量車廂溫度',          expectId: 'clarify-receiving-shipping',        expectHint: '車廂溫度' },
-  { q: '到貨點收驗收紀錄表',        expectId: 'clarify-receiving-shipping',         expectHint: '到貨點收驗收紀錄表' },
+  { q: '到貨點收驗收紀錄表',        expectId: 'clarify-receiving-shipping',         expectHint: '到貨先測車廂溫度' },
 
   // ── 新增：回收深入 ──
   { q: '第二級回收多久完成',        expectId: 'fact-recall-level-deadline',        expectHint: '2個月' },
