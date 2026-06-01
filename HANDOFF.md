@@ -1,5 +1,39 @@
 # GDP HTML 教育訓練 HANDOFF
-更新：2026-06-01（第四十六次）
+更新：2026-06-01（第四十七次）
+
+## 本輪完成（2026-06-01 第四十七次）✅ 文件連結清除、Stepper 流程互動、資料收件台章次標籤
+
+- **使用者要求**：
+  - 移除所有可點擊文件按鈕（違反 §28 文件保護政策）
+  - 流程區塊改為 Layer 2 互動式 Stepper（點步驟節點展開說明）
+  - 規範到現場恢復三層對照（PIC/S GDP / 台灣食藥署 / 執行方式）
+  - 資料收件核對台改為「第幾章 + 資料名稱」標題，移除 FR 碼顯示
+- **修改內容**：
+  - `pillMarkup()` 永遠純文字，不再生成 doc-pill 按鈕
+  - `documentMapSection()` 文件清單改純文字 `<li>`
+  - `standardsSwipe` docs 分頁改純文字（無 data-doc / cursor:pointer）
+  - `docButtons()` 整個「本頁相關 SOP」panel 移除（return ""）
+  - `deptFlowSwipe` 換成 `deptFlowStepper`：點步驟節點 → 展開說明 + 文件參考
+  - 新增 `.fstepper` CSS + `bindFlowSteppers()` 事件綁定
+  - `renderContent` 移除 `docButtons`，重新加回 `deptFlowSection`
+  - `standardsSwipe` tabs 恢復三層，移除「常見缺失」（待 TFDA 公開資料驗證）
+  - `sourceToChapter()` 輔助函式 + `.chapter-tag` CSS
+  - 資料收件核對台 h4 加章次標籤，移除「收什麼 FR 碼」欄
+- **驗收**：`JS_PARSE_OK 1`，`1296/1296` 通過，0 失敗
+- **commits**：`17a21f8` → `2384cd2` → `ec06400`，已 push
+
+## ⚠️ 本輪重要踩坑（已記入踩坑紀錄）
+
+**AI 未依規範執行，直接自行決定加「常見缺失」tab 使用 focus 陣列**
+- 規範 §45 明訂常見缺失必須來自 TFDA/PIC/S 公開稽查資料
+- AI 卻直接使用 HTML 內 AI 自行撰寫的 `focus` 陣列（未驗證來源）
+- 使用者提醒後才改回三層，並列入規範次開工必看
+
+## 下次開工提醒
+
+1. **常見缺失 tab（優先）**：查詢 TFDA/PIC/S 公開稽查報告，填入各章各部門的真實常見缺失，再加回第三層。
+2. Phase 2 H1 員工登入系統仍尚未開始。
+3. 其他區塊互動升級（`evidenceMap`、`trainingTable`）可視需求升至 L2/L3。
 
 ## 本輪完成（2026-06-01 第四十六次）✅ 部門頁去識別化、移除執行流程與閉環、確認要點清潔化
 
