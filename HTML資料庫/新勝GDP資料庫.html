@@ -439,6 +439,7 @@
     .fstep-detail-title{font-size:15px;color:var(--brand);font-weight:700}
     .fstep-doc{display:inline-block;margin-top:10px;background:#fffaf4;border:1px solid #f0e0c8;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:700;color:#7b3f00}
     @media(max-width:600px){.fstep-row{flex-direction:column;align-items:flex-start}.fstep-btn{flex-direction:row;max-width:100%;width:100%;gap:10px}.fstep-lbl{text-align:left;max-width:none}.fstep-arrow{transform:rotate(90deg);margin:0 0 0 19px}}
+    .chapter-tag{display:inline-block;padding:1px 7px;background:#e8f3f2;color:var(--brand);border-radius:4px;font-size:11px;font-weight:700;margin-right:6px;vertical-align:middle}
   </style>
 </head>
 <body>
@@ -3110,10 +3111,9 @@ function visualIntro(s){
 function standardsSwipe(standards){
   if(!standards) return "";
   const tabs=[
-    {key:"picsgdp",label:"PIC/S GDP",  fullLabel:"PIC/S GDP 國際規範",       icon:"🌐", col:"#0a4d8a",bg:"#eef2f9"},
-    {key:"taiwan", label:"台灣食藥署",  fullLabel:"台灣食藥署規定",            icon:"🇹🇼",col:"#006437",bg:"#edf5ef"},
-    {key:"focus",  label:"常見缺失",    fullLabel:"常見缺失（TFDA 稽查重點）", icon:"⚠️", col:"#b8832f",bg:"#fff8f0"},
-    {key:"company",label:"執行方式",    fullLabel:"執行方式（依內部文件）",    icon:"🏢", col:"#0f5b50",bg:"#eaf3f1"}
+    {key:"picsgdp",label:"PIC/S GDP",  fullLabel:"PIC/S GDP 國際規範",    icon:"🌐", col:"#0a4d8a",bg:"#eef2f9"},
+    {key:"taiwan", label:"台灣食藥署",  fullLabel:"台灣食藥署規定",         icon:"🇹🇼",col:"#006437",bg:"#edf5ef"},
+    {key:"company",label:"執行方式",    fullLabel:"執行方式（依內部文件）", icon:"🏢", col:"#0f5b50",bg:"#eaf3f1"}
   ];
   function hl(text){
     return text.replace(/([A-Z]{2}\d{2}-\d{2})/g,'<b>$1</b>');
@@ -3263,11 +3263,10 @@ function collectionCalendarSection(s){
         <span class="dept-badge" style="margin-top:6px;display:block">${esc(x.dept)}</span>
       </div>
       <div>
-        <h4>${esc(x.data)}</h4>
+        <h4>${sourceToChapter(x.source)?`<span class="chapter-tag">${sourceToChapter(x.source)}</span>`:""}${esc(x.data)}</h4>
         <p style="font-size:14px;color:var(--ink-soft);line-height:1.62;margin-bottom:9px">${esc(x.note)}</p>
         <div class="equipment-meta">
           <span>找誰：${esc(x.owner)}</span>
-          <span>收什麼：${esc(x.form)}</span>
           <span>依據：${esc(x.source)}</span>
           <span class="calendar-status" data-calendar-status="${i}" data-calendar-status-id="${esc(itemId)}" aria-label="收件狀態">
             <button type="button" data-status="done">已完成</button>
@@ -3902,6 +3901,11 @@ async function showSection(id){
 /* ═══════════════════════════════════════════════
    UTILITIES
 ═══════════════════════════════════════════════ */
+function sourceToChapter(src){
+  const m=(src||"").match(/[A-Z]{2}(\d)/);
+  const n=m?parseInt(m[1]):0;
+  return ["","第一章","第二章","第三章","第四章","第五章","第六章","第七章","第八章"][n]||"";
+}
 function esc(v){
   return String(v||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 }
