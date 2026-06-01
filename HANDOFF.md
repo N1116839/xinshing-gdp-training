@@ -1,6 +1,19 @@
 # GDP HTML 教育訓練 HANDOFF
 更新：2026-06-01（第三十七次）
 
+## 本輪完成（2026-06-01 第三十八次）✅ 修復 GDP 智慧查詢無法開啟
+
+- **問題**：`HTML資料庫/新勝GDP資料庫.html` 內嵌 JavaScript 有語法錯誤，導致整段腳本停止執行，GDP 智慧查詢表單與 Firebase 初始化都無法正常啟動。
+- **根因**：
+  - `clarify-org-chart` 的 `xinshing` 字串少了結尾引號與逗號。
+  - `clarify-drug-recall` 的 `xinshing` 欄尾端多出 `,",`。
+- **確認**：
+  - 本機 HTML 修正後 `JS_PARSE_OK`。
+  - Firebase SDK CDN 可讀取（HTTP 200）。
+  - Firestore `gdpKnowledgeBase` 可讀取（HTTP 200），因此不是 Firebase 專案未連線或 rules 禁止讀取。
+  - 修正前 GitHub Pages 線上 HTML 也有同一語法錯誤，需 commit + push 才會讓永久網址恢復。
+- **檔案修改**：僅 `HTML資料庫/新勝GDP資料庫.html` 與本交接紀錄。
+
 ## 本輪完成（2026-06-01 第三十七次）✅ 統計面板種子資料植入 — 問題排行榜 + 季度法規更新
 
 - **問題**：統計面板（問題排行榜/季節追蹤）在首次載入時無任何資料，顯示「尚無查詢紀錄」
