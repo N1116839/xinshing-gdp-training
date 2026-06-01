@@ -1,6 +1,24 @@
 # GDP HTML 教育訓練 HANDOFF
 更新：2026-06-01（第三十三次）
 
+## 本輪完成（2026-06-01 第三十三次）續✅ F 全量校對啟動 — 溫度測繪錯誤修正 + Personnel 部門 12 條 fact 修正
+- **溫度測繪法規錯誤修正**：fact-temp-mapping-cycle taiwan 欄「食藥署 GDP 無明文規定測繪週期」→ 正確法規內容（至少每三年或重大變更後執行）
+- **Personnel 部門全量校對完成**（12 條 fact 修正）：
+  - 8 條 taiwan 欄系統性修正：將公司 SMF 資格要求從「台灣 GDP 要求/規定」改為正確歸屬
+  - fact-org-gdp-manager：補齊 9 項缺漏職責（缺 9/13→完整 13 項）
+  - fact-org-pharmacist：補齊 6 項缺漏職責（藥品查驗登記、環境檢查等）
+  - fact-org-sales：補缺漏職責（客戶抱怨分析、不良品清點、採購支援）
+  - fact-org-quality：補缺漏職責（品質表單實施、問題追蹤、績效報告等）
+  - fact-org-warehouse/purchasing/doccontrol：補缺漏職責與系統性 taiwan 欄修正
+  - fact-org-emergency-contact：補實際聯絡人資訊
+  - fact-training-pass-score：補定期評估標準（70 分+表現良好）
+  - fact-training-record：修正 FR24-02/FR24-03 混淆問題
+- **常見缺失資料搜集完成**：9 章共 40+ 項缺失（來源：TFDA 官方文件 2024-2025）
+- **驗收**：316/316 通過 ✅
+- **剩餘待辦**：繼續 F 校對（下一章...）、D/E 互動升級、eyebrow 字體
+- **已修改檔案**：新勝GDP資料庫.html、verify_facts_ghpages.mjs（expectHint 同步）
+- **收工狀態**：已修改但未 commit/push
+
 ## 本輪完成（2026-06-01 第三十三次）🛠 KB-1 完成 — 清除 fact + clarify 殘留指令語，xinshing 欄「依規定，新勝醫藥」零殘留
 - 掃描全部 clarify 49 筆 + fact 106 筆，清除 5 處殘留指令語
   - fact 4 筆：移除「依規定，新勝醫藥」開頭語
