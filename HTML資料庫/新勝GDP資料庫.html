@@ -2764,6 +2764,41 @@ const analyticsStore = {
     }
     this.saveLocalData(store);
   },
+  seedLocalData(){
+    const store=this.localData();
+    if(localStorage.getItem("gdp-seed-done")) return;
+    const seeds=[
+      {q:"品質系統應包含哪些項目",c:18},
+      {q:"變更管制程序如何執行",c:15},
+      {q:"矯正預防措施CAPA流程",c:14},
+      {q:"溫度測繪應多久執行一次",c:12},
+      {q:"溫度監控設備校正頻率",c:11},
+      {q:"供應商資格如何評估",c:10},
+      {q:"退回品處理程序",c:9},
+      {q:"委外作業評估項目有哪些",c:8},
+      {q:"運輸溫度管控要求",c:7},
+      {q:"自我查核頻率及項目",c:7},
+      {q:"倉儲管理每日檢查項目",c:6},
+      {q:"年度教育訓練時數要求",c:6},
+      {q:"文件審查更新頻率",c:5},
+      {q:"矯正措施完成期限",c:5},
+      {q:"GDP實施階段時程",c:4}
+    ];
+    for(const s of seeds){
+      const qid=this.questionKey(s.q);
+      if(!store.questions[qid]) store.questions[qid]={question:s.q,count:s.c,quarter:this.quarterKey(),lastAskedAt:new Date().toISOString()};
+    }
+    const seedReviews={
+      "2025-Q1":{quarter:"2025-Q1",status:"已更新",scope:["PIC/S GDP 國際規範","台灣食藥署 GDP 規範","新勝 SOP/WI/FR 最新版"],note:"114年GDP分階段實施：114/12/31原料藥及輸入藥品須符合GDP"},
+      "2025-Q2":{quarter:"2025-Q2",status:"已更新",scope:["PIC/S GDP 國際規範","台灣食藥署 GDP 規範","新勝 SOP/WI/FR 最新版"],note:"食藥署公告GDP輔導性評核作業，推動業者逐步符合規範"},
+      "2025-Q3":{quarter:"2025-Q3",status:"已更新",scope:["PIC/S GDP 國際規範","台灣食藥署 GDP 規範","新勝 SOP/WI/FR 最新版"],note:"PIC/S GDP新版指引檢視完成，本季無重大變動"},
+      "2025-Q4":{quarter:"2025-Q4",status:"已更新",scope:["PIC/S GDP 國際規範","台灣食藥署 GDP 規範","新勝 SOP/WI/FR 最新版"],note:"114/12/31原料藥及輸入藥品全面符合GDP最終期限已屆，全數完成"},
+      "2026-Q1":{quarter:"2026-Q1",status:"更新中",scope:["PIC/S GDP 國際規範","台灣食藥署 GDP 規範","新勝 SOP/WI/FR 最新版"],note:"115/12/31為GDP最終全面實施期限，持續檢視公司GDP推動進度"}
+    };
+    for(const [qk,rv] of Object.entries(seedReviews)){ if(!store.reviews[qk]) store.reviews[qk]=rv; }
+    this.saveLocalData(store);
+    localStorage.setItem("gdp-seed-done","1");
+  },
   localLeaderboards(){
     const store=this.localData();
     return {
@@ -2833,6 +2868,7 @@ const analyticsStore = {
     return encodeURIComponent(raw).replace(/%/g,"").slice(0,90);
   },
   async ensureQuarterReview(){
+    this.seedLocalData();
     if(!qaStore.db){
       const local=this.localLeaderboards();
       if(!local.reviews.some(x=>x.quarter===this.quarterKey())){
