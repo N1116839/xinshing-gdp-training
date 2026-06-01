@@ -337,8 +337,7 @@
     .company-action-no{font-size:11px;font-weight:800;color:var(--gold);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
     .company-action-text{font-size:15px;line-height:1.72;color:var(--ink)}
     .doc-pill-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;padding:16px}
-    .doc-pill-card{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:#fffaf4;border:1px solid #f0e0c8;border-radius:8px;cursor:pointer;transition:background .12s}
-    .doc-pill-card:hover{background:#fff3de}
+    .doc-pill-card{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:#fffaf4;border:1px solid #f0e0c8;border-radius:8px}
     .doc-pill-icon{font-size:18px;flex-shrink:0;padding-top:1px}
     .doc-pill-label{font-size:14px;font-weight:700;color:#7b3f00;line-height:1.45}
     @media(max-width:960px){.doc-pill-grid{grid-template-columns:1fr}.company-action-card,.spec-rule-card{padding:11px 14px}}
@@ -428,6 +427,18 @@
     .flip-checked .flip-card-front{border-top-color:var(--gold)}
     @media(max-width:680px){.flip-grid{grid-template-columns:1fr 1fr}.flip-card{height:160px}}
     @media(max-width:420px){.flip-grid{grid-template-columns:1fr}.flip-card{height:auto;min-height:140px}}
+    .fstepper{margin-top:6px}
+    .fstep-row{display:flex;flex-wrap:wrap;align-items:center;gap:2px;margin-bottom:12px}
+    .fstep-btn{display:flex;flex-direction:column;align-items:center;background:none;border:none;cursor:pointer;padding:6px 4px;min-width:66px;flex:1;max-width:110px;font-family:inherit}
+    .fstep-node{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:13px;background:#e8f3f2;color:var(--brand);border:2px solid #cde0dd;transition:background .13s,color .13s,border-color .13s}
+    .fstep-btn:hover .fstep-node,.fstep-btn.active .fstep-node{background:var(--brand);color:#fff;border-color:var(--brand)}
+    .fstep-lbl{font-size:11px;color:var(--ink-soft);margin-top:5px;text-align:center;line-height:1.3;max-width:72px}
+    .fstep-arrow{font-size:18px;color:var(--line);flex-shrink:0;margin-bottom:18px;padding:0 2px;pointer-events:none}
+    .fstep-detail{display:none;background:#f7fbfb;border:1px solid var(--line);border-top:3px solid var(--brand);border-radius:0 0 8px 8px;padding:14px 18px}
+    .fstep-detail.show{display:block}
+    .fstep-detail-title{font-size:15px;color:var(--brand);font-weight:700}
+    .fstep-doc{display:inline-block;margin-top:10px;background:#fffaf4;border:1px solid #f0e0c8;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:700;color:#7b3f00}
+    @media(max-width:600px){.fstep-row{flex-direction:column;align-items:flex-start}.fstep-btn{flex-direction:row;max-width:100%;width:100%;gap:10px}.fstep-lbl{text-align:left;max-width:none}.fstep-arrow{transform:rotate(90deg);margin:0 0 0 19px}}
   </style>
 </head>
 <body>
@@ -2956,7 +2967,6 @@ function panel(title,html,cls=""){
   return `<article class="panel ${cls}"><h3>${title}</h3>${html}</article>`;
 }
 function pillMarkup(pill){
-  if(sopLibrary[pill]) return `<button class="pill doc-pill" type="button" data-doc="${pill}">${pill}</button>`;
   return `<span class="pill">${pill}</span>`;
 }
 function list(items,ordered=false){
@@ -2979,13 +2989,7 @@ function documentMapSection(s){
     <article class="doc-map-card">
       <small>${esc(g.note)}</small>
       <strong>${esc(g.label)}</strong>
-      <ul>${g.docs.map(d=>{
-        const m=d.match(/^([A-Z]{2}\d{2}-\d{2})/);
-        const dc=m&&sopLibrary[m[1]]?m[1]:null;
-        return dc
-          ? `<li><button class="pill doc-pill" type="button" data-doc="${dc}" style="width:100%;text-align:left;min-height:32px;font-size:13px;margin:2px 0">${esc(d)}</button></li>`
-          : `<li>${esc(d)}</li>`;
-      }).join("")}</ul>
+      <ul>${g.docs.map(d=>`<li>${esc(d)}</li>`).join("")}</ul>
     </article>`).join("");
   return `<p class="lead" style="font-size:15px">${esc(map.intro)}</p>
   <p style="font-size:13px;color:#7b3f00;background:#fff8f0;border:1px solid #f0e0c8;border-radius:6px;padding:10px 14px;margin:0 0 14px">
@@ -3108,7 +3112,8 @@ function standardsSwipe(standards){
   const tabs=[
     {key:"picsgdp",label:"PIC/S GDP",     fullLabel:"PIC/S GDP 國際規範", icon:"🌐",col:"#0a4d8a",bg:"#eef2f9"},
     {key:"taiwan", label:"台灣食藥署",     fullLabel:"台灣食藥署規定",     icon:"🇹🇼",col:"#006437",bg:"#edf5ef"},
-    {key:"company",label:"執行方式",fullLabel:"執行方式（依內部文件）",icon:"🏢",col:"#0f5b50",bg:"#eaf3f1"}
+    {key:"company",label:"執行方式",       fullLabel:"執行方式（依內部文件）",icon:"🏢",col:"#0f5b50",bg:"#eaf3f1"},
+    {key:"docs",   label:"文件依據",       fullLabel:"相關文件依據",       icon:"📑",col:"#7b3f00",bg:"#fffaf4"}
   ];
   function hl(text){
     return text.replace(/([A-Z]{2}\d{2}-\d{2})/g,'<b>$1</b>');
@@ -3117,12 +3122,7 @@ function standardsSwipe(standards){
     const items=standards[t.key]||[];
     if(!items.length) return `<div style="padding:20px 18px;color:#aaa;font-size:14px">—</div>`;
     if(t.key==="docs"){
-      return `<div class="doc-pill-grid">${items.map(item=>{
-        const m=item.match(/([A-Z]{2}\d{2}-\d{2})/);
-        const dc=m?m[1]:null;
-        const clickable=dc&&sopLibrary[dc];
-        return `<div class="doc-pill-card"${clickable?` data-doc="${dc}" tabindex="0" role="button"`:""}><span class="doc-pill-icon">📄</span><span class="doc-pill-label">${hl(item)}</span></div>`;
-      }).join("")}</div>`;
+      return `<div class="doc-pill-grid" style="padding:16px">${items.map(item=>`<div class="doc-pill-card"><span class="doc-pill-icon">📄</span><span class="doc-pill-label">${hl(item)}</span></div>`).join("")}</div>`;
     }
     if(t.key==="company"){
       const ci=txt=>{
@@ -3184,40 +3184,28 @@ function standardsSwipe(standards){
     </div>
   </div>`;
 }
-function deptFlowSwipe(steps){
-  const palette=["#0f5b50","#2f7c74","#0a4d8a","#5a3a9a","#7b3f00","#26705d","#b8832f","#173c3a"];
-  const uid=`df${Math.random().toString(36).slice(2,8)}`;
-  const pipeSteps=steps.map(([num,title,,],i)=>
-    `<div class="pipe-step${i===0?" active":""}" data-col="${i}" style="--sw-col:${palette[i%palette.length]}">
-      <div class="pipe-node" style="font-size:13px;font-weight:800">${esc(num)}</div>
-      <div class="pipe-lbl">${esc(title)}</div>
-    </div>${i<steps.length-1?'<div class="pipe-arrow">›</div>':''}`).join("");
-  const panes=steps.map(([num,title,desc,doc],i)=>
-    `<div class="slide-pane">
-      <div class="slide-hd" style="background:${palette[i%palette.length]}">
-        <span class="slide-hd-icon" style="font-size:14px;font-weight:800;min-width:36px;text-align:center">${esc(num)}</span>${esc(title)}
-      </div>
-      <div style="padding:22px 20px;background:#f7fbfb;min-height:120px">
-        <p style="font-size:15px;line-height:1.8;color:var(--ink);white-space:pre-line;margin:0">${esc(desc)}</p>
-        ${doc?`<div style="margin-top:14px"><span class="freq-badge">📋 ${esc(doc)}</span></div>`:""}
-      </div>
+function deptFlowStepper(f){
+  const uid=`fs${Math.random().toString(36).slice(2,7)}`;
+  const nodes=f.steps.map(([num,title,,],i)=>
+    `<button class="fstep-btn${i===0?" active":""}" type="button" data-fsuid="${uid}" data-fsi="${i}">
+      <span class="fstep-node">${esc(num)}</span>
+      <span class="fstep-lbl">${esc(title)}</span>
+    </button>${i<f.steps.length-1?'<span class="fstep-arrow">›</span>':""}`).join("");
+  const details=f.steps.map(([num,title,desc,doc],i)=>
+    `<div class="fstep-detail${i===0?" show":""}" id="${uid}-d${i}">
+      <strong class="fstep-detail-title">${esc(num)} ${esc(title)}</strong>
+      <p style="margin:8px 0 0;white-space:pre-line;color:var(--ink-soft);font-size:14px;line-height:1.7">${esc(desc)}</p>
+      ${doc?`<span class="fstep-doc">📋 ${esc(doc)}</span>`:""}
     </div>`).join("");
-  const dots=steps.map((_,i)=>`<span class="slide-dot${i===0?" active":""}"></span>`).join("");
-  return `<div class="swipe-panel" data-uid="${uid}">
-    <div class="pipe-hdr">${pipeSteps}</div>
-    <div class="pipe-progress"><div class="pipe-progress-fill" style="width:${Math.round(100/steps.length)}%"></div></div>
-    <div class="slide-vp"><div class="slide-track" id="${uid}">${panes}</div></div>
-    <div class="slide-nav">
-      <button class="slide-btn slide-prev" disabled>‹ 上一步</button>
-      <div class="slide-dots">${dots}</div>
-      <button class="slide-btn slide-next">下一步 ›</button>
-    </div>
+  return `<div class="fstepper" data-fsuid="${uid}">
+    <div class="fstep-row">${nodes}</div>
+    <div>${details}</div>
   </div>`;
 }
 function deptFlowSection(s){
   if(!s.deptFlow) return "";
   const flows=Array.isArray(s.deptFlow)?s.deptFlow:[s.deptFlow];
-  return flows.map(f=>panel(f.title,deptFlowSwipe(f.steps),"wide")).join("");
+  return flows.map(f=>panel(f.title,deptFlowStepper(f),"wide")).join("");
 }
 function trainingTable(info){
   if(!info) return "";
@@ -3320,13 +3308,7 @@ function equipmentOnlySection(s){
   </article>`).join("");
   return panel("關鍵設備時間核對台",`<p class="lead" style="font-size:15px">這一頁跟年度資料收件行事曆一樣，先依時間點篩選，再看該找誰、收什麼設備保養/校驗/確效證據，以及對應哪份 SOP 或表單。</p><div class="equip-menu"><div class="equip-menu-list">${menu}</div><div class="equip-item-list">${list}</div></div>`,"wide");
 }
-function docButtons(s){
-  if(["collection-calendar","equipment-calendar"].includes(s.id)) return "";
-  if(departmentDocumentMaps[s.id]) return "";
-  const docs=s.pills.filter(p=>sopLibrary[p]);
-  if(!docs.length) return "";
-  return `<article class="panel"><h3>本頁相關 SOP</h3><div class="pill-row">${docs.map(c=>pillMarkup(c)).join("")}</div><p class="note" style="margin-top:10px">點擊文件編號開啟 SOP 學習重點面板。</p></article>`;
-}
+function docButtons(s){ return ""; }
 function evidenceMap(s){
   const uid=`em-${s.id}`;
   const focusItems=(s.focus||[]).slice(0,4);
@@ -3409,9 +3391,9 @@ function renderContent(s){
   if(s.id==="gdp-kb") return kbSection();
   return [
     panel("視覺導讀",visualIntro(s),""),
-    docButtons(s),
     panel("規範到現場：四層對照",standardsSwipe(s.standards),"wide"),
     departmentDocumentMaps[s.id] ? panel("部門文件閱讀地圖",documentMapSection(s),"wide") : "",
+    deptFlowSection(s),
     deptScheduleSection(s),
     s.id==="collection-calendar" ? panel("年度保存與交接策略",annualGovernanceSection(),"wide") : "",
     s.qualityPolicy ? panel("品質政策與目標 KPI（DM10-01）",policyTable(s.qualityPolicy),"wide") : "",
@@ -3763,6 +3745,18 @@ function bindAuditFocus(){
     });
   });
 }
+function bindFlowSteppers(){
+  document.querySelectorAll(".fstep-btn[data-fsuid]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const uid=btn.dataset.fsuid;
+      const i=parseInt(btn.dataset.fsi);
+      document.querySelectorAll(`.fstep-btn[data-fsuid="${uid}"]`).forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+      const wrap=btn.closest(".fstepper");
+      if(wrap) wrap.querySelectorAll(".fstep-detail").forEach((d,j)=>d.classList.toggle("show",j===i));
+    });
+  });
+}
 function bindFlipCards(){
   const allCards=[...document.querySelectorAll(".flip-card[data-fc-uid]")];
   if(!allCards.length) return;
@@ -3889,6 +3883,7 @@ async function showSection(id){
   bindEquipmentMenu();
   bindDeptSchedTabs();
   bindAuditFocus();
+  bindFlowSteppers();
   bindFlipCards();
   bindQaForm(id);
   bindDocButtons();
