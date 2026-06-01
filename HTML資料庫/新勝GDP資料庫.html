@@ -3110,10 +3110,10 @@ function visualIntro(s){
 function standardsSwipe(standards){
   if(!standards) return "";
   const tabs=[
-    {key:"picsgdp",label:"PIC/S GDP",     fullLabel:"PIC/S GDP 國際規範", icon:"🌐",col:"#0a4d8a",bg:"#eef2f9"},
-    {key:"taiwan", label:"台灣食藥署",     fullLabel:"台灣食藥署規定",     icon:"🇹🇼",col:"#006437",bg:"#edf5ef"},
-    {key:"company",label:"執行方式",       fullLabel:"執行方式（依內部文件）",icon:"🏢",col:"#0f5b50",bg:"#eaf3f1"},
-    {key:"docs",   label:"文件依據",       fullLabel:"相關文件依據",       icon:"📑",col:"#7b3f00",bg:"#fffaf4"}
+    {key:"picsgdp",label:"PIC/S GDP",  fullLabel:"PIC/S GDP 國際規範",       icon:"🌐", col:"#0a4d8a",bg:"#eef2f9"},
+    {key:"taiwan", label:"台灣食藥署",  fullLabel:"台灣食藥署規定",            icon:"🇹🇼",col:"#006437",bg:"#edf5ef"},
+    {key:"focus",  label:"常見缺失",    fullLabel:"常見缺失（TFDA 稽查重點）", icon:"⚠️", col:"#b8832f",bg:"#fff8f0"},
+    {key:"company",label:"執行方式",    fullLabel:"執行方式（依內部文件）",    icon:"🏢", col:"#0f5b50",bg:"#eaf3f1"}
   ];
   function hl(text){
     return text.replace(/([A-Z]{2}\d{2}-\d{2})/g,'<b>$1</b>');
@@ -3121,8 +3121,12 @@ function standardsSwipe(standards){
   function paneBody(t){
     const items=standards[t.key]||[];
     if(!items.length) return `<div style="padding:20px 18px;color:#aaa;font-size:14px">—</div>`;
-    if(t.key==="docs"){
-      return `<div class="doc-pill-grid" style="padding:16px">${items.map(item=>`<div class="doc-pill-card"><span class="doc-pill-icon">📄</span><span class="doc-pill-label">${hl(item)}</span></div>`).join("")}</div>`;
+    if(t.key==="focus"){
+      if(!items.length) return `<div style="padding:20px 18px;color:#aaa;font-size:14px">—</div>`;
+      return `<div class="spec-rule-grid">${items.map((item,i)=>`<div class="spec-rule-card">
+        <div class="spec-rule-num" style="background:${t.col}">⚠️</div>
+        <div class="spec-rule-text">${hl(item)}</div>
+      </div>`).join("")}</div>`;
     }
     if(t.key==="company"){
       const ci=txt=>{
@@ -3391,7 +3395,7 @@ function renderContent(s){
   if(s.id==="gdp-kb") return kbSection();
   return [
     panel("視覺導讀",visualIntro(s),""),
-    panel("規範到現場：四層對照",standardsSwipe(s.standards),"wide"),
+    panel("規範到現場：四層對照",standardsSwipe({...(s.standards||{}),focus:s.focus||[]}),"wide"),
     departmentDocumentMaps[s.id] ? panel("部門文件閱讀地圖",documentMapSection(s),"wide") : "",
     deptFlowSection(s),
     deptScheduleSection(s),
