@@ -1914,7 +1914,7 @@ const kbStore = {
     docs.push({id:"fact-training-pass-score",sourceType:"fact",topic:"教育訓練合格標準",
       international:"PIC/S GDP 要求參與 GDP 活動所有人員應在開始作業前達到所界定能力，並持續評估有效性。",
       taiwan:"台灣 GDP 要求人員訓練需有合格標準與有效性評估，並留存紀錄以供稽查。",
-      xinshing:"派任前職前訓練評鑑：≥70分合格，方可獨立作業；已派任者每年定期實務評鑑，需表現良好（DP24-01）或70分以上（WI10-01 SMF）始為合格；不合格者須補訓至合格；訓練計畫記錄於年度計畫表（FR24-01），考核結果記錄於定期訓練簽到與評估表（FR24-02）。",
+      xinshing:"職前訓練評鑑：≥70分合格，方可獨立作業；已派任者每年定期實務評鑑，一般人員依 DP24-01 評定表現良好始為合格，SMF 相關人員依 WI10-01 須達70分以上；不合格者須補訓至合格；訓練計畫記錄於 FR24-01，考核結果記錄於 FR24-02。",
       sop_ref:["DP24-01","WI10-01"],
       keywords:["教育訓練合格標準","訓練合格","合格標準","訓練幾分及格","70分","訓練評鑑","70分及格","職前訓練合格","職前幾分合格","訓練多少分過關","訓練評鑑標準","定期評估","實務評鑑","補訓","再評鑑","表現良好","訓練要幾分","訓練合格標準幾分","教育訓練合格標準幾分","訓練及格分數"]});
     docs.push({id:"fact-training-frequency",sourceType:"fact",topic:"教育訓練頻率",
@@ -3341,7 +3341,7 @@ function kbResultsHtml(results,query){
   return kbAnswerHtml(primary);
 }
 function kbSection(){
-  const quickQuestions=["倉庫多久盤點一次","溫度測繪夏季冬季是哪幾個月","正航是不是溫度監控系統","公司有沒有冷藏倉","溫度超標怎麼處理","供應商怎麼評鑑","藥品回收要怎麼做","偏差要怎麼處理","教育訓練合格標準","內部稽核多久一次"];
+  const quickQuestions=["倉庫多久盤點一次","溫度測繪夏季冬季是哪幾個月","正航是不是溫度監控系統","溫度超標怎麼處理","供應商怎麼評鑑","藥品回收要怎麼做","偏差要怎麼處理","教育訓練合格標準","內部稽核多久一次","品質系統應包含哪些項目","變更管制怎麼申請","退回品如何處理"];
   const quickBtns=quickQuestions.map(q=>`<button type="button" class="kb-quick" data-q="${esc(q)}">${esc(q)}？</button>`).join("");
   return [
     panel("常見問題快速查詢",`<p style="font-size:13px;color:var(--muted);margin-bottom:14px">點擊常見問題，或在下方輸入自定義問題後按查詢。</p><div class="kb-quick-btns">${quickBtns}</div>`,"wide"),
