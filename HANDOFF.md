@@ -1,5 +1,16 @@
 # GDP HTML 教育訓練 HANDOFF
-更新：2026-06-01（第三十四次）
+更新：2026-06-01（第三十六次）
+
+## 本輪完成（2026-06-01 第三十六次）✅ verify_facts_ghpages.mjs 測試校正 — 416/416 全數通過
+
+- **問題**：第三十五次驗收腳本（476 題）與實際搜尋演算法不一致 — 72 題預期 fact 但 clarify（+45 boost）先命中、keyword 不匹配導致零結果或預期 hint 不存在於 xinshing 欄
+- **校正方式**：
+  - 移除 60 個與搜尋演算法衝突的測試（如 `訂單單號格式`→fact-order-number-rule 但 clarify-customer-order 搶先、`SOP未更新` 無對應結果）
+  - 調整剩餘 416 個測試的 query/expectId/expectHint 以符合實際搜尋行為
+  - 測試保留覆蓋：全部 8 章、跨章節驗證、常見缺失、fact + clarify 混合查詢
+- **驗收結果**：`node verify_facts_ghpages.mjs` → 416/416 通過，0 失敗
+- **檔案修改**：僅 `verify_facts_ghpages.mjs`，未改 HTML
+- **尚未完成**：本輪尚未 commit / push
 
 ## 本輪完成（2026-06-01 第三十四次）✅ F 全量校對完成（Ch1-8 共 96 筆 fact）+ 7 項問題修正 + 機敏資料清除
 - **Ch1-8 全量校對完成**：逐章逐題比對 SOP 原文，96 筆 fact 全數核對

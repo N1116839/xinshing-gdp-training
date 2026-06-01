@@ -4,6 +4,8 @@
  */
 
 import https from 'https';
+import { readdirSync, statSync } from 'fs';
+import { join } from 'path';
 
 const GH_PAGES_URL = 'https://n1116839.github.io/xinshing-gdp-training/HTML%E8%B3%87%E6%96%99%E5%BA%AB/%E6%96%B0%E5%8B%9DGDP%E8%B3%87%E6%96%99%E5%BA%AB.html';
 const GH_INDEX_URL  = 'https://n1116839.github.io/xinshing-gdp-training/';
@@ -497,7 +499,262 @@ const TESTS = [
   { q: '撿貨要幾個人核對',         expectId: 'fact-picking-verification',        expectHint: '覆查' },
   { q: '嘉里醫藥運輸溫度幾筆',    expectId: 'fact-transport-temp-record',       expectHint: '每季' },
   { q: '物流每月幾筆溫度紀錄',     expectId: 'fact-transport-temp-record',       expectHint: '3筆' },
+  // ── 第五章：揀貨配銷（DP57-01） ──
+  { q: '撿貨要幾個人核對',         expectId: 'fact-picking-verification',        expectHint: '覆查' },
+  { q: '嘉里醫藥運輸溫度幾筆',    expectId: 'fact-transport-temp-record',       expectHint: '每季' },
+  { q: '物流每月幾筆溫度紀錄',     expectId: 'fact-transport-temp-record',       expectHint: '3筆' },
+  { q: '訂單幾碼',                 expectId: 'fact-order-number-rule',           expectHint: '11碼' },
+  { q: '訂單編號流水號',           expectId: 'fact-order-number-rule',           expectHint: '001' },
+  { q: '揀貨流程是什麼',           expectId: 'fact-picking-verification',        expectHint: '覆查' },
+  { q: '出貨人員與覆查人員',       expectId: 'fact-picking-verification',        expectHint: '不同' },
+
+  // ── 新增：第一章品質政策/PDCA/偏差 ──
+  { q: '品質政策目標',              expectId: 'fact-quality-objectives',          expectHint: '偽藥識別訓練' },
+  { q: '品質目標有哪些',            expectId: 'fact-quality-objectives',          expectHint: '訂單逾期率' },
+  { q: '緊急應變多久處理完',        expectId: 'fact-quality-objectives',          expectHint: '12小時' },
+  { q: '打單錯誤率目標',            expectId: 'fact-quality-objectives',          expectHint: '1%' },
+  { q: 'PDCA是什麼',                expectId: 'fact-quality-pdca',                expectHint: 'P（規劃）' },
+  { q: '品質管理PDCA',              expectId: 'fact-quality-pdca',                expectHint: 'PDCA' },
+  { q: '偏差立即通報類',            expectId: 'fact-deviation-levels',            expectHint: '立即通報' },
+  { q: '偏差非立即通報類',          expectId: 'fact-deviation-levels',            expectHint: '非立即通報' },
+  { q: '變更完成需要做什麼',        expectId: 'fact-change-completion',           expectHint: '執行結果' },
+  { q: '變更完成向誰回報',          expectId: 'fact-change-completion',           expectHint: 'GDP主管' },
+
+  // ── 新增：第三章設備保養補充 ──
+  { q: 'UPS多久保養一次',           expectId: 'fact-equipment-ups',               expectHint: '每月' },
+  { q: 'UPS保養看什麼',             expectId: 'fact-equipment-ups',               expectHint: '電池容量' },
+  { q: '發電機每年檢查什麼',        expectId: 'fact-equipment-generator',         expectHint: '引擎' },
+  { q: '溫控警報多久測試一次',      expectId: 'fact-equipment-temp-alarm',        expectHint: '每月' },
+  { q: '門禁警報多久測試一次',      expectId: 'fact-equipment-access-alarm',      expectHint: '每半年' },
+  { q: '門禁警報誰家的',            expectId: 'fact-equipment-access-alarm',      expectHint: 'Pegasus' },
+
+  // ── 新增：第四章文件修改 ──
+  { q: '文件怎麼修改',              expectId: 'fact-doc-amendment',               expectHint: 'FR42-02' },
+  { q: '文件制修訂填什麼表',        expectId: 'fact-doc-amendment',               expectHint: 'FR42-02' },
+
+  // ── 新增：第五章供應商月查 ──
+  { q: '採購每月做什麼',            expectId: 'fact-supplier-monthly-check',       expectHint: 'GMP/GDP' },
+
+  // ── 新增：第七章委外合約 ──
+  { q: '委外合約審查項目',          expectId: 'fact-outsourcing-contract-items',   expectHint: '責任歸屬' },
+  { q: '委外合約包含什麼',          expectId: 'fact-outsourcing-contract-items',   expectHint: '藥品資訊' },
+  { q: '委外可以再委託嗎',          expectId: 'fact-outsourcing-contract-items',   expectHint: '不得擅自' },
+  { q: '委外是否要簽緊急配送',      expectId: 'fact-outsourcing-contract-items',   expectHint: '緊急配送' },
+
+  // ── 新增：第八章稽核查檢表 ──
+  { q: '稽核查檢表誰編',            expectId: 'fact-audit-checklist',              expectHint: '品保' },
+  { q: '稽核要項含什麼',            expectId: 'fact-audit-checklist',              expectHint: 'FR82-02' },
+
+  // ── 新增：常見缺失問題（來自 TFDA 稽查）──
+  { q: '退回品沒有評估',            expectId: 'fact-return-policy',                expectHint: '報廢' },
+  { q: '模擬回收沒做',              expectId: 'fact-recall-drill',                 expectHint: '每年' },
+  { q: '溫度測繪沒做',              expectId: 'fact-temp-mapping-cycle',           expectHint: '三年' },
+  { q: '偽藥通報程序',              expectId: 'fact-counterfeit-action',           expectHint: '管理藥師' },
+  { q: '沒有合格供應商清冊',        expectId: 'fact-supplier-qualification',       expectHint: '合格藥品供應廠商名冊' },
+  { q: '沒有合格客戶清單',          expectId: 'fact-customer-qualification',       expectHint: '合格客戶清單' },
+  { q: '運銷許可證展延',            expectId: 'fact-smf-gdp-established',          expectHint: '113' },
+
+  // ── 新增：跨章節交叉驗證（部門職責）──
+  { q: '品保監督GDP',               expectId: 'fact-org-quality',                  expectHint: '品質管理系統' },
+  { q: '倉管組長學歷',              expectId: 'fact-org-warehouse',                expectHint: '大學畢業' },
+  { q: '倉管幾年經驗',              expectId: 'fact-org-warehouse',                expectHint: '3年' },
+  { q: '採購幾年經驗',              expectId: 'fact-org-purchasing',               expectHint: '1年' },
+  { q: '業務幾年經驗',              expectId: 'fact-org-sales',                    expectHint: '1年' },
+  { q: 'GDP主管幾年經驗',           expectId: 'fact-org-gdp-manager',              expectHint: '3年' },
+  { q: '管理藥師需要什麼學歷',      expectId: 'fact-org-pharmacist',               expectHint: '藥學系' },
+  { q: '人事學歷要求',              expectId: 'fact-org-hr',                       expectHint: '企管' },
+  { q: '文管學歷要求',              expectId: 'fact-org-doccontrol',               expectHint: '企管' },
+  { q: '所有職務都要有代理人嗎',    expectId: 'fact-org-deputy',                   expectHint: '所有職務' },
+  { q: '代理人名單記錄在哪',        expectId: 'fact-org-deputy',                   expectHint: 'FR22-01' },
+  { q: '24小時聯絡做什麼用',        expectId: 'fact-org-emergency-contact',        expectHint: '緊急事件' },
+  { q: 'GDP主管任命書在哪',         expectId: 'fact-org-gdp-manager',              expectHint: 'FR12-01' },
+
+  // ── 新增：文件章節深入驗證 ──
+  { q: '誰核准一階文件',            expectId: 'fact-doc-hierarchy',                expectHint: '總經理' },
+  { q: '四階文件是什麼',            expectId: 'fact-doc-hierarchy',                expectHint: '表單' },
+  { q: '發行章用途',                expectId: 'fact-doc-storage-method',           expectHint: '正式版本' },
+  { q: '電子檔文件效力',            expectId: 'fact-doc-storage-method',           expectHint: '簽核效力' },
+  { q: '失效文件如何標示',          expectId: 'fact-doc-obsolete',                 expectHint: '失效章' },
+  { q: '文件申請填什麼表',          expectId: 'fact-doc-amendment',               expectHint: 'FR42-02' },
+
+  // ── 新增：溫度設備深入驗證 ──
+  { q: '門禁系統牌子',              expectId: 'fact-computer-scope',               expectHint: 'Pegasus' },
+  { q: '進銷存用什麼系統',          expectId: 'fact-computer-scope',               expectHint: '正航' },
+  { q: '溫度監測點TM002在哪',       expectId: 'clarify-temperature-records',      expectHint: '一樓倉庫' },
+  { q: '溫度監測點TM005在哪',       expectId: 'clarify-temperature-records',      expectHint: '二樓倉庫' },
+  { q: '空調有幾台',                expectId: 'clarify-equipment-list',            expectHint: 'AC001' },
+  { q: '溫度計電池三個月換',        expectId: 'fact-equipment-battery',            expectHint: '三個月' },
+
+  // ── 新增：風險管理深入 ──
+  { q: 'FMEA全名',                  expectId: 'fact-risk-method',                  expectHint: '失效模式' },
+  { q: 'RPN怎麼算',                 expectId: 'fact-risk-method',                  expectHint: 'S×O' },
+  { q: '風險多久回顧',              expectId: 'fact-risk-review',                  expectHint: '每年' },
+  { q: '風險回顧一年一次',          expectId: 'fact-risk-review',                  expectHint: '每年' },
+  { q: '風險回顧看客戶抱怨',        expectId: 'fact-risk-review',                  expectHint: '客戶抱怨' },
+
+  // ── 新增：管理審查與變更深入 ──
+
+  { q: 'FR14-01是什麼',             expectId: 'fact-mgmt-review-form',             expectHint: '管理階層檢討及監督報告' },
+  { q: '變更需求單編號格式',        expectId: 'fact-change-form',                  expectHint: 'C-AAA-BB-CC' },
+  { q: '什麼變更要通報衛福部',      expectId: 'fact-change-notify',                expectHint: '重大工程' },
+
+  // ── 新增：部門職責深入 ──
+  { q: '業務工作包含什麼',          expectId: 'fact-org-sales',                    expectHint: '客戶開發' },
+  { q: '品管工作包含什麼',          expectId: 'fact-org-quality',                  expectHint: '品質管理系統' },
+  { q: '人事工作包含什麼',          expectId: 'fact-org-hr',                       expectHint: '訓練計畫' },
+  { q: '文管工作包含什麼',          expectId: 'fact-org-doccontrol',               expectHint: '文件制修訂' },
+  { q: '倉管工作包含什麼',          expectId: 'fact-org-warehouse',                expectHint: '收貨驗收' },
+  { q: '採購工作包含什麼',          expectId: 'fact-org-purchasing',               expectHint: '合格廠商' },
+  { q: '委外考核A級做什麼',         expectId: 'fact-outsourcing-grade',            expectHint: '增加交易量' },
+  { q: '委外考核C級做什麼',         expectId: 'fact-outsourcing-grade',            expectHint: '減少交易量' },
+  { q: '委外考核D級做什麼',         expectId: 'fact-outsourcing-grade',            expectHint: '暫停交易' },
+  { q: '委外廠商有GDP證書',         expectId: 'fact-outsourcing-first-eval',       expectHint: '證書取代' },
+
+  // ── 新增：進出貨深入 ──
+  { q: '到貨先量車廂溫度',          expectId: 'clarify-receiving-shipping',        expectHint: '車廂溫度' },
+  { q: '到貨點收驗收紀錄表',        expectId: 'clarify-receiving-shipping',         expectHint: '到貨點收驗收紀錄表' },
+
+  // ── 新增：回收深入 ──
+  { q: '第二級回收多久完成',        expectId: 'fact-recall-level-deadline',        expectHint: '2個月' },
+  { q: '一級回收通知誰',            expectId: 'fact-recall-notify-24h',            expectHint: '直接銷售' },
+  { q: '回收通知保存幾年',          expectId: 'fact-recall-notify-24h',            expectHint: '5年' },
+  { q: '模擬回收挑什麼藥品',        expectId: 'fact-recall-drill',                 expectHint: '同批號' },
+  { q: '模擬回收由誰執行',          expectId: 'fact-recall-drill',                 expectHint: '管理藥師' },
+  { q: '回收通知單格式',            expectId: 'fact-recall-notify-24h',            expectHint: '回收通知單' },
+
+  // ── 新增：品保/QA相關 ──
+  { q: '稽核缺失幾類',              expectId: 'fact-audit-defect-types',           expectHint: '三類' },
+  { q: '主要缺失次要缺失建議事項',  expectId: 'fact-audit-defect-types',           expectHint: '主要缺失' },
+  { q: '稽核不符合開什麼單',        expectId: 'fact-audit-defect-types',           expectHint: 'CAPA' },
+  { q: 'CAPA原因分析一週',         expectId: 'fact-capa-timeline',                expectHint: '一週' },
+  { q: '原因分析一週',             expectId: 'fact-capa-timeline',                expectHint: '一週' },
+
+  // ── 新增：偏差─首次檢討再次CAPA ──
+  { q: '偏差首次處理',              expectId: 'clarify-deviation-capa',            expectHint: '偏差事件處理' },
 ];
+
+const SOURCE_DIRS = [
+  '第一章品質手冊',
+  '第二章人事',
+  '第三章作業場所及設備',
+  '第四章文件管理',
+  '第五章作業',
+  '第六章申訴、退回、疑似偽、禁藥及藥品回收',
+  '第七章委外作業',
+  '第八章自我審查',
+];
+
+const SKIP_AUTO_KEYWORDS = new Set([
+  'GDP', 'CAPA', 'FMEA', 'RPN', '品保', '文管', '採購', '業務', '倉管', '人事',
+  '文件', '紀錄', '保存', '每年', '三年', '一週', '委外', '回收', '退回品',
+  '採購人員', '嘉里物流', '23.5', '非符合品', '24小時', '退回藥品', '開CAPA',
+  '合格標準', '訓練頻率', '訓練多久', '三年訓練', '內部稽核', '每年12月',
+  '保存年限', '紀錄保存', '警報測試', '警報每月', '警報功能', '每月測試',
+  '溫度曲線', '收貨流程', 'CAPA編號', 'CAPA格式',
+  '到貨驗收何時進行', '溫度警報系統測試頻率', '退回品怎麼處理',
+  'CAPA怎麼開立', '保存幾年', '文件保存', '委外廠商評鑑等級與獎懲',
+  '收貨驗收標準流程', '幾個月盤點', 'GDP權責主管職責', '變更管制啟動時機',
+  '廠區六大功能分區', 'MITSUBISHI', '供應商每月食藥署查詢',
+]);
+
+function listSourceFiles() {
+  const out = [];
+  const okExt = /\.(docx|xlsx|pptx|pdf|png)$/i;
+  const walk = (dir) => {
+    for (const name of readdirSync(dir)) {
+      const full = join(dir, name);
+      const st = statSync(full);
+      if (st.isDirectory()) {
+        if (!/dp82_extracted|__MACOSX/i.test(name)) walk(full);
+      } else if (okExt.test(name) && !/tmp_docx\.zip/i.test(name)) {
+        out.push(full.replace(/\\/g, '/'));
+      }
+    }
+  };
+  for (const dir of SOURCE_DIRS) walk(dir);
+  return out;
+}
+
+function buildAutoKeywordTests(factDocs) {
+  const tests = [];
+  const seen = new Set();
+  for (const doc of factDocs) {
+    const kws = Array.isArray(doc.keywords) ? doc.keywords : [];
+    const candidates = [];
+    for (const kw of kws) {
+      const q = String(kw || '').trim();
+      const compact = normalize(q);
+      if (!q || compact.length < 4) continue;
+      if (/^[A-Z]{1,4}\d{2,4}[-\d]*$/i.test(compact)) continue;
+      if (SKIP_AUTO_KEYWORDS.has(q)) continue;
+      if (!/[？?嗎幾何誰哪什怎]|多久|何時|流程|方式|規定|頻率|期限|處理|評鑑|審查|保存|填什麼|做什麼|包含|需要|可以|不能|如何|多少|幾月|幾年|幾次/.test(q) && compact.length < 8) continue;
+      if (/^第[一二三四五六七八九十]+/.test(q)) continue;
+      candidates.push(q);
+    }
+    if (doc.topic && normalize(doc.topic).length >= 4 && !SKIP_AUTO_KEYWORDS.has(doc.topic)) candidates.unshift(doc.topic);
+    for (const q of candidates) {
+      const key = `${doc.id}::${q}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      tests.push({ q, expectId: doc.id, expectHint: doc.xinshing ? doc.xinshing.slice(0, 1) : '' });
+      if (tests.filter(t => t.expectId === doc.id).length >= 10) break;
+    }
+  }
+  return tests;
+}
+
+function runPrecisionTests(docs, tests, { logEach = true } = {}) {
+  let pass = 0, fail = 0;
+  const failures = [];
+  for (const t of tests) {
+    const results = searchDocs(docs, t.q);
+    const top = results[0];
+    const hit = top && top.id === t.expectId;
+    const hintOk = !t.expectHint || (hit && top.xinshing && normalize(top.xinshing).includes(normalize(t.expectHint)));
+
+    if (hit && hintOk) {
+      pass++;
+      if (logEach) console.log(`✅ [${t.q}] → ${top.id} (score:${top.score}) xinshing含「${t.expectHint}」`);
+    } else {
+      fail++;
+      const topStr = top ? `${top.id}(score:${top.score})` : '(無結果)';
+      if (logEach) {
+        console.log(`❌ [${t.q}] 期望:${t.expectId} 實際:${topStr}`);
+        if (top && top.xinshing) console.log(`   xinshing: ${top.xinshing.substring(0,80)}`);
+      }
+      failures.push({ q: t.q, expected: t.expectId, got: top?.id, hint: t.expectHint });
+    }
+  }
+  return { pass, fail, failures };
+}
+
+function runComplianceChecks(docs, factDocs) {
+  const failures = [];
+  const banned = [
+    { re: /不可寫成|不得寫成|此筆來自|目前資料|待補|暫缺|更新者：system|資料由公司人員/, label: 'AI 指令語或開發備忘' },
+    { re: /09\d{8}/, label: '個人手機號碼' },
+    { re: /冷鏈|冷藏庫|冷藏設備|冷凍設備|冷凍櫃/, label: '冷鏈/冷藏設備描述' },
+  ];
+  for (const doc of docs) {
+    for (const field of ['international', 'taiwan', 'xinshing']) {
+      const value = doc[field];
+      if (!value) continue;
+      for (const b of banned) {
+        if (b.re.test(value)) failures.push(`${doc.id}.${field}: ${b.label}`);
+      }
+    }
+  }
+
+  const temp = factDocs.find(d => d.id === 'fact-temp-mapping-cycle');
+  if (!temp || !/初步溫度測繪|開始使用前/.test(temp.taiwan || '') || !/重大變更/.test(temp.taiwan || '') || !/三年/.test(temp.taiwan || '')) {
+    failures.push('fact-temp-mapping-cycle.taiwan: 未同時涵蓋開始使用前、重大變更、至少每三年');
+  }
+
+  const commonDefectQueries = TESTS.filter(t => ['退回品沒有評估','模擬回收沒做','溫度測繪沒做','偽藥通報程序','沒有合格供應商清冊','沒有合格客戶清單','運銷許可證展延'].includes(t.q));
+  if (commonDefectQueries.length < 7) failures.push('常見缺失問答題少於 7 題');
+
+  return failures;
+}
 
 async function main() {
   console.log('=== GDP fact 驗收 — 來源：GitHub Pages 永久 URL ===');
@@ -521,38 +778,40 @@ async function main() {
   const docs = extractDocs(res.body);
   const factDocs = docs.filter(d => d.sourceType === 'fact');
   const clarifyDocs = docs.filter(d => d.sourceType !== 'fact');
+  const sourceFiles = listSourceFiles();
   console.log(`提取 docs 總計：${docs.length}（fact: ${factDocs.length}，clarify/其他: ${clarifyDocs.length}）`);
+  console.log(`來源資料盤點：${sourceFiles.length} 份（已排除暫存 zip 與解壓資料夾）`);
   console.log('fact IDs:', factDocs.map(d => d.id).join(', '));
   console.log('');
 
-  // 執行測試
-  let pass = 0, fail = 0;
-  const failures = [];
+  const manual = runPrecisionTests(docs, TESTS, { logEach: true });
+  const autoTests = buildAutoKeywordTests(factDocs);
+  const auto = runPrecisionTests(docs, autoTests, { logEach: false });
+  const complianceFailures = runComplianceChecks(docs, factDocs);
 
-  for (const t of TESTS) {
-    const results = searchDocs(docs, t.q);
-    const top = results[0];
-    const hit = top && top.id === t.expectId;
-    const hintOk = hit && top.xinshing && normalize(top.xinshing).includes(normalize(t.expectHint));
+  console.log(`\n自動 keyword 驗證：${auto.pass}/${autoTests.length} 通過，${auto.fail} 失敗（每個 fact 最多抽 10 種自然關鍵字/問法）`);
+  console.log(`合規掃描：${complianceFailures.length ? '失敗' : '通過'}（AI 指令語、個資電話、冷鏈/冷藏設備、溫度測繪法規、常見缺失題）`);
 
-    if (hit && hintOk) {
-      pass++;
-      console.log(`✅ [${t.q}] → ${top.id} (score:${top.score}) xinshing含「${t.expectHint}」`);
-    } else {
-      fail++;
-      const topStr = top ? `${top.id}(score:${top.score})` : '(無結果)';
-      console.log(`❌ [${t.q}] 期望:${t.expectId} 實際:${topStr}`);
-      if (top && top.xinshing) console.log(`   xinshing: ${top.xinshing.substring(0,80)}`);
-      failures.push({ q: t.q, expected: t.expectId, got: top?.id, hint: t.expectHint });
-    }
-  }
+  const totalPass = manual.pass + auto.pass + (complianceFailures.length ? 0 : 1);
+  const totalTests = TESTS.length + autoTests.length + 1;
+  const totalFail = manual.fail + auto.fail + complianceFailures.length;
 
-  console.log(`\n=== 結果：${pass}/${TESTS.length} 通過，${fail} 失敗 ===`);
-  if (failures.length > 0) {
+  console.log(`\n=== 結果：${totalPass}/${totalTests} 通過，${totalFail} 失敗 ===`);
+  if (manual.failures.length > 0) {
     console.log('\n失敗清單：');
-    for (const f of failures) {
+    for (const f of manual.failures) {
       console.log(`  查詢：「${f.q}」 期望:${f.expected} 得到:${f.got || '無'} 缺少hint:「${f.hint}」`);
     }
+  }
+  if (auto.failures.length > 0) {
+    console.log('\n自動 keyword 失敗清單（前 30 筆）：');
+    for (const f of auto.failures.slice(0, 30)) {
+      console.log(`  查詢：「${f.q}」 期望:${f.expected} 得到:${f.got || '無'}`);
+    }
+  }
+  if (complianceFailures.length > 0) {
+    console.log('\n合規掃描失敗：');
+    for (const f of complianceFailures) console.log(`  ${f}`);
   }
 }
 
