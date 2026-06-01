@@ -107,6 +107,9 @@ function searchDocs(docs, query) {
 // 驗收測試組（第一輪 21 筆 + 第二章 20 筆）
 const TESTS = [
   // ── 第一輪：進出貨/溫度/庫存/回收/CAPA/訓練/稽核/文件 ──
+  { q: '品質系統應包含哪些項目', expectId: 'fact-quality-pdca',           expectHint: 'PDCA' },
+  { q: '變更管制怎麼申請',      expectId: 'fact-change-form',           expectHint: '變更管制需求單' },
+  { q: '偏差要怎麼處理',        expectId: 'fact-deviation-levels',      expectHint: '調查原因' },
   { q: '採購單由誰列印',        expectId: 'fact-purchase-order-who',    expectHint: '採購' },
   { q: 'FR54-01由誰填',        expectId: 'fact-receiving-fr54-who',    expectHint: '進貨' },
   { q: '何時填FR54-01',        expectId: 'fact-receiving-when',        expectHint: '到達' },
@@ -116,8 +119,9 @@ const TESTS = [
   { q: '警報測試多久一次',      expectId: 'fact-temp-alarm-test',       expectHint: '每月' },
   { q: 'FR33-01月記錄',        expectId: 'fact-temp-monthly-record',   expectHint: '溫度記錄表' },
   { q: '溫度測繪週期',         expectId: 'fact-temp-mapping-cycle',    expectHint: '三年' },
+  { q: '溫度測繪夏季冬季是哪幾個月', expectId: 'fact-temp-mapping-cycle', expectHint: '7～9' },
   { q: '溫測多久一次',         expectId: 'fact-temp-mapping-cycle',    expectHint: '三年' },
-  { q: '溫測',                 expectId: 'fact-temp-mapping-summer',   expectHint: '7～9' },
+  { q: '溫測',                 expectId: 'fact-temp-mapping-cycle',    expectHint: '三年' },
   { q: '夏季溫測幾月份',       expectId: 'fact-temp-mapping-summer',   expectHint: '7～9' },
   { q: '冬季溫測幾月份',       expectId: 'fact-temp-mapping-winter',   expectHint: '1～3' },
   { q: '盤點頻率多久一次',     expectId: 'fact-storage-inventory',       expectHint: '2個月' },
@@ -127,6 +131,7 @@ const TESTS = [
   { q: '24小時通知回收',       expectId: 'fact-recall-notify-24h',     expectHint: '24' },
   { q: '模擬演練多久一次',     expectId: 'fact-recall-drill',          expectHint: '每年' },
   { q: '退回品處理方式',       expectId: 'fact-return-policy',         expectHint: '報廢' },
+  { q: '退回品如何處理',       expectId: 'fact-return-policy',         expectHint: '報廢' },
   { q: 'CAPA怎麼觸發',        expectId: 'fact-capa-trigger',          expectHint: '六' },
   { q: 'CAPA原因分析期限',    expectId: 'fact-capa-timeline',         expectHint: '一週' },
   { q: '訓練合格標準幾分',    expectId: 'fact-training-pass-score',   expectHint: '70' },
@@ -480,6 +485,7 @@ const TESTS = [
   { q: '國外供應商需要什麼資格',   expectId: 'fact-supplier-qualification',      expectHint: 'PMF' },
   { q: '新供應商怎麼認可',         expectId: 'fact-supplier-qualification',      expectHint: 'PIC/S GMP核備函' },
   { q: '供應商每月要做什麼',       expectId: 'fact-supplier-periodic-eval',      expectHint: '食藥署' },
+  { q: '供應商怎麼評鑑',           expectId: 'fact-supplier-periodic-eval',      expectHint: '年底' },
   { q: '供應商不合格怎麼辦',       expectId: 'fact-supplier-periodic-eval',      expectHint: '撤銷' },
   // ── 第五章：客戶認可（DP53-01） ──
   { q: '新客戶怎麼審核',           expectId: 'fact-customer-qualification',      expectHint: '合格客戶清單' },
@@ -493,6 +499,7 @@ const TESTS = [
   { q: '近效期藥品幾個月貼黃標',   expectId: 'fact-storage-near-expiry',         expectHint: '黃色標籤' },
   { q: '效期到了藥品怎麼辦',       expectId: 'fact-storage-near-expiry',         expectHint: '非符合區' },
   { q: '庫存盤點多久一次',         expectId: 'fact-storage-inventory',           expectHint: '2個月' },
+  { q: '倉庫多久盤點一次',         expectId: 'fact-storage-inventory',           expectHint: '2個月' },
   { q: '盤點發現過期藥品怎麼辦',   expectId: 'fact-storage-inventory',           expectHint: '廢棄物程序' },
   // ── 第五章：廢棄物管理（DP56-01） ──
   { q: '報廢藥品怎麼銷毀',         expectId: 'fact-waste-destruction',           expectHint: '良衛環保' },

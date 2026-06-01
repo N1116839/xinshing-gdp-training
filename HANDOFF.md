@@ -1,4 +1,35 @@
 # GDP HTML 教育訓練 HANDOFF
+更新：2026-06-01（第四十四次）
+
+## 本輪完成（2026-06-01 第四十四次）✅ 全量稽核常見問題與 KB 自動可判斷違規，12 項修正完成
+
+- **使用者要求**：一次確認目前資料內還有多少項目違反規範，並一次更正。
+- **本輪稽核範圍**：HTML 內 `docs.push` 知識庫資料 170 筆（fact 122、clarify/其他 48）與 `quickQuestions` 12 題。
+- **稽核類型**：
+  - 快速問題未命中 fact。
+  - learner-facing 三欄含 AI 指令語 / meta / 路徑。
+  - `xinshing` 欄不良開頭語。
+  - 冷鏈 / 冷藏倉 / 冷藏庫 / 冷藏設備字樣。
+  - clarify 保留 who / when / 頻率 / 處理方式等專屬問法 keyword。
+- **稽核結果（修正前）**：共 12 項可自動判斷違規：
+  - `quick-no-fact`：7 項（品質系統、變更管制、偏差、溫度測繪夏冬月份、供應商評鑑、退回品、倉庫盤點）。
+  - `cold-chain`：2 項（`clarify-temperature-mapping`、`fact-temp-range`）。
+  - `clarify-specific-keyword`：3 項（`clarify-storage`、`clarify-outsourcing`、`clarify-risk-analysis-record`）。
+- **修正內容**：
+  - 7 個快速問題補入對應 fact keywords，確保快速按鈕第一名命中 fact 短答。
+  - 移除 `clarify-temperature-mapping` / `fact-temp-range` 的冷藏倉字樣與 keyword，改為只描述室溫倉庫與 15～25°C。
+  - 移除 clarify 中越界的盤點頻率、委外責任 who 問法、風險發生頻率 keyword。
+  - `verify_facts_ghpages.mjs` 補入缺漏快速問題固定驗收。
+- **修正後稽核**：`counts: {}`，可自動判斷違規 0 項。
+- **驗收**：
+  - 內嵌 JavaScript 語法檢查：`JS_PARSE_OK 1`
+  - `node verify_facts_ghpages.mjs`：`1296/1296` 通過，0 失敗。
+
+## 下次開工提醒
+
+1. `quickQuestions` 12 題已納入固定驗收；新增快速問題時必須同步加入 `verify_facts_ghpages.mjs`。
+2. 若使用者再要求「全量違規檢查」，沿用本輪五類自動稽核：quick-no-fact、instruction/meta、bad-opening、cold-chain、clarify-specific-keyword。
+
 更新：2026-06-01（第四十三次）
 
 ## 本輪完成（2026-06-01 第四十三次）✅ 修正常見問題快速查詢三筆長答案 / 混答
