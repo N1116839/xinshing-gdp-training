@@ -1,23 +1,19 @@
 # GDP HTML 教育訓練 HANDOFF
-更新：2026-06-02（第五十五次）
+更新：2026-06-02（第五十六次）
 
-## 本輪完成（2026-06-02 第五十五次）✅ 常見缺失補來源 + 文件閱讀地圖重設計
+## 本輪完成（2026-06-02 第五十六次）✅ 管理藥師流程水平修正 + 174 筆 KB 權限標籤
 
-- **A.1–A.5**：移除前台 Firebase/Firestore/年度行事曆管理資訊；Q&A placeholder、pill、panel 改中文概念標籤
-- **B.1–B.3**：renderContent 改學習順序（視覺引導→觸發時程→作業流程→對照→翻卡→地圖→證據鏈→Q&A）；新增手機浮動 ☰ 目錄按鈕
-- **常見缺失補來源欄位**：13 章 focus 陣列從字串改為 `{text, source, year, type}` 物件，badge 動態顯示來源/年份，body 含來源類型說明；TFDA 86 筆 + EU 7 筆，年份 2019/2022/2024/2025；重複內容以最新年度為準，不同面向獨立保留
-- **文件閱讀地圖重設計**：8 個部門 (`departments/personnel/rp/pharmacist/qa/warehouse/purchase/sales/doc`) 從分類標籤改為「我想了解→向文管調閱→調閱目的」三步驟學習路徑，每部門 4–7 筆
-- **CSS 新增**：`focus-badge-*` 五色來源標籤、`doc-map-flow` 排版
-- **驗收**：JS_PARSE_OK 1、1296/1296 通過
-- **commit**：`8179fab`（常見缺失補來源）、`318ce83`（文件閱讀地圖重設計），已 push
+- **管理藥師流程水平修正**：`.flow-dual-cell` 強制垂直 CSS（`.fsh{display:none!important}` / `.fsv{display:block!important}`）移除，桌機雙欄流程恢復水平 Stepper，手機 640px 以下維持垂直 Timeline
+- **174 筆 KB 權限標籤**：全量 `docs.push` 加入 `departments` 與 `allowedRoles` 欄位，依事實內容對應至正確部門（8 部門），跨部門條目（收貨驗收、回收等）加註多部門；`allowedRoles` 統一設 `["staff","leader"]`
+- **驗收**：JS_PARSE_OK 1、1296/1296 通過（verify_facts_ghpages.mjs 全量）
+- **commit**：待 commit
 
 ## 下次開工提醒
 
-1. 補 174 筆 KB 權限標籤（`docs.push` 加入 `departments` / `allowedRoles`），為 Phase 2 員工登入做準備。
-2. 更新 Firestore rules 前需先完成角色/部門權限表。
-3. 全站互動性升級（稽查重點 checkbox、scroll fade-in 等）回退待重做。
-4. 重複區塊整合（三處文件清單、時程）。
-5. eyebrow 字體 16px → 18px 回退。
+1. 更新 Firestore rules 前需先完成角色/部門權限表（實際角色名稱、組長跨部門邊界清單）。
+2. 全站互動性升級（稽查重點 checkbox、scroll fade-in 等）回退待重做。
+3. 重複區塊整合（三處文件清單、時程）。
+4. eyebrow 字體 16px → 18px 回退。
 
 ---
 
