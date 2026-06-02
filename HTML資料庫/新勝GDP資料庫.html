@@ -75,6 +75,15 @@
   .doc-map-flow-request{flex:1;color:var(--ink);font-weight:700}
   .doc-map-flow-purpose{flex:1;color:#555}
   .doc-map-flow-arrow{text-align:center;color:var(--gold);font-size:11px;margin:-2px 0 2px 18px}
+  .doc-map-filter{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 14px}
+  .doc-map-filter button{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:6px;padding:7px 10px;font:inherit;font-size:13px;cursor:pointer}
+  .doc-map-filter button.active{background:var(--brand);border-color:var(--brand);color:#fff}
+  .doc-map-status{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:12px}
+  .doc-map-status button{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:6px;padding:7px 5px;font:inherit;font-size:12px;cursor:pointer;line-height:1.35}
+  .doc-map-status button.active{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:700}
+  .doc-map-card[data-docmap-status="assist"]{border-top-color:#a83232;background:#fff8f8}
+  .doc-map-card[data-docmap-status="applied"]{border-top-color:var(--gold);background:#fffaf0}
+  .doc-map-card[data-docmap-status="read"]{border-top-color:#0b7a43;background:#f3fbf7}
     .slide-label{display:inline-grid;place-items:center;width:40px;height:40px;margin-bottom:8px;color:#fff;background:var(--gold);border-radius:50%;font-weight:800}
     .audit-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
     .audit-card{min-height:140px;padding:14px;background:#f4faf9;border:1px solid #cde0dd;border-top:5px solid var(--brand);font-size:15px;line-height:1.55;text-align:left;cursor:pointer}
@@ -134,6 +143,7 @@
     .focus-text{flex:1;font-size:14px;line-height:1.65;color:var(--ink);min-width:0}
     .focus-text b{font-weight:800;background:rgba(0,0,0,.06);padding:0 3px;border-radius:3px}
     .focus-source-badge{flex-shrink:0;font-size:10px;padding:2px 7px;border-radius:4px;font-weight:700;white-space:nowrap;margin-top:2px}
+    .focus-source-link{display:inline-block;margin-top:7px;color:var(--brand);font-size:12px;font-weight:700;text-decoration:underline;text-underline-offset:2px}
     .focus-badge-TFDA{background:#e8cccc;color:#7a2222}
     .focus-badge-EU{background:#cce0f0;color:#0a4d8a}
     .focus-badge-PICS{background:#cce0f0;color:#0a4d8a}
@@ -269,13 +279,6 @@
       .ds-item-meta span{font-size:13px;padding:5px 10px}
     }
     @media(max-width:700px){.dept-sched{grid-template-columns:1fr}}
-    /* ── doc modal ── */
-    .doc-modal{position:fixed;inset:0;z-index:30;display:none;background:rgba(15,55,50,.44);padding:28px}
-    .doc-modal.open{display:grid;place-items:center}
-    .doc-dialog{width:min(860px,96vw);max-height:88vh;overflow:auto;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow)}
-    .doc-head{position:sticky;top:0;display:flex;justify-content:space-between;gap:12px;padding:14px 18px;color:#fff;background:var(--brand)}
-    .doc-body{padding:20px;display:grid;gap:12px;font-size:16px;line-height:1.8}
-    .doc-close{color:#fff;background:transparent;border:1px solid rgba(255,255,255,.55);border-radius:6px;cursor:pointer;font:inherit;padding:5px 10px}
     /* ── evidence / metric ── */
     .ev-chain-hdr{display:flex;align-items:center;gap:10px;padding:12px 18px;background:var(--brand);border-radius:10px 10px 0 0}
     .ev-chain-lbl{background:rgba(255,255,255,.18);color:#fff;font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;letter-spacing:.06em;flex-shrink:0}
@@ -306,7 +309,17 @@
     .metric strong{display:block;color:var(--gold);font-size:15px;font-weight:800;margin-bottom:4px;line-height:1.2}
     .metric span{font-size:12px;color:var(--ink-soft);display:block;line-height:1.4}
     .em-tip-box{margin-top:10px;padding:12px 16px;background:#fff9ef;border:1px solid #ead6b6;border-left:4px solid var(--gold);line-height:1.7;animation:fadeIn .2s;border-radius:0 0 8px 8px}
-    @media(max-width:680px){.evidence-map{grid-template-columns:1fr}.evidence-node.center{min-height:50px;flex-direction:row;gap:10px;padding:12px}.metric-strip{grid-template-columns:repeat(2,1fr)}.metric{border-bottom:1px solid #ead6b6}}
+    .evidence-checkdesk{margin-top:14px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+    .ev-check-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;background:#f7fbfb;border-bottom:1px solid var(--line);font-size:13px;color:var(--ink)}
+    .ev-check-head strong{color:var(--brand);font-size:15px}
+    .ev-check-list{display:grid;grid-template-columns:repeat(4,1fr)}
+    .ev-check-item{display:flex;align-items:flex-start;gap:8px;padding:12px;border-right:1px solid var(--line);font-size:13px;line-height:1.45;color:var(--ink);cursor:pointer}
+    .ev-check-item:last-child{border-right:none}
+    .ev-check-item input{margin-top:2px;accent-color:var(--brand)}
+    .ev-check-item span{font-weight:700;color:var(--brand)}
+    .ev-check-item small{display:block;color:var(--ink-soft);font-size:12px;margin-top:3px}
+    .ev-check-fill{height:6px;background:var(--brand);width:0%;transition:width .2s}
+    @media(max-width:680px){.evidence-map{grid-template-columns:1fr}.evidence-node.center{min-height:50px;flex-direction:row;gap:10px;padding:12px}.metric-strip{grid-template-columns:repeat(2,1fr)}.metric{border-bottom:1px solid #ead6b6}.doc-map-status,.ev-check-list{grid-template-columns:1fr}}
     @keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
     /* ── timeline ── */
     .timeline{display:grid;gap:8px}
@@ -3569,12 +3582,31 @@ function stripInlineCode(txt){
     .replace(/\s+([，、。；）)])/g,"$1")
     .trim();
 }
+function slugText(txt){
+  return String(txt||"").replace(/\s+/g,"").slice(0,48);
+}
+function docMapScenario(g){
+  const text=[g.want,g.request,g.purpose].join(" ");
+  if(/到貨|驗收|供應商|採購|進貨|收貨/.test(text)) return "到貨";
+  if(/訓練|教育|考核|人事/.test(text)) return "訓練";
+  if(/稽核|稽查|審查|管理審查|自我查核/.test(text)) return "稽核";
+  if(/異常|偏差|CAPA|退回|回收|客訴|偽禁|變更/.test(text)) return "異常";
+  return "日常";
+}
 function documentMapSection(s){
   const map=departmentDocumentMaps[s.id];
   if(!map) return "";
   const role=deptIdMap[s.id]||s.short||s.title;
-  const cards=map.groups.map(g=>`
-    <article class="doc-map-card">
+  const scenarios=[...new Set(map.groups.map(docMapScenario))];
+  const filter=scenarios.length>1?`<div class="doc-map-filter" data-docmap-filter="${esc(s.id)}">
+    <button type="button" class="active" data-docmap-scenario="">全部情境</button>
+    ${scenarios.map(x=>`<button type="button" data-docmap-scenario="${esc(x)}">${esc(x)}</button>`).join("")}
+  </div>`:"";
+  const cards=map.groups.map((g,i)=>{
+    const scenario=docMapScenario(g);
+    const itemId=`${s.id}-${i}-${slugText(g.want)}`;
+    return `
+    <article class="doc-map-card" data-docmap-card="${esc(s.id)}" data-docmap-scenario-card="${esc(scenario)}" data-docmap-id="${esc(itemId)}">
       <div class="doc-map-flow">
         <span class="doc-map-flow-label">我想了解</span>
         <span class="doc-map-flow-want">${esc(g.want)}</span>
@@ -3597,11 +3629,18 @@ function documentMapSection(s){
         <span class="doc-map-flow-label">申請對象</span>
         <span class="doc-map-flow-purpose">文管部</span>
       </div>
-    </article>`).join("");
+      <div class="doc-map-status" data-docmap-status="${esc(itemId)}">
+        <button type="button" data-status="applied">已申請</button>
+        <button type="button" data-status="read">已閱讀</button>
+        <button type="button" data-status="assist">需協助</button>
+      </div>
+    </article>`;
+  }).join("");
   return `<p class="lead" style="font-size:15px">${esc(map.intro)}</p>
   <p style="font-size:13px;color:#7b3f00;background:#fff8f0;border:1px solid #f0e0c8;border-radius:6px;padding:10px 14px;margin:0 0 14px">
     📋 如需閱讀完整文件，請向<strong>文管部</strong>填單申請調閱。線上平台提供學習指引，完整文件以正式核准版本為準。
   </p>
+  ${filter}
   <div class="doc-map-grid">${cards}</div>`;
 }
 function annualGovernanceSection(){
@@ -3773,6 +3812,39 @@ function standardsSwipe(standards){
   function hl(text){
     return text.replace(/([A-Z]{2}\d{2}-\d{2})/g,'<b>$1</b>');
   }
+  function focusSourceMeta(item){
+    const src=String(item.source||"TFDA").toUpperCase();
+    const type=String(item.type||"");
+    const year=String(item.year||"");
+    if(src==="PICS"||src==="PIC/S"){
+      return {
+        title:"PIC/S PI 044-1 Aide-Memoire on GDP Inspections",
+        url:"https://picscheme.org/docview/6234"
+      };
+    }
+    if(type.includes("行政指導")){
+      return {
+        title:"食藥署藥品 GDP 專區：申請 GDP 檢查注意事項",
+        url:"https://www.fda.gov.tw/TC/siteContent.aspx?sid=7876"
+      };
+    }
+    if(year==="2024"){
+      return {
+        title:"食藥署 113年度GDP業者說明會-GDP申請資料準備與常見缺失",
+        url:"https://www.fda.gov.tw/tc/includes/GetFile.ashx?id=f638768789562401428&type=1"
+      };
+    }
+    if(year==="2022"){
+      return {
+        title:"食藥署 111年度GDP業者說明會-實地查核流程與常見缺失",
+        url:"https://www.fda.gov.tw/tc/includes/GetFile.ashx?id=f637913384797731043&type=1"
+      };
+    }
+    return {
+      title:"食藥署藥品GDP相關活動/訓練講義：GDP法規解析與常見缺失說明",
+      url:"https://www.fda.gov.tw/tc/siteListContent.aspx?id=27151&sid=4072"
+    };
+  }
   function paneBody(t){
     const items=standards[t.key]||[];
     if(!items.length) return `<div style="padding:20px 18px;color:#aaa;font-size:14px">—</div>`;
@@ -3789,18 +3861,21 @@ function standardsSwipe(standards){
           <span>✅ <span class="focus-count">0</span>/${publicItems.length} 已確認</span>
           <div class="focus-progress-bar"><div class="focus-progress-fill" style="width:0%"></div></div>
         </div>
-        <div class="focus-grid">${publicItems.map((item,i)=>`<div class="focus-card" data-fuid="${fuid}" data-fidx="${i}">
+        <div class="focus-grid">${publicItems.map((item,i)=>{
+          const meta=focusSourceMeta(item);
+          return `<div class="focus-card" data-fuid="${fuid}" data-fidx="${i}">
           <div class="focus-header">
             <label class="focus-cb-wrap" onclick="event.stopPropagation()"><input type="checkbox" class="focus-cb" data-fuid="${fuid}" data-fidx="${i}"></label>
             <div class="focus-text">${hl(item.text||item)}</div>
             <span class="focus-source-badge focus-badge-${(item.source||"TFDA").replace(/[^A-Z]/g,"")}">${item.source||"TFDA"} ${item.year||""}</span>
           </div>
-          <div class="focus-body"><div class="focus-body-inner"><strong>🔍 來源：</strong>${item.source||"TFDA"} ${item.type||"實地查核統計"}（${item.year||""}）${
+          <div class="focus-body"><div class="focus-body-inner"><strong>🔍 來源：</strong>${item.source||"TFDA"} ${item.type||"實地查核統計"}（${item.year||""}）<br><strong>官方依據：</strong>${esc(meta.title)}<br><a class="focus-source-link" href="${esc(meta.url)}" target="_blank" rel="noopener">開啟官方來源</a>${
             (item.evidenceToPrepare||item.auditQuestion||item.answerDirection)
             ? `${item.evidenceToPrepare?`<div class="focus-sub focus-sub-evi"><span class="focus-sub-lbl">📋 本部門應準備的證據</span>${esc(item.evidenceToPrepare)}</div>`:""}${item.auditQuestion?`<div class="focus-sub focus-sub-q"><span class="focus-sub-lbl">🧑‍⚖️ 稽查員可能怎麼問</span>${esc(item.auditQuestion)}</div>`:""}${item.answerDirection?`<div class="focus-sub focus-sub-ans"><span class="focus-sub-lbl">💬 公司回答方向</span>${esc(item.answerDirection)}</div>`:""}`
             : `<br><strong>建議：</strong>對照內部 SOP 進行差距分析，完成後以 CAPA 系統追蹤至結案。`
           }</div></div>
-        </div>`).join("")}</div>
+        </div>`;
+        }).join("")}</div>
         <div class="focus-reset-row"><button class="focus-reset" type="button" data-fuid="${fuid}">重置確認</button></div>
       </div>`;
     }
@@ -3994,6 +4069,12 @@ function evidenceMap(s){
   const uid=`em-${s.id}`;
   const focusItems=(s.focus||[]).slice(0,4);
   const auditItems=(s.audit||[]).slice(0,6);
+  const checks=[
+    {key:"realtime",label:"紀錄即時",body:"作業當下完成紀錄，沒有事後補填。"},
+    {key:"complete",label:"欄位完整",body:"必要欄位、附件與責任資訊齊全。"},
+    {key:"approval",label:"簽核日期完整",body:"簽名、日期、審核與核准可辨識。"},
+    {key:"trace",label:"批號可追溯",body:"可由批號追到來源、儲位、出貨與客戶。"}
+  ];
   const focusHtml=focusItems.length?`<ul>${focusItems.map(x=>`<li>${esc(x.text||x)}</li>`).join("")}</ul>`:`<p style="font-size:13px;color:var(--ink-soft)">詳見本頁重點說明。</p>`;
   const auditHtml=auditItems.length?`<ul>${auditItems.map(x=>`<li>${esc(stripInlineCode(x))}</li>`).join("")}</ul>`:`<p style="font-size:13px;color:var(--ink-soft)">詳見本頁稽查查檢表。</p>`;
   return `<div class="ev-chain-hdr">
@@ -4035,7 +4116,20 @@ function evidenceMap(s){
     <div class="metric clickable" data-em-tip="紀錄內容需與現場實際作業相符。數字、批號、操作人員與設備資訊應一致且可核實。"><span class="metric-icon">🎯</span><strong>正確</strong><span>資料與現場一致</span></div>
     <div class="metric clickable" data-em-tip="任何問題都能往回追查：批號→供應商→入庫→儲位→出貨→客戶，責任人清楚可識別。"><span class="metric-icon">🔗</span><strong>可追溯</strong><span>批號、流向、責任清楚</span></div>
   </div>
-  <div id="${uid}-tip" class="em-tip-box" style="display:none"></div>`;
+  <div id="${uid}-tip" class="em-tip-box" style="display:none"></div>
+  <div class="evidence-checkdesk" data-ev-checkdesk="${uid}">
+    <div class="ev-check-head">
+      <strong>證據核對台</strong>
+      <span><span data-ev-count="${uid}">0</span> / ${checks.length} 已確認</span>
+    </div>
+    <div class="ev-check-list">
+      ${checks.map(c=>`<label class="ev-check-item">
+        <input type="checkbox" data-ev-check="${uid}" data-ev-key="${c.key}">
+        <div><span>${esc(c.label)}</span><small>${esc(c.body)}</small></div>
+      </label>`).join("")}
+    </div>
+    <div class="ev-check-fill" data-ev-fill="${uid}"></div>
+  </div>`;
 }
 function kbAnswerHtml(doc){
   return `<div class="kb-answer-card">
@@ -4204,6 +4298,64 @@ function bindEvidenceMap(){
         tipBox.innerHTML=`<strong style="color:var(--gold)">${esc(label)}</strong>：${esc(metric.dataset.emTip)}`;
       }
     });
+  });
+  document.querySelectorAll("[data-ev-checkdesk]").forEach(desk=>{
+    const uid=desk.dataset.evCheckdesk;
+    const boxes=[...desk.querySelectorAll(`[data-ev-check="${uid}"]`)];
+    const count=document.querySelector(`[data-ev-count="${uid}"]`);
+    const fill=document.querySelector(`[data-ev-fill="${uid}"]`);
+    const key=`gdpEvidenceCheck:${uid}`;
+    const saved=JSON.parse(localStorage.getItem(key)||"{}");
+    function refresh(){
+      const done=boxes.filter(b=>b.checked).length;
+      if(count) count.textContent=String(done);
+      if(fill) fill.style.width=`${boxes.length?done/boxes.length*100:0}%`;
+      const state={};
+      boxes.forEach(b=>{state[b.dataset.evKey]=b.checked;});
+      localStorage.setItem(key,JSON.stringify(state));
+    }
+    boxes.forEach(box=>{
+      box.checked=!!saved[box.dataset.evKey];
+      box.addEventListener("change",refresh);
+    });
+    refresh();
+  });
+}
+function bindDocumentMap(){
+  document.querySelectorAll("[data-docmap-status]").forEach(group=>{
+    const id=group.dataset.docmapStatus;
+    const card=group.closest("[data-docmap-card]");
+    const key=`gdpDocMapStatus:${id}`;
+    const saved=localStorage.getItem(key)||"";
+    const buttons=[...group.querySelectorAll("button")];
+    function setStatus(status){
+      if(status){
+        localStorage.setItem(key,status);
+      }else{
+        localStorage.removeItem(key);
+      }
+      if(card) card.dataset.docmapStatus=status;
+      buttons.forEach(btn=>btn.classList.toggle("active",btn.dataset.status===status));
+    }
+    buttons.forEach(btn=>btn.addEventListener("click",()=>{
+      const next=btn.classList.contains("active")?"":btn.dataset.status;
+      setStatus(next);
+    }));
+    setStatus(saved);
+  });
+  document.querySelectorAll("[data-docmap-filter]").forEach(filter=>{
+    const sectionId=filter.dataset.docmapFilter;
+    const buttons=[...filter.querySelectorAll("button")];
+    const cards=[...document.querySelectorAll(`[data-docmap-card="${sectionId}"]`)];
+    function apply(scenario){
+      buttons.forEach(btn=>btn.classList.toggle("active",btn.dataset.docmapScenario===scenario));
+      cards.forEach(card=>{
+        const ok=!scenario||card.dataset.docmapScenarioCard===scenario;
+        card.style.display=ok?"":"none";
+      });
+    }
+    buttons.forEach(btn=>btn.addEventListener("click",()=>apply(btn.dataset.docmapScenario||"")));
+    apply("");
   });
 }
 function bindKbForm(){
@@ -4650,6 +4802,7 @@ async function showSection(id){
   bindFlowDiagrams();
   bindFlipCards();
   bindFocusInteractives();
+  bindDocumentMap();
   bindQaForm(id);
   bindEvidenceMap();
   bindKbForm();
@@ -4701,4 +4854,3 @@ function fmtDate(v){
 </script>
 </body>
 </html>
-
