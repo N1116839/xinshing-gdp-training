@@ -3752,14 +3752,19 @@ function standardsSwipe(standards){
     const items=standards[t.key]||[];
     if(!items.length) return `<div style="padding:20px 18px;color:#aaa;font-size:14px">—</div>`;
     if(t.key==="focus"){
-      if(!items.length) return `<div style="padding:20px 18px;color:#aaa;font-size:14px">—</div>`;
+      // §45：常見缺失只顯示 TFDA 或 PIC/S 公開來源，其他來源不符合規範不顯示
+      const publicItems=items.filter(item=>{
+        const src=String(item.source||"TFDA").toUpperCase();
+        return src==="TFDA"||src==="PICS"||src==="PIC/S";
+      });
+      if(!publicItems.length) return `<div style="padding:20px 18px;color:#aaa;font-size:14px">—</div>`;
       const fuid=`fc${Math.random().toString(36).slice(2,8)}`;
       return `<div class="focus-interactive" data-fuid="${fuid}">
         <div class="focus-progress">
-          <span>✅ <span class="focus-count">0</span>/${items.length} 已確認</span>
+          <span>✅ <span class="focus-count">0</span>/${publicItems.length} 已確認</span>
           <div class="focus-progress-bar"><div class="focus-progress-fill" style="width:0%"></div></div>
         </div>
-        <div class="focus-grid">${items.map((item,i)=>`<div class="focus-card" data-fuid="${fuid}" data-fidx="${i}">
+        <div class="focus-grid">${publicItems.map((item,i)=>`<div class="focus-card" data-fuid="${fuid}" data-fidx="${i}">
           <div class="focus-header">
             <label class="focus-cb-wrap" onclick="event.stopPropagation()"><input type="checkbox" class="focus-cb" data-fuid="${fuid}" data-fidx="${i}"></label>
             <div class="focus-text">${hl(item.text||item)}</div>
