@@ -1,5 +1,36 @@
 # GDP HTML 教育訓練 HANDOFF
-更新：2026-06-02（第四十八次）
+更新：2026-06-02（第四十九次）
+
+## 本輪完成（2026-06-02 第四十九次）✅ 視覺互動化升級 — 流程圖、證據鏈、翻卡、章節標籤
+
+- **使用者要求**：
+  - 翻卡 + 證據鏈：完整視覺化重設計（不只加字體）
+  - 異常升級/藥品回收流程：改為 CSS 垂直流程圖（可點擊展開）
+  - 執行方式 tab：違規（doc code 加粗 hl()），改為純文字
+  - 文件閱讀地圖 / 資料交付時程 / 行事曆：改為「第X章 章節名稱」格式，移除 doc code
+
+- **修改內容**：
+  - **翻卡（auditSlides）**：min-height 230px、字體加大、漸層背景、hint badge 化
+  - **證據鏈（evidenceMap）**：新增 `ev-chain-hdr` banner、A/B panel 加 icon + badge、metric 加圖示
+  - **流程圖**：`deptFlowStepper` → `deptFlowDiagram`（垂直卡片流程圖，箭頭 ▼，點擊展開詳情）+ `bindFlowDiagrams()`
+  - **執行方式 tab**：`company` 卡片 `hl(item)` → `esc(item)`（純文字，無粗體 doc code）
+  - **sourceToChapter**：回傳「第X章 章節名稱」而非只「第X章」
+  - **documentMapSection**：strip doc code，顯示章節標籤 + SOP 簡稱
+  - **deptScheduleSection**：ds-item-title 加章節標籤
+
+- **驗收**：`JS_PARSE_OK 1`，`1296/1296` 通過，0 失敗
+- **commit**：`aaa7d36`，已 push
+
+## ⚠️ 本輪踩坑
+- Edit 工具無法匹配 CRLF 換行檔案的多行字串 → 改用 Node.js 腳本直接做字串替換
+
+## 下次開工提醒
+
+1. Phase 2 H1 員工登入系統（多次延後，優先度最高）
+2. 各部門 audit 問句可再確認是否有識別性詞彙
+3. evidenceMap / trainingTable 其他互動升級
+
+---
 
 ## 本輪完成（2026-06-02 第四十八次）✅ TFDA 驗證常見缺失 + 互動式確認面板
 
