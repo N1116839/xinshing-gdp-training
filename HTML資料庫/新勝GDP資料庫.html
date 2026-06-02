@@ -100,6 +100,28 @@
     .slide-hd{display:flex;align-items:center;gap:10px;padding:13px 18px;color:#fff;font-weight:800;font-size:15px;letter-spacing:.01em}
     .slide-hd-icon{font-size:22px}
     /* item cards */
+    /* ── focus / common deficiencies ── */
+    .focus-interactive{padding:8px 10px 14px}
+    .focus-progress{display:flex;align-items:center;gap:8px;margin:0 8px 12px;padding:6px 12px;background:#faf0f0;border-radius:8px;font-size:13px;font-weight:700;color:#a83232}
+    .focus-progress-bar{flex:1;height:6px;background:#e8cccc;border-radius:4px;overflow:hidden}
+    .focus-progress-fill{height:100%;background:#a83232;border-radius:4px;transition:width .35s}
+    .focus-grid{display:grid;gap:6px}
+    .focus-card{border:1px solid #f0d8d8;border-radius:8px;overflow:hidden;transition:border-color .2s}
+    .focus-card:hover{border-color:#dba0a0}
+    .focus-header{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;cursor:pointer;background:#fffdfd;user-select:none}
+    .focus-cb-wrap{flex-shrink:0;padding-top:2px}
+    .focus-cb{width:18px;height:18px;accent-color:#a83232;cursor:pointer}
+    .focus-text{flex:1;font-size:14px;line-height:1.65;color:var(--ink);min-width:0}
+    .focus-text b{font-weight:800;background:rgba(0,0,0,.06);padding:0 3px;border-radius:3px}
+    .focus-source-badge{flex-shrink:0;font-size:10px;padding:2px 7px;border-radius:4px;background:#e8cccc;color:#7a2222;font-weight:700;white-space:nowrap;margin-top:2px}
+    .focus-body{padding:0 14px 10px;display:none}
+    .focus-body.show{display:block}
+    .focus-body-inner{padding:10px 12px;background:#fcf4f4;border-radius:6px;font-size:13px;color:#666;line-height:1.7}
+    .focus-body-inner strong{color:#a83232}
+    .focus-reset-row{display:flex;justify-content:flex-end;margin-top:10px;padding:0 8px}
+    .focus-reset{font-size:12px;padding:4px 14px;border:1px solid #dba0a0;border-radius:6px;background:#fff;color:#a83232;cursor:pointer;transition:all .2s;font-weight:700}
+    .focus-reset:hover{background:#a83232;color:#fff;border-color:#a83232}
+    /* ── swipe items ── */
     .swipe-item{display:flex;gap:12px;align-items:flex-start;padding:13px 18px;border-bottom:1px solid var(--line);background:#fff;transition:background .12s}
     .swipe-item:last-child{border-bottom:none}
     .swipe-item:hover{background:#f4fbfb}
@@ -519,9 +541,11 @@ const sections = [
       docs:["DM10-01 品質手冊","DP12-01 品質管理系統程序書","DP12-02 偏差管理作業程序（FR12-03）","DP12-03 矯正與預防作業程序書（FR12-04）","DP12-04 變更管制作業程序書","DP14-01 管理階層檢討作業程序","DP15-01 品質風險作業程序書"]
     },
     focus:[
-      "為何做 GDP：藥品出廠後若儲存不當（溫度超標、污染）或來源不明（偽禁仿冒藥），病患可能用到無效甚至有害的藥品。GDP 確保公司在整個批發配送鏈中維持藥品原廠品質。",
-      "品質系統五大保證（DM10-01 核心）：①藥品採購、儲存、供應符合 GDP ②管理職責清楚明定 ③藥品在適當期間交付給正確接收者 ④作業同時紀錄、不事後補填 ⑤偏差文件化、調查並追蹤 CAPA。",
-      "品質績效年度追蹤：申訴數、偏差數、CAPA 結案率、稽核缺失數、訂單逾期率、溫度警報次數，每年管理審查時一併彙整檢視，由 GDP 權責主管確認改善效果。"
+      "品質系統未訂定採購、儲存及供應之相關程序（藥品許可證持有者另須確保產品符合上市許可）。",
+      "管理階層未定期檢討品質系統，或檢討項目未符合西藥優良運銷準則條文規定。",
+      "變更管制未完善：未經風險評估、核准與文件版次管制即實施變更。",
+      "未明確訂定儲存及運輸發生異常時之處理程序與通報路徑。",
+      "CAPA 未有根本原因分析或只描述表面現象，未深入調查系統性問題。"
     ],
     qualityPolicy:[
       {dir:"安全",goal:"防止偽藥進入供應鏈",kpi:"偽藥識別訓練合格分數 ≥ 70 分",icon:"🛡️"},
@@ -549,9 +573,11 @@ const sections = [
       docs:["WI10-01 SMF 廠商基本資料（場所、組織架構、委外物流安排）","藥品清冊（SMF 附件二：品名、許可證字號、持有者、保存溫度、儲位）","供應商清冊（採購維護）","客戶清冊（業務維護）","DP72-01 委外作業程序書（嘉里醫藥物流品質協議依據）"]
     },
     focus:[
-      "公司為有倉儲、無自行運輸的批發模式，運輸全委外部物流商，雙方有合約書與品質協議書；委外物流須維持藥品品質與完整性，發生問題時以 CAPA 系統改善。",
-      "本公司無持有藥品許可證（以經銷商身分運作）；所有品名、許可證字號、許可證持有者、保存溫度、儲位，均可從藥品清冊（SMF 附件二）追溯。",
-      "SMF 若有組織、場所、人員、委外安排異動，需即時更新——不等年度彙整。稽查員一旦發現清冊資料與現況不符，即可記缺失。"
+      "SMF 內容未即時更新：組織、場所、人員或委外安排異動後未同步修正 SMF，稽查員發現清冊與現況不符。",
+      "供應商清冊或客戶清冊未定期更新，與現行核准狀態不一致。",
+      "委外物流無書面合約或品質協議，或合約未清楚界定雙方責任與通報流程。",
+      "藥商許可執照未登載外部倉庫或委外倉庫地址。",
+      "委外活動未定期監測績效或未留有評估紀錄。"
     ],
     companyProfile:{
       basics:[
@@ -602,7 +628,12 @@ const sections = [
         ["文件制修訂",       "—","—","審查","—","—","—","—","主辦"]
       ]
     },
-    focus:["GDP 權責人負責品質系統維持、訓練計畫、供應商/客戶核准、自我查核與委外核准。","管理藥師負責藥品物流供應鏈安全，疑似偽禁仿冒藥與回收需能立即判斷與啟動。","各部門需按程序產生紀錄，紀錄至少依公司程序保存 5 年。"],
+    focus:[
+      "GDP 權責人對 GDP 作業及程序未有足夠知識，無法確保 GDP 符合性。",
+      "各部門人員執行 GDP 作業未即時記錄，有事後補填或編造讀值之情形。",
+      "跨部門資料交接未明確界定輸入、輸出與責任歸屬。",
+      "人員於開始執行 GDP 作業前未達到所界定之能力要求。"
+    ],
     schedule:[["日常","採購、收貨、儲存、訂單、揀貨、出貨與紀錄同步完成。"],["每月","溫度資料整理與運輸溫度核實紀錄追蹤。"],["每年","教育訓練、內部稽核、管理審查、文件定期審查。"]],
     audit:["每個部門是否知道自己負責哪些 GDP 文件與紀錄。","跨部門交接是否有明確輸入、輸出、責任人與核准角色。","日常作業紀錄是否與作業同步完成，不事後補填。","資料缺漏、錯誤或逾期時是否知道偏差提報路徑。","部門人員是否完成職前與持續教育訓練並有考核紀錄。","職務代理是否有授權紀錄，且不違反職能分立。","部門是否能在稽查時快速提出最新版 SOP 與表單。","各部門是否理解回收、客訴、退回、溫度異常時的通報節點。"],
     qa:true
@@ -617,7 +648,12 @@ const sections = [
       company:["每月向倉管收當月溫度紀錄，並追蹤運輸溫度核實資料。","每兩個月向倉管收庫存盤點紀錄，異常時啟動調查與文件化。","每季向委外物流收嘉里醫藥運輸過程溫度記錄 1 筆。","每年向業務收客戶清冊與客戶認可審查紀錄，向採購收供應商評鑑資料。"],
       docs:["DP12-02 偏差管理作業程序","DP14-01 管理階層檢討作業程序","DP24-01 員工教育訓練作業程序","DP33-01 溫度監視作業程序書","DP42-01 文件管制作業程序書","DP52-01 藥品供應商評鑑作業程序","DP53-01 客戶認可審查程序書","DP57-01 訂單、揀貨及配銷管理程序書","DP65-01 藥品回收管理程序書","DP82-01 內部稽核作業程序書"]
     },
-    focus:["這一頁站在收資料的人角度，不列 SOP 未明定的空週期，只列固定週期或發生時啟動的資料節點。","部門篩選只保留 GDP權責人、管理藥師、品保、倉管、採購、業務、文管、人事，便於新人快速記憶自己要交哪些資料。","客戶清冊、供應商清冊、設備保養、溫度測繪、溫度紀錄、偏差/CAPA、客訴/退回/回收，都要能回到表單與 SOP 來源。"],
+    focus:[
+      "未依 SOP 明定週期執行資料收件，導致年度稽核或管理審查前才回頭補資料。",
+      "定期確認紀錄（溫度、庫存、供應商、客戶）未能完整提供或保存期限不足。",
+      "偏差、客訴、退回、回收等品質事件未即時啟動與文件化。",
+      "同一缺失跨年度重複出現，顯示 CAPA 改善措施未有效防止再發。"
+    ],
     collectionCalendar:[
       {freq:"發生時啟動",dept:"品保",data:"偏差事件提報與調查資料",form:"FR12-03 偏差事件處理報告單、FR12-02 偏差事件處理管制表",owner:"品保 / GDP 權責人 / 發生部門",source:"DP12-02",note:"發現 GDP 作業與規範或 SOP 發生偏差時立即提報；溫度偏差、停電、文件不完整、資格檢查不足皆屬可能來源。"},
       {freq:"發生時啟動",dept:"品保",data:"矯正與預防措施執行資料",form:"FR12-04 矯正與預防處理單",owner:"品保 / 責任部門",source:"DP12-03",note:"偏差、稽核缺失或重複問題需 CAPA 時，由責任部門提出原因分析、改善措施與完成期限。"},
@@ -709,7 +745,13 @@ const sections = [
       company:["關鍵設備清單（FR34-02）涵蓋 UPS、分離式冷氣、柴油發電機、溫控警報、門禁警報","設備定期保養維修記錄填 FR34-03，倉管負責日常保養","溫度計與溫濕度記錄器每年 12 月底外部校正，報告保存 5 年","倉儲環境每三年執行夏/冬季溫度測繪各 7 天；夏季為 7～9 月、冬季為隔年 1～3 月，重大事件不等三年"],
       docs:["DP34-01 關鍵設備作業程序書（FR34-02 設備清單、FR34-03 保養紀錄）","DP34-02 量測儀器作業程序書（外部校正報告）","DP33-01 溫度監視作業程序書（溫度測繪報告）","DP36-01 驗證確效作業程序書（4Q 確效報告）"]
     },
-    focus:["UPS、冷氣、柴油發電機、溫控警報每月必查；門禁警報每半年保養；設備異常需提報 FR12-03 偏差，調查後執行 CAPA。","量測儀器（溫度計、溫濕度記錄器）每年外部校正，電池每季更換並依中原標準時間重新校正；校正報告保存 5 年。","倉儲環境溫度測繪：無重大事件每三年一次，夏季 7～9 月、冬季隔年 1～3 月各測量 7 天。"],
+    focus:[
+      "溫度監測設備未定期校正，或校正報告未留存（含委外校正報告未有公司文件化紀錄）。",
+      "倉庫管制溫度與藥品核定儲存溫度不一致。",
+      "溫度測繪評估方式不具代表性（如夏季或冬季未各測 7 天），或未依測繪結果放置溫度記錄器。",
+      "關鍵設備未建立保養計畫，或保養紀錄未包含日期、執行人與結果。",
+      "量測儀器校正報告結果不合格時，未評估對已儲存藥品之影響。"
+    ],
     equipmentRef:"collection-calendar",
     schedule:[["每月","UPS / 分離式冷氣外觀 / 柴油發電機發動 / 溫控警報功能測試。"],["每季","冷氣濾網保養、柴油量電池確認、溫度計電池更換與時間校正。"],["每半年","門禁警報系統保養檢查。"],["每年","冷氣外機鰭片、柴油引擎檢查、量測儀器外部校正（12 月底）。"],["每三年","倉儲環境夏季 7～9 月、冬季隔年 1～3 月溫度測繪，各 7 天。"],["重大事件/環境變更","立即評估是否需再確效或重新測繪，不等例行週期。"]],
     audit:["FR34-02 設備清單是否涵蓋所有 GDP 關鍵設備，且與現場一致。","FR34-03 保養紀錄是否依計畫頻率執行，每次有日期、執行人與結果。","量測儀器外部校正報告是否在有效期內，校正結果在合格範圍。","校正報告是否保存 5 年，且可即時提供。","電池更換後是否即時校正時間至中原標準時間。","溫度測繪報告是否完整，夏季 7～9 月、冬季隔年 1～3 月各 7 天。","重大事件時是否啟動即時再確效評估，不等三年例行週期。","設備異常是否有偏差提報（FR12-03）與後續 CAPA 追蹤紀錄。"],
@@ -733,7 +775,12 @@ const sections = [
       title:"教育訓練執行流程",
       steps:[["01","訓練計畫","GDP 權責人核准\n年度訓練計畫","DP24-01"],["02","通知受訓","通知各部門\n受訓人員名單",""],["03","執行訓練","授課講師主導\n講授/演練/示範","FR24-02"],["04","測驗考核","書面或口試測驗\n合格 ≥ 70 分",""],["05","紀錄歸檔","訓練紀錄簽核\n文管存檔 ≥5 年",""],["06","有效性評估","品保確認訓練\n效果是否達標","DP24-01"]]
     }],
-    focus:["所有參與 GDP 活動的人員，在開始執行作業前必須達到所界定的能力要求。","訓練有效性需評估，若認知不足應依教育訓練程序補訓並再次評鑑合格。","偽禁仿冒藥識別訓練需完成且有合格紀錄（稽查必查）。"],
+    focus:[
+      "人員於開始執行 GDP 作業前未達到所界定之能力要求。",
+      "訓練紀錄不完整，未包含訓練日期、內容、講師、受訓者與考核結果。",
+      "訓練有效性未評估，或認知不足時未依程序補訓並再次評鑑合格。",
+      "偽禁仿冒藥識別訓練未完成或無合格紀錄（稽查必查項目）。"
+    ],
     schedule:[["到職前","完成職前訓練與 GDP 基礎課程，達合格門檻才可獨立作業。"],["每年","依訓練計畫執行年度持續訓練，GDP 權責人每年至少參加一次外部訓練。"],["文件修訂後","相關人員須完成訓練與考核後，文件才可生效。"]],
     audit:["所有 GDP 活動人員是否完成職前與持續訓練並有合格紀錄。","訓練紀錄是否包含訓練日期、內容、講師、受訓者與考核結果。","GDP 權責人是否每年至少參加一次外部訓練（FR24-01）。","內部訓練測驗是否達合格門檻，未合格者是否完成補訓。","偽禁仿冒藥識別訓練是否完成且有合格紀錄。","職務說明書是否連結 GDP 訓練合格要求與職責。","人員衛生、門禁、病媒防治紀錄是否齊備且最新。","代理人是否完成同等能力訓練並有授權紀錄。"],
     qa:true
@@ -752,7 +799,12 @@ const sections = [
       title:"異常升級與 CAPA 追蹤閉環",
       steps:[["01","發生異常","各部門識別\n偏差事件","FR12-03"],["02","品保調查","調查根本原因\n風險評估","DP12-02"],["03","GDP 權責人審核","審核調查結果\n核准處置方向",""],["04","CAPA 執行","責任單位\n執行改善措施","DP12-03"],["05","有效性確認","品保確認改善\n效果是否達標",""],["06","提報管審","結案後納入\n管理階層檢討","DP14-01"]]
     }],
-    focus:["確保品質系統執行及維持，並取得必要資源與權限。","確保職前及持續訓練計畫執行，並維持 GDP 規範執行能力。","核准可能影響 GDP 符合性的轉委託作業，追蹤自我查核與 CAPA。"],
+    focus:[
+      "GDP 權責人對 GDP 作業及程序未有足夠知識，無法確保品質系統符合性。",
+      "品質系統未獲得維持所需之資源與權限。",
+      "轉委託（分包）作業未經 GDP 權責人核准，或核准未文件化。",
+      "自我查核缺失未執行必要矯正措施，或 CAPA 未有效追蹤至結案。"
+    ],
     schedule:[["異常提報後","審核偏差/CAPA，追蹤改善與必要升級。"],["內稽前","確認稽核計畫、範圍、稽核通知與部門準備。"],["管審時","彙整品質系統績效、重大缺失、改善追蹤與資源需求。"]],
     audit:["GDP 權責人任命書、職務說明與授權是否完整。","權責人是否確保品質系統維持、訓練計畫與資源到位。","供應商、客戶與委外作業核准是否有權責人審核或追蹤。","自我查核計畫是否事先安排，缺失是否執行必要矯正措施。","重大偏差、CAPA、變更是否由權責人審核與追蹤。","代理人制度是否清楚，緊急事件或非營業時段是否可聯繫。","跨職能支援是否保留授權與執行紀錄。","管審資料是否呈現品質系統績效、趨勢與待改善事項。"],
     qa:true
@@ -771,7 +823,13 @@ const sections = [
       {title:"藥品回收執行流程",steps:[["01","接獲回收通知","製造商/食藥署\n或公司自發回收","DP65-01"],["02","確認批號範圍","查詢運銷紀錄\n確認影響批號",""],["03","聯繫客戶","通知受影響客戶\n停止使用/銷售",""],["04","收回藥品","記錄回收數量\n核對批號效期",""],["05","隔離評估","移置非符合區\n等候處置指示",""],["06","結案通報","回收完成率\n通報主管機關","DP65-01"]]},
       {title:"疑似偽禁仿冒藥處理流程",steps:[["01","疑似識別","現場人員察覺\n外觀/文件異常","DP64-01"],["02","立即停止銷售","隔離疑似品\n貼非符合標示",""],["03","上呈管理藥師","判斷是否疑似\n偽禁仿冒藥",""],["04","通報主管機關","通知食藥署\n及上市許可持有廠商",""],["05","紀錄與結案","完成處置紀錄\n並歸檔",""]]}
     ],
-    focus:["疑似偽禁仿冒藥須立即上呈管理藥師，判定後停止銷售並移入非符合區。","必要時通知主管機關與上市供應藥品許可持有廠商，依指示執行。","模擬回收應選擇配送多家客戶的同批號藥品，不能只挑單一客戶批號。"],
+    focus:[
+      "申訴程序未區分藥品品質及運銷相關之申訴，或未指導藥品品質申訴應通知製造商與主管機關。",
+      "疑似偽禁仿冒藥程序定義範圍不完整，未納入所有可能來源（如退回品、異常低價品）。",
+      "藥品回收作業程序未涵蓋回收有效性評估（模擬回收），或模擬回收頻率不符合西藥優良運銷準則規定。",
+      "退回品處理程序未涵蓋準則規定，或未留有退回品評估紀錄。",
+      "退回品未確實隔離即回到可銷售庫存，或未經風險評估即判定處置方式。"
+    ],
     schedule:[["立即","疑似偽禁仿冒藥、回收事件、重大品質疑慮須立即通報與隔離。"],["回收啟動時","確認批號、數量、客戶流向、通知紀錄與回收進度。"],["年度","規劃或執行模擬回收，檢討可追溯性與回收效率。"]],
     audit:["疑似偽禁仿冒藥是否立即停止銷售、隔離並上呈管理藥師。","非符合區標示、實體隔離與處置紀錄是否完整。","必要通知主管機關與上市許可持有廠商的流程是否明確。","回收啟動條件、緊急程度、客戶通知與行動指令是否可追溯。","運銷紀錄是否能快速提供客戶、批號、數量與聯絡資訊。","模擬回收是否選擇足以測試多客戶追溯能力的批號。","退回品是否經風險判斷，不能回售者是否報廢處置。","偽禁仿冒藥識別教育訓練是否完成且有合格紀錄。"],
     qa:true
@@ -790,7 +848,12 @@ const sections = [
       title:"內部稽核執行流程",
       steps:[["01","計畫訂定","年度稽核計畫\n含範圍與日程","DP82-01"],["02","稽核通知","提前通知\n被稽核部門",""],["03","稽核執行","依查檢表\n現場查核紀錄","FR82"],["04","缺失開立","判定缺失等級\n開立矯正預防單","FR12-04"],["05","責任改善","責任單位\n執行改善措施",""],["06","有效性確認","品保確認後\n提報管理審查","DP14-01"]]
     }],
-    focus:["偏差事件需評估潛在風險與 GDP 符合性影響，記錄根本原因與建議方案。","內稽缺失若判定為不符合事項，應開立 FR12-04 矯正與預防處理單。","責任部門改善後，品保需查證措施有效性並彙整報告。"],
+    focus:[
+      "偏差事件未即時提報，或未完成根本原因分析與風險評估。",
+      "CAPA 無責任歸屬、完成期限、有效性確認或結案紀錄。",
+      "內部稽核未依計畫執行，或缺失未追蹤矯正至結案。",
+      "稽核報告內容過於簡略，未具體描述觀察事項與判定依據。"
+    ],
     schedule:[["偏差發生時","收件、分類、調查、風險評估、建議處置。"],["內稽前","準備查檢表，納入先前內外稽核缺失。"],["內稽後","轉責任單位改善，追蹤有效性，提報管理審查。"]],
     audit:["偏差事件處理報告單是否有日期、描述、簽署與編號。","偏差分類是否依品質風險管理原則判定。","調查是否指出根本原因，而不是只描述表面現象。","CAPA 是否有責任單位、完成期限與追蹤狀態。","內稽查檢表是否包含前次缺失與本次查核重點。","缺失判定是否有證據，且與被稽核部門確認。","改善完成後是否由品保確認有效性。","內稽報告與 CAPA 是否提報 GDP 權責人與管理審查。"],
     qa:true
@@ -809,7 +872,13 @@ const sections = [
       title:"進貨到出貨完整作業流程",
       steps:[["01","到貨","供應商送達\n核對採購單","DP54-01"],["02","驗收","品名/批號/效期\n外觀/數量核對","FR54"],["03","入庫","依保存條件\n分區存放","DP55-01"],["04","溫度監控","每日監控\n每月末整理紀錄","FR33-01"],["05","揀貨","銷貨單/FEFO\n指定批號揀取","DP57-01"],["06","出貨複查","複查後交配送\n出貨紀錄完成",""]]
     }],
-    focus:["收貨應確認貨物正確、來自核准供應商，且運送期間未明顯受損。","倉管每月上班最後一日整理當月溫度紀錄並檢視是否有偏差。","揀貨需依銷貨單指定批號，確認品名、批號、數量與出貨資料。"],
+    focus:[
+      "倉庫管制溫度與藥品核定儲存溫度不一致。",
+      "未規範進貨點收程序，或未確認藥品來自合格供應商。",
+      "未有定期確認倉庫連續溫度之紀錄（每月末整理與偏差檢視）。",
+      "未依照先到期先出貨（FEFO）原則運作。",
+      "溫度異常時未立即通知管理藥師並移置非符合區評估。"
+    ],
     schedule:[["到貨當下","核對供應商、品名、批號、效期、數量、外觀與必要文件。"],["每日/持續","監控儲存環境與門禁狀態，異常立即通知管理藥師。"],["每月最後上班日","整理當月溫度紀錄，若有異常依偏差/CAPA 流程處理。"]],
     audit:["到貨是否確認供應商核准狀態、品名、批號、效期、數量與外觀。","收貨、驗收、入庫紀錄是否與實際作業同步完成。","藥品是否依保存條件、品項、規格、批號與儲位分區管理。","溫度監測設備位置是否依溫度測繪或風險評估配置。","每月最後上班日是否整理當月溫度紀錄並檢視偏差。","溫度異常是否立即通知管理藥師並移置非符合區評估。","揀貨是否依銷貨單指定批號，並於出貨前複查。","門禁、訪客、清潔、病媒與關鍵設備紀錄是否可提供。"],
     qa:true
@@ -828,7 +897,12 @@ const sections = [
       title:"供應商資格認可流程",
       steps:[["01","採購需求","業務/倉管提出\n進貨需求",""],["02","資格資料","許可證/GMP\nPMF核備函收集","DP52-01"],["03","實質評估","法規資格/\n能力/可靠性",""],["04","GDP 核准","GDP 權責人核准\n清冊更新",""],["05","定期審閱","年度評鑑\n確認資格有效",""]]
     }],
-    focus:["任何藥品採購前，應對供應商進行資格認可及核准，結果需文件化。","新供應商需實質檢核其能力、可靠性、法規資格與供應藥品適當性。","採購紀錄需保留採購日期、藥品名稱、數量、供應商、批號與有效期限。"],
+    focus:[
+      "供應商資格認可程序不完整，未確認供應商之 GDP 符合性（如是否有 GDP 證明）。",
+      "未定期確認供應商狀態，或資格文件過期未及時更新。",
+      "採購紀錄未包含批號、效期、供應商等必要追溯資訊。",
+      "新供應商未完成實質檢核（能力、可靠性、法規資格）即核准採購。"
+    ],
     schedule:[["採購前","確認供應商已核准且資料有效。"],["新供應商","完成資格資料收集、風險評估、核准與清冊更新。"],["年度/定期","配合供應商定期審閱與評鑑。"]],
     audit:["採購前是否確認供應商已完成資格認可與核准。","新供應商是否完成實質檢核、風險評估與文件化結果。","國內、國外、批發運銷商或代理商資格資料是否齊備。","國外供應商是否確認 PIC/S GMP、PMF 核備函或相關上市許可。","供應商定期審閱是否依風險導向執行。","採購紀錄是否包含日期、藥品名稱、數量、供應商、批號與效期。","異常價格、來源可疑或資格文件過期是否會升級處理。","採購資料是否可支援回收、退回與供應鏈追溯。"],
     qa:true
@@ -847,7 +921,12 @@ const sections = [
       {title:"客戶資格認可流程",steps:[["01","新客戶申請","提供資格文件\n許可證/醫事代碼","DP53-01"],["02","資格審查","核對法令資格\n確認文件完整性",""],["03","核准與清冊","通過核准\n加入客戶清冊",""],["04","定期複查","資格文件到期\n重新確認",""],["05","異常停止","資格異常\n暫停出貨","DP53-01"]]},
       {title:"訂單到出貨流程",steps:[["01","客戶下單","確認客戶資格\n建立訂單編號","DP57-01"],["02","倉管揀貨","依 FEFO 揀取\n指定批號",""],["03","出貨複查","複查品名/批號\n數量/客戶",""],["04","配送","交嘉里醫藥\n或自行配送",""],["05","出貨紀錄","完成出貨憑單\n批號/效期/數量","DP57-01"]]}
     ],
-    focus:["藥品應供應給符合法令要求的對象，客戶資格文件需定期複查。","業務接單後應在系統建立訂單編號，作為銷售追溯依據。","客訴需區分藥品品質與運銷品質，運銷品質原則上一個月內結案。"],
+    focus:[
+      "客戶認可程序未訂定適用對象，或未涵蓋所有客戶類別。",
+      "未定期確認客戶狀態，或客戶資格文件過期未重新審查。",
+      "運銷紀錄未記載藥品批號、效期等完整追溯資訊。",
+      "客訴未區分藥品品質與運銷品質，或運銷品質客訴逾時未結案。"
+    ],
     schedule:[["接單時","確認客戶資格、訂單日期、品項、數量與特殊要求。"],["客訴受理時","登錄原始細節，必要時通知製造商、主管機關或啟動 CAPA。"],["退貨需求時","先查證是否為本公司出貨，核對批號、效期與銷貨紀錄。"]],
     audit:["客戶是否具備藥品販賣或合法使用資格文件。","客戶資格是否定期複查，文件過期是否停止或限制出貨。","訂單是否建立下單日期與訂單編號，支援追溯。","出貨資訊是否包含品名、劑型、批號、效期、數量、客戶與地址。","客訴是否區分藥品品質與運銷品質並登錄原始細節。","運銷品質客訴是否原則上一個月內結案並管制進度。","退貨是否先查證為本公司出貨，核對批號、效期與銷售資料。","回收時業務是否能聯繫客戶並回報庫存與回收數量。"],
     qa:true
@@ -866,7 +945,13 @@ const sections = [
       title:"文件生命週期",
       steps:[["01","提出制修訂","各部門或品保\n提出修訂需求","DP42-01"],["02","審查核准","審查者/核准者\n簽核確認",""],["03","文管登錄","更新文件總覽表\n確認版次與編號",""],["04","發行","紙本蓋發行章\n舊版回收",""],["05","訓練考核","相關人員完成\n訓練與考核","DP24-01"],["06","文件生效","達合格門檻後\n新版正式生效",""]]
     }],
-    focus:["正式文件紙本應由文管存放於文件櫃，紙本加蓋發行章為正式版本。","電子內容檔同步放於公司共用資料夾供查閱，不作為正式簽核依據。","品質紀錄保存期限至少 5 年，跨年度紀錄由文管保管並利於索引。"],
+    focus:[
+      "GDP 相關 SOP 未依實際作業狀況更新，內容與現場不一致。",
+      "文件管理程序未規範文件定期審查，或審查未按時執行。",
+      "文件審核及核准人員未簽署日期。",
+      "執行作業未即時記錄，有事後補填情形；權責人員承認填寫編造的讀值。",
+      "作廢文件未即時撤除，或現場仍使用過期版本文件。"
+    ],
     schedule:[["文件核准後","登錄文件總覽表、確認版次、發行正式文件。"],["每年12月","向相關單位徵詢文件修改意見，進行定期審查。"],["每年第一個星期","挑出屆保管期限之作廢文件，依程序簽核銷毀。"]],
     audit:["正式文件是否經制定、審查、核准、登錄與發行。","紙本正式文件是否加蓋發行章並由文管控管。","電子檔是否僅供查閱，不取代正式簽核依據。","文件修訂後是否完成教育訓練與考核才生效。","文件總覽表是否反映最新版編號、版次與狀態。","每年 12 月是否徵詢文件修改意見並執行定期審查。","作廢文件是否移除、歸檔並依期限銷毀。","品質紀錄是否至少保存 5 年，跨年度由文管保管並可索引。"],
     qa:true
@@ -3113,7 +3198,8 @@ function standardsSwipe(standards){
   const tabs=[
     {key:"picsgdp",label:"PIC/S GDP",  fullLabel:"PIC/S GDP 國際規範",    icon:"🌐", col:"#0a4d8a",bg:"#eef2f9"},
     {key:"taiwan", label:"台灣食藥署",  fullLabel:"台灣食藥署規定",         icon:"🇹🇼",col:"#006437",bg:"#edf5ef"},
-    {key:"company",label:"執行方式",    fullLabel:"執行方式（依內部文件）", icon:"🏢", col:"#0f5b50",bg:"#eaf3f1"}
+    {key:"company",label:"執行方式",    fullLabel:"執行方式（依內部文件）", icon:"🏢", col:"#0f5b50",bg:"#eaf3f1"},
+    {key:"focus",  label:"常見缺失",    fullLabel:"政府公開常見缺失",       icon:"🔍", col:"#a83232",bg:"#fdf5f5"}
   ];
   function hl(text){
     return text.replace(/([A-Z]{2}\d{2}-\d{2})/g,'<b>$1</b>');
@@ -3123,10 +3209,22 @@ function standardsSwipe(standards){
     if(!items.length) return `<div style="padding:20px 18px;color:#aaa;font-size:14px">—</div>`;
     if(t.key==="focus"){
       if(!items.length) return `<div style="padding:20px 18px;color:#aaa;font-size:14px">—</div>`;
-      return `<div class="spec-rule-grid">${items.map((item,i)=>`<div class="spec-rule-card">
-        <div class="spec-rule-num" style="background:${t.col}">⚠️</div>
-        <div class="spec-rule-text">${hl(item)}</div>
-      </div>`).join("")}</div>`;
+      const fuid=`fc${Math.random().toString(36).slice(2,8)}`;
+      return `<div class="focus-interactive" data-fuid="${fuid}">
+        <div class="focus-progress">
+          <span>✅ <span class="focus-count">0</span>/${items.length} 已確認</span>
+          <div class="focus-progress-bar"><div class="focus-progress-fill" style="width:0%"></div></div>
+        </div>
+        <div class="focus-grid">${items.map((item,i)=>`<div class="focus-card" data-fuid="${fuid}" data-fidx="${i}">
+          <div class="focus-header">
+            <label class="focus-cb-wrap" onclick="event.stopPropagation()"><input type="checkbox" class="focus-cb" data-fuid="${fuid}" data-fidx="${i}"></label>
+            <div class="focus-text">${hl(item)}</div>
+            <span class="focus-source-badge">TFDA</span>
+          </div>
+          <div class="focus-body"><div class="focus-body-inner"><strong>🔍 改善對策參考：</strong>參照 TFDA 食藥署 GDP 實地查核常見缺失統計（2024-2025），建議對照內部 SOP 進行差距分析，完成後以 CAPA 系統追蹤至結案。</div></div>
+        </div>`).join("")}</div>
+        <div class="focus-reset-row"><button class="focus-reset" type="button" data-fuid="${fuid}">重置確認</button></div>
+      </div>`;
     }
     if(t.key==="company"){
       const ci=txt=>{
@@ -3749,14 +3847,51 @@ function bindAuditFocus(){
   });
 }
 function bindFlowSteppers(){
-  document.querySelectorAll(".fstep-btn[data-fsuid]").forEach(btn=>{
-    btn.addEventListener("click",()=>{
-      const uid=btn.dataset.fsuid;
-      const i=parseInt(btn.dataset.fsi);
-      document.querySelectorAll(`.fstep-btn[data-fsuid="${uid}"]`).forEach(b=>b.classList.remove("active"));
-      btn.classList.add("active");
-      const wrap=btn.closest(".fstepper");
-      if(wrap) wrap.querySelectorAll(".fstep-detail").forEach((d,j)=>d.classList.toggle("show",j===i));
+  document.querySelectorAll(".fstepper").forEach(panel=>{
+    const uid=panel.dataset.fsuid;
+    const btns=panel.querySelectorAll(".fstep-btn");
+    const details=panel.querySelectorAll(`[id^="${uid}-d"]`);
+    btns.forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        const i=parseInt(btn.dataset.fsi);
+        btns.forEach(b=>b.classList.toggle("active",b===btn));
+        details.forEach((d,j)=>d.classList.toggle("show",j===i));
+      });
+    });
+  });
+}
+function bindFocusInteractives(){
+  document.querySelectorAll(".focus-interactive").forEach(panel=>{
+    const fuid=panel.dataset.fuid;
+    const cbs=panel.querySelectorAll(".focus-cb");
+    const count=panel.querySelector(".focus-count");
+    const fill=panel.querySelector(".focus-progress-fill");
+    const total=cbs.length;
+    function update(){
+      const n=[...cbs].filter(c=>c.checked).length;
+      if(count) count.textContent=n;
+      if(fill) fill.style.width=`${total?((n/total)*100):0}%`;
+    }
+    cbs.forEach(cb=>{
+      const idx=cb.dataset.fidx;
+      cb.checked=localStorage.getItem(`gdp-focus-${fuid}-${idx}`)==="1";
+      cb.addEventListener("change",()=>{
+        localStorage.setItem(`gdp-focus-${fuid}-${idx}`,cb.checked?"1":"0");
+        update();
+      });
+    });
+    update();
+    panel.querySelector(".focus-header")?.addEventListener("click",function(){
+      const body=this.parentElement.querySelector(".focus-body");
+      if(body) body.classList.toggle("show");
+    });
+    panel.querySelector(".focus-reset")?.addEventListener("click",function(){
+      const puid=this.dataset.fuid;
+      document.querySelectorAll(`.focus-interactive[data-fuid="${puid}"] .focus-cb`).forEach(cb=>{
+        cb.checked=false;
+        localStorage.removeItem(`gdp-focus-${puid}-${cb.dataset.fidx}`);
+      });
+      update();
     });
   });
 }
@@ -3888,6 +4023,7 @@ async function showSection(id){
   bindAuditFocus();
   bindFlowSteppers();
   bindFlipCards();
+  bindFocusInteractives();
   bindQaForm(id);
   bindDocButtons();
   bindEvidenceMap();
