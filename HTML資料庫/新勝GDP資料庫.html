@@ -62,9 +62,18 @@
     .brief-grid,.doc-map-grid,.governance-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
     .brief-card,.doc-map-card,.governance-card{padding:14px;background:#f7fbfb;border:1px solid var(--line);border-top:4px solid var(--brand)}
     .brief-card strong,.doc-map-card strong,.governance-card strong{display:block;margin-bottom:8px;color:var(--brand);font-size:16px}
-    .brief-card p,.governance-card p{margin:0;color:var(--ink-soft);line-height:1.65}
-    .doc-map-card ul{margin-top:6px}
-    .doc-map-card small{display:block;color:var(--gold);font-weight:800;margin-bottom:6px}
+
+  .brief-card ul,.doc-map-card ul{margin:0;padding-left:18px}
+  .brief-card li,.doc-map-card li{font-size:13px;line-height:1.7;color:#444}
+  .doc-map-card ul{margin-top:6px}
+  .doc-map-card small{display:block;color:var(--gold);font-weight:800;margin-bottom:6px}
+  .doc-map-flow{display:flex;align-items:flex-start;gap:6px;margin-bottom:8px;font-size:13px;line-height:1.55}
+  .doc-map-flow:last-child{margin-bottom:0}
+  .doc-map-flow-label{flex-shrink:0;font-size:10px;font-weight:800;padding:2px 7px;border-radius:4px;background:var(--brand);color:#fff;letter-spacing:.03em;margin-top:1px}
+  .doc-map-flow-want{flex:1;color:var(--ink);font-weight:600}
+  .doc-map-flow-request{flex:1;color:var(--ink);font-weight:700}
+  .doc-map-flow-purpose{flex:1;color:#555}
+  .doc-map-flow-arrow{text-align:center;color:var(--gold);font-size:11px;margin:-2px 0 2px 18px}
     .slide-label{display:inline-grid;place-items:center;width:40px;height:40px;margin-bottom:8px;color:#fff;background:var(--gold);border-radius:50%;font-weight:800}
     .audit-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
     .audit-card{min-height:140px;padding:14px;background:#f4faf9;border:1px solid #cde0dd;border-top:5px solid var(--brand);font-size:15px;line-height:1.55;text-align:left;cursor:pointer}
@@ -1137,76 +1146,95 @@ const visualAssets = {
 
 const departmentDocumentMaps = {
   departments:{
-    intro:"新人可先依「核心共讀、作業共用、異常與查核」三個方向閱讀，先建立整體 GDP 作業地圖，再回到各部門日常責任。",
+    intro:"新人可依「我想了解什麼→調閱什麼→為什麼調閱」的路徑學習，先建立整體 GDP 作業概念，再回到各部門日常責任。",
     groups:[
-      {label:"核心共讀",note:"所有 GDP 人員都要理解",docs:["DM10-01 品質手冊","WI10-01 SMF廠商基本資料","DP12-01 品質管理系統程序書","DP22-01 組織與職掌標準作業程序"]},
-      {label:"作業共用",note:"跨部門交接會遇到",docs:["DP52-01 藥品供應商評鑑作業程序","DP53-01 客戶認可審查程序書","DP54-01 藥品進出貨管理程序書","DP57-01 訂單、揀貨及配銷管理程序書"]},
-      {label:"異常與查核",note:"事情不順或稽查時會用",docs:["DP12-02 偏差管理作業程序","DP12-03 矯正與預防作業程序書","DP62-01 客訴管理作業程序書","DP63-01 退回","DP65-01 藥品回收管理程序書","DP82-01 內部稽核作業程序書"]}
+      {want:"品質系統涵蓋範圍與整體架構",request:"DM10-01 品質手冊",purpose:"了解品質政策、五大保證與品質目標 KPI，新人入職第 一份必讀"},
+      {want:"公司 GDP 作業邊界與場所組織",request:"WI10-01 SMF 廠商基本資料",purpose:"確認作業場所、產品範圍、委外安排與緊急聯絡方式"},
+      {want:"各部門在 GDP 中的角色與職責",request:"DP22-01 組織與職掌標準作業程序",purpose:"知道每個職位的 GDP 權責、代理人與跨部門交接關係"},
+      {want:"偏差發生該怎麼提報與調查",request:"DP12-02 偏差管理作業程序",purpose:"了解偏差分類、通報路徑、風險評估與 CAPA 連接"},
+      {want:"供應商資格怎麼認可與管理",request:"DP52-01 藥品供應商評鑑作業程序",purpose:"掌握供應商核准流程、定期評鑑與不合格處理"},
+      {want:"訂單建立到出貨的完整流程",request:"DP57-01 訂單、揀貨及配銷管理程序書",purpose:"了解揀貨、出貨複查與配銷紀錄要求"},
+      {want:"客訴怎麼分類與處理到結案",request:"DP62-01 客訴管理作業程序書",purpose:"知道藥品品質與運銷品質申訴的區分及結案期限"}
     ]
   },
   personnel:{
     intro:"人事不是只看訓練表，還要確保組織職掌、代理人、門禁與衛生清潔能支持 GDP 作業。",
     groups:[
-      {label:"必讀文件",note:"新人與異動必看",docs:["DP22-01 組織與職掌標準作業程序","DP24-01 員工教育訓練作業程序","DP25-01 人員衛生暨環境清潔作業程序書"]},
-      {label:"共用",note:"會與倉管、文管、GDP 權責人交接",docs:["WI22-01 組織圖暨員工職務說明書","FR22-01 組織各職稱指派名單","WI25-01 門禁進出管制規定"]},
-      {label:"稽查常用",note:"資格與訓練證據",docs:["FR24-01 外部訓練紀錄","FR24-02 內部訓練紀錄","補訓與再評鑑紀錄"]}
+      {want:"組織職掌與各職位 GDP 責任",request:"DP22-01 組織與職掌標準作業程序",purpose:"確認各職位說明書、代理人制度與部門交接歸屬"},
+      {want:"教育訓練怎麼規劃與執行",request:"DP24-01 員工教育訓練作業程序",purpose:"了解職前訓練、年度持續訓練與測驗合格標準"},
+      {want:"人員衛生與門禁管制規定",request:"DP25-01 人員衛生暨環境清潔作業程序書",purpose:"確認門禁授權、人員清潔與病媒防治要求"},
+      {want:"外部訓練參加與紀錄查詢",request:"FR24-01 外部訓練紀錄",purpose:"查詢 GDP 權責人外部訓練計畫與完成情形"},
+      {want:"個人訓練合格狀態確認",request:"FR24-02 內部訓練紀錄",purpose:"確認自己與部門同仁是否完成必要訓練並留有考核"}
     ]
   },
   rp:{
     intro:"GDP 權責人要看的是整個系統是否運作，不是只看任命書；供應商、客戶、委外、偏差、內稽與管理審查都會回到這個角色。",
     groups:[
-      {label:"必讀文件",note:"系統責任",docs:["DM10-01 品質手冊","DP12-01 品質管理系統程序書","DP14-01 管理階層檢討作業程序","DP82-01 內部稽核作業程序書"]},
-      {label:"共用",note:"需要核准或追蹤",docs:["DP52-01 藥品供應商評鑑作業程序","DP53-01 客戶認可審查程序書","DP72-01 委外作業程序書","WI10-01 SMF廠商基本資料"]},
-      {label:"異常",note:"需審核與追蹤結案",docs:["DP12-02 偏差管理作業程序","DP12-03 矯正與預防作業程序書","DP12-04 變更管制作業程序書","DP15-01 品質風險作業程序書"]}
+      {want:"品質系統整體責任與委外監督",request:"DM10-01 品質手冊",purpose:"確認品質系統範圍、GDP 權責人職責與委外管理原則"},
+      {want:"管理階層檢討該準備什麼",request:"DP14-01 管理階層檢討作業程序",purpose:"了解管審輸入項目、績效指標與決策追蹤"},
+      {want:"偏差審核與 CAPA 追蹤結案",request:"DP12-02 偏差管理作業程序",purpose:"掌握偏差升級判斷、調查核准與 CAPA 有效性確認"},
+      {want:"供應商與客戶資格核准權責",request:"DP52-01 藥品供應商評鑑作業程序",purpose:"確認權責人對新供應商與客戶資格的最終核准流程"},
+      {want:"內部稽核計畫與缺失追蹤",request:"DP82-01 內部稽核作業程序書",purpose:"確保年度稽核涵蓋所有 GDP 活動，缺失改善追蹤至結案"}
     ]
   },
   pharmacist:{
     intro:"管理藥師重點是藥品安全判斷與緊急處置，需連結回收、退回、偽禁仿冒藥與配送紀錄。",
     groups:[
-      {label:"必讀文件",note:"藥品安全事件",docs:["DP64-01 偽禁仿冒藥作業程序書","DP65-01 藥品回收管理程序書","DP63-01 退回品管理作業程序書"]},
-      {label:"共用",note:"需要查批號、客戶與庫存",docs:["DP57-01 訂單、揀貨及配銷管理程序書","DP54-01 藥品進出貨管理程序書","DP55-01 產品儲存作業程序書"]},
-      {label:"稽查常用",note:"是否能快速追溯與通報",docs:["模擬回收紀錄","回收通知與結案紀錄","非符合品隔離與處置紀錄"]}
+      {want:"疑似偽禁仿冒藥識別與通報",request:"DP64-01 偽禁仿冒藥作業程序書",purpose:"掌握疑似品判斷、立即隔離與主管機關通報路徑"},
+      {want:"藥品回收啟動到結案流程",request:"DP65-01 藥品回收管理程序書",purpose:"了解回收等級、24小時通知、客戶聯繫與結案要求"},
+      {want:"退回品風險評估與處置",request:"DP63-01 退回品管理作業程序書",purpose:"確認退回品核對、保存條件判斷與不得再銷售原則"},
+      {want:"運銷紀錄批號與客戶追溯",request:"DP57-01 訂單、揀貨及配銷管理程序書",purpose:"了解如何查詢批號流向、出貨客戶與模擬回收測試"},
+      {want:"年度模擬回收測試結果",request:"模擬回收報告",purpose:"確認追溯能力、回收效率與缺失改善追蹤"}
     ]
   },
   qa:{
     intro:"品保不只看偏差/CAPA，也要能把內稽、變更、風險、管理審查與部門改善串成完整證據鏈。",
     groups:[
-      {label:"必讀文件",note:"品質事件與改善",docs:["DP12-02 偏差管理作業程序","DP12-03 矯正與預防作業程序書","DP82-01 內部稽核作業程序書"]},
-      {label:"共用",note:"跨部門改善會碰到",docs:["DP12-04 變更管制","DP15-01 品質風險作業程序書","DP14-01 管理階層檢討作業程序","DP36-01 驗證確效作業程序書"]},
-      {label:"稽查常用",note:"證據與結案",docs:["FR12-03 偏差事件處理報告","FR12-04 矯正預防處理單","稽核查檢表與缺失追蹤"]}
+      {want:"偏差調查與風險評估做法",request:"DP12-02 偏差管理作業程序",purpose:"掌握偏差分類、根本原因分析與品質風險評估方法"},
+      {want:"CAPA 追蹤到結案的完整流程",request:"DP12-03 矯正與預防作業程序書",purpose:"了解 CAPA 啟動、原因分析、改善措施與有效性確認"},
+      {want:"內部稽核如何規劃與執行",request:"DP82-01 內部稽核作業程序書",purpose:"了解稽核計畫、查檢表編製、缺失判定與追蹤結案"},
+      {want:"變更管制分類與審查",request:"DP12-04 變更管制作業程序書",purpose:"確認變更分類標準、風險評估與相關部門會簽要求"},
+      {want:"品質風險管理方法與團隊",request:"DP15-01 品質風險作業程序書",purpose:"了解 FMEA 方法、風險等級判定與年度回顧機制"}
     ]
   },
   warehouse:{
-    intro:"倉管頁先從日常倉儲作業開始，再往外連到場所設備、門禁、病媒、溫度、電腦化系統、進出貨、儲存、揀貨、退回、回收與非符合品隔離。",
+    intro:"倉管可依「我想了解日常作業→設備場所→異常處理」的路徑學習，先建立完整倉儲作業概念。",
     groups:[
-      {label:"必讀文件",note:"日常倉儲作業",docs:["DP32-01 作業場所規劃作業程序書","DP33-01 溫度監視作業程序書","DP54-01 藥品進出貨管理程序書","DP55-01 產品儲存作業程序書","DP57-01 訂單、揀貨及配銷管理程序書"]},
-      {label:"共用",note:"與品保、業務、採購交接",docs:["DP52-01 藥品供應商評鑑作業程序","DP53-01 客戶認可審查程序書","DP63-01 退回品管理作業程序書","DP65-01 藥品回收管理程序書","DP56-01 廢棄物管理作業程序書"]},
-      {label:"設備/場所",note:"維持倉庫條件",docs:["DP34-01 關鍵設備作業程序書","DP34-02 量測儀器作業程序書","DP35-01 電腦化系統作業程序書","DP36-01 驗證確效作業程序書","WI25-01 門禁進出管制規定","DP25-02 病媒蟲鼠防治作業程序書"]},
-      {label:"稽查常用",note:"現場條件與紀錄證據",docs:["溫度連續監測紀錄","收貨/出貨/揀貨紀錄","非符合品隔離紀錄","退回與回收流向紀錄","設備保養與校正紀錄","門禁與病媒防治紀錄"]}
+      {want:"進貨驗收流程與點收規範",request:"DP54-01 藥品進出貨管理程序書",purpose:"掌握到貨點收、量測車廂溫度、品項核對與驗收記錄"},
+      {want:"儲存條件與 FEFO 儲位管理",request:"DP55-01 產品儲存作業程序書",purpose:"了解分區儲存、先到期先出、近效期標示與非符合品隔離"},
+      {want:"溫度監控頻率與異常通報",request:"DP33-01 溫度監視作業程序書",purpose:"確認連續溫度監控、每月紀錄整理與溫度超標處理程序"},
+      {want:"揀貨與出貨複查作業",request:"DP57-01 訂單、揀貨及配銷管理程序書",purpose:"了解訂單揀貨、出貨前複查與配送交接要求"},
+      {want:"關鍵設備有哪些與怎麼保養",request:"DP34-01 關鍵設備作業程序書",purpose:"掌握 UPS、冷氣、發電機等設備清單與保養週期"},
+      {want:"門禁進出管制與訪客規定",request:"WI25-01 門禁進出管制規定",purpose:"確認人員進出管制區、刷卡權限與訪客陪同要求"},
+      {want:"過期或損壞藥品銷毀流程",request:"DP56-01 廢棄物管理作業程序書",purpose:"了解報廢藥品分類、暫存與委外銷毀處理程序"}
     ]
   },
   purchase:{
     intro:"採購不是只有供應商評鑑；採購會影響進貨、供應鏈合法性、產品追溯、SMF 清冊與異常升級。",
     groups:[
-      {label:"必讀文件",note:"採購與供應商",docs:["DP52-01 藥品供應商評鑑作業程序","核准供應商清冊","WI10-01 SMF廠商基本資料"]},
-      {label:"共用",note:"會與倉管、品保交接",docs:["DP54-01 藥品進出貨管理程序書","DP55-01 產品儲存作業程序書","DP72-01 委外作業程序書"]},
-      {label:"稽查常用",note:"合法來源與文件有效性",docs:["藥品許可證字號","PIC/S GMP / PMF 核備函","年度供應商評鑑紀錄"]}
+      {want:"新供應商核准與資格認可",request:"DP52-01 藥品供應商評鑑作業程序",purpose:"掌握供應商盡職調查、資格文件確認與清冊更新流程"},
+      {want:"SMF 供應商清冊內容與更新",request:"WI10-01 SMF 廠商基本資料",purpose:"確認供應商清冊維護方式、存放位置與異動更新責任"},
+      {want:"採購單與到貨驗收如何銜接",request:"DP54-01 藥品進出貨管理程序書",purpose:"了解採購單資訊如何支援進貨核對與系統入庫"},
+      {want:"委外物流評鑑與合約管理",request:"DP72-01 委外作業程序書",purpose:"掌握委外商評估、合約審查項目與定期績效監測"}
     ]
   },
   sales:{
     intro:"業務文件橫跨客戶資格、訂單、客訴、退回與回收；出貨不是倉管單獨完成，訂單資訊與客戶資格會直接影響追溯。",
     groups:[
-      {label:"必讀文件",note:"客戶與訂單",docs:["DP53-01 客戶認可審查程序書","DP57-01 訂單、揀貨及配銷管理程序書","客戶清冊"]},
-      {label:"共用",note:"會與倉管、管理藥師、品保交接",docs:["DP62-01 客訴管理作業程序書","DP63-01 退回品管理作業程序書","DP65-01 藥品回收管理程序書","DP54-01 藥品進出貨管理程序書"]},
-      {label:"稽查常用",note:"流向與通知證據",docs:["銷貨憑單","客戶資格文件","客訴結案紀錄","回收客戶通知紀錄"]}
+      {want:"新客戶資格審查與定期複查",request:"DP53-01 客戶認可審查程序書",purpose:"了解客戶核准門檻、資格文件要求與定期狀態確認"},
+      {want:"訂單建立到出貨的資訊流",request:"DP57-01 訂單、揀貨及配銷管理程序書",purpose:"確認訂單編號規則、品項資訊與出貨追溯要求"},
+      {want:"客訴受理到結案處理流程",request:"DP62-01 客訴管理作業程序書",purpose:"了解客訴分類、登錄、調查與運銷申訴結案期限"},
+      {want:"退回品查證與批號核對",request:"DP63-01 退回品管理作業程序書",purpose:"掌握退貨查證流程、核對銷貨紀錄與隔離處置原則"},
+      {want:"回收時客戶通知與數量回報",request:"DP65-01 藥品回收管理程序書",purpose:"了解回收通知時限、客戶聯繫與回收完成率計算"}
     ]
   },
   doc:{
     intro:"文管要能讓所有文件與紀錄被找到、版本正確且保存年限清楚；部門資料交來後，最終也會回到文件與品質紀錄管理。",
     groups:[
-      {label:"必讀文件",note:"文件與紀錄制度",docs:["DP42-01 文件管制","DP42-02 品質紀錄","FR10-01 文件總覽表"]},
-      {label:"共用",note:"所有部門都會送來紀錄",docs:["訓練紀錄","溫度紀錄","採購/銷售紀錄","偏差/矯正與預防","內稽紀錄"]},
-      {label:"稽查常用",note:"版次、生效與保存",docs:["發行章紙本","作廢文件銷毀紀錄","年度定期審查","保存 5 年證據"]}
+      {want:"文件生命週期：制定到生效",request:"DP42-01 文件管制作業程序書",purpose:"掌握文件制修訂、審查核准、發行訓練與版本管制流程"},
+      {want:"品質紀錄保存期限與書寫規範",request:"DP42-02 品質紀錄作業程序書",purpose:"了解紀錄保存年限、塗改修正方式與不可使用鉛筆規定"},
+      {want:"查詢最新文件版本與狀態",request:"FR10-01 文件總覽表",purpose:"確認各文件最新版次、生效日期與歷次修訂紀錄"},
+      {want:"作廢文件回收與銷毀程序",request:"DP42-01 文件管制作業程序書",purpose:"了解過期文件移除、歸檔保存年限與年度銷毀規劃"}
     ]
   }
 };
@@ -1497,10 +1525,10 @@ const kbStore = {
         topic:`${map.intro||id}`,
         international:"PIC/S GDP 要求各部門文件應分類管理，確保人員可依職能取得對應文件。",
         taiwan:"台灣 GDP（西藥優良運銷準則）要求文件管理系統應涵蓋各部門作業文件並維持最新版本。",
-        xinshing:(map.groups||[]).flatMap(g=>[g.label,g.note,...(g.docs||[])]).join(" "),
-        sop_ref:(map.groups||[]).flatMap(g=>g.docs||[]).map(x=>this.codeFromText(x)).filter(code=>sopLibrary[code]),
+        xinshing:(map.groups||[]).flatMap(g=>[g.want,g.request,g.purpose]).join(" "),
+        sop_ref:(map.groups||[]).flatMap(g=>[g.request]).map(x=>this.codeFromText(x)).filter(code=>sopLibrary[code]),
         file:"",
-        keywords:[map.intro,...(map.groups||[]).flatMap(g=>[g.label,g.note,...(g.docs||[])])].filter(Boolean)
+        keywords:[map.intro,...(map.groups||[]).flatMap(g=>[g.want,g.request,g.purpose])].filter(Boolean)
       });
     });
     projectSourceFiles.forEach(path=>{
@@ -3190,15 +3218,20 @@ function documentMapSection(s){
   if(!map) return "";
   const cards=map.groups.map(g=>`
     <article class="doc-map-card">
-      <small>${esc(g.note)}</small>
-      <strong>${esc(g.label)}</strong>
-      <ul>${g.docs.map(d=>{
-        const cm=d.match(/^([A-Z]{2}\d{2}-\d{2})\s+/);
-        const code=cm?cm[1]:"";
-        const label=cm?d.slice(cm[0].length):d;
-        const ch=code?sourceToChapter(code):"";
-        return `<li>${ch?'<span class="chapter-tag">'+ch+'</span>':''}${esc(label)}</li>`;
-      }).join("")}</ul>
+      <div class="doc-map-flow">
+        <span class="doc-map-flow-label">我想了解</span>
+        <span class="doc-map-flow-want">${esc(g.want)}</span>
+      </div>
+      <div class="doc-map-flow-arrow">▾ 向文管調閱</div>
+      <div class="doc-map-flow">
+        <span class="doc-map-flow-label">調閱文件</span>
+        <span class="doc-map-flow-request">${esc(g.request)}</span>
+      </div>
+      <div class="doc-map-flow-arrow">▾ 調閱目的</div>
+      <div class="doc-map-flow">
+        <span class="doc-map-flow-label">目的</span>
+        <span class="doc-map-flow-purpose">${esc(g.purpose)}</span>
+      </div>
     </article>`).join("");
   return `<p class="lead" style="font-size:15px">${esc(map.intro)}</p>
   <p style="font-size:13px;color:#7b3f00;background:#fff8f0;border:1px solid #f0e0c8;border-radius:6px;padding:10px 14px;margin:0 0 14px">
