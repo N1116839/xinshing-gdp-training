@@ -312,10 +312,9 @@
     .evidence-checkdesk{margin-top:14px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
     .ev-check-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;background:#f7fbfb;border-bottom:1px solid var(--line);font-size:13px;color:var(--ink)}
     .ev-check-head strong{color:var(--brand);font-size:15px}
-    .ev-check-list{display:grid;grid-template-columns:repeat(4,1fr)}
-    .ev-check-item{display:flex;align-items:flex-start;gap:8px;padding:12px;border-right:1px solid var(--line);font-size:13px;line-height:1.45;color:var(--ink);cursor:pointer}
-    .ev-check-item:last-child{border-right:none}
-    .ev-check-item input{margin-top:2px;accent-color:var(--brand)}
+    .ev-check-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line)}
+    .ev-check-item{display:grid;grid-template-columns:18px minmax(0,1fr);align-items:flex-start;gap:10px;padding:14px 16px;background:#fff;font-size:13px;line-height:1.45;color:var(--ink);cursor:pointer}
+    .ev-check-item input{width:16px;height:16px;margin:2px 0 0;accent-color:var(--brand)}
     .ev-check-item span{font-weight:700;color:var(--brand)}
     .ev-check-item small{display:block;color:var(--ink-soft);font-size:12px;margin-top:3px}
     .ev-check-fill{height:6px;background:var(--brand);width:0%;transition:width .2s}
@@ -577,8 +576,8 @@
         /* ── section anchors ────────────────────────────── */
     .sec-anchor{display:block;height:0;visibility:hidden;margin-top:-70px;padding-top:70px}
         /* ── trigger cards ─────────────────────────────── */
-    .trigger-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:4px}
-    .trigger-card{border-radius:10px;padding:12px 14px;border:2px solid}
+    .trigger-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:4px}
+    .trigger-card{border-radius:10px;padding:14px 16px;border:2px solid;min-height:112px}
     .urg-red{background:#fff5f5;border-color:#f5a0a0}
     .urg-amber{background:#fffbef;border-color:#f5c86a}
     .urg-blue{background:#f0f6ff;border-color:#8ab4e8}
