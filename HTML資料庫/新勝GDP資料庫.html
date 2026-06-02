@@ -143,6 +143,14 @@
     .focus-body.show{display:block}
     .focus-body-inner{padding:10px 12px;background:#fcf4f4;border-radius:6px;font-size:13px;color:#666;line-height:1.7}
     .focus-body-inner strong{color:#a83232}
+    .focus-sub{margin-top:9px;padding:8px 10px;border-radius:6px;background:#fff;border-left:3px solid #ccc}
+    .focus-sub-lbl{display:block;font-size:12px;font-weight:700;margin-bottom:3px}
+    .focus-sub-evi{border-left-color:#0f7a52;background:#f0f8f4}
+    .focus-sub-evi .focus-sub-lbl{color:#0f7a52}
+    .focus-sub-q{border-left-color:#b8860b;background:#fbf7ec}
+    .focus-sub-q .focus-sub-lbl{color:#9a6f08}
+    .focus-sub-ans{border-left-color:#0a4d8a;background:#eef3fa}
+    .focus-sub-ans .focus-sub-lbl{color:#0a4d8a}
     .focus-reset-row{display:flex;justify-content:flex-end;margin-top:10px;padding:0 8px}
     .focus-reset{font-size:12px;padding:4px 14px;border:1px solid #dba0a0;border-radius:6px;background:#fff;color:#a83232;cursor:pointer;transition:all .2s;font-weight:700}
     .focus-reset:hover{background:#a83232;color:#fff;border-color:#a83232}
@@ -646,11 +654,11 @@ const sections = [
       docs:["DM10-01 品質手冊","DP12-01 品質管理系統程序書","DP12-02 偏差管理作業程序（FR12-03）","DP12-03 矯正與預防作業程序書（FR12-04）","DP12-04 變更管制作業程序書","DP14-01 管理階層檢討作業程序","DP15-01 品質風險作業程序書"]
     },
     focus:[
-      {text:"品質系統未訂定採購、儲存及供應之相關程序（藥品許可證持有者另須確保產品符合上市許可）。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"管理階層未定期檢討品質系統，或檢討項目未符合西藥優良運銷準則條文規定。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"變更管制未完善：未經風險評估、核准與文件版次管制即實施變更。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"未明確訂定儲存及運輸發生異常時之處理程序與通報路徑。",source:"TFDA",year:"2019",type:"研究年報"},
-      {text:"CAPA 未有根本原因分析或只描述表面現象，未深入調查系統性問題。",source:"TFDA",year:"2024",type:"實地查核統計"},
+      {text:"品質系統未訂定採購、儲存及供應之相關程序（藥品許可證持有者另須確保產品符合上市許可）。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"採購、儲存、供應各環節的書面標準程序與最新版品質手冊。",auditQuestion:"你們的品質系統有沒有涵蓋採購、儲存到供應的完整程序？",answerDirection:"出示品質手冊與各作業程序，說明涵蓋範圍與版本管制。"},
+      {text:"管理階層未定期檢討品質系統，或檢討項目未符合西藥優良運銷準則條文規定。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"年度管理審查會議紀錄與品質績效指標彙整。",auditQuestion:"管理階層多久檢討一次品質系統？檢討哪些項目？",answerDirection:"出示管理審查紀錄，說明每年檢討頻率與依準則涵蓋的項目。"},
+      {text:"變更管制未完善：未經風險評估、核准與文件版次管制即實施變更。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"變更申請、風險評估、核准與文件版次更新紀錄。",auditQuestion:"一項變更從提出到實施，經過哪些評估與核准？",answerDirection:"以一筆實際變更為例，說明風險評估、核准與版次管制流程。"},
+      {text:"未明確訂定儲存及運輸發生異常時之處理程序與通報路徑。",source:"TFDA",year:"2019",type:"研究年報",evidenceToPrepare:"儲存與運輸異常的處理程序、通報路徑文件與異常處理紀錄。",auditQuestion:"儲存或運輸發生溫度異常時，誰負責處理、怎麼通報？",answerDirection:"說明異常處理程序與通報對象，並出示曾發生異常的處理紀錄。"},
+      {text:"CAPA 未有根本原因分析或只描述表面現象，未深入調查系統性問題。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"CAPA 紀錄，含根本原因分析、改善措施與有效性確認。",auditQuestion:"這件 CAPA 的根本原因是什麼？怎麼確認改善有效？",answerDirection:"以紀錄說明根本原因分析方法與有效性確認結果，非只描述表面現象。"},
       {text:"委外活動未適當監控，合約商績效未定期審查或未留有評估紀錄。",source:"EU",year:"2025",type:"非符合性報告"}
     ],
     qualityPolicy:[
@@ -679,10 +687,10 @@ const sections = [
       docs:["WI10-01 SMF 廠商基本資料（場所、組織架構、委外物流安排）","藥品清冊（SMF 附件二：品名、許可證字號、持有者、保存溫度、儲位）","供應商清冊（採購維護）","客戶清冊（業務維護）","DP72-01 委外作業程序書（嘉里醫藥物流品質協議依據）"]
     },
     focus:[
-      {text:"SMF 內容未即時更新：組織、場所、人員或委外安排異動後未同步修正 SMF，稽查員發現清冊與現況不符。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"供應商清冊或客戶清冊未定期更新，與現行核准狀態不一致。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"委外物流無書面合約或品質協議，或合約未清楚界定雙方責任與通報流程。",source:"TFDA",year:"2019",type:"研究年報"},
-      {text:"藥商許可執照未登載外部倉庫或委外倉庫地址。",source:"TFDA",year:"2019",type:"研究年報"},
+      {text:"SMF 內容未即時更新：組織、場所、人員或委外安排異動後未同步修正 SMF，稽查員發現清冊與現況不符。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"最新版 SMF 與最近一次更新紀錄、異動觸發清單。",auditQuestion:"你們的 SMF 多久更新一次？最近一次因什麼異動更新？",answerDirection:"出示最新版 SMF，說明組織、場所、人員或委外異動時即時更新的機制。"},
+      {text:"供應商清冊或客戶清冊未定期更新，與現行核准狀態不一致。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"最新供應商清冊與客戶清冊，及其核准、更新日期。",auditQuestion:"清冊是不是最新版？多久確認一次與核准狀態一致？",answerDirection:"出示清冊與更新紀錄，說明定期確認與異動核准流程。"},
+      {text:"委外物流無書面合約或品質協議，或合約未清楚界定雙方責任與通報流程。",source:"TFDA",year:"2019",type:"研究年報",evidenceToPrepare:"委外物流合約與品質協議書，明定雙方責任與通報流程。",auditQuestion:"委外運輸的責任與異常通報怎麼界定？",answerDirection:"出示合約與品質協議，說明責任分工、通報與績效監測機制。"},
+      {text:"藥商許可執照未登載外部倉庫或委外倉庫地址。",source:"TFDA",year:"2019",type:"研究年報",evidenceToPrepare:"藥商許可執照與實際使用倉庫地址對照。",auditQuestion:"你們實際使用的倉庫地址是否都登載於許可執照？",answerDirection:"確認所有實際使用倉庫均已登載，如有異動即申請變更登記。"},
       {text:"委外活動未定期監測績效或未留有評估紀錄。",source:"EU",year:"2024",type:"非符合性報告"}
     ],
     companyProfile:{
@@ -735,10 +743,10 @@ const sections = [
       ]
     },
     focus:[
-      {text:"GDP 權責人對 GDP 作業及程序未有足夠知識，無法確保 GDP 符合性。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"各部門人員執行 GDP 作業未即時記錄，有事後補填或編造讀值之情形。",source:"TFDA",year:"2019",type:"研究年報"},
-      {text:"跨部門資料交接未明確界定輸入、輸出與責任歸屬。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"人員於開始執行 GDP 作業前未達到所界定之能力要求。",source:"TFDA",year:"2024",type:"實地查核統計"},
+      {text:"GDP 權責人對 GDP 作業及程序未有足夠知識，無法確保 GDP 符合性。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"GDP 權責人任命、職責說明與訓練紀錄。",auditQuestion:"GDP 權責人受過哪些訓練？如何確保具備足夠 GDP 知識？",answerDirection:"出示任命與訓練紀錄，說明持續訓練與職責履行情形。"},
+      {text:"各部門人員執行 GDP 作業未即時記錄，有事後補填或編造讀值之情形。",source:"TFDA",year:"2019",type:"研究年報",evidenceToPrepare:"各作業紀錄與其填寫時間，可佐證即時記錄。",auditQuestion:"這些紀錄是作業當下填的，還是事後補的？",answerDirection:"說明紀錄即時填寫規定，並以紀錄與作業時序佐證無事後補填。"},
+      {text:"跨部門資料交接未明確界定輸入、輸出與責任歸屬。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"跨部門交接流程文件，界定輸入、輸出與責任。",auditQuestion:"部門之間交接時，誰交什麼、給誰、出什麼結果？",answerDirection:"說明交接流程的輸入與輸出及責任邊界，並出示交接紀錄。"},
+      {text:"人員於開始執行 GDP 作業前未達到所界定之能力要求。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"職前訓練與能力評估合格紀錄。",auditQuestion:"人員是在達到能力要求後才開始 GDP 作業的嗎？",answerDirection:"出示職前訓練與考核合格紀錄，說明合格後才上線的規定。"},
       {text:"IT 系統未適當管制存取權限，密碼共用或未經授權人員使用他人帳號執行品質決策。",source:"EU",year:"2025",type:"非符合性報告"}
     ],
     schedule:[["日常","採購、收貨、儲存、訂單、揀貨、出貨與紀錄同步完成。"],["每月","溫度資料整理與運輸溫度核實紀錄追蹤。"],["每年","教育訓練、內部稽核、管理審查、文件定期審查。"]],
@@ -756,11 +764,11 @@ const sections = [
       docs:["DP12-02 偏差管理作業程序","DP14-01 管理階層檢討作業程序","DP24-01 員工教育訓練作業程序","DP33-01 溫度監視作業程序書","DP42-01 文件管制作業程序書","DP52-01 藥品供應商評鑑作業程序","DP53-01 客戶認可審查程序書","DP57-01 訂單、揀貨及配銷管理程序書","DP65-01 藥品回收管理程序書","DP82-01 內部稽核作業程序書"]
     },
     focus:[
-      {text:"未依 SOP 明定週期執行資料收件，導致年度稽核或管理審查前才回頭補資料。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"定期確認紀錄（溫度、庫存、供應商、客戶）未能完整提供或保存期限不足。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"偏差、客訴、退回、回收等品質事件未即時啟動與文件化。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"同一缺失跨年度重複出現，顯示 CAPA 改善措施未有效防止再發。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"法規通報義務未落實，如運銷許可變更未於 30 日內向食藥署申請、許可效期屆滿未申請展延。",source:"TFDA",year:"2022",type:"行政指導"}
+      {text:"未依 SOP 明定週期執行資料收件，導致年度稽核或管理審查前才回頭補資料。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"年度資料收件時程表與各期實際收件紀錄。",auditQuestion:"各項定期資料是否都按 SOP 週期收齊？",answerDirection:"出示收件時程與紀錄，說明按週期執行、非稽核前才補。"},
+      {text:"定期確認紀錄（溫度、庫存、供應商、客戶）未能完整提供或保存期限不足。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"溫度、庫存、供應商、客戶等定期紀錄及其保存期限。",auditQuestion:"這些定期紀錄保存多久？能否完整提供？",answerDirection:"出示紀錄與保存規定，說明依期限完整保存與可追溯。"},
+      {text:"偏差、客訴、退回、回收等品質事件未即時啟動與文件化。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"偏差、客訴、退回、回收等事件的啟動與處理紀錄。",auditQuestion:"發生品質事件時多久內啟動處理？有沒有文件化？",answerDirection:"以實際事件說明即時啟動與全程文件化流程。"},
+      {text:"同一缺失跨年度重複出現，顯示 CAPA 改善措施未有效防止再發。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"歷年缺失與 CAPA 追蹤紀錄，顯示改善有效性。",auditQuestion:"去年的缺失今年為何又出現？改善措施有效嗎？",answerDirection:"說明 CAPA 有效性確認機制，並以紀錄佐證未再發或已升級處理。"},
+      {text:"法規通報義務未落實，如運銷許可變更未於 30 日內向食藥署申請、許可效期屆滿未申請展延。",source:"TFDA",year:"2022",type:"行政指導",evidenceToPrepare:"運銷許可變更申請與許可展延申請紀錄。",auditQuestion:"運銷許可有異動時，多久內向主管機關申請？",answerDirection:"說明法規時限（如變更 30 日內申請、效期屆滿前展延）與實際申請紀錄。"}
     ],
     collectionCalendar:[
       {freq:"發生時啟動",dept:"品保",data:"偏差事件提報與調查資料",form:"FR12-03 偏差事件處理報告單、FR12-02 偏差事件處理管制表",owner:"品保 / GDP 權責人 / 發生部門",source:"DP12-02",note:"發現 GDP 作業與規範或 SOP 發生偏差時立即提報；溫度偏差、停電、文件不完整、資格檢查不足皆屬可能來源。"},
@@ -854,12 +862,12 @@ const sections = [
       docs:["DP34-01 關鍵設備作業程序書（FR34-02 設備清單、FR34-03 保養紀錄）","DP34-02 量測儀器作業程序書（外部校正報告）","DP33-01 溫度監視作業程序書（溫度測繪報告）","DP36-01 驗證確效作業程序書（4Q 確效報告）"]
     },
     focus:[
-      {text:"溫度監測設備未定期校正，或校正報告未留存（含委外校正報告未有公司文件化紀錄）。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"倉庫管制溫度與藥品核定儲存溫度不一致。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"溫度測繪評估方式不具代表性（如夏季或冬季未各測 7 天），或未依測繪結果放置溫度記錄器。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"關鍵設備未建立保養計畫，或保養紀錄未包含日期、執行人與結果。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"量測儀器校正報告結果不合格時，未評估對已儲存藥品之影響。",source:"TFDA",year:"2019",type:"研究年報"},
-      {text:"參與運輸車輛未訂有操作程序，包括出貨時之溫度與清潔度確認。",source:"TFDA",year:"2019",type:"研究年報"}
+      {text:"溫度監測設備未定期校正，或校正報告未留存（含委外校正報告未有公司文件化紀錄）。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"溫度監測設備校正報告與校正週期紀錄。",auditQuestion:"溫度計多久校正一次？校正報告在哪裡？",answerDirection:"出示校正報告與週期，委外校正亦留存公司文件化紀錄。"},
+      {text:"倉庫管制溫度與藥品核定儲存溫度不一致。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"倉庫管制設定值與藥品核定儲存溫度對照。",auditQuestion:"你們倉庫管制溫度和藥品核定儲存溫度一致嗎？",answerDirection:"出示對照，說明管制範圍涵蓋所有藥品核定儲存條件。"},
+      {text:"溫度測繪評估方式不具代表性（如夏季或冬季未各測 7 天），或未依測繪結果放置溫度記錄器。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"溫度測繪報告（夏、冬季各 7 天）與記錄器放置依據。",auditQuestion:"溫度測繪怎麼做的？記錄器放在哪、為什麼？",answerDirection:"說明夏冬季各測 7 天，並依測繪結果決定記錄器位置。"},
+      {text:"關鍵設備未建立保養計畫，或保養紀錄未包含日期、執行人與結果。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"關鍵設備保養計畫與保養紀錄（日期、執行人、結果）。",auditQuestion:"關鍵設備的保養計畫是什麼？保養紀錄完整嗎？",answerDirection:"出示保養計畫與紀錄，說明涵蓋日期、執行人與結果。"},
+      {text:"量測儀器校正報告結果不合格時，未評估對已儲存藥品之影響。",source:"TFDA",year:"2019",type:"研究年報",evidenceToPrepare:"校正不合格時的影響評估與後續處理紀錄。",auditQuestion:"如果儀器校正不合格，你們怎麼評估對已儲存藥品的影響？",answerDirection:"說明不合格觸發影響評估的程序，並出示評估紀錄。"},
+      {text:"參與運輸車輛未訂有操作程序，包括出貨時之溫度與清潔度確認。",source:"TFDA",year:"2019",type:"研究年報",evidenceToPrepare:"運輸操作程序，含出貨溫度與清潔度確認紀錄。",auditQuestion:"出貨前如何確認車輛溫度與清潔度？",answerDirection:"出示運輸操作程序與出貨前確認紀錄。"}
     ],
     equipmentRef:"collection-calendar",
     schedule:[["每月","UPS / 分離式冷氣外觀 / 柴油發電機發動 / 溫控警報功能測試。"],["每季","冷氣濾網保養、柴油量電池確認、溫度計電池更換與時間校正。"],["每半年","門禁警報系統保養檢查。"],["每年","冷氣外機鰭片、柴油引擎檢查、量測儀器外部校正（12 月底）。"],["每三年","倉儲環境夏季 7～9 月、冬季隔年 1～3 月溫度測繪，各 7 天。"],["重大事件/環境變更","立即評估是否需再確效或重新測繪，不等例行週期。"]],
@@ -885,11 +893,11 @@ const sections = [
       steps:[["01","訓練需求與計畫","各部門提需求\n人事彙整年度訓練計畫","DP24-01"],["02","訓練通知","人事部通知\n各單位受訓人員","DP24-01"],["03","執行訓練","主辦單位排定\n講師講授並簽到","FR24-02"],["04","訓練考核","部門主管/講師考核\n合格 ≥ 70 分","FR24-02"],["05","紀錄保存","人事部保存\n員工訓練紀錄 ≥5 年","FR24-03"],["06","有效性評估","每年管理審查會議\n評估訓練有效性","DP24-01"]]
     }],
     focus:[
-      {text:"人員於開始執行 GDP 作業前未達到所界定之能力要求。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"訓練紀錄不完整，未包含訓練日期、內容、講師、受訓者與考核結果。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"訓練有效性未評估，或認知不足時未依程序補訓並再次評鑑合格。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"偽禁仿冒藥識別訓練未完成或無合格紀錄（稽查必查項目）。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"GDP 權責人員未符合資格要求，或未履行確保 GDP 符合性之職責。",source:"TFDA",year:"2022",type:"行政指導"}
+      {text:"人員於開始執行 GDP 作業前未達到所界定之能力要求。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"職前訓練與能力評估合格紀錄。",auditQuestion:"人員是在達到能力要求後才開始 GDP 作業的嗎？",answerDirection:"出示職前訓練與考核合格紀錄，說明合格後才上線的規定。"},
+      {text:"訓練紀錄不完整，未包含訓練日期、內容、講師、受訓者與考核結果。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"訓練紀錄（日期、內容、講師、受訓者、考核結果）。",auditQuestion:"訓練紀錄有沒有完整記載日期、講師與考核結果？",answerDirection:"出示完整訓練紀錄，逐欄說明記載內容。"},
+      {text:"訓練有效性未評估，或認知不足時未依程序補訓並再次評鑑合格。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"訓練後考核與不合格補訓、再評鑑紀錄。",auditQuestion:"訓練完怎麼確認大家真的學會了？不合格怎麼辦？",answerDirection:"說明考核合格門檻與補訓再評鑑機制，並出示紀錄。"},
+      {text:"偽禁仿冒藥識別訓練未完成或無合格紀錄（稽查必查項目）。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"偽禁仿冒藥識別訓練紀錄與合格結果。",auditQuestion:"全員都完成偽禁仿冒藥識別訓練了嗎？",answerDirection:"出示訓練與合格紀錄，說明此為必訓項目。"},
+      {text:"GDP 權責人員未符合資格要求，或未履行確保 GDP 符合性之職責。",source:"TFDA",year:"2022",type:"行政指導",evidenceToPrepare:"GDP 權責人資格證明、任命與職責履行紀錄。",auditQuestion:"GDP 權責人符合資格嗎？平時履行哪些職責？",answerDirection:"出示資格與任命，並以核准、審查紀錄佐證職責履行。"}
     ],
     schedule:[["到職前","完成職前訓練與 GDP 基礎課程，達合格門檻才可獨立作業。"],["每年","依訓練計畫執行年度持續訓練，GDP 權責人每年至少參加一次外部訓練。"],["文件修訂後","相關人員須完成訓練與考核後，文件才可生效。"]],
     audit:["所有 GDP 活動人員是否完成職前與持續訓練並有合格紀錄。","訓練紀錄是否包含訓練日期、內容、講師、受訓者與考核結果。","GDP 權責人是否每年至少參加一次外部訓練（FR24-01）。","內部訓練測驗是否達合格門檻，未合格者是否完成補訓。","偽禁仿冒藥識別訓練是否完成且有合格紀錄。","職務說明書是否連結 GDP 訓練合格要求與職責。","人員衛生、門禁、病媒防治紀錄是否齊備且最新。","代理人是否完成同等能力訓練並有授權紀錄。"],
@@ -912,8 +920,8 @@ const sections = [
     focus:[
       {text:"GDP 權責人對 GDP 作業及程序未有足夠知識，無法確保品質系統符合性。",source:"EU",year:"2025",type:"非符合性報告"},
       {text:"品質系統未獲得維持所需之資源與權限。",source:"EU",year:"2024",type:"非符合性報告"},
-      {text:"轉委託（分包）作業未經 GDP 權責人核准，或核准未文件化。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"自我查核缺失未執行必要矯正措施，或 CAPA 未有效追蹤至結案。",source:"TFDA",year:"2024",type:"實地查核統計"}
+      {text:"轉委託（分包）作業未經 GDP 權責人核准，或核准未文件化。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"轉委託（分包）核准文件與 GDP 權責人簽核。",auditQuestion:"分包作業有沒有經過 GDP 權責人核准？",answerDirection:"出示轉委託核准文件，說明核准均經文件化。"},
+      {text:"自我查核缺失未執行必要矯正措施，或 CAPA 未有效追蹤至結案。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"自我查核缺失清單與 CAPA 追蹤至結案紀錄。",auditQuestion:"自我查核發現的缺失後來都改善結案了嗎？",answerDirection:"出示缺失與 CAPA 結案紀錄，說明追蹤機制。"}
     ],
     schedule:[["異常提報後","審核偏差/CAPA，追蹤改善與必要升級。"],["內稽前","確認稽核計畫、範圍、稽核通知與部門準備。"],["管審時","彙整品質系統績效、重大缺失、改善追蹤與資源需求。"]],
     audit:["GDP 權責人任命書、職務說明與授權是否完整。","權責人是否確保品質系統維持、訓練計畫與資源到位。","供應商、客戶與委外作業核准是否有權責人審核或追蹤。","自我查核計畫是否事先安排，缺失是否執行必要矯正措施。","重大偏差、CAPA、變更是否由權責人審核與追蹤。","代理人制度是否清楚，緊急事件或非營業時段是否可聯繫。","跨職能支援是否保留授權與執行紀錄。","管審資料是否呈現品質系統績效、趨勢與待改善事項。"],
@@ -934,11 +942,11 @@ const sections = [
       {title:"疑似偽禁仿冒藥處理流程",steps:[["01","疑似識別","現場人員察覺\n外觀/文件異常","DP64-01"],["02","立即停止銷售","隔離疑似品\n貼非符合標示",""],["03","上呈管理藥師","判斷是否疑似\n偽禁仿冒藥",""],["04","通報主管機關","通知食藥署\n及上市許可持有廠商",""],["05","紀錄與結案","完成處置紀錄\n並歸檔",""]]}
     ],
     focus:[
-      {text:"申訴程序未區分藥品品質及運銷相關之申訴，或未指導藥品品質申訴應通知製造商與主管機關。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"疑似偽禁仿冒藥程序定義範圍不完整，未納入所有可能來源（如退回品、異常低價品）。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"藥品回收作業程序未涵蓋回收有效性評估（模擬回收），或模擬回收頻率不符合規定。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"退回品處理程序未涵蓋準則規定，或未留有退回品評估紀錄。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"退回品未確實隔離即回到可銷售庫存，或未經風險評估即判定處置方式。",source:"TFDA",year:"2024",type:"實地查核統計"}
+      {text:"申訴程序未區分藥品品質及運銷相關之申訴，或未指導藥品品質申訴應通知製造商與主管機關。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"申訴處理程序與分類紀錄。",auditQuestion:"客訴怎麼分類？藥品品質申訴會通知誰？",answerDirection:"說明區分品質與運銷申訴，品質申訴通知製造商與主管機關。"},
+      {text:"疑似偽禁仿冒藥程序定義範圍不完整，未納入所有可能來源（如退回品、異常低價品）。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"疑似偽禁仿冒藥處理程序，涵蓋各種來源。",auditQuestion:"哪些情況會被你們列為疑似偽禁仿冒藥？",answerDirection:"說明程序涵蓋退回品、異常低價品等所有可能來源。"},
+      {text:"藥品回收作業程序未涵蓋回收有效性評估（模擬回收），或模擬回收頻率不符合規定。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"藥品回收程序與模擬回收演練紀錄。",auditQuestion:"你們多久做一次模擬回收？怎麼評估回收有效性？",answerDirection:"出示模擬回收紀錄，說明頻率與有效性評估。"},
+      {text:"退回品處理程序未涵蓋準則規定，或未留有退回品評估紀錄。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"退回品處理程序與退回品評估紀錄。",auditQuestion:"退回品收回後怎麼處理？有沒有評估紀錄？",answerDirection:"說明退回品評估流程，並出示評估紀錄。"},
+      {text:"退回品未確實隔離即回到可銷售庫存，或未經風險評估即判定處置方式。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"退回品隔離與風險評估後處置紀錄。",auditQuestion:"退回品在判定可否再售前，放在哪裡？",answerDirection:"說明退回品先隔離、經風險評估才決定處置，並出示紀錄。"}
     ],
     schedule:[["立即","疑似偽禁仿冒藥、回收事件、重大品質疑慮須立即通報與隔離。"],["回收啟動時","確認批號、數量、客戶流向、通知紀錄與回收進度。"],["年度","規劃或執行模擬回收，檢討可追溯性與回收效率。"]],
     audit:["疑似偽禁仿冒藥是否立即停止銷售、隔離並上呈管理藥師。","非符合區標示、實體隔離與處置紀錄是否完整。","必要通知主管機關與上市許可持有廠商的流程是否明確。","回收啟動條件、緊急程度、客戶通知與行動指令是否可追溯。","運銷紀錄是否能快速提供客戶、批號、數量與聯絡資訊。","模擬回收是否選擇足以測試多客戶追溯能力的批號。","退回品是否經風險判斷，不能回售者是否報廢處置。","偽禁仿冒藥識別教育訓練是否完成且有合格紀錄。"],
@@ -959,10 +967,10 @@ const sections = [
       steps:[["01","計畫訂定","年度稽核計畫\n含範圍與日程","DP82-01"],["02","稽核通知","提前通知\n被稽核部門",""],["03","稽核執行","依查檢表\n現場查核紀錄","FR82"],["04","缺失開立","判定缺失等級\n開立矯正預防單","FR12-04"],["05","責任改善","責任單位\n執行改善措施",""],["06","有效性確認","品保確認後\n提報管理審查","DP14-01"]]
     }],
     focus:[
-      {text:"偏差事件未即時提報，或未完成根本原因分析與風險評估。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"CAPA 無責任歸屬、完成期限、有效性確認或結案紀錄。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"內部稽核未依計畫執行，或缺失未追蹤矯正至結案。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"稽核報告內容過於簡略，未具體描述觀察事項與判定依據。",source:"TFDA",year:"2024",type:"實地查核統計"}
+      {text:"偏差事件未即時提報，或未完成根本原因分析與風險評估。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"偏差提報紀錄（提報日期、部門、影響範圍、根本原因）。",auditQuestion:"偏差多久內提報？有沒有做根本原因分析？",answerDirection:"以紀錄說明即時提報與根本原因、風險評估。"},
+      {text:"CAPA 無責任歸屬、完成期限、有效性確認或結案紀錄。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"CAPA 紀錄，含責任人、期限、有效性確認與結案。",auditQuestion:"這件 CAPA 誰負責、何時完成、怎麼確認有效？",answerDirection:"出示 CAPA 紀錄，逐項說明責任、期限與結案依據。"},
+      {text:"內部稽核未依計畫執行，或缺失未追蹤矯正至結案。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"年度稽核計畫、稽核報告與缺失 CAPA 追蹤紀錄。",auditQuestion:"內部稽核照計畫執行了嗎？缺失都改善了嗎？",answerDirection:"出示稽核計畫與缺失追蹤至結案紀錄。"},
+      {text:"稽核報告內容過於簡略，未具體描述觀察事項與判定依據。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"稽核報告，含觀察事項與判定依據。",auditQuestion:"稽核報告怎麼描述缺失與判定依據？",answerDirection:"出示報告，說明具體記載觀察事項與判定理由。"}
     ],
     schedule:[["偏差發生時","收件、分類、調查、風險評估、建議處置。"],["內稽前","準備查檢表，納入先前內外稽核缺失。"],["內稽後","轉責任單位改善，追蹤有效性，提報管理審查。"]],
     audit:["偏差事件處理報告單是否有日期、描述、簽署與編號。","偏差分類是否依品質風險管理原則判定。","調查是否指出根本原因，而不是只描述表面現象。","CAPA 是否有責任單位、完成期限與追蹤狀態。","內稽查檢表是否包含前次缺失與本次查核重點。","缺失判定是否有證據，且與被稽核部門確認。","改善完成後是否由品保確認有效性。","內稽報告與 CAPA 是否提報 GDP 權責人與管理審查。"],
@@ -983,12 +991,12 @@ const sections = [
       steps:[["01","到貨","供應商送達\n核對採購單","DP54-01"],["02","驗收","品名/批號/效期\n外觀/數量核對","FR54"],["03","入庫","依保存條件\n分區存放","DP55-01"],["04","溫度監控","每日監控\n每月末整理紀錄","FR33-01"],["05","揀貨","銷貨單/FEFO\n指定批號揀取","DP57-01"],["06","出貨複查","複查後交配送\n出貨紀錄完成",""]]
     }],
     focus:[
-      {text:"倉庫管制溫度與藥品核定儲存溫度不一致。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"未規範進貨點收程序，或未確認藥品來自合格供應商。",source:"TFDA",year:"2019",type:"研究年報"},
-      {text:"未有定期確認倉庫連續溫度之紀錄（每月末整理與偏差檢視）。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"未依照先到期先出貨（FEFO）原則運作。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"溫度異常時未立即通知管理藥師並移置非符合區評估。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"儲存區溫度測繪評估未執行或執行內容未具代表性。",source:"TFDA",year:"2019",type:"研究年報"}
+      {text:"倉庫管制溫度與藥品核定儲存溫度不一致。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"倉庫管制設定值與藥品核定儲存溫度對照。",auditQuestion:"你們倉庫管制溫度和藥品核定儲存溫度一致嗎？",answerDirection:"出示對照，說明管制範圍涵蓋所有藥品核定儲存條件。"},
+      {text:"未規範進貨點收程序，或未確認藥品來自合格供應商。",source:"TFDA",year:"2019",type:"研究年報",evidenceToPrepare:"進貨點收程序、到貨驗收紀錄與供應商核准狀態。",auditQuestion:"到貨時怎麼點收？怎麼確認來自合格供應商？",answerDirection:"出示點收程序與驗收紀錄，說明到貨前確認供應商資格。"},
+      {text:"未有定期確認倉庫連續溫度之紀錄（每月末整理與偏差檢視）。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"每月溫度整理與偏差檢視紀錄。",auditQuestion:"倉庫溫度多久整理、檢視一次？",answerDirection:"出示每月末溫度整理與偏差檢視紀錄。"},
+      {text:"未依照先到期先出貨（FEFO）原則運作。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"揀貨紀錄佐證先到期先出。",auditQuestion:"揀貨怎麼確保先到期先出？",answerDirection:"說明先到期先出揀貨規則，並以揀貨、批號紀錄佐證。"},
+      {text:"溫度異常時未立即通知管理藥師並移置非符合區評估。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"溫度異常通知與非符合區移置評估紀錄。",auditQuestion:"溫度異常時，第一步做什麼？",answerDirection:"說明立即通知管理藥師並移至非符合區評估，並出示紀錄。"},
+      {text:"儲存區溫度測繪評估未執行或執行內容未具代表性。",source:"TFDA",year:"2019",type:"研究年報",evidenceToPrepare:"儲存區溫度測繪報告與代表性說明。",auditQuestion:"儲存區的溫度測繪有沒有做？怎麼確保具代表性？",answerDirection:"出示測繪報告，說明涵蓋季節與位置的代表性。"}
     ],
     schedule:[["到貨當下","核對供應商、品名、批號、效期、數量、外觀與必要文件。"],["每日/持續","監控儲存環境與門禁狀態，異常立即通知管理藥師。"],["每月最後上班日","整理當月溫度紀錄，若有異常依偏差/CAPA 流程處理。"]],
     audit:["到貨是否確認供應商核准狀態、品名、批號、效期、數量與外觀。","收貨、驗收、入庫紀錄是否與實際作業同步完成。","藥品是否依保存條件、品項、規格、批號與儲位分區管理。","溫度監測設備位置是否依溫度測繪或風險評估配置。","每月最後上班日是否整理當月溫度紀錄並檢視偏差。","溫度異常是否立即通知管理藥師並移置非符合區評估。","揀貨是否依銷貨單指定批號，並於出貨前複查。","門禁、訪客、清潔、病媒與關鍵設備紀錄是否可提供。"],
@@ -1009,10 +1017,10 @@ const sections = [
       steps:[["01","提出申請","採購提出\n新供應商評估申請","DP52-01"],["02","資格資料","許可證/GMP\nPMF核備函收集","DP52-01"],["03","實質評估","採購評估法規資格/\n能力/可靠性","DP52-01"],["04","核准與清冊","單位主管審核後\nGDP 權責人核准、清冊更新","DP52-01"],["05","定期評鑑","採購每年評核\n確認資格持續有效","DP52-01"]]
     }],
     focus:[
-      {text:"供應商資格認可程序不完整，未確認供應商之 GDP 符合性（如是否有 GDP 證明）。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"未定期確認供應商狀態，或資格文件過期未及時更新。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"採購紀錄未包含批號、效期、供應商等必要追溯資訊。",source:"TFDA",year:"2019",type:"研究年報"},
-      {text:"新供應商未完成實質檢核（能力、可靠性、法規資格）即核准採購。",source:"TFDA",year:"2024",type:"實地查核統計"},
+      {text:"供應商資格認可程序不完整，未確認供應商之 GDP 符合性（如是否有 GDP 證明）。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"供應商資格審查紀錄，含 GDP、GMP 符合性證明。",auditQuestion:"你們怎麼確認供應商符合 GDP？",answerDirection:"出示資格審查紀錄與供應商符合性證明文件。"},
+      {text:"未定期確認供應商狀態，或資格文件過期未及時更新。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"供應商年度評鑑與資格文件有效期追蹤。",auditQuestion:"供應商資格多久確認一次？文件過期怎麼處理？",answerDirection:"出示年度評鑑與資格更新紀錄。"},
+      {text:"採購紀錄未包含批號、效期、供應商等必要追溯資訊。",source:"TFDA",year:"2019",type:"研究年報",evidenceToPrepare:"採購紀錄含批號、效期、供應商等追溯資訊。",auditQuestion:"採購紀錄能不能追到批號、效期與供應商？",answerDirection:"出示採購紀錄，說明完整追溯欄位。"},
+      {text:"新供應商未完成實質檢核（能力、可靠性、法規資格）即核准採購。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"新供應商實質評估（能力、可靠性、法規資格）紀錄。",auditQuestion:"新供應商核准前做了哪些實質檢核？",answerDirection:"出示新供應商評估紀錄與核准依據。"},
       {text:"自未授權（許可）者購買或供應藥品，導致偽藥進入合法供應鏈之風險。",source:"EU",year:"2025",type:"非符合性報告"}
     ],
     schedule:[["採購前","確認供應商已核准且資料有效。"],["新供應商","完成資格資料收集、風險評估、核准與清冊更新。"],["年度/定期","配合供應商定期審閱與評鑑。"]],
@@ -1034,10 +1042,10 @@ const sections = [
       {title:"訂單到出貨流程",steps:[["01","客戶下單","確認客戶資格\n建立訂單編號","DP57-01"],["02","倉管揀貨","依 FEFO 揀取\n指定批號",""],["03","出貨複查","複查品名/批號\n數量/客戶",""],["04","配送","交嘉里醫藥\n或自行配送",""],["05","出貨紀錄","完成出貨憑單\n批號/效期/數量","DP57-01"]]}
     ],
     focus:[
-      {text:"客戶認可程序未訂定適用對象，或未涵蓋所有客戶類別。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"未定期確認客戶狀態，或客戶資格文件過期未重新審查。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"運銷紀錄未記載藥品批號、效期等完整追溯資訊。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"客訴未區分藥品品質與運銷品質，或運銷品質客訴逾時未結案。",source:"TFDA",year:"2024",type:"實地查核統計"},
+      {text:"客戶認可程序未訂定適用對象，或未涵蓋所有客戶類別。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"客戶認可程序，界定適用對象與類別。",auditQuestion:"哪些客戶需要做認可？涵蓋所有類別嗎？",answerDirection:"說明客戶認可適用範圍，並出示認可程序與紀錄。"},
+      {text:"未定期確認客戶狀態，或客戶資格文件過期未重新審查。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"客戶年度資格審查與文件有效期紀錄。",auditQuestion:"客戶資格多久重新審查一次？",answerDirection:"出示年度審查紀錄與資格文件更新。"},
+      {text:"運銷紀錄未記載藥品批號、效期等完整追溯資訊。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"運銷、出貨紀錄含批號、效期等追溯資訊。",auditQuestion:"出貨紀錄能追到批號與效期嗎？",answerDirection:"出示運銷紀錄，說明完整追溯欄位。"},
+      {text:"客訴未區分藥品品質與運銷品質，或運銷品質客訴逾時未結案。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"客訴分類與結案時限紀錄。",auditQuestion:"運銷品質客訴多久要結案？有沒有區分品質與運銷？",answerDirection:"說明分類與結案時限，並出示客訴處理紀錄。"},
       {text:"藥品供應給未經授權之對象（未具合法資格之客戶）。",source:"EU",year:"2025",type:"非符合性報告"}
     ],
     schedule:[["接單時","確認客戶資格、訂單日期、品項、數量與特殊要求。"],["客訴受理時","登錄原始細節，必要時通知製造商、主管機關或啟動 CAPA。"],["退貨需求時","先查證是否為本公司出貨，核對批號、效期與銷貨紀錄。"]],
@@ -1059,11 +1067,11 @@ const sections = [
       steps:[["01","提出制修訂","各部門或品保\n提出修訂需求","DP42-01"],["02","審查核准","審查者/核准者\n簽核確認",""],["03","文管登錄","更新文件總覽表\n確認版次與編號",""],["04","發行","紙本蓋發行章\n舊版回收",""],["05","訓練考核","相關人員完成\n訓練與考核","DP24-01"],["06","文件生效","達合格門檻後\n新版正式生效",""]]
     }],
     focus:[
-      {text:"GDP 相關 SOP 未依實際作業狀況更新，內容與現場不一致。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"文件管理程序未規範文件定期審查，或審查未按時執行。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"文件審核及核准人員未簽署日期。",source:"TFDA",year:"2019",type:"研究年報"},
-      {text:"執行作業未即時記錄，有事後補填情形；權責人員承認填寫編造的讀值。",source:"TFDA",year:"2024",type:"實地查核統計"},
-      {text:"作廢文件未即時撤除，或現場仍使用過期版本文件。",source:"TFDA",year:"2024",type:"實地查核統計"}
+      {text:"GDP 相關 SOP 未依實際作業狀況更新，內容與現場不一致。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"SOP 版本與最近審查、更新紀錄，對照現場作業。",auditQuestion:"這份 SOP 和現場實際作業一致嗎？多久更新？",answerDirection:"出示最新版 SOP 與審查紀錄，說明與現場一致。"},
+      {text:"文件管理程序未規範文件定期審查，或審查未按時執行。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"文件定期審查排程與審查紀錄。",auditQuestion:"文件多久審查一次？審查都按時做了嗎？",answerDirection:"出示審查排程與紀錄，說明按時執行。"},
+      {text:"文件審核及核准人員未簽署日期。",source:"TFDA",year:"2019",type:"研究年報",evidenceToPrepare:"文件審核、核准簽署含日期。",auditQuestion:"文件核准有沒有簽日期？",answerDirection:"出示已簽署日期的文件，說明簽核規定。"},
+      {text:"執行作業未即時記錄，有事後補填情形；權責人員承認填寫編造的讀值。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"作業紀錄與填寫時序，佐證即時且真實記錄。",auditQuestion:"紀錄是當場填的嗎？讀值真實嗎？",answerDirection:"說明即時據實記錄規定，並以紀錄與時序佐證。"},
+      {text:"作廢文件未即時撤除，或現場仍使用過期版本文件。",source:"TFDA",year:"2024",type:"實地查核統計",evidenceToPrepare:"作廢文件回收、標示紀錄與現場版本控管。",auditQuestion:"作廢的文件怎麼確保現場不再使用？",answerDirection:"說明作廢文件撤除、標示流程，現場僅用核准現行版。"}
     ],
     schedule:[["文件核准後","登錄文件總覽表、確認版次、發行正式文件。"],["每年12月","向相關單位徵詢文件修改意見，進行定期審查。"],["每年第一個星期","挑出屆保管期限之作廢文件，依程序簽核銷毀。"]],
     audit:["正式文件是否經制定、審查、核准、登錄與發行。","紙本正式文件是否加蓋發行章並由文管控管。","電子檔是否僅供查閱，不取代正式簽核依據。","文件修訂後是否完成教育訓練與考核才生效。","文件總覽表是否反映最新版編號、版次與狀態。","每年 12 月是否徵詢文件修改意見並執行定期審查。","作廢文件是否移除、歸檔並依期限銷毀。","品質紀錄是否至少保存 5 年，跨年度由文管保管並可索引。"],
@@ -3787,7 +3795,11 @@ function standardsSwipe(standards){
             <div class="focus-text">${hl(item.text||item)}</div>
             <span class="focus-source-badge focus-badge-${(item.source||"TFDA").replace(/[^A-Z]/g,"")}">${item.source||"TFDA"} ${item.year||""}</span>
           </div>
-          <div class="focus-body"><div class="focus-body-inner"><strong>🔍 來源：</strong>${item.source||"TFDA"} ${item.type||"實地查核統計"}（${item.year||""}）<br><strong>建議：</strong>對照內部 SOP 進行差距分析，完成後以 CAPA 系統追蹤至結案。</div></div>
+          <div class="focus-body"><div class="focus-body-inner"><strong>🔍 來源：</strong>${item.source||"TFDA"} ${item.type||"實地查核統計"}（${item.year||""}）${
+            (item.evidenceToPrepare||item.auditQuestion||item.answerDirection)
+            ? `${item.evidenceToPrepare?`<div class="focus-sub focus-sub-evi"><span class="focus-sub-lbl">📋 本部門應準備的證據</span>${esc(item.evidenceToPrepare)}</div>`:""}${item.auditQuestion?`<div class="focus-sub focus-sub-q"><span class="focus-sub-lbl">🧑‍⚖️ 稽查員可能怎麼問</span>${esc(item.auditQuestion)}</div>`:""}${item.answerDirection?`<div class="focus-sub focus-sub-ans"><span class="focus-sub-lbl">💬 公司回答方向</span>${esc(item.answerDirection)}</div>`:""}`
+            : `<br><strong>建議：</strong>對照內部 SOP 進行差距分析，完成後以 CAPA 系統追蹤至結案。`
+          }</div></div>
         </div>`).join("")}</div>
         <div class="focus-reset-row"><button class="focus-reset" type="button" data-fuid="${fuid}">重置確認</button></div>
       </div>`;
