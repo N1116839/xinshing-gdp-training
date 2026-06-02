@@ -530,6 +530,16 @@
     .dept-qn-btn{display:inline-flex;align-items:center;gap:4px;padding:7px 16px;border-radius:20px;background:#f0f8f6;border:1.5px solid #cde0dd;font-size:13px;font-weight:600;color:var(--brand);text-decoration:none;transition:all .2s;cursor:pointer}
     .dept-qn-btn:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
     @media(max-width:640px){.dept-qn-btn{font-size:12px;padding:6px 13px}}
+    /* ── mobile page TOC floating button ─────────────── */
+    .dept-toc-fab{display:none;position:fixed;bottom:80px;right:14px;z-index:999;width:50px;height:50px;border-radius:50%;background:var(--brand);color:#fff;border:none;font-size:22px;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.25);transition:transform .2s;align-items:center;justify-content:center}
+    .dept-toc-fab:active{transform:scale(.92)}
+    .dept-toc-popup{display:none;position:fixed;bottom:140px;right:14px;z-index:998;background:#fff;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.18);padding:10px;min-width:170px;flex-direction:column;gap:6px}
+    .dept-toc-popup.open{display:flex}
+    .dept-toc-popup a{display:block;padding:8px 12px;border-radius:8px;font-size:14px;font-weight:600;color:var(--brand);text-decoration:none;background:#f0f8f6}
+    .dept-toc-popup a:active{background:var(--brand);color:#fff}
+    .dept-toc-overlay{display:none;position:fixed;inset:0;z-index:997;background:transparent}
+    .dept-toc-overlay.open{display:block}
+    @media(max-width:640px){.dept-toc-fab{display:flex}}
         /* ── section anchors ────────────────────────────── */
     .sec-anchor{display:block;height:0;visibility:hidden;margin-top:-70px;padding-top:70px}
         /* ── trigger cards ─────────────────────────────── */
@@ -584,6 +594,9 @@
       <div class="pill-row" id="pagePills"></div>
     </section>
     <section class="grid" id="content"></section>
+    <button class="dept-toc-fab" id="deptTocFab" type="button" aria-label="本頁目錄">☰</button>
+    <div class="dept-toc-popup" id="deptTocPopup"></div>
+    <div class="dept-toc-overlay" id="deptTocOverlay"></div>
   </main>
 </div>
 <div class="doc-modal" id="docModal" role="dialog" aria-modal="true">
@@ -619,7 +632,7 @@ const sections = [
   {
     id:"manual",group:"GDP核心",title:"品質手冊",tag:"為何要做 GDP",
     lead:"品質手冊回答的是「為什麼公司必須做 GDP」。藥品離開製造廠後，批發、儲存、運輸、退回、回收與紀錄保存都可能影響品質；GDP 不是額外文件工作，而是確保藥品在供應鏈中仍維持安全、有效與可追溯的品質系統。DM10-01 是本公司 GDP 系統最高層級文件，用來把法規要求、管理責任、偏差/CAPA、風險管理、內部稽核與管理審查串成同一套品質邏輯。",
-    pills:["DM10-01","DP12-01","偏差/矯正與預防","管理審查","內部稽核"],
+    pills:["品質手冊","品質系統程序","偏差/CAPA","管理審查","內部稽核"],
     coreBrief:[
       {title:"這頁先回答",body:"為什麼藥品不是出廠後就結束管理，而是到交付客戶前都需要 GDP 管制。"},
       {title:"新人要記得",body:"GDP 的核心不是背條文，是讓採購、倉儲、配送、客訴、退回、回收與紀錄都能被追溯。"},
@@ -651,7 +664,7 @@ const sections = [
   {
     id:"smf",group:"GDP核心",title:"SMF廠商清冊",tag:"公司怎麼做 GDP",
     lead:"SMF 回答的是「公司實際怎麼做 GDP」。它把公司場所、組織架構、產品範圍、儲存條件、委外物流、供應商、客戶與產品清冊放在同一個脈絡中，讓稽查員能快速理解公司作業邊界與證據來源。新人不需要一開始背完整清冊，但要知道遇到供應商、客戶、產品、儲位、委外物流或緊急聯絡問題時，應回到 WI10-01 與相關清冊確認。",
-    pills:["WI10-01","藥品清冊","嘉里醫藥物流","合約/品質協議","24hr 緊急聯絡"],
+    pills:["SMF基本資料","藥品清冊","嘉里醫藥物流","合約/品質協議","24hr 緊急聯絡"],
     coreBrief:[
       {title:"這頁先回答",body:"公司有哪些場所、藥品範圍、委外物流、供應商與客戶，GDP 作業邊界在哪裡。"},
       {title:"新人要記得",body:"SMF 不是單一文件，而是把組織、產品清冊、供應商清冊、客戶清冊與委外物流串起來。"},
@@ -732,7 +745,7 @@ const sections = [
   {
     id:"collection-calendar",group:"年度行事曆",title:"年度資料收件行事曆",tag:"各部門資料收件與啟動時機",
     lead:"站在負責收資料的人角度，整理何時要向哪個部門收哪些紀錄、清冊、表單與報告。固定週期與發生時啟動項目分開管理，避免年度稽核或管理審查前才回頭補資料。",
-    pills:["DP12-02","DP14-01","DP24-01","DP33-01","DP42-01","DP52-01","DP53-01","DP57-01","DP65-01","DP82-01"],
+    pills:["偏差管理","管審","教育訓練","溫度監控","文件管制","供應商評鑑","客戶審查","訂單揀貨","藥品回收","內部稽核"],
     standards:{
       picsgdp:["GDP 紀錄需與作業同步產生，並可支持追溯、回收與稽查。","偏差、客訴、退回、偽禁仿冒藥與回收屬於發生時即啟動的品質事件。","例行性資料需依既定週期彙整，作為管理審查與自我查核輸入。","資料收件需明確指定來源部門、表單、保存與審核責任。"],
       taiwan:["西藥優良運銷準則要求運銷紀錄、資格資料、溫度資料與品質事件可供查閱。","內部稽核、管理階層檢討與文件定期審查需有年度紀錄。","客戶與供應商資格需定期複查，確認許可文件與 GDP 資格仍有效。","回收作業安排至少每年評估一次，且必要時能立即啟動。"],
@@ -829,7 +842,7 @@ const sections = [
   {
     id:"equipment-calendar",group:"年度行事曆",title:"關鍵設備行事曆",tag:"保養・校驗・確效",
     lead:"依第三章 DP34-01、DP34-02 整理關鍵設備的定期保養、外部校正與溫度測繪週期。每次執行填寫 FR34-03，由倉管或品保留存；校正報告需保存 5 年。",
-    pills:["DP34-01","DP34-02","DP33-01","DP36-01","FR34-03"],
+    pills:["關鍵設備SOP","量測儀器","溫度監控","驗證確效","設備保養紀錄"],
     standards:{
       picsgdp:["關鍵設備需建立並維護足以確保其正確運作的系統","溫度記錄設備、警報系統等需定期校正，並有校正紀錄","設備保養需有計畫與紀錄，異常需文件化並評估對 GDP 的影響","確效確保設備與系統持續符合既定規格"],
       taiwan:["西藥優良運銷準則第三章規定作業場所及設備要求","量測儀器需定期校正並保存校正報告","電腦化系統需驗證確效，確保資料完整性","倉儲環境溫度需定期測繪，確保儲存條件均一"],
@@ -851,7 +864,7 @@ const sections = [
   {
     id:"personnel",group:"新人部門",title:"人事",tag:"人員資格與教育訓練",
     lead:"人事單元確保所有參與 GDP 活動的人員具備資格、完成訓練並留有紀錄。訓練區分外部（GDP 權責人年度必修）與內部（全員，授課講師主導，測驗合格）兩類。",
-    pills:["DP22-01","DP24-01","DP25-01","FR24-01","FR24-02"],
+    pills:["組織職掌","教育訓練","人員衛生","外部訓練紀錄","內部訓練紀錄"],
     standards:{
       picsgdp:["人員需具備資格、知識、技能，並在職責範圍內接受訓練（GDP 第二章）","職前訓練（On-the-job training）需在執行作業前完成","偽禁仿冒藥識別與特定條件藥品需有對應訓練課程","訓練紀錄需文件化並評估訓練有效性","衛生標準：感染性疾病管制、個人清潔、人員識別與門禁"],
       taiwan:["西藥優良運銷準則第二章規定人員資格與訓練要求","GDP 活動人員需在開始執行作業前達到所界定能力","持續訓練需有紀錄，包含考核結果與訓練有效性評估","人員衛生程序需涵蓋門禁管制、清潔消毒與病媒防治"],
@@ -903,7 +916,7 @@ const sections = [
   {
     id:"pharmacist",group:"新人部門",title:"管理藥師",tag:"藥品安全與回收",
     lead:"管理藥師訓練重點放在藥品供應鏈安全、疑似偽禁仿冒藥判斷、退回品風險、回收與模擬回收。異常事件需能立即隔離、判斷、通知與紀錄。",
-    pills:["DP64-01","DP65-01","疑似偽禁仿冒藥","回收","模擬回收"],
+    pills:["偽禁仿冒藥程序","藥品回收程序","疑似偽禁仿冒藥","回收","模擬回收"],
     standards:{
       picsgdp:["藥品供應鏈安全是配送商的核心責任（GDP 第六章）","疑似偽禁仿冒品需立即隔離、調查，並通知主管機關","回收需能快速啟動，運銷紀錄需支援批號與客戶追溯","模擬回收應定期執行，測試追溯能力與回收效率","退回品需風險評估，無法確認保存條件者不得回到可銷售庫存"],
       taiwan:["藥事法要求藥商配置管理藥師，確保藥品供應鏈安全","西藥優良運銷準則第六章規定疑似偽禁仿冒藥需立即隔離，並通知食藥署與上市許可持有廠商","食藥署要求年度模擬回收測試批號追溯能力與回收完成效率","退回品依食藥署規定不得自動回到可銷售庫存，需有風險評估與處置紀錄","回收紀錄需完整保存，供食藥署稽查時提供客戶、批號與數量追溯"],
@@ -928,7 +941,7 @@ const sections = [
   {
     id:"qa",group:"新人部門",title:"品保",tag:"偏差、CAPA 與內稽",
     lead:"品保是內部稽核、缺失判定、CAPA 跟催與品質系統改善的主要執行者。訓練聚焦在證據、期限、原因分析、改善有效性確認。",
-    pills:["DP12-02","DP12-03","DP82-01","FR12-03","FR12-04"],
+    pills:["偏差管理","CAPA","內部稽核","偏差處理單","矯正預防單"],
     standards:{
       picsgdp:["偏差管理系統需確保所有不符合被識別、調查與文件化","根本原因分析（RCA）是 CAPA 的基礎，不能只描述表面現象","CAPA 需有責任歸屬、期限、執行追蹤與有效性確認","內部稽核需按計畫執行，缺失需追蹤改善並結案","品質系統改善需提報管理審查"],
       taiwan:["西藥優良運銷準則要求建立偏差管理制度，不符合事項需識別、文件化、調查","CAPA 需有根本原因分析、責任歸屬、期限、有效性確認與結案紀錄","食藥署要求內部稽核依計畫執行，缺失需追蹤矯正並結案","稽核報告與品質紀錄至少保存 5 年，供食藥署稽查時提供","管理審查需包含內外稽核、申訴、回收、偏差、CAPA 等品質績效資料"],
@@ -952,7 +965,7 @@ const sections = [
   {
     id:"warehouse",group:"新人部門",title:"倉管",tag:"收貨、儲存、揀貨與溫控",
     lead:"倉管單元讓同仁熟悉收貨、驗收、入庫、儲位、溫度監測、異常提報、揀貨與出貨複查。稽核重點通常回到紀錄是否即時、完整、可追溯。",
-    pills:["DP33-01","DP54-01","DP55-01","DP57-01","溫度紀錄"],
+    pills:["溫度監控","進出貨管理","儲存管理","訂單揀貨","溫度紀錄"],
     standards:{
       picsgdp:["儲存設施需保持良好條件，防止汙染、溫度超標與交叉污染（GDP 第四章）","溫度監控設備需定期校驗，位置依溫度測繪或風險評估決定","FEFO（先到期先出）原則管理批號，確保不出貨過期品","非符合品需實體隔離，設有非符合區（Quarantine area）","收貨時需確認供應商核准狀態，並核對品名、批號、效期"],
       taiwan:["西藥優良運銷準則第四章規定儲存設施需維持良好條件，防止污染、溫度超標與交叉污染","食藥署要求溫度監控設備定期校驗，位置依溫度測繪或風險評估決定","收貨需確認貨物來自核准供應商，外觀完好且運送期間未明顯受損","FEFO（先到期先出）為食藥署 GDP 規定，需有批號管理與紀錄","非符合品需實體隔離於非符合區，溫度異常、受損品等需文件化處置"],
@@ -977,7 +990,7 @@ const sections = [
   {
     id:"purchase",group:"新人部門",title:"採購",tag:"供應商資格與採購紀錄",
     lead:"採購單元重點是只向核准供應商採購，並保存可追溯的採購紀錄。新供應商或異常條件需完成資格認可、實質檢核與風險評估。",
-    pills:["DP52-01","供應商評鑑","PIC/S GMP","PMF核備函","採購紀錄"],
+    pills:["供應商程序","供應商評鑑","PIC/S GMP","PMF核備函","採購紀錄"],
     standards:{
       picsgdp:["僅可向核准供應商採購藥品，不得向未核准供應商進貨（GDP 第五章）","新供應商需盡職調查（Due Diligence）：能力、可靠性、法規資格","供應商評估結果需文件化，並依風險等級定期審閱","採購紀錄需保存並能支援產品追溯（批號、效期、來源）","異常採購條件（可疑價格、異常包裝）需升級處理"],
       taiwan:["西藥優良運銷準則第五章規定僅可向核准供應商採購藥品，不得向未核准來源進貨","國內廠商：需具藥品許可證字號與藥商登記等合法資格（食藥署查核）","國外廠商：需確認 PIC/S GMP 認證或 PMF 核備函與上市許可文件","採購紀錄需可支援產品追溯，保存日期、品名、批號、效期、數量、供應商","供應商資格異動或表現不佳，需重新評估，不合格者暫停採購"],
@@ -1001,7 +1014,7 @@ const sections = [
   {
     id:"sales",group:"新人部門",title:"業務",tag:"客戶資格、訂單與客訴",
     lead:"業務單元涵蓋客戶資格確認、訂單輸入、出貨資訊完整性、客訴受理、退貨查證與回收聯繫。強調客戶合法資格與紀錄完整。",
-    pills:["DP53-01","DP57-01","DP62-01","DP63-01","DP65-01"],
+    pills:["客戶審查","訂單揀貨","客訴處理","退回品","藥品回收"],
     standards:{
       picsgdp:["藥品僅供應給有合法資格的客戶，不得向無資格對象出貨（GDP 第五章）","銷售紀錄需可追溯到具體客戶、批號、數量與日期","客訴需分類（品質申訴 vs 運銷申訴）並依程序處理","退回品不得自動回到可銷售庫存，需先完成風險評估","回收時需能快速聯繫客戶並確認庫存與回收數量"],
       taiwan:["西藥優良運銷準則第五章規定藥品僅可供應給具合法資格的客戶，不得向無資格對象出貨","食藥署要求銷售紀錄可追溯至具體客戶、批號、數量與日期","客訴需依食藥署規定分類處理，品質申訴必要時需通知製造商與主管機關","退回品不得自動回到可銷售庫存，需有風險評估與處置紀錄","客戶資格文件需定期複查，文件不齊全時不得視為核准客戶"],
@@ -1025,7 +1038,7 @@ const sections = [
   {
     id:"doc",group:"新人部門",title:"文管",tag:"文件發行、紀錄保存與版本",
     lead:"文管確保正式文件、表單與品質紀錄可被找到、可辨識、版本正確且保存期限清楚。文件未經訓練與考核前，不應視為已正式生效。",
-    pills:["DP42-01","DP42-02","FR10-01","版本管制","至少5年"],
+    pills:["文件管制","品質紀錄","文件總覽表","版本管制","保存年限"],
     standards:{
       picsgdp:["文件系統需確保制定、審查、核准、發行與版本管制（GDP 第三章）","現場僅使用當前有效版本文件，過時版本需立即移除","品質紀錄需不可篡改、即時記錄，不得事後補填","電子記錄系統需驗證確效，確保數據完整性（ALCOA+ 原則）","文件與記錄保存期限至少 5 年，並可供稽查時快速取用"],
       taiwan:["西藥優良運銷準則第三章規定文件系統需確保制定、審查、核准、發行與版本管制","食藥署規定現場僅使用當前有效版本文件，過時版本需立即撤除","文件修訂後需完成教育訓練與考核，相關人員達合格門檻後新版才可生效","品質紀錄至少保存 5 年，且可供食藥署稽查時快速索引取用","電子記錄需符合數據完整性原則（ALCOA+），防止未授權修改或刪除"],
@@ -1186,9 +1199,9 @@ const departmentDocumentMaps = {
 };
 
 const annualDataGovernance = [
-  {title:"年度保存",body:"收件狀態應以年度為單位保存，避免 2026 年完成狀態覆蓋 2027 年資料。後續資料路徑需加入年度層級。"},
-  {title:"公司接管",body:"目前 Firebase 在個人專案；正式使用前應改由公司可管理帳號持有，並設定至少兩位管理者。"},
-  {title:"交接備份",body:"每年結案後應匯出狀態、收件清單與 Q&A；交接資料需包含 Firebase 專案、rules、部署指令與管理者清單。"}
+  {title:"年度保存",body:"收件狀態以年度為單位保存，每年結案後應匯出狀態、收件清單與 Q&A。"},
+  {title:"資料交接",body:"各部門與文管交接時，需確認檔案完整、簽核已完備、保存期限清楚。"},
+  {title:"歸檔備查",body:"日常表單與品質紀錄由使用單位保管；跨年度資料移交文管彙整歸檔。"}
 ];
 
 const projectSourceFiles = [
@@ -1266,7 +1279,7 @@ const qaStore = {
       this.db  = fsMod.getFirestore(this.app);
       this.mode = "firestore";
       document.getElementById("dbDot").classList.add("connected");
-      document.getElementById("dbStatus").textContent = "Q&A 已連接你的 Firebase";
+      document.getElementById("dbStatus").textContent = "Q&A 已連接資料庫";
     } catch(e){
       console.warn("Firestore 初始化失敗，改用本機儲存",e);
       document.getElementById("dbStatus").textContent = "Q&A 本機暫存";
@@ -3297,7 +3310,27 @@ function deptQuickNav(s){
   if(s.audit&&s.audit.length) links.push({label:'🎯 稽查翻卡',href:`#sec-${s.id}-audit`});
   if(departmentDocumentMaps[s.id]) links.push({label:'📖 文件地圖',href:`#sec-${s.id}-docmap`});
   if(!links.length) return '';
-  return `<nav class="dept-quicknav">${links.map(l=>`<a class="dept-qn-btn" href="${l.href}">${l.label}</a>`).join('')}</nav>`;
+  const qn=links.map(l=>`<a class="dept-qn-btn" href="${l.href}">${l.label}</a>`).join('');
+  return `<nav class="dept-quicknav">${qn}</nav>`;
+}
+function updateDeptToc(s){
+  const popup=document.getElementById("deptTocPopup");
+  const fab=document.getElementById("deptTocFab");
+  if(!popup||!fab) return;
+  const deptName=deptIdMap[s.id];
+  if(!deptName||s.id==="gdp-kb"){popup.innerHTML="";fab.style.display="none";return;}
+  const calSrc=sections.find(x=>x.id==="collection-calendar");
+  const hasSchedule=calSrc&&calSrc.collectionCalendar&&calSrc.collectionCalendar.some(x=>{
+    const depts=String(x.dept).split("/").map(d=>d.trim());
+    return depts.some(d=>d===deptName||d.includes(deptName));
+  });
+  const links=[];
+  if(hasSchedule) links.push({label:'📅 時程',href:`#sec-${s.id}-schedule`});
+  if(s.deptFlow) links.push({label:'🔄 流程',href:`#sec-${s.id}-flow`});
+  if(s.audit&&s.audit.length) links.push({label:'🎯 稽查',href:`#sec-${s.id}-audit`});
+  if(departmentDocumentMaps[s.id]) links.push({label:'📖 文件',href:`#sec-${s.id}-docmap`});
+  popup.innerHTML=links.map(l=>`<a href="${l.href}">${l.label}</a>`).join('');
+  fab.style.display=links.length?'flex':'none'; // hidden if no links
 }
 function visualIntro(s){
   const goals=[
@@ -3643,18 +3676,18 @@ function renderContent(s){
   return [
     panel("視覺導讀",visualIntro(s),""),
     scheduleTriggersSection(s),
-    panel("規範到現場：四層對照",standardsSwipe({...(s.standards||{}),focus:s.focus||[]}),"wide"),
-    departmentDocumentMaps[s.id] ? `<span id="sec-${s.id}-docmap" class="sec-anchor"></span>`+panel("部門文件閱讀地圖",documentMapSection(s),"wide") : "",
     `<span id="sec-${s.id}-schedule" class="sec-anchor"></span>`+deptScheduleSection(s),
     `<span id="sec-${s.id}-flow" class="sec-anchor"></span>`+deptFlowSection(s),
     s.id==="collection-calendar" ? panel("年度保存與交接策略",annualGovernanceSection(),"wide") : "",
-    s.qualityPolicy ? panel("品質政策與目標 KPI（DM10-01）",policyTable(s.qualityPolicy),"wide") : "",
+    s.qualityPolicy ? panel("品質政策與目標 KPI",policyTable(s.qualityPolicy),"wide") : "",
     s.companyProfile ? panel("公司 GDP 執行概況（WI10-01）",companyProfileHtml(s.companyProfile),"wide") : "",
     s.trainingInfo ? panel("教育訓練：外部 vs 內部",trainingTable(s.trainingInfo),"wide") : "",
     s.respMatrix   ? panel("跨部門責任矩陣",respMatrix(s),"") : "",
     collectionCalendarSection(s),
     s.equipmentRef ? equipmentOnlySection(s) : "",
+    panel("規範到現場與公開缺失",standardsSwipe({...(s.standards||{}),focus:s.focus||[]}),"wide"),
     `<span id="sec-${s.id}-audit" class="sec-anchor"></span>`+auditSlides(s),
+    departmentDocumentMaps[s.id] ? `<span id="sec-${s.id}-docmap" class="sec-anchor"></span>`+panel("部門文件閱讀地圖",documentMapSection(s),"wide") : "",
     panel("稽查時最常看的證據鏈",evidenceMap(s),"wide"),
     panel("部門 Q&A 討論區",qaHtml(s),"")
   ].filter(Boolean).join("");
@@ -3669,7 +3702,7 @@ function qaHtml(s){
       <h4 style="margin-bottom:12px">提出問題</h4>
       <p style="font-size:13px;color:var(--muted);margin-bottom:14px">看到不懂的段落、文件編號或實務情境，直接留言，問題將永久保留供大家參考。</p>
       <form id="qaForm">
-        <label>問題內容<textarea name="question" placeholder="例如：DP54-01 的收貨時間限制是什麼？" required style="min-height:90px"></textarea></label>
+        <label>問題內容<textarea name="question" placeholder="例如：到貨驗收時間限制是什麼？" required style="min-height:90px"></textarea></label>
         <div class="actions"><button class="primary" type="submit">送出問題</button><span class="note">儲存至「${esc(s.title)}」。</span></div>
       </form>
     </div>
@@ -3783,12 +3816,12 @@ function bindKbForm(){
         box.appendChild(el);
         el.querySelectorAll("[data-doc]").forEach(b=>b.addEventListener("click",()=>openDoc(b.dataset.doc)));
       }else{
-        box.insertAdjacentHTML("beforeend",`<div class="kb-bubble bot kb-notfound">資料庫目前找不到命中資料。請先確認該 SOP/WI/FR 是否已放入專案資料夾並同步到 Firestore。</div>`);
+        box.insertAdjacentHTML("beforeend",`<div class="kb-bubble bot kb-notfound">目前查無符合資料，請改用更明確的關鍵字，或洽管理者確認。</div>`);
       }
     }catch(e){
       console.warn("GDP智慧查詢失敗",e);
       loading.remove();
-      box.insertAdjacentHTML("beforeend",`<div class="kb-bubble bot kb-notfound">查詢暫時無法完成。請稍後再試，或確認網路與 Firebase 連線狀態。</div>`);
+      box.insertAdjacentHTML("beforeend",`<div class="kb-bubble bot kb-notfound">查詢暫時無法完成，請稍後再試。</div>`);
     }
     renderUsageStats();
     box.scrollTop=box.scrollHeight;
@@ -4231,6 +4264,7 @@ async function showSection(id){
   bindDocButtons();
   bindEvidenceMap();
   bindKbForm();
+  updateDeptToc(s);
   if(id==="gdp-kb") renderUsageStats();
   await renderQa(id);
   analyticsStore.log("page_view",{sectionId:id,targetLabel:s.title});
@@ -4264,6 +4298,15 @@ function fmtDate(v){
   initDocModal();
   await qaStore.init();
   await analyticsStore.ensureQuarterReview();
+  // mobile TOC button handlers
+  const fab=document.getElementById("deptTocFab");
+  const popup=document.getElementById("deptTocPopup");
+  const overlay=document.getElementById("deptTocOverlay");
+  if(fab&&popup&&overlay){
+    fab.addEventListener("click",e=>{e.stopPropagation();popup.classList.toggle("open");overlay.classList.toggle("open");});
+    overlay.addEventListener("click",()=>{popup.classList.remove("open");overlay.classList.remove("open");});
+    popup.addEventListener("click",e=>{if(e.target.tagName==="A"){popup.classList.remove("open");overlay.classList.remove("open");}});
+  }
   const hash=location.hash.slice(1);
   await showSection(sections.some(s=>s.id===hash)?hash:current);
 })();
