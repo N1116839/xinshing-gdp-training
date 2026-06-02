@@ -59,7 +59,8 @@
     .pill{display:inline-grid;min-width:88px;min-height:44px;place-items:center;padding:6px 10px;color:var(--brand);background:#e8f3f2;border:1px solid #cde0dd;border-radius:8px;font-size:14px;font-weight:700;text-align:center}
     .pill.doc-pill{cursor:pointer;background:#fff;border-color:var(--gold);box-shadow:0 6px 14px rgba(184,131,47,.12)}
     .pill.doc-pill:hover{color:#fff;background:var(--brand);border-color:var(--brand)}
-    .brief-grid,.doc-map-grid,.governance-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    .brief-grid,.governance-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.doc-map-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
     .brief-card,.doc-map-card,.governance-card{padding:14px;background:#f7fbfb;border:1px solid var(--line);border-top:4px solid var(--brand)}
     .brief-card strong,.doc-map-card strong,.governance-card strong{display:block;margin-bottom:8px;color:var(--brand);font-size:16px}
 
@@ -3539,9 +3540,13 @@ function coreBriefHtml(s){
     <article class="brief-card"><strong>${esc(x.title)}</strong><p>${esc(x.body)}</p></article>
   `).join("")}</div>`;
 }
+function stripDocCode(txt){
+  return txt.replace(/^[A-Z]{2}\d{2}-\d{2}\s+/,"");
+}
 function documentMapSection(s){
   const map=departmentDocumentMaps[s.id];
   if(!map) return "";
+  const role=deptIdMap[s.id]||s.short||s.title;
   const cards=map.groups.map(g=>`
     <article class="doc-map-card">
       <div class="doc-map-flow">
@@ -3551,12 +3556,20 @@ function documentMapSection(s){
       <div class="doc-map-flow-arrow">▾ 向文管調閱</div>
       <div class="doc-map-flow">
         <span class="doc-map-flow-label">調閱文件</span>
-        <span class="doc-map-flow-request">${esc(g.request)}</span>
+        <span class="doc-map-flow-request">${esc(stripDocCode(g.request))}</span>
       </div>
       <div class="doc-map-flow-arrow">▾ 調閱目的</div>
       <div class="doc-map-flow">
         <span class="doc-map-flow-label">目的</span>
         <span class="doc-map-flow-purpose">${esc(g.purpose)}</span>
+      </div>
+      <div class="doc-map-flow" style="margin-top:8px">
+        <span class="doc-map-flow-label">適用角色</span>
+        <span class="doc-map-flow-purpose">${esc(role)}</span>
+      </div>
+      <div class="doc-map-flow">
+        <span class="doc-map-flow-label">申請對象</span>
+        <span class="doc-map-flow-purpose">文管部</span>
       </div>
     </article>`).join("");
   return `<p class="lead" style="font-size:15px">${esc(map.intro)}</p>
