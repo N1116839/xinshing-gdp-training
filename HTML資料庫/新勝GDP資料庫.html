@@ -238,23 +238,36 @@
     .doc-body{padding:20px;display:grid;gap:12px;font-size:16px;line-height:1.8}
     .doc-close{color:#fff;background:transparent;border:1px solid rgba(255,255,255,.55);border-radius:6px;cursor:pointer;font:inherit;padding:5px 10px}
     /* ── evidence / metric ── */
-    .evidence-map{display:grid;grid-template-columns:1.05fr .75fr 1.05fr;gap:12px;align-items:stretch}
-    .evidence-node{min-height:120px;padding:14px;background:#eef7f7;border:1px solid var(--line);transition:background .2s,border-color .2s}
+    .ev-chain-hdr{display:flex;align-items:center;gap:10px;padding:12px 18px;background:var(--brand);border-radius:10px 10px 0 0}
+    .ev-chain-lbl{background:rgba(255,255,255,.18);color:#fff;font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;letter-spacing:.06em;flex-shrink:0}
+    .ev-chain-dept{color:#fff;font-weight:700;font-size:15px}
+    .evidence-map{display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;border:2px solid var(--brand);border-top:none;border-radius:0 0 10px 10px;overflow:hidden}
+    .evidence-node{padding:20px 18px;background:#f4faf9;transition:background .2s,border-color .2s;position:relative}
     .evidence-node.clickable{cursor:pointer}
-    .evidence-node.clickable:hover{background:#e2f3f1;border-color:var(--brand-2)}
-    .evidence-node.open{background:#fff8ef;border-color:#d49435}
-    .evidence-node.center{display:grid;place-items:center;color:#fff;text-align:center;background:var(--brand);border-color:var(--brand);font-weight:800}
-    .evidence-node h4{color:var(--brand)}
-    .em-toggle{float:right;font-size:12px;color:var(--brand);background:#ddeeed;padding:2px 7px;border-radius:20px;font-weight:700}
-    .em-detail{border-top:1px solid var(--line);padding-top:10px;margin-top:10px;animation:fadeIn .2s}
-    .metric-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
-    .metric{padding:12px;text-align:center;background:#fff9ef;border:1px solid #ead6b6;transition:background .2s,border-color .2s}
+    .evidence-node.clickable:hover{background:#e8f5f2}
+    .evidence-node.open{background:#fff8ef}
+    .evidence-node.center{display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;background:var(--brand);font-weight:800;padding:16px 10px;min-width:80px;border-left:1px solid rgba(255,255,255,.2);border-right:1px solid rgba(255,255,255,.2)}
+    .ev-node-icon{font-size:28px;margin-bottom:8px;line-height:1;display:block}
+    .ev-node-badge{position:absolute;top:12px;right:14px;width:26px;height:26px;border-radius:50%;background:var(--brand);color:#fff;font-weight:800;font-size:12px;display:grid;place-items:center}
+    .evidence-node h4{color:var(--brand);font-size:16px;font-weight:800;margin:0 0 10px}
+    .evidence-node ul{margin:0 0 8px;padding:0;list-style:none}
+    .evidence-node ul li{font-size:14px;line-height:1.7;padding-left:18px;position:relative;color:var(--ink)}
+    .evidence-node ul li::before{content:"▸";position:absolute;left:0;color:var(--gold);font-size:12px;top:4px}
+    .em-toggle{display:inline-block;margin-top:8px;font-size:12px;color:var(--brand);background:#ddeeed;padding:3px 10px;border-radius:20px;font-weight:700;cursor:pointer}
+    .em-detail{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);animation:fadeIn .2s}
+    .em-detail ul li{font-size:13px;line-height:1.65}
+    .metric-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:14px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+    .metric{padding:16px 10px;text-align:center;background:#fff9ef;border-right:1px solid #ead6b6;transition:background .2s}
+    .metric:last-child{border-right:none}
     .metric.clickable{cursor:pointer}
-    .metric.clickable:hover{background:#fff0d0;border-color:#c9a350}
-    .metric.active{background:#0f5b50;border-color:#0f5b50}
-    .metric.active strong,.metric.active span{color:#fff}
-    .metric strong{display:block;color:var(--gold);font-size:22px;line-height:1}
-    .em-tip-box{margin-top:10px;padding:12px 16px;background:#fff9ef;border:1px solid #ead6b6;border-left:4px solid var(--gold);line-height:1.7;animation:fadeIn .2s}
+    .metric.clickable:hover{background:#fff0d0}
+    .metric.active{background:var(--brand)}
+    .metric.active strong,.metric.active span,.metric.active .metric-icon{color:#fff}
+    .metric-icon{display:block;font-size:20px;margin-bottom:6px;line-height:1}
+    .metric strong{display:block;color:var(--gold);font-size:15px;font-weight:800;margin-bottom:4px;line-height:1.2}
+    .metric span{font-size:12px;color:var(--ink-soft);display:block;line-height:1.4}
+    .em-tip-box{margin-top:10px;padding:12px 16px;background:#fff9ef;border:1px solid #ead6b6;border-left:4px solid var(--gold);line-height:1.7;animation:fadeIn .2s;border-radius:0 0 8px 8px}
+    @media(max-width:680px){.evidence-map{grid-template-columns:1fr}.evidence-node.center{min-height:50px;flex-direction:row;gap:10px;padding:12px}.metric-strip{grid-template-columns:repeat(2,1fr)}.metric{border-bottom:1px solid #ead6b6}}
     @keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
     /* ── timeline ── */
     .timeline{display:grid;gap:8px}
@@ -430,25 +443,27 @@
     .flip-reset{padding:6px 14px;border:1.5px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;font:inherit;font-size:13px;color:var(--brand);transition:all .15s}
     .flip-reset:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
     .flip-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
-    .flip-card{height:180px;perspective:900px;cursor:pointer}
-    .flip-card-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+    .flip-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+    .flip-card{height:auto;min-height:230px;perspective:900px;cursor:pointer}
+    .flip-card-inner{position:relative;width:100%;height:100%;min-height:230px;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,0,.2,1)}
     .flip-card.flipped .flip-card-inner{transform:rotateY(180deg)}
-    .flip-card-front,.flip-card-back{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
-    .flip-card-front{background:#f4faf9;border:1.5px solid #cde0dd;border-top:5px solid var(--brand)}
+    .flip-card-front,.flip-card-back{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;padding:18px 16px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+    .flip-card-front{background:#f4faf9;border:1.5px solid #cde0dd;border-top:6px solid var(--brand)}
     .flip-card.flipped .flip-card-front{pointer-events:none}
-    .flip-card-back{background:#0f5b50;border:1.5px solid #0a4d45;transform:rotateY(180deg);color:#e9f5f2}
-    .flip-card-no{font-size:11px;font-weight:800;color:var(--ink-soft);letter-spacing:.05em}
+    .flip-card-back{background:linear-gradient(145deg,#0d5248,#0f5b50);border:1.5px solid #0a4d45;transform:rotateY(180deg);color:#e9f5f2}
+    .flip-card-no{font-size:12px;font-weight:800;color:var(--ink-soft);letter-spacing:.06em}
     .flip-card-front .flip-card-no{color:var(--gold)}
-    .flip-card-back .flip-card-no{color:#a3d9ce;font-size:11px}
-    .flip-card-q{font-size:14px;line-height:1.55;color:var(--ink);flex:1}
-    .flip-card-hint{margin-top:auto;font-size:11.5px;color:#8db8b2;font-weight:700;align-self:flex-end}
-    .flip-card-checklist{list-style:none;padding:0;margin:0;flex:1;overflow:hidden;display:flex;flex-direction:column;gap:5px}
-    .flip-card-checklist li{font-size:12px;line-height:1.5;color:#e9f5f2;padding-left:16px;position:relative}
-    .flip-card-checklist li::before{content:"✓";position:absolute;left:0;color:#f2c56b;font-weight:800}
-    .flip-checked{background:#26705d!important;border-color:#1a5248!important}
+    .flip-card-back .flip-card-no{color:#8dcfc5;font-size:12px}
+    .flip-card-q{font-size:15px;line-height:1.65;color:var(--ink);flex:1;font-weight:500}
+    .flip-card-hint{margin-top:auto;font-size:12px;color:#8db8b2;font-weight:700;align-self:flex-end;padding:3px 8px;background:#ddeeed;border-radius:20px}
+    .flip-card-checklist{list-style:none;padding:0;margin:0;flex:1;display:flex;flex-direction:column;gap:7px}
+    .flip-card-checklist li{font-size:13px;line-height:1.6;color:#e9f5f2;padding-left:20px;position:relative}
+    .flip-card-checklist li::before{content:"✓";position:absolute;left:0;color:#f2c56b;font-weight:800;font-size:13px}
+    .flip-checked{background:linear-gradient(145deg,#1d6558,#26705d)!important;border-color:#1a5248!important}
     .flip-checked .flip-card-front{border-top-color:var(--gold)}
-    @media(max-width:680px){.flip-grid{grid-template-columns:1fr 1fr}.flip-card{height:160px}}
-    @media(max-width:420px){.flip-grid{grid-template-columns:1fr}.flip-card{height:auto;min-height:140px}}
+    .flip-all-done{margin-top:14px;padding:12px 16px;background:#f0faf8;border:2px solid var(--brand);border-radius:10px;text-align:center;font-size:14px;color:var(--brand);font-weight:700;animation:fadeIn .3s}
+    @media(max-width:680px){.flip-grid{grid-template-columns:1fr 1fr}.flip-card{min-height:200px}.flip-card-inner{min-height:200px}}
+    @media(max-width:420px){.flip-grid{grid-template-columns:1fr}.flip-card{min-height:180px}.flip-card-inner{min-height:180px}}
     .fstepper{margin-top:6px}
     .fstep-row{display:flex;flex-wrap:wrap;align-items:center;gap:2px;margin-bottom:12px}
     .fstep-btn{display:flex;flex-direction:column;align-items:center;background:none;border:none;cursor:pointer;padding:6px 4px;min-width:66px;flex:1;max-width:110px;font-family:inherit}
@@ -462,6 +477,22 @@
     .fstep-doc{display:inline-block;margin-top:10px;background:#fffaf4;border:1px solid #f0e0c8;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:700;color:#7b3f00}
     @media(max-width:600px){.fstep-row{flex-direction:column;align-items:flex-start}.fstep-btn{flex-direction:row;max-width:100%;width:100%;gap:10px}.fstep-lbl{text-align:left;max-width:none}.fstep-arrow{transform:rotate(90deg);margin:0 0 0 19px}}
     .chapter-tag{display:inline-block;padding:1px 7px;background:#e8f3f2;color:var(--brand);border-radius:4px;font-size:11px;font-weight:700;margin-right:6px;vertical-align:middle}
+    /* ── flow diagram ── */
+    .flow-diagram{display:flex;flex-direction:column;gap:0;margin-top:4px}
+    .flow-step-wrap{cursor:pointer}
+    .flow-step-box{display:grid;grid-template-columns:56px 1fr;border:2px solid #cde0dd;border-radius:12px;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+    .flow-step-wrap:hover .flow-step-box,.flow-step-wrap.flow-active .flow-step-box{border-color:var(--brand);box-shadow:0 3px 14px rgba(15,91,80,.18)}
+    .flow-step-num{background:var(--brand);color:#fff;display:grid;place-items:center;font-weight:800;font-size:16px;min-height:72px;letter-spacing:-.03em}
+    .flow-step-body{padding:15px 18px;background:#f7fbfb}
+    .flow-step-wrap.flow-active .flow-step-body{background:#eaf3f1}
+    .flow-step-title{font-weight:700;font-size:15px;color:var(--brand);margin-bottom:3px}
+    .flow-step-desc{font-size:13px;color:var(--ink-soft);line-height:1.5}
+    .flow-step-hint{font-size:11px;color:#8db8b2;font-weight:700;margin-top:6px}
+    .flow-detail{display:none;padding:13px 18px 15px 74px;background:#eaf3f1;border-top:1px dashed #cde0dd;font-size:14px;line-height:1.8;color:var(--ink);white-space:pre-line}
+    .flow-detail.show{display:block;animation:fadeIn .2s}
+    .flow-doc-chip{display:inline-block;margin-top:9px;background:#fffaf4;border:1px solid #f0e0c8;border-radius:6px;padding:4px 12px;font-size:12px;font-weight:700;color:#7b3f00}
+    .flow-arrow{text-align:left;padding:4px 0;padding-left:26px;color:var(--brand);font-size:22px;line-height:1;pointer-events:none;opacity:.5}
+    @media(max-width:600px){.flow-detail{padding-left:16px}}
   </style>
 </head>
 <body>
@@ -3075,7 +3106,13 @@ function documentMapSection(s){
     <article class="doc-map-card">
       <small>${esc(g.note)}</small>
       <strong>${esc(g.label)}</strong>
-      <ul>${g.docs.map(d=>`<li>${esc(d)}</li>`).join("")}</ul>
+      <ul>${g.docs.map(d=>{
+        const cm=d.match(/^([A-Z]{2}\d{2}-\d{2})\s+/);
+        const code=cm?cm[1]:"";
+        const label=cm?d.slice(cm[0].length):d;
+        const ch=code?sourceToChapter(code):"";
+        return `<li>${ch?'<span class="chapter-tag">'+ch+'</span>':''}${esc(label)}</li>`;
+      }).join("")}</ul>
     </article>`).join("");
   return `<p class="lead" style="font-size:15px">${esc(map.intro)}</p>
   <p style="font-size:13px;color:#7b3f00;background:#fff8f0;border:1px solid #f0e0c8;border-radius:6px;padding:10px 14px;margin:0 0 14px">
@@ -3253,7 +3290,7 @@ function standardsSwipe(standards){
         <div class="company-action-icon">${ci(item)}</div>
         <div>
           <div class="company-action-no">公司做法 ${String(i+1).padStart(2,"0")}</div>
-          <div class="company-action-text">${hl(item)}</div>
+          <div class="company-action-text">${esc(item)}</div>
         </div>
       </div>`).join("")}</div>`;
     }
@@ -3286,28 +3323,30 @@ function standardsSwipe(standards){
     </div>
   </div>`;
 }
-function deptFlowStepper(f){
-  const uid=`fs${Math.random().toString(36).slice(2,7)}`;
-  const nodes=f.steps.map(([num,title,,],i)=>
-    `<button class="fstep-btn${i===0?" active":""}" type="button" data-fsuid="${uid}" data-fsi="${i}">
-      <span class="fstep-node">${esc(num)}</span>
-      <span class="fstep-lbl">${esc(title)}</span>
-    </button>${i<f.steps.length-1?'<span class="fstep-arrow">›</span>':""}`).join("");
-  const details=f.steps.map(([num,title,desc,doc],i)=>
-    `<div class="fstep-detail${i===0?" show":""}" id="${uid}-d${i}">
-      <strong class="fstep-detail-title">${esc(num)} ${esc(title)}</strong>
-      <p style="margin:8px 0 0;white-space:pre-line;color:var(--ink-soft);font-size:14px;line-height:1.7">${esc(desc)}</p>
-      ${doc?`<span class="fstep-doc">📋 ${esc(doc)}</span>`:""}
-    </div>`).join("");
-  return `<div class="fstepper" data-fsuid="${uid}">
-    <div class="fstep-row">${nodes}</div>
-    <div>${details}</div>
-  </div>`;
+function deptFlowDiagram(f){
+  const uid=`fd${Math.random().toString(36).slice(2,7)}`;
+  const items=f.steps.map(([num,title,desc,doc],i)=>{
+    const safeDesc=(desc||'').replace(/\n/g,'<br>');
+    const firstLine=(desc||'').split('\n')[0];
+    const docChip=doc?`<br><span class="flow-doc-chip">📋 ${esc(doc)}</span>`:'';
+    return `<div class="flow-step-wrap${i===0?' flow-active':''}" data-fduid="${uid}" data-fdi="${i}" tabindex="0" role="button">
+      <div class="flow-step-box">
+        <div class="flow-step-num">${esc(num)}</div>
+        <div class="flow-step-body">
+          <div class="flow-step-title">${esc(title)}</div>
+          <div class="flow-step-desc">${esc(firstLine)}</div>
+          <div class="flow-step-hint">點擊展開說明 ▶</div>
+        </div>
+      </div>
+      <div class="flow-detail${i===0?' show':''}" id="${uid}-d${i}">${esc(desc||'')}${docChip}</div>
+    </div>${i<f.steps.length-1?'<div class="flow-arrow">▼</div>':''}`;
+  }).join('');
+  return `<div class="flow-diagram" data-fduid="${uid}">${items}</div>`;
 }
 function deptFlowSection(s){
-  if(!s.deptFlow) return "";
+  if(!s.deptFlow) return '';
   const flows=Array.isArray(s.deptFlow)?s.deptFlow:[s.deptFlow];
-  return flows.map(f=>panel(f.title,deptFlowStepper(f),"wide")).join("");
+  return flows.map(f=>panel(f.title,deptFlowDiagram(f),'wide')).join('');
 }
 function trainingTable(info){
   if(!info) return "";
@@ -3414,28 +3453,46 @@ function evidenceMap(s){
   const uid=`em-${s.id}`;
   const focusItems=(s.focus||[]).slice(0,4);
   const auditItems=(s.audit||[]).slice(0,6);
-  const focusHtml=focusItems.length?`<ul>${focusItems.map(x=>`<li style="font-size:13px">${esc(x)}</li>`).join("")}</ul>`:`<p style="font-size:13px;color:var(--ink-soft)">詳見本頁重點說明。</p>`;
-  const auditHtml=auditItems.length?`<ul>${auditItems.map(x=>`<li style="font-size:13px">${esc(x)}</li>`).join("")}</ul>`:`<p style="font-size:13px;color:var(--ink-soft)">詳見本頁稽查查檢表。</p>`;
-  return `<div class="evidence-map" id="${uid}">
+  const focusHtml=focusItems.length?`<ul>${focusItems.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:`<p style="font-size:13px;color:var(--ink-soft)">詳見本頁重點說明。</p>`;
+  const auditHtml=auditItems.length?`<ul>${auditItems.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:`<p style="font-size:13px;color:var(--ink-soft)">詳見本頁稽查查檢表。</p>`;
+  return `<div class="ev-chain-hdr">
+    <span class="ev-chain-lbl">稽查證據鏈</span>
+    <span class="ev-chain-dept">${esc(s.title)}</span>
+  </div>
+  <div class="evidence-map" id="${uid}">
     <div class="evidence-node clickable" data-em-node="${uid}-A">
-      <span class="slide-label">A</span>
-      <h4>現場作業 <span class="em-toggle">▶ 展開</span></h4>
+      <span class="ev-node-badge">A</span>
+      <span class="ev-node-icon">⚙️</span>
+      <h4>現場作業</h4>
       <ul><li>人員知道自己的步驟</li><li>作業與紀錄同步完成</li><li>異常立即通報</li></ul>
-      <div id="${uid}-A-detail" class="em-detail" style="display:none">${focusHtml}</div>
+      <div id="${uid}-A-detail" class="em-detail" style="display:none">
+        <div style="font-size:12px;font-weight:800;color:var(--gold);margin-bottom:6px;letter-spacing:.04em">常見缺失提醒</div>
+        ${focusHtml}
+      </div>
+      <span class="em-toggle">▶ 展開缺失提醒</span>
     </div>
-    <div class="evidence-node center">${esc(s.title)}<br><span style="font-size:12px;opacity:.85">稽查證據鏈</span><br><span style="font-size:11px;opacity:.7;margin-top:6px;display:block">點擊兩側節點展開細節</span></div>
+    <div class="evidence-node center">
+      <span style="font-size:22px;margin-bottom:8px">⇌</span>
+      <span style="font-size:13px;font-weight:800;letter-spacing:.04em">核心</span>
+      <span style="font-size:11px;opacity:.8;margin-top:4px">點兩側<br>展開細節</span>
+    </div>
     <div class="evidence-node clickable" data-em-node="${uid}-B">
-      <span class="slide-label">B</span>
-      <h4>文件與紀錄 <span class="em-toggle">▶ 展開</span></h4>
+      <span class="ev-node-badge">B</span>
+      <span class="ev-node-icon">📋</span>
+      <h4>文件與紀錄</h4>
       <ul><li>最新版 SOP 與表單</li><li>簽核、日期、版次完整</li><li>可追溯批號與責任人</li></ul>
-      <div id="${uid}-B-detail" class="em-detail" style="display:none">${auditHtml}</div>
+      <div id="${uid}-B-detail" class="em-detail" style="display:none">
+        <div style="font-size:12px;font-weight:800;color:var(--gold);margin-bottom:6px;letter-spacing:.04em">稽查重點對照</div>
+        ${auditHtml}
+      </div>
+      <span class="em-toggle">▶ 展開稽查重點</span>
     </div>
   </div>
   <div class="metric-strip" id="${uid}-metrics">
-    <div class="metric clickable" data-em-tip="作業當下即填寫紀錄，不事後補填。稽查員現場看到的紀錄，應反映真實作業順序與時間點。"><strong>即時</strong><span>作業發生即紀錄</span></div>
-    <div class="metric clickable" data-em-tip="每個欄位、簽名與日期都不可空白。欄位留空視為資料不完整，等同作業未執行。"><strong>完整</strong><span>欄位、簽名、日期齊全</span></div>
-    <div class="metric clickable" data-em-tip="紀錄內容需與現場實際作業相符。數字、批號、操作人員與設備資訊應一致且可核實。"><strong>正確</strong><span>資料與現場一致</span></div>
-    <div class="metric clickable" data-em-tip="任何問題都能往回追查：批號→供應商→入庫→儲位→出貨→客戶，責任人清楚可識別。"><strong>可追溯</strong><span>批號、流向、責任清楚</span></div>
+    <div class="metric clickable" data-em-tip="作業當下即填寫紀錄，不事後補填。稽查員現場看到的紀錄，應反映真實作業順序與時間點。"><span class="metric-icon">⏱</span><strong>即時</strong><span>作業發生即紀錄</span></div>
+    <div class="metric clickable" data-em-tip="每個欄位、簽名與日期都不可空白。欄位留空視為資料不完整，等同作業未執行。"><span class="metric-icon">✅</span><strong>完整</strong><span>欄位、簽名、日期齊全</span></div>
+    <div class="metric clickable" data-em-tip="紀錄內容需與現場實際作業相符。數字、批號、操作人員與設備資訊應一致且可核實。"><span class="metric-icon">🎯</span><strong>正確</strong><span>資料與現場一致</span></div>
+    <div class="metric clickable" data-em-tip="任何問題都能往回追查：批號→供應商→入庫→儲位→出貨→客戶，責任人清楚可識別。"><span class="metric-icon">🔗</span><strong>可追溯</strong><span>批號、流向、責任清楚</span></div>
   </div>
   <div id="${uid}-tip" class="em-tip-box" style="display:none"></div>`;
 }
@@ -3585,7 +3642,10 @@ function bindEvidenceMap(){
       const isOpen=detail.style.display!=="none";
       detail.style.display=isOpen?"none":"";
       node.classList.toggle("open",!isOpen);
-      if(toggle) toggle.textContent=isOpen?"▶ 展開":"▼ 收起";
+      if(toggle){
+        const base=toggle.textContent.replace(/^[▶▼]\s*/,"");
+        toggle.textContent=(isOpen?"▶ ":"▼ ")+base;
+      }
     });
   });
   document.querySelectorAll("[data-em-tip]").forEach(metric=>{
@@ -3791,7 +3851,7 @@ function deptScheduleSection(s){
   const tabs=orderedFreqs.map((freq,i)=>`<button type="button" class="dept-sched-tab${i===0?" active":""}" data-ds-tab="${pid}" data-ds-freq="${esc(freq)}">${esc(freq)}<span>${byFreq[freq].length}</span></button>`).join("");
   const panes=orderedFreqs.map((freq,i)=>`<div class="dept-sched-pane${i===0?" active":""}" data-ds-pane="${pid}" data-ds-pfreq="${esc(freq)}">${
     byFreq[freq].map(x=>`<div class="ds-item">
-      <div class="ds-item-title">${esc(x.data)}</div>
+      <div class="ds-item-title">${sourceToChapter(x.source)?'<span class="chapter-tag">'+sourceToChapter(x.source)+'</span>':''}${esc(x.data)}</div>
       <div class="ds-item-note">${esc(x.note)}</div>
       <div class="ds-item-meta">
         <span>📋 ${esc(x.form)}</span>
@@ -3843,6 +3903,27 @@ function bindAuditFocus(){
       card.classList.add("active");
       const no=String(card.dataset.auditNo||"").padStart(2,"0");
       detail.innerHTML=auditDetailHtml(no,card.dataset.auditItem,"核對這一點");
+    });
+  });
+}
+function bindFlowDiagrams(){
+  document.querySelectorAll('.flow-diagram[data-fduid]').forEach(diagram=>{
+    const uid=diagram.dataset.fduid;
+    const wraps=[...diagram.querySelectorAll(`.flow-step-wrap[data-fduid="${uid}"]`)];
+    wraps.forEach(wrap=>{
+      const activate=()=>{
+        const i=parseInt(wrap.dataset.fdi);
+        wraps.forEach(w=>{
+          w.classList.remove('flow-active');
+          const d=diagram.querySelector('#'+uid+'-d'+w.dataset.fdi);
+          if(d) d.classList.remove('show');
+        });
+        wrap.classList.add('flow-active');
+        const det=diagram.querySelector('#'+uid+'-d'+i);
+        if(det) det.classList.toggle('show');
+      };
+      wrap.addEventListener('click',activate);
+      wrap.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();activate();}});
     });
   });
 }
@@ -4022,6 +4103,7 @@ async function showSection(id){
   bindDeptSchedTabs();
   bindAuditFocus();
   bindFlowSteppers();
+  bindFlowDiagrams();
   bindFlipCards();
   bindFocusInteractives();
   bindQaForm(id);
@@ -4038,9 +4120,11 @@ async function showSection(id){
    UTILITIES
 ═══════════════════════════════════════════════ */
 function sourceToChapter(src){
-  const m=(src||"").match(/[A-Z]{2}(\d)/);
+  const m=(src||"").match(/[A-Z]{2}(d)/);
   const n=m?parseInt(m[1]):0;
-  return ["","第一章","第二章","第三章","第四章","第五章","第六章","第七章","第八章"][n]||"";
+  const nums=["","第一章","第二章","第三章","第四章","第五章","第六章","第七章","第八章"];
+  const names=["","品質管理系統","組織人員衛生","場所與設備","文件管制","供應鏈管理","退回品與回收","委外作業","內部稽核"];
+  return nums[n]?(nums[n]+" "+names[n]):"";
 }
 function esc(v){
   return String(v||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
