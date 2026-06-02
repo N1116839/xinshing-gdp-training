@@ -566,10 +566,7 @@
     .trigger-icon{font-size:18px;flex-shrink:0}
     .trigger-badge{font-size:10px;font-weight:800;padding:2px 8px;border-radius:10px;background:rgba(0,0,0,.07);white-space:nowrap}
     .trigger-desc{font-size:13px;color:var(--ink-soft);line-height:1.65;margin:0}
-    /* ── dual-flow grid ─────────────────────────────── */
-    .flow-dual-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:4px}
-    .flow-dual-cell{min-width:0}
-    @media(max-width:768px){.flow-dual-grid{grid-template-columns:1fr}}
+
     /* ── urgency tabs in deptScheduleSection ─────────── */
     .dept-sched-tab[data-urg="red"]  {border-left:3px solid #e55}
     .dept-sched-tab[data-urg="amber"]{border-left:3px solid #e8a020}
@@ -3852,10 +3849,6 @@ function deptFlowDiagram(f){
 function deptFlowSection(s){
   if(!s.deptFlow) return '';
   const flows=Array.isArray(s.deptFlow)?s.deptFlow:[s.deptFlow];
-  if(flows.length>=2){
-    const cells=flows.map(f=>'<article class="panel flow-dual-cell"><h3>'+esc(f.title)+'</h3>'+deptFlowDiagram(f)+'</article>').join('');
-    return '<div class="flow-dual-grid">'+cells+'</div>';
-  }
   return flows.map(f=>panel(f.title,deptFlowDiagram(f),'wide')).join('');
 }
 function trainingTable(info){
