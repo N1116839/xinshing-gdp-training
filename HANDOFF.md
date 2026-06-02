@@ -1,5 +1,34 @@
 # GDP HTML 教育訓練 HANDOFF
-更新：2026-06-02（第四十九次）
+更新：2026-06-02（第五十次）
+
+## 本輪完成（2026-06-02 第五十次）✅ 部門頁視覺排版修正 — regex 修正、流程圖三欄、visualIntro 重設計
+
+- **使用者要求**：
+  - 部門文件閱讀地圖/資料交付時程/行事曆 顯示「章節+SOP名稱」
+  - 流程圖視覺改善（目前只有左邊有資料右邊沒有）
+  - 各部門頁面全部重新排版，服務三大目標：GDP是什麼、知識保護、什麼時候交資料
+
+- **修改內容**：
+  - **sourceToChapter regex bug 修正**：`/[A-Z]{2}(d)/` → `/[A-Z]{2}(\d)/`（全站章節標籤從此正常顯示）
+  - **流程圖三欄佈局**：`.flow-step-box` 改 `56px 1fr auto`，加 `.flow-step-right` 欄（右側永遠顯示文件代碼）
+  - **deptFlowDiagram 函式**：文件代碼移至右欄 div，不再藏在展開詳情
+  - **flow-arrow** 改為置中對齊
+  - **visualIntro 重設計**：移除背景圖片依賴，改為結構化 `dept-intro` card（角色標籤 + lead + pills + 4大學習目標）
+  - **renderContent 排序**：`deptScheduleSection` 提前到 `deptFlowSection` 前（目標4優先）
+
+- **驗收**：JS_PARSE_OK 1，1296/1296 通過，0 失敗
+- **commit**：`e957c67`，已 push
+
+## ⚠️ 本輪踩坑
+- bash heredoc `<< 'SCRIPT'` 中，Node.js template literal 裡的 `\\n` 仍可能在特定環境被解析成 literal newline，導致 JS 語法錯誤 → 解法：改用 `Write` 工具寫 .js 檔案再執行，不用 heredoc 傳遞含有 `\n` 的替換字串
+
+## 下次開工提醒
+
+1. Phase 2 H1 員工登入系統（多次延後，優先度最高）
+2. 各部門 audit 問句可再確認是否有識別性詞彙
+3. evidenceMap / trainingTable 其他互動升級
+
+---
 
 ## 本輪完成（2026-06-02 第四十九次）✅ 視覺互動化升級 — 流程圖、證據鏈、翻卡、章節標籤
 
