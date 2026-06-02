@@ -709,7 +709,7 @@ const sections = [
       ]
     },
     schedule:[["清冊異動時","同步更新產品、供應商、儲位、保存條件與委外資訊。"],["委外評鑑時","確認物流業者適任性、文件維護、溫度紀錄與改善事項。"],["查詢需求時","能快速提供產品清冊、供應商資格與委外品質協議。"]],
-    audit:["SMF 是否清楚說明公司場所、作業範圍、組織與 GDP 活動。","產品清冊是否包含品名、許可證、持有者、保存條件與儲存位置。","委外物流是否有合約、品質協議與核准紀錄。","委外活動是否明確界定責任、通報、文件保存與績效監測。","供應商與客戶清冊是否為最新版，異動是否有核准與紀錄。","24 小時緊急聯絡人與代理人是否與 WI10-01 一致，現場人員是否知道查詢位置。","保存溫度與儲位資訊是否能回到實際標示與倉儲紀錄。","委外物流溫度、清潔、安全與暫存管制是否可提供佐證。","清冊異動是否同步到相關 SOP、表單、訓練與現場作業。"],
+    audit:["SMF 是否清楚說明公司場所、作業範圍、組織與 GDP 活動。","產品清冊是否包含品名、許可證、持有者、保存條件與儲存位置。","委外物流是否有合約、品質協議與核准紀錄。","委外活動是否明確界定責任、通報、文件保存與績效監測。","供應商與客戶清冊是否為最新版，異動是否有核准與紀錄。","24 小時緊急聯絡人與代理人是否與品質手冊及 SMF 一致，現場人員是否知道查詢位置。","保存溫度與儲位資訊是否能回到實際標示與倉儲紀錄。","委外物流溫度、清潔、安全與暫存管制是否可提供佐證。","清冊異動是否同步到相關 SOP、表單、訓練與現場作業。"],
     qa:true
   },
   {
@@ -840,12 +840,12 @@ const sections = [
       {freq:"發生時啟動",equipment:"倉儲環境或關鍵設備",task:"環境變更、重大事件、重大維修、遷移後再測繪或再確效評估",owner:"品保 / 倉管",form:"溫度測繪報告、4Q 確效報告",source:"DP33-01 / DP36-01"}
     ],
     schedule:[["發生時啟動","偏差、CAPA、客訴、退回、偽禁仿冒藥、藥品回收、文件/人員/儲位/設備/委外異動、新品項與新供應商都不等到月結。"],["固定週期","每日、每月、每兩月、每季、每半年、每年、每三年為 SOP 文件可追溯的收件節奏。"]],
-    audit:["行事曆是否能回答：什麼時間點、向哪一個部門、收哪一份資料。","每一筆資料是否有 SOP 或表單來源，不用口頭記憶管理。","部門篩選是否只保留指定的 8 個部門。","每季與每三個月是否已合併，不再重複。","客戶清冊是否每年交業務核對並完成 FR53-01、FR53-02。","運輸溫度紀錄權責是否列為倉管部。","未明定固定週期的項目是否未被寫成正式要求。"],
+    audit:["行事曆是否能回答：什麼時間點、向哪一個部門、收哪一份資料。","每一筆資料是否有 SOP 或表單來源，不用口頭記憶管理。","部門篩選是否只保留指定的 8 個部門。","每季與每三個月是否已合併，不再重複。","客戶清冊是否每年交業務核對並完成合格客戶清單與客戶認可審查。","運輸溫度紀錄權責是否列為倉管部。","未明定固定週期的項目是否未被寫成正式要求。"],
     qa:true
   },
   {
     id:"equipment-calendar",group:"年度行事曆",title:"關鍵設備行事曆",tag:"保養・校驗・確效",
-    lead:"依第三章 DP34-01、DP34-02 整理關鍵設備的定期保養、外部校正與溫度測繪週期。每次執行填寫 FR34-03，由倉管或品保留存；校正報告需保存 5 年。",
+    lead:"依第三章場所與設備規範整理關鍵設備的定期保養、外部校正與溫度測繪週期。每次執行均填寫設備保養維修紀錄，由倉管或品保留存；校正報告需保存 5 年。",
     pills:["關鍵設備SOP","量測儀器","溫度監控","驗證確效","設備保養紀錄"],
     standards:{
       picsgdp:["關鍵設備需建立並維護足以確保其正確運作的系統","溫度記錄設備、警報系統等需定期校正，並有校正紀錄","設備保養需有計畫與紀錄，異常需文件化並評估對 GDP 的影響","確效確保設備與系統持續符合既定規格"],
@@ -3555,8 +3555,8 @@ function stripDocCode(txt){
 // 行內移除文件代碼：用於 learner-facing 第一層正文（資料層仍保留代碼供搜尋/keyword）
 function stripInlineCode(txt){
   return String(txt)
-    .replace(/[（(]\s*[A-Z]{2}\d{2}-\d{2}\s*[）)]/g,"")  // 括號內代碼 如（FR12-04）
-    .replace(/[A-Z]{2}\d{2}-\d{2}\s*/g,"")               // 句中代碼 如 DP22-01 / FR24-02
+    .replace(/[（(]\s*[A-Z]{2}\d{2}-\d{2}(\s*[、，]\s*[A-Z]{2}\d{2}-\d{2})*\s*[）)]/g,"")  // 括號內代碼 如（FR12-04）（FR15-01、FR15-02）
+    .replace(/[A-Z]{2}\d{2}-\d{2}[、，]?\s*/g,"")          // 句中代碼（含「代碼、代碼」串） 如 DP22-01 / FR15-01、FR15-02
     .replace(/\s{2,}/g," ")
     .replace(/\s+([，、。；）)])/g,"$1")
     .trim();
@@ -3619,7 +3619,7 @@ function companyProfileHtml(p){
     <tbody>${staffRows}</tbody>
   </table></div>`;
   return `<div class="profile-grid">
-    <div class="profile-basics"><h4 style="margin:0 0 8px;color:#0a4d8a;font-size:14px">公司基本資料（WI10-01 §壹）</h4>${basics}</div>
+    <div class="profile-basics"><h4 style="margin:0 0 8px;color:#0a4d8a;font-size:14px">公司基本資料</h4>${basics}</div>
     <div class="profile-staff"><h4 style="margin:0 0 8px;color:#0a4d8a;font-size:14px">各職位任用資格與必修主題</h4>${staff}</div>
   </div>`;
 }
@@ -3665,7 +3665,7 @@ function auditChecklistFor(item){
 function auditDetailHtml(no,item,heading="先確認這一點"){
   return `<small>稽查重點 ${String(no).padStart(2,"0")}</small>
       <h4>${heading}</h4>
-      <p>${esc(item)}</p>
+      <p>${esc(stripInlineCode(item))}</p>
       <ul>${auditChecklistFor(item).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`;
 }
 function auditSlides(s){
@@ -3680,7 +3680,7 @@ function auditSlides(s){
       <div class="flip-card-inner">
         <div class="flip-card-front">
           <div class="flip-card-no">稽查重點 ${no}／${total}</div>
-          <div class="flip-card-q">${esc(item)}</div>
+          <div class="flip-card-q">${esc(stripInlineCode(item))}</div>
           <div class="flip-card-hint">點擊翻面看確認要點 ▶</div>
         </div>
         <div class="flip-card-back">
@@ -3747,7 +3747,7 @@ function visualIntro(s){
   return `<div class="dept-intro">
     <div class="dept-intro-top">
       ${s.tag?`<span class="dept-tag-badge">🏷 ${esc(s.tag)}</span>`:''}
-      <p class="dept-intro-lead">${esc(s.lead)}</p>
+      <p class="dept-intro-lead">${esc(stripInlineCode(s.lead))}</p>
     </div>
     ${pillsHtml?`<div class="dept-intro-pills">${pillsHtml}</div>`:''}
     <div class="dept-intro-goals">${goalsHtml}</div>
@@ -3889,7 +3889,7 @@ function trainingTable(info){
         <tr><th>地點</th><td>${d.where}</td></tr>
         <tr><th>授課</th><td>${d.instructor}</td></tr>
         <tr><th>形式</th><td>${d.format}</td></tr>
-        <tr><th>紀錄表單</th><td>${d.record}</td></tr>
+        <tr><th>紀錄表單</th><td>${stripInlineCode(d.record)}</td></tr>
         <tr><th>合格門檻</th><td><strong class="score-badge">${d.score}</strong></td></tr>
         <tr><th>保存年限</th><td>${d.keep}</td></tr>
       </table>
@@ -3930,8 +3930,8 @@ function collectionCalendarSection(s){
         <span class="dept-badge" style="margin-top:6px;display:block">${esc(x.dept)}</span>
       </div>
       <div>
-        <h4>${sourceToChapter(x.source)?`<span class="chapter-tag">${sourceToChapter(x.source)}</span>`:""}${esc(x.data)}</h4>
-        <p style="font-size:14px;color:var(--ink-soft);line-height:1.62;margin-bottom:9px">${esc(x.note)}</p>
+        <h4>${sourceToChapter(x.source)?`<span class="chapter-tag">${sourceToChapter(x.source)}</span>`:""}${esc(stripInlineCode(x.data))}</h4>
+        <p style="font-size:14px;color:var(--ink-soft);line-height:1.62;margin-bottom:9px">${esc(stripInlineCode(x.note))}</p>
         <div class="equipment-meta">
           <span>找誰：${esc(x.owner)}</span>
           <span class="calendar-status" data-calendar-status="${i}" data-calendar-status-id="${esc(itemId)}" aria-label="收件狀態">
@@ -3983,7 +3983,7 @@ function evidenceMap(s){
   const focusItems=(s.focus||[]).slice(0,4);
   const auditItems=(s.audit||[]).slice(0,6);
   const focusHtml=focusItems.length?`<ul>${focusItems.map(x=>`<li>${esc(x.text||x)}</li>`).join("")}</ul>`:`<p style="font-size:13px;color:var(--ink-soft)">詳見本頁重點說明。</p>`;
-  const auditHtml=auditItems.length?`<ul>${auditItems.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:`<p style="font-size:13px;color:var(--ink-soft)">詳見本頁稽查查檢表。</p>`;
+  const auditHtml=auditItems.length?`<ul>${auditItems.map(x=>`<li>${esc(stripInlineCode(x))}</li>`).join("")}</ul>`:`<p style="font-size:13px;color:var(--ink-soft)">詳見本頁稽查查檢表。</p>`;
   return `<div class="ev-chain-hdr">
     <span class="ev-chain-lbl">稽查證據鏈</span>
     <span class="ev-chain-dept">${esc(s.title)}</span>
@@ -4379,8 +4379,8 @@ function deptScheduleSection(s){
   const tabs=orderedFreqs.map((freq,i)=>{const urg=urgMap[freq]||'';return '<button type="button" class="dept-sched-tab'+(i===0?' active':'')+'" data-ds-tab="'+pid+'" data-ds-freq="'+esc(freq)+'"'+(urg?' data-urg="'+urg+'"':'')+'>'+esc(freq)+'<span>'+byFreq[freq].length+'</span></button>';}).join("");
   const panes=orderedFreqs.map((freq,i)=>`<div class="dept-sched-pane${i===0?" active":""}" data-ds-pane="${pid}" data-ds-pfreq="${esc(freq)}">${
     byFreq[freq].map(x=>`<div class="ds-item">
-      <div class="ds-item-title">${sourceToChapter(x.source)?'<span class="chapter-tag">'+sourceToChapter(x.source)+'</span>':''}${esc(x.data)}</div>
-      <div class="ds-item-note">${esc(x.note)}</div>
+      <div class="ds-item-title">${sourceToChapter(x.source)?'<span class="chapter-tag">'+sourceToChapter(x.source)+'</span>':''}${esc(stripInlineCode(x.data))}</div>
+      <div class="ds-item-note">${esc(stripInlineCode(x.note))}</div>
       <div class="ds-item-meta">
         <span>👤 ${esc(x.owner)}</span>
       </div>

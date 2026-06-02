@@ -1,4 +1,40 @@
 # GDP HTML 教育訓練 HANDOFF
+更新：2026-06-02（第五十九次）
+
+## 本輪完成（2026-06-02 第五十九次）✅ 報告派工 1、2 完成 + 報告刷新
+
+依 `HTML視覺權限改善報告_2026-06-02.md` 完成派工順序前兩項，並刷新報告本身。
+
+### 項 1 — 4 類自動索引 KB 條目改為僅供搜尋
+- `localDocs()` 內 `sop-*`／`section-*`／`docmap-*`／`file-*` 全部加 `searchOnly:true` + `visibilityLayer:"internal-index"`（`keywords`/`sop_ref` 不動，搜尋命中不受影響）
+- `sop-*` 三欄移除「文件編號：${code}」；`file-*` 的 `xinshing` 移除「檔案路徑：${path}」（路徑只留 `file`/`keywords`）
+- `kbResultsHtml()` 新增 `results.filter(r=>!r.searchOnly)`：索引條目不再被選為學員三欄答案；僅剩索引時顯示中性導向訊息
+
+### 項 2 — learner-facing 第一層文件代碼外露（大幅清除）
+- 新增 `stripInlineCode()`（移除句中/括號內、含「代碼、代碼」串的 DM/DP/WI/FR，清理頓號殘留；資料層保留，僅 render 層移除）
+- 套用 7 類 render 點：執行方式 company 卡、資料收件核對台(data/note)、部門資料交付時程(data/note)、稽查翻卡問句、稽查證據鏈 audit 清單、視覺導讀 lead、教育訓練表 record 欄
+- 移除「資料收件核對台」meta 內「依據：(原始代碼)」一行
+- 改寫少數 strip 後語意斷裂的資料句：偏差/設備/訓練 company 句、2 句 audit 問句、設備行事曆 lead、companyProfile 標題（移除「（WI10-01 §壹）」）
+- **瀏覽器逐頁掃描 29 區段，learner-facing 文件代碼命中數 = 0（ALL_CLEAN）**
+
+### 刻意保留（勿誤刪）
+`standards.docs`、`collectionCalendar.form/source`、各 fact/clarify `keywords`、`sop_ref` 仍保留代碼 → 資料層／搜尋／驗收用途，且不在前台 learner-facing 正文渲染。
+
+### 本輪踩坑
+- 純 render-strip 對「代碼為句子主詞/受詞」的字串會留下語意斷裂（「填寫，」「與 一致」「完成。」）→ 規則：先 strip 安全網，再對斷裂句改寫資料；兩層並行。
+
+**驗收**：`JS_PARSE_OK 1`、`1296/1296` 通過、桌機 + 手機(375px 無水平溢出)、智慧查詢抽測無代碼/路徑外露。
+
+## 下次開工提醒（接報告派工 3–6）
+
+1. 項 3 常見缺失補來源：7 筆 EU 仍在資料層（前台已過濾不顯示）；補 `sourceUrl`/具體來源**需使用者提供 TFDA/PIC·S 公開來源，不可杜撰**。
+2. 項 4 常見缺失互動升級（補 evidenceToPrepare/auditQuestion/answerDirection）。
+3. 項 5 文件閱讀地圖學習狀態保存；項 6 證據鏈→可勾選核對台。
+4. 項 7（非急迫）移除 `.doc-modal`/`.doc-dialog` 殘留 CSS（`:265`）。
+5. Phase 2 H1 員工登入系統（使用者已確認登入端暫無法開工）。
+
+---
+
 更新：2026-06-02（第五十八次）
 
 ## 本輪完成（2026-06-02 第五十八次）✅ HTML視覺權限改善報告 晚間複檢 7 項修正
