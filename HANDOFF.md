@@ -11,8 +11,12 @@
 4. **openDoc 殘留** — 移除整個 doc-modal HTML、`bindDocButtons`、`openDoc/closeDoc/initDocModal` 函式及所有呼叫點
 5. **文件代碼 chip** — `deptScheduleSection` 移除 `📋 form` 代碼 chip，保留章節標籤 + 資料名稱 + 負責人
 
+### 後續修正（使用者回報）
+
+- **文件閱讀地圖** — 3 欄 grid 改 `auto-fill` 消除右側空白、`stripDocCode()` 移除 SOP 代碼、補「適用角色」「申請對象」欄位
+
 - **驗收**：JS_PARSE_OK 1、1296/1296 通過（verify_facts_ghpages.mjs 全量）
-- **commit**：將於收工時完成
+- **commit**：`d21879b`（報告5項）、`8abcfff`（文件閱讀地圖修正），已 push
 
 ## 下次開工提醒
 
