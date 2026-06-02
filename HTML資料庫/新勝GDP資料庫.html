@@ -522,13 +522,16 @@
     .fsv-detail{font-size:12px;color:var(--ink);line-height:1.7;display:none;margin-top:8px;padding-top:8px;border-top:1px solid #cde0dd;white-space:pre-line}
     .fsv-step.active .fsv-detail{display:block}
     .fsv-chapter{display:inline-block;font-size:11px;background:#e6f2ef;color:var(--brand);border-radius:5px;padding:2px 8px;margin-top:6px}
-    @media(max-width:640px){.fsh{display:none}.fsv{display:block}}
+    .flow-dual-cell .fsh{display:none!important}
+    .flow-dual-cell .fsv{display:block!important}
+    @media(max-width:640px){.fsh{display:none}.fsv{display:block}.fsh-detail{text-align:left}}
     /* ── dept quick nav ─────────────────────────────── */
     .dept-quicknav{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
     .dept-qn-btn{display:inline-flex;align-items:center;gap:4px;padding:7px 16px;border-radius:20px;background:#f0f8f6;border:1.5px solid #cde0dd;font-size:13px;font-weight:600;color:var(--brand);text-decoration:none;transition:all .2s;cursor:pointer}
     .dept-qn-btn:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
     @media(max-width:640px){.dept-qn-btn{font-size:12px;padding:6px 13px}}
-    /* ── section anchors ────────────────────────────── */
+    .doc-map-code{font-size:11px;font-weight:700;color:#7b3f00;background:#fff8f0;border-radius:4px;padding:1px 6px;margin-right:3px;letter-spacing:.02em}
+        /* ── section anchors ────────────────────────────── */
     .sec-anchor{display:block;height:0;visibility:hidden;margin-top:-70px;padding-top:70px}
         /* ── trigger cards ─────────────────────────────── */
     .trigger-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:4px}
@@ -617,7 +620,7 @@ const sections = [
   {
     id:"manual",group:"GDP核心",title:"品質手冊",tag:"為何要做 GDP",
     lead:"品質手冊回答的是「為什麼公司必須做 GDP」。藥品離開製造廠後，批發、儲存、運輸、退回、回收與紀錄保存都可能影響品質；GDP 不是額外文件工作，而是確保藥品在供應鏈中仍維持安全、有效與可追溯的品質系統。DM10-01 是本公司 GDP 系統最高層級文件，用來把法規要求、管理責任、偏差/CAPA、風險管理、內部稽核與管理審查串成同一套品質邏輯。",
-    pills:["DM10-01","DP12-01","偏差/CAPA","管理審查","內部稽核"],
+    pills:["DM10-01","DP12-01","偏差/矯正與預防","管理審查","內部稽核"],
     coreBrief:[
       {title:"這頁先回答",body:"為什麼藥品不是出廠後就結束管理，而是到交付客戶前都需要 GDP 管制。"},
       {title:"新人要記得",body:"GDP 的核心不是背條文，是讓採購、倉儲、配送、客訴、退回、回收與紀錄都能被追溯。"},
@@ -1111,65 +1114,65 @@ const departmentDocumentMaps = {
   departments:{
     intro:"新人可先依「核心共讀、作業共用、異常與查核」三個方向閱讀，先建立整體 GDP 作業地圖，再回到各部門日常責任。",
     groups:[
-      {label:"核心共讀",note:"所有 GDP 人員都要理解",docs:["DM10-01 品質手冊","WI10-01 SMF 廠商基本資料","DP12-01 品質管理系統","DP22-01 組織與職掌"]},
-      {label:"作業共用",note:"跨部門交接會遇到",docs:["DP52-01 供應商評鑑","DP53-01 客戶認可","DP54-01 進出貨","DP57-01 訂單、揀貨及配銷"]},
-      {label:"異常與查核",note:"事情不順或稽查時會用",docs:["DP12-02 偏差","DP12-03 CAPA","DP62-01 客訴","DP63-01 退回","DP65-01 回收","DP82-01 內部稽核"]}
+      {label:"核心共讀",note:"所有 GDP 人員都要理解",docs:["DM10-01 品質手冊","WI10-01 SMF廠商基本資料","DP12-01 品質管理系統程序書","DP22-01 組織與職掌標準作業程序"]},
+      {label:"作業共用",note:"跨部門交接會遇到",docs:["DP52-01 藥品供應商評鑑作業程序","DP53-01 客戶認可審查程序書","DP54-01 藥品進出貨管理程序書","DP57-01 訂單、揀貨及配銷管理程序書"]},
+      {label:"異常與查核",note:"事情不順或稽查時會用",docs:["DP12-02 偏差管理作業程序","DP12-03 矯正與預防作業程序書","DP62-01 客訴管理作業程序書","DP63-01 退回","DP65-01 藥品回收管理程序書","DP82-01 內部稽核作業程序書"]}
     ]
   },
   personnel:{
     intro:"人事不是只看訓練表，還要確保組織職掌、代理人、門禁與衛生清潔能支持 GDP 作業。",
     groups:[
-      {label:"必讀文件",note:"新人與異動必看",docs:["DP22-01 組織與職掌","DP24-01 員工教育訓練","DP25-01 人員衛生暨環境清潔"]},
-      {label:"共用",note:"會與倉管、文管、GDP 權責人交接",docs:["WI22-01 組織圖暨職務說明","FR22-01 組織各職稱指派名單","WI25-01 門禁進出管制"]},
+      {label:"必讀文件",note:"新人與異動必看",docs:["DP22-01 組織與職掌標準作業程序","DP24-01 員工教育訓練作業程序","DP25-01 人員衛生暨環境清潔作業程序書"]},
+      {label:"共用",note:"會與倉管、文管、GDP 權責人交接",docs:["WI22-01 組織圖暨員工職務說明書","FR22-01 組織各職稱指派名單","WI25-01 門禁進出管制規定"]},
       {label:"稽查常用",note:"資格與訓練證據",docs:["FR24-01 外部訓練紀錄","FR24-02 內部訓練紀錄","補訓與再評鑑紀錄"]}
     ]
   },
   rp:{
     intro:"GDP 權責人要看的是整個系統是否運作，不是只看任命書；供應商、客戶、委外、偏差、內稽與管理審查都會回到這個角色。",
     groups:[
-      {label:"必讀文件",note:"系統責任",docs:["DM10-01 品質手冊","DP12-01 品質管理系統","DP14-01 管理階層檢討","DP82-01 內部稽核"]},
-      {label:"共用",note:"需要核准或追蹤",docs:["DP52-01 供應商評鑑","DP53-01 客戶認可","DP72-01 委外作業","WI10-01 SMF"]},
-      {label:"異常",note:"需審核與追蹤結案",docs:["DP12-02 偏差","DP12-03 CAPA","DP12-04 變更","DP15-01 品質風險"]}
+      {label:"必讀文件",note:"系統責任",docs:["DM10-01 品質手冊","DP12-01 品質管理系統程序書","DP14-01 管理階層檢討作業程序","DP82-01 內部稽核作業程序書"]},
+      {label:"共用",note:"需要核准或追蹤",docs:["DP52-01 藥品供應商評鑑作業程序","DP53-01 客戶認可審查程序書","DP72-01 委外作業程序書","WI10-01 SMF廠商基本資料"]},
+      {label:"異常",note:"需審核與追蹤結案",docs:["DP12-02 偏差管理作業程序","DP12-03 矯正與預防作業程序書","DP12-04 變更管制作業程序書","DP15-01 品質風險作業程序書"]}
     ]
   },
   pharmacist:{
     intro:"管理藥師重點是藥品安全判斷與緊急處置，需連結回收、退回、偽禁仿冒藥與配送紀錄。",
     groups:[
-      {label:"必讀文件",note:"藥品安全事件",docs:["DP64-01 偽禁仿冒藥","DP65-01 藥品回收","DP63-01 退回品"]},
-      {label:"共用",note:"需要查批號、客戶與庫存",docs:["DP57-01 訂單、揀貨及配銷","DP54-01 進出貨","DP55-01 產品儲存"]},
+      {label:"必讀文件",note:"藥品安全事件",docs:["DP64-01 偽禁仿冒藥作業程序書","DP65-01 藥品回收管理程序書","DP63-01 退回品管理作業程序書"]},
+      {label:"共用",note:"需要查批號、客戶與庫存",docs:["DP57-01 訂單、揀貨及配銷管理程序書","DP54-01 藥品進出貨管理程序書","DP55-01 產品儲存作業程序書"]},
       {label:"稽查常用",note:"是否能快速追溯與通報",docs:["模擬回收紀錄","回收通知與結案紀錄","非符合品隔離與處置紀錄"]}
     ]
   },
   qa:{
     intro:"品保不只看偏差/CAPA，也要能把內稽、變更、風險、管理審查與部門改善串成完整證據鏈。",
     groups:[
-      {label:"必讀文件",note:"品質事件與改善",docs:["DP12-02 偏差","DP12-03 CAPA","DP82-01 內部稽核"]},
-      {label:"共用",note:"跨部門改善會碰到",docs:["DP12-04 變更管制","DP15-01 品質風險","DP14-01 管理階層檢討","DP36-01 驗證確效"]},
+      {label:"必讀文件",note:"品質事件與改善",docs:["DP12-02 偏差管理作業程序","DP12-03 矯正與預防作業程序書","DP82-01 內部稽核作業程序書"]},
+      {label:"共用",note:"跨部門改善會碰到",docs:["DP12-04 變更管制","DP15-01 品質風險作業程序書","DP14-01 管理階層檢討作業程序","DP36-01 驗證確效作業程序書"]},
       {label:"稽查常用",note:"證據與結案",docs:["FR12-03 偏差事件處理報告","FR12-04 矯正預防處理單","稽核查檢表與缺失追蹤"]}
     ]
   },
   warehouse:{
     intro:"倉管頁先從日常倉儲作業開始，再往外連到場所設備、門禁、病媒、溫度、電腦化系統、進出貨、儲存、揀貨、退回、回收與非符合品隔離。",
     groups:[
-      {label:"必讀文件",note:"日常倉儲作業",docs:["DP32-01 作業場所規劃","DP33-01 溫度監視","DP54-01 藥品進出貨","DP55-01 產品儲存","DP57-01 訂單、揀貨及配銷"]},
-      {label:"共用",note:"與品保、業務、採購交接",docs:["DP52-01 供應商評鑑","DP53-01 客戶認可","DP63-01 退回品","DP65-01 回收","DP56-01 廢棄物"]},
-      {label:"設備/場所",note:"維持倉庫條件",docs:["DP34-01 關鍵設備","DP34-02 量測儀器","DP35-01 電腦化系統","DP36-01 驗證確效","WI25-01 門禁","DP25-02 病媒防治"]},
+      {label:"必讀文件",note:"日常倉儲作業",docs:["DP32-01 作業場所規劃作業程序書","DP33-01 溫度監視作業程序書","DP54-01 藥品進出貨管理程序書","DP55-01 產品儲存作業程序書","DP57-01 訂單、揀貨及配銷管理程序書"]},
+      {label:"共用",note:"與品保、業務、採購交接",docs:["DP52-01 藥品供應商評鑑作業程序","DP53-01 客戶認可審查程序書","DP63-01 退回品管理作業程序書","DP65-01 藥品回收管理程序書","DP56-01 廢棄物管理作業程序書"]},
+      {label:"設備/場所",note:"維持倉庫條件",docs:["DP34-01 關鍵設備作業程序書","DP34-02 量測儀器作業程序書","DP35-01 電腦化系統作業程序書","DP36-01 驗證確效作業程序書","WI25-01 門禁進出管制規定","DP25-02 病媒蟲鼠防治作業程序書"]},
       {label:"稽查常用",note:"現場條件與紀錄證據",docs:["溫度連續監測紀錄","收貨/出貨/揀貨紀錄","非符合品隔離紀錄","退回與回收流向紀錄","設備保養與校正紀錄","門禁與病媒防治紀錄"]}
     ]
   },
   purchase:{
     intro:"採購不是只有供應商評鑑；採購會影響進貨、供應鏈合法性、產品追溯、SMF 清冊與異常升級。",
     groups:[
-      {label:"必讀文件",note:"採購與供應商",docs:["DP52-01 藥品供應商評鑑","核准供應商清冊","WI10-01 SMF 廠商基本資料"]},
-      {label:"共用",note:"會與倉管、品保交接",docs:["DP54-01 藥品進出貨","DP55-01 產品儲存","DP72-01 委外作業"]},
+      {label:"必讀文件",note:"採購與供應商",docs:["DP52-01 藥品供應商評鑑作業程序","核准供應商清冊","WI10-01 SMF廠商基本資料"]},
+      {label:"共用",note:"會與倉管、品保交接",docs:["DP54-01 藥品進出貨管理程序書","DP55-01 產品儲存作業程序書","DP72-01 委外作業程序書"]},
       {label:"稽查常用",note:"合法來源與文件有效性",docs:["藥品許可證字號","PIC/S GMP / PMF 核備函","年度供應商評鑑紀錄"]}
     ]
   },
   sales:{
     intro:"業務文件橫跨客戶資格、訂單、客訴、退回與回收；出貨不是倉管單獨完成，訂單資訊與客戶資格會直接影響追溯。",
     groups:[
-      {label:"必讀文件",note:"客戶與訂單",docs:["DP53-01 客戶認可","DP57-01 訂單、揀貨及配銷","客戶清冊"]},
-      {label:"共用",note:"會與倉管、管理藥師、品保交接",docs:["DP62-01 客訴","DP63-01 退回品","DP65-01 回收","DP54-01 進出貨"]},
+      {label:"必讀文件",note:"客戶與訂單",docs:["DP53-01 客戶認可審查程序書","DP57-01 訂單、揀貨及配銷管理程序書","客戶清冊"]},
+      {label:"共用",note:"會與倉管、管理藥師、品保交接",docs:["DP62-01 客訴管理作業程序書","DP63-01 退回品管理作業程序書","DP65-01 藥品回收管理程序書","DP54-01 藥品進出貨管理程序書"]},
       {label:"稽查常用",note:"流向與通知證據",docs:["銷貨憑單","客戶資格文件","客訴結案紀錄","回收客戶通知紀錄"]}
     ]
   },
@@ -1177,7 +1180,7 @@ const departmentDocumentMaps = {
     intro:"文管要能讓所有文件與紀錄被找到、版本正確且保存年限清楚；部門資料交來後，最終也會回到文件與品質紀錄管理。",
     groups:[
       {label:"必讀文件",note:"文件與紀錄制度",docs:["DP42-01 文件管制","DP42-02 品質紀錄","FR10-01 文件總覽表"]},
-      {label:"共用",note:"所有部門都會送來紀錄",docs:["訓練紀錄","溫度紀錄","採購/銷售紀錄","偏差/CAPA","內稽紀錄"]},
+      {label:"共用",note:"所有部門都會送來紀錄",docs:["訓練紀錄","溫度紀錄","採購/銷售紀錄","偏差/矯正與預防","內稽紀錄"]},
       {label:"稽查常用",note:"版次、生效與保存",docs:["發行章紙本","作廢文件銷毀紀錄","年度定期審查","保存 5 年證據"]}
     ]
   }
@@ -3169,7 +3172,8 @@ function documentMapSection(s){
         const code=cm?cm[1]:"";
         const label=cm?d.slice(cm[0].length):d;
         const ch=code?sourceToChapter(code):"";
-        return `<li>${ch?'<span class="chapter-tag">'+ch+'</span>':''}${esc(label)}</li>`;
+        const codePart=code?`<span class="doc-map-code">${esc(code)}</span> `:'';
+        return `<li>${ch?'<span class="chapter-tag">'+ch+'</span>':''}${codePart}${esc(label)}</li>`;
       }).join("")}</ul>
     </article>`).join("");
   return `<p class="lead" style="font-size:15px">${esc(map.intro)}</p>
