@@ -1,19 +1,22 @@
 # GDP HTML 教育訓練 HANDOFF
-更新：2026-06-02（第五十六次）
+更新：2026-06-02（第五十七次）
 
-## 本輪完成（2026-06-02 第五十六次）✅ 管理藥師流程水平修正 + 174 筆 KB 權限標籤
+## 本輪完成（2026-06-02 第五十七次）✅ 報告 5 項全部修正
 
-- **管理藥師流程水平修正**：`.flow-dual-cell` 強制垂直 CSS（`.fsh{display:none!important}` / `.fsv{display:block!important}`）移除，桌機雙欄流程恢復水平 Stepper，手機 640px 以下維持垂直 Timeline
-- **174 筆 KB 權限標籤**：全量 `docs.push` 加入 `departments` 與 `allowedRoles` 欄位，依事實內容對應至正確部門（8 部門），跨部門條目（收貨驗收、回收等）加註多部門；`allowedRoles` 統一設 `["staff","leader"]`
+依 `HTML視覺權限改善報告_2026-06-02.md` 完成 5 項修正：
+
+1. **首屏空白** — `coreBriefHtml` 加入 `renderContent()`（`s.coreBrief ? panel("學習重點",coreBriefHtml(s),"wide") : ""`）
+2. **Firestore 技術字眼** — 統計狀態改為「已連接資料庫｜統計資料同步中」「目前顯示本機統計」
+3. **SOP 全文文案** — 三處「完整 SOP 全文」統一改為「實際作業請依核准文件與主管指示執行」
+4. **openDoc 殘留** — 移除整個 doc-modal HTML、`bindDocButtons`、`openDoc/closeDoc/initDocModal` 函式及所有呼叫點
+5. **文件代碼 chip** — `deptScheduleSection` 移除 `📋 form` 代碼 chip，保留章節標籤 + 資料名稱 + 負責人
+
 - **驗收**：JS_PARSE_OK 1、1296/1296 通過（verify_facts_ghpages.mjs 全量）
-- **commit**：待 commit
+- **commit**：將於收工時完成
 
 ## 下次開工提醒
 
-1. 更新 Firestore rules 前需先完成角色/部門權限表（實際角色名稱、組長跨部門邊界清單）。
-2. 全站互動性升級（稽查重點 checkbox、scroll fade-in 等）回退待重做。
-3. 重複區塊整合（三處文件清單、時程）。
-4. eyebrow 字體 16px → 18px 回退。
+現有 HANDOFF.md 以下舊紀錄保留，但報告 5 項已完成無待修。
 
 ---
 

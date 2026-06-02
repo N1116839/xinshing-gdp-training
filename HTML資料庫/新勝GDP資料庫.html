@@ -608,15 +608,6 @@
     <div class="dept-toc-overlay" id="deptTocOverlay"></div>
   </main>
 </div>
-<div class="doc-modal" id="docModal" role="dialog" aria-modal="true">
-  <div class="doc-dialog">
-    <div class="doc-head">
-      <strong id="docTitle">SOP</strong>
-      <button class="doc-close" type="button" id="docClose">關閉</button>
-    </div>
-    <div class="doc-body" id="docBody"></div>
-  </div>
-</div>
 <script>
 window.GDP_FIREBASE_CONFIG = {
   apiKey: "AIzaSyBX6Z31XPRIMEzQuIpHL-6ptgV40rum8gI",
@@ -3836,13 +3827,13 @@ function deptFlowDiagram(f){
     const ch=doc?sourceToChapter(doc):'';
     const chTag=ch?`<span class="chapter-tag">${esc(ch)}</span> `:'';
     const counter=`<span class="fsh-step-counter">步驟 ${i+1} / ${steps.length}</span>`;
-    return `<div class="fsh-detail${i===0?' show':''}" data-fduid="${uid}" data-fdi="${i}"><div class="fsh-detail-header">${counter}<div class="fsh-detail-title">${esc(title)}</div></div><div class="fsh-detail-body">${esc(desc||'')}</div><div class="fsh-detail-foot">${chTag}⚠️ 實際作業請參閱部門 SOP 全文與主管指示</div></div>`;
+    return `<div class="fsh-detail${i===0?' show':''}" data-fduid="${uid}" data-fdi="${i}"><div class="fsh-detail-header">${counter}<div class="fsh-detail-title">${esc(title)}</div></div><div class="fsh-detail-body">${esc(desc||'')}</div><div class="fsh-detail-foot">${chTag}實際作業請依核准文件與主管指示執行</div></div>`;
   }).join('');
   const vSteps=steps.map(([num,title,desc,doc],i)=>{
     const sub=(desc||'').split('\n')[0];
     const ch=doc?sourceToChapter(doc):'';
     const chTag=ch?`<br><span class="fsv-chapter">${esc(ch)}</span>`:'';
-    return `<div class="fsv-step${i===0?' active':''}" data-fduid="${uid}" data-fvi="${i}"><div class="fsv-dot">${esc(num)}</div><div class="fsv-card"><div class="fsv-title">${esc(title)}</div><div class="fsv-sub">${esc(sub)}</div><div class="fsv-detail">${esc(desc||'')}${chTag}<div style="font-size:11px;color:#8db8b2;margin-top:6px">⚠️ 請以完整 SOP 為準</div></div></div></div>`;
+    return `<div class="fsv-step${i===0?' active':''}" data-fduid="${uid}" data-fvi="${i}"><div class="fsv-dot">${esc(num)}</div><div class="fsv-card"><div class="fsv-title">${esc(title)}</div><div class="fsv-sub">${esc(sub)}</div><div class="fsv-detail">${esc(desc||'')}${chTag}<div style="font-size:11px;color:#8db8b2;margin-top:6px">實際作業請依核准文件與主管指示執行</div></div></div></div>`;
   }).join('');
   return `<div class="flow-stepper"><div class="fsh" data-fduid="${uid}">${hDots}</div><div class="fsh-panels" data-fduid="${uid}">${hPanels}</div><div class="fsv" data-fduid="${uid}">${vSteps}</div></div>`;
 }
@@ -4052,6 +4043,7 @@ function renderContent(s){
   if(s.id==="gdp-kb") return kbSection();
   return [
     panel("視覺導讀",visualIntro(s),""),
+    s.coreBrief ? panel("學習重點",coreBriefHtml(s),"wide") : "",
     scheduleTriggersSection(s),
     `<span id="sec-${s.id}-schedule" class="sec-anchor"></span>`+deptScheduleSection(s),
     `<span id="sec-${s.id}-flow" class="sec-anchor"></span>`+deptFlowSection(s),
@@ -4130,12 +4122,6 @@ function bindQaForm(id){
   });
 }
 
-/* ═══════════════════════════════════════════════
-   SOP MODAL
-═══════════════════════════════════════════════ */
-function bindDocButtons(){
-  document.querySelectorAll("[data-doc]").forEach(b=>b.addEventListener("click",()=>openDoc(b.dataset.doc)));
-}
 function bindEvidenceMap(){
   document.querySelectorAll("[data-em-node]").forEach(node=>{
     node.addEventListener("click",()=>{
@@ -4191,7 +4177,6 @@ function bindKbForm(){
         el.className="kb-bubble bot";
         el.innerHTML=kbResultsHtml(results,q);
         box.appendChild(el);
-        el.querySelectorAll("[data-doc]").forEach(b=>b.addEventListener("click",()=>openDoc(b.dataset.doc)));
       }else{
         box.insertAdjacentHTML("beforeend",`<div class="kb-bubble bot kb-notfound">目前查無符合資料，請改用更明確的關鍵字，或洽管理者確認。</div>`);
       }
@@ -4215,8 +4200,8 @@ async function renderUsageStats(){
   const connected=!!qaStore.db;
   if(statusEl){
     statusEl.innerHTML=connected
-      ? `<span class="dot connected"></span>已連線 Firestore｜同步資料優先，必要時顯示本機即時統計`
-      : `<span class="dot"></span>未連線 Firestore｜目前顯示本機即時統計`;
+      ? `<span class="dot connected"></span>已連接資料庫｜統計資料同步中`
+      : `<span class="dot"></span>目前顯示本機統計`;
   }
   qEl.innerHTML=`<span class="note">載入中…</span>`;
   dEl.innerHTML=`<span class="note">載入中…</span>`;
@@ -4235,27 +4220,6 @@ async function renderUsageStats(){
       }).join("")
     : `<span class="note">尚無季度更新紀錄。系統將於首次連線時自動建立當季追蹤項目。</span>`;
 }
-function openDoc(code){
-  const doc=sopLibrary[code];if(!doc) return;
-  analyticsStore.log("doc_open",{sectionId:current,targetId:code,targetLabel:doc.title}).then(()=>{
-    if(current==="gdp-kb") renderUsageStats();
-  });
-  document.getElementById("docTitle").textContent=`${code}｜${doc.title}`;
-  document.getElementById("docBody").innerHTML=`
-    <div style="padding:8px 0">
-      <p style="font-size:15px;color:#333;margin:0 0 12px">此文件為公司內部管控文件。</p>
-      <p style="font-size:14px;color:#555;margin:0 0 16px">如需閱讀完整內容，請向<strong>文管部</strong>填單申請調閱。</p>
-      <p style="font-size:13px;color:#888;border-top:1px solid #eee;padding-top:12px;margin:0">文件編號：${esc(code)}</p>
-    </div>`;
-  document.getElementById("docModal").classList.add("open");
-}
-function closeDoc(){ document.getElementById("docModal").classList.remove("open"); }
-function initDocModal(){
-  document.getElementById("docClose").addEventListener("click",closeDoc);
-  document.getElementById("docModal").addEventListener("click",e=>{ if(e.target.id==="docModal") closeDoc(); });
-  window.addEventListener("keydown",e=>{ if(e.key==="Escape") closeDoc(); });
-}
-
 /* ═══════════════════════════════════════════════
    SWIPE PANELS
 ═══════════════════════════════════════════════ */
@@ -4380,13 +4344,12 @@ function deptScheduleSection(s){
       <div class="ds-item-title">${sourceToChapter(x.source)?'<span class="chapter-tag">'+sourceToChapter(x.source)+'</span>':''}${esc(x.data)}</div>
       <div class="ds-item-note">${esc(x.note)}</div>
       <div class="ds-item-meta">
-        <span>📋 ${esc(x.form)}</span>
         <span>👤 ${esc(x.owner)}</span>
       </div>
     </div>`).join("")
   }</div>`).join("");
   return panel(`${deptName} 資料交付時程（${items.length} 項）`,
-    `<p style="font-size:14px;color:var(--muted);margin-bottom:6px">點擊左側頻率，查看「${deptName}」在各時間節點需要提交、啟動或確認的資料。</p><p style="font-size:12px;color:#aaa;margin-bottom:12px">⚠️ 以下資料僅為交付時程索引，實際作業依據請參閱各完整 SOP 全文。</p>
+    `<p style="font-size:14px;color:var(--muted);margin-bottom:6px">點擊左側頻率，查看「${deptName}」在各時間節點需要提交、啟動或確認的資料。</p><p style="font-size:12px;color:#aaa;margin-bottom:12px">以下資料僅為交付時程索引，實際作業請依核准文件與主管指示執行。</p>
     <div class="dept-sched"><div class="dept-sched-tabs">${tabs}</div><div class="dept-sched-body">${panes}</div></div>`,
     "wide");
 }
@@ -4638,7 +4601,6 @@ async function showSection(id){
   bindFlipCards();
   bindFocusInteractives();
   bindQaForm(id);
-  bindDocButtons();
   bindEvidenceMap();
   bindKbForm();
   updateDeptToc(s);
@@ -4672,7 +4634,6 @@ function fmtDate(v){
 ═══════════════════════════════════════════════ */
 (async function init(){
   renderNav();
-  initDocModal();
   await qaStore.init();
   await analyticsStore.ensureQuarterReview();
   // mobile TOC button handlers
