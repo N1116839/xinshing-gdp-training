@@ -506,6 +506,27 @@
     .flow-step-doc-icon{font-size:16px}
     .flow-arrow{text-align:center;padding:4px 0;color:var(--brand);font-size:22px;line-height:1;pointer-events:none;opacity:.6}
     @media(max-width:600px){.flow-detail{padding-left:16px}.flow-step-right{display:none}}
+    /* ── trigger cards ─────────────────────────────── */
+    .trigger-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:4px}
+    .trigger-card{border-radius:10px;padding:12px 14px;border:2px solid}
+    .urg-red{background:#fff5f5;border-color:#f5a0a0}
+    .urg-amber{background:#fffbef;border-color:#f5c86a}
+    .urg-blue{background:#f0f6ff;border-color:#8ab4e8}
+    .urg-green{background:#f0fbf5;border-color:#7ec8a0}
+    .trigger-card-head{display:flex;align-items:center;gap:7px;margin-bottom:6px;flex-wrap:wrap}
+    .trigger-card-head strong{font-size:14px;font-weight:800;flex:1;min-width:0}
+    .trigger-icon{font-size:18px;flex-shrink:0}
+    .trigger-badge{font-size:10px;font-weight:800;padding:2px 8px;border-radius:10px;background:rgba(0,0,0,.07);white-space:nowrap}
+    .trigger-desc{font-size:13px;color:var(--ink-soft);line-height:1.65;margin:0}
+    /* ── dual-flow grid ─────────────────────────────── */
+    .flow-dual-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:4px}
+    .flow-dual-cell{min-width:0}
+    @media(max-width:768px){.flow-dual-grid{grid-template-columns:1fr}}
+    /* ── urgency tabs in deptScheduleSection ─────────── */
+    .dept-sched-tab[data-urg="red"]  {border-left:3px solid #e55}
+    .dept-sched-tab[data-urg="amber"]{border-left:3px solid #e8a020}
+    .dept-sched-tab[data-urg="blue"] {border-left:3px solid #4a80c4}
+    .dept-sched-tab[data-urg="green"]{border-left:3px solid #3a9c68}
   </style>
 </head>
 <body>
@@ -3370,6 +3391,10 @@ function deptFlowDiagram(f){
 function deptFlowSection(s){
   if(!s.deptFlow) return '';
   const flows=Array.isArray(s.deptFlow)?s.deptFlow:[s.deptFlow];
+  if(flows.length>=2){
+    const cells=flows.map(f=>'<article class="panel flow-dual-cell"><h3>'+esc(f.title)+'</h3>'+deptFlowDiagram(f)+'</article>').join('');
+    return '<div class="flow-dual-grid">'+cells+'</div>';
+  }
   return flows.map(f=>panel(f.title,deptFlowDiagram(f),'wide')).join('');
 }
 function trainingTable(info){
@@ -3573,6 +3598,7 @@ function renderContent(s){
   if(s.id==="gdp-kb") return kbSection();
   return [
     panel("視覺導讀",visualIntro(s),""),
+    scheduleTriggersSection(s),
     panel("規範到現場：四層對照",standardsSwipe({...(s.standards||{}),focus:s.focus||[]}),"wide"),
     departmentDocumentMaps[s.id] ? panel("部門文件閱讀地圖",documentMapSection(s),"wide") : "",
     deptScheduleSection(s),
@@ -3857,6 +3883,27 @@ const deptIdMap={
   personnel:"人事", rp:"GDP 權責人", pharmacist:"管理藥師",
   qa:"品保", warehouse:"倉管", purchase:"採購", sales:"業務", doc:"文管"
 };
+function scheduleTriggersSection(s){
+  if(!s.schedule||!s.schedule.length) return '';
+  function urg(t){
+    if(/立即|發生時|啟動|當下|超標/.test(t)) return {cls:'urg-red',  icon:'🚨', lbl:'立即行動'};
+    if(/到職前|核准後|修訂後|接單|採購前|新供|回收|稽核前|稽核後/.test(t)) return {cls:'urg-amber', icon:'⚡', lbl:'事件觸發'};
+    if(/每日|到貨|每月|每季|每週/.test(t)) return {cls:'urg-blue',  icon:'🔄', lbl:'定期執行'};
+    return {cls:'urg-green', icon:'📅', lbl:'週期規劃'};
+  }
+  const cards=s.schedule.map(([trigger,desc])=>{
+    const u=urg(trigger);
+    return '<div class="trigger-card '+u.cls+'">'+
+      '<div class="trigger-card-head">'+
+        '<span class="trigger-icon">'+u.icon+'</span>'+
+        '<strong>'+esc(trigger)+'</strong>'+
+        '<span class="trigger-badge">'+u.lbl+'</span>'+
+      '</div>'+
+      '<p class="trigger-desc">'+esc(desc)+'</p>'+
+    '</div>';
+  }).join('');
+  return panel('文件交付觸發時機','<div class="trigger-cards">'+cards+'</div>','');
+}
 function deptScheduleSection(s){
   const deptName=deptIdMap[s.id];
   if(!deptName) return "";
@@ -3872,7 +3919,8 @@ function deptScheduleSection(s){
   items.forEach(x=>{if(!byFreq[x.freq])byFreq[x.freq]=[];byFreq[x.freq].push(x);});
   const orderedFreqs=freqOrder.filter(f=>byFreq[f]&&byFreq[f].length);
   const pid=`ds_${s.id}`;
-  const tabs=orderedFreqs.map((freq,i)=>`<button type="button" class="dept-sched-tab${i===0?" active":""}" data-ds-tab="${pid}" data-ds-freq="${esc(freq)}">${esc(freq)}<span>${byFreq[freq].length}</span></button>`).join("");
+  const urgMap={"發生時啟動":"red","每日":"amber","每月":"blue","每兩個月":"blue","每季":"blue","每半年":"green","每年":"green","每三年":"green"};
+  const tabs=orderedFreqs.map((freq,i)=>{const urg=urgMap[freq]||'';return '<button type="button" class="dept-sched-tab'+(i===0?' active':'')+'" data-ds-tab="'+pid+'" data-ds-freq="'+esc(freq)+'"'+(urg?' data-urg="'+urg+'"':'')+'>'+esc(freq)+'<span>'+byFreq[freq].length+'</span></button>';}).join("");
   const panes=orderedFreqs.map((freq,i)=>`<div class="dept-sched-pane${i===0?" active":""}" data-ds-pane="${pid}" data-ds-pfreq="${esc(freq)}">${
     byFreq[freq].map(x=>`<div class="ds-item">
       <div class="ds-item-title">${sourceToChapter(x.source)?'<span class="chapter-tag">'+sourceToChapter(x.source)+'</span>':''}${esc(x.data)}</div>
