@@ -44,7 +44,7 @@
     .hero{position:relative;display:grid;gap:18px;margin-bottom:22px;min-height:300px;padding:34px;background:rgba(255,255,255,.88);border:1px solid var(--line);box-shadow:var(--shadow);overflow:hidden;isolation:isolate}
     .hero::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(247,251,251,.98) 0%,rgba(247,251,251,.88) 42%,rgba(247,251,251,.28) 76%),var(--hero-image,url("assets/gdp-training-hero.png")) center right/cover no-repeat;z-index:-2}
     .hero::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:7px;background:linear-gradient(90deg,var(--brand),var(--gold));z-index:-1}
-    .eyebrow{margin:0;color:var(--gold);font-weight:700;font-size:16px}
+    .eyebrow{margin:0;color:var(--gold);font-weight:700;font-size:18px}
     h2{margin:0;color:var(--brand);font-size:clamp(28px,4vw,46px);line-height:1.12}
     .lead{max-width:980px;margin:0;color:var(--ink-soft);font-size:17px;line-height:1.8}
     .hero .lead{max-width:680px;color:#315753;font-weight:600}
@@ -199,15 +199,21 @@
     .dept-flow-arrow{display:grid;place-items:center;color:var(--gold);font-size:20px;flex-shrink:0;align-self:center;padding:0 2px}
     /* ── training table ── */
     .training-split{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-    .training-card{border:2px solid var(--t-color,var(--brand));overflow:hidden}
+    .training-card{border:2px solid var(--t-color,var(--brand));overflow:hidden;position:relative}
+    .training-card.done{border-color:var(--brand-2);opacity:.88}
     .training-card-head{display:flex;align-items:center;gap:10px;padding:12px 14px;color:#fff;background:var(--t-color,var(--brand));font-weight:800;font-size:15px}
+    .training-card.done .training-card-head{background:var(--brand-2)}
     .training-icon{font-size:20px}
     .info-table{width:100%;border-collapse:collapse;font-size:14px}
-    .info-table th,.info-table td{padding:7px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+    .info-table th,.info-table td{padding:7px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;cursor:pointer}
     .info-table th{width:32%;color:var(--ink-soft);font-weight:700;background:#f7fbfb}
     .info-table td{color:var(--ink)}
     .info-table tr:last-child th,.info-table tr:last-child td{border-bottom:none}
+    .info-table tr.highlight{background:#f0f9f4;outline:2px solid var(--brand-2);outline-offset:-1px}
     .score-badge{display:inline-block;padding:2px 8px;background:var(--gold);color:#fff;border-radius:4px;font-weight:800}
+    .training-progress{display:flex;gap:8px;margin-bottom:10px;font-size:13px}
+    .training-progress button{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px 12px;cursor:pointer;font-size:13px}
+    .training-progress button.done{background:var(--brand-2);color:#fff;border-color:var(--brand-2)}
     /* ── responsibility matrix ── */
     .resp-table{width:100%;border-collapse:collapse;font-size:13px}
     .resp-table th,.resp-table td{padding:8px 10px;border:1px solid var(--line);text-align:center}
@@ -3963,10 +3969,12 @@ function deptFlowSection(s){
 }
 function trainingTable(info){
   if(!info) return "";
-  function card(d){
-    return `<div class="training-card" style="--t-color:${d.color}">
+  function card(d,side){
+    const key="tr_"+side;
+    const done=localStorage.getItem(key)==="1";
+    return `<div class="training-card${done?" done":""}" data-trf-card="${side}" style="--t-color:${d.color}">
       <div class="training-card-head"><span class="training-icon">${d.icon}</span><strong>${d.label}</strong></div>
-      <table class="info-table">
+      <table class="info-table" data-trf="${side}">
         <tr><th>對象</th><td>${d.who}</td></tr>
         <tr><th>時機</th><td>${d.when}</td></tr>
         <tr><th>地點</th><td>${d.where}</td></tr>
@@ -3976,9 +3984,56 @@ function trainingTable(info){
         <tr><th>合格門檻</th><td><strong class="score-badge">${d.score}</strong></td></tr>
         <tr><th>保存年限</th><td>${d.keep}</td></tr>
       </table>
+      <label style="display:flex;align-items:center;gap:6px;padding:8px 14px;font-size:13px;border-top:1px solid var(--line);cursor:pointer;background:#fafcfc">
+        <input type="checkbox" data-trf-check="${side}"${done?" checked":""}> ${done?"✅ 已閱讀":"標記已閱讀"}
+      </label>
     </div>`;
   }
-  return `<div class="training-split">${card(info.external)}${card(info.internal)}</div>`;
+  return `<div class="training-split">${card(info.external,"external")}${card(info.internal,"internal")}</div>`;
+}
+function bindTrainingInteractives(){
+  const cards=[...document.querySelectorAll("[data-trf-card]")];
+  if(!cards.length) return;
+  cards.forEach(card=>{
+    const tbl=card.querySelector("[data-trf]");
+    if(tbl){
+      const rows=[...tbl.querySelectorAll("tr")];
+      rows.forEach((row,i)=>{
+        row.addEventListener("click",()=>{
+          const side=card.dataset.trfCard;
+          const pair=tbl.parentElement.parentElement.querySelector(`[data-trf="${side==="external"?"internal":"external"}"]`);
+          if(pair){
+            const pairRows=[...pair.querySelectorAll("tr")];
+            pairRows.forEach(pr=>pr.classList.remove("highlight"));
+            if(pairRows[i]) pairRows[i].classList.add("highlight");
+          }
+        });
+      });
+    }
+    const cb=card.querySelector("[data-trf-check]");
+    if(cb){
+      cb.addEventListener("change",function(){
+        const key="tr_"+this.dataset.trfCheck;
+        const done=this.checked;
+        localStorage.setItem(key,done?"1":"0");
+        card.classList.toggle("done",done);
+        const lbl=this.parentElement;
+        lbl.innerHTML=done?'<span>✅ 已閱讀</span>':'<input type="checkbox" data-trf-check="'+this.dataset.trfCheck+'"> 標記已閱讀';
+        const newCb=card.querySelector("[data-trf-check]");
+        if(newCb) newCb.checked=done;
+        // re-bind the checkbox
+        if(newCb) bindSingleCheck(newCb,card);
+      });
+    }
+  });
+  function bindSingleCheck(cb,card){
+    cb.addEventListener("change",function(){
+      const key="tr_"+this.dataset.trfCheck;
+      const done=this.checked;
+      localStorage.setItem(key,done?"1":"0");
+      card.classList.toggle("done",done);
+    });
+  }
 }
 function respMatrix(s){
   if(!s.respMatrix) return "";
@@ -4795,6 +4850,7 @@ async function showSection(id){
   bindFlowDiagrams();
   bindFlipCards();
   bindFocusInteractives();
+  bindTrainingInteractives();
   bindDocumentMap();
   bindQaForm(id);
   bindEvidenceMap();
