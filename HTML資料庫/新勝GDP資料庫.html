@@ -354,7 +354,6 @@
     button.primary{color:#fff;background:var(--brand);border:1px solid var(--brand)}
     button.secondary{color:var(--brand);background:#fff;border:1px solid var(--line)}
     .note{color:var(--ink-soft);font-size:13px;line-height:1.6}
-    .mobile-menu{display:none}
     .mobile-picker{display:none;margin-bottom:14px;position:relative}
     .mobile-picker-toggle{width:100%;min-height:46px;padding:10px 42px 10px 12px;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:16px;font-weight:700;text-align:left;line-height:1.35;cursor:pointer;position:relative}
     .mobile-picker-toggle::after{content:"";position:absolute;right:14px;top:50%;width:9px;height:9px;border-right:2px solid var(--brand);border-bottom:2px solid var(--brand);transform:translateY(-70%) rotate(45deg);transition:transform .18s}
@@ -603,7 +602,6 @@
       <h1>GDP 內部教育訓練</h1>
       <p>GDP 合規教育訓練平台</p>
     </div>
-    <select id="mobileMenu" class="mobile-menu" aria-label="選擇單元"></select>
     <div id="mobilePicker" class="mobile-picker">
       <button id="mobilePickerToggle" class="mobile-picker-toggle" type="button" aria-expanded="false" aria-controls="mobilePickerPanel">選擇單元</button>
       <div id="mobilePickerPanel" class="mobile-picker-panel"></div>
@@ -4710,11 +4708,10 @@ function bindFlipCards(){
 ═══════════════════════════════════════════════ */
 function renderNav(){
   const nav=document.getElementById("nav");
-  const mob=document.getElementById("mobileMenu");
   const picker=document.getElementById("mobilePicker");
   const pickerToggle=document.getElementById("mobilePickerToggle");
   const pickerPanel=document.getElementById("mobilePickerPanel");
-  nav.innerHTML="";mob.innerHTML="";
+  nav.innerHTML="";
   pickerPanel.innerHTML="";
   const navGroups=["GDP核心","新人部門","年度行事曆","GDP 知識庫"];
   navGroups.forEach(group=>{
@@ -4738,8 +4735,6 @@ function renderNav(){
       const b=document.createElement("button");
       b.className="nav-button";b.type="button";b.textContent=s.title;b.dataset.section=s.id;
       b.addEventListener("click",()=>showSection(s.id));body.appendChild(b);
-      const opt=document.createElement("option");
-      opt.value=s.id;opt.textContent=`${s.group} / ${s.title}`;mob.appendChild(opt);
       const pickerBtn=document.createElement("button");
       pickerBtn.className="mobile-picker-option";
       pickerBtn.type="button";
@@ -4753,7 +4748,6 @@ function renderNav(){
       pickerPanel.appendChild(pickerBtn);
     });
   });
-  mob.addEventListener("change",e=>showSection(e.target.value));
   pickerToggle.addEventListener("click",()=>{
     const open=!picker.classList.contains("open");
     picker.classList.toggle("open",open);
@@ -4791,7 +4785,6 @@ async function showSection(id){
   document.querySelectorAll(".nav-button").forEach(b=>b.classList.toggle("active",b.dataset.section===id));
   document.querySelectorAll(".mobile-picker-option").forEach(b=>b.classList.toggle("active",b.dataset.section===id));
   if(id!=="collection-calendar") document.querySelectorAll(".nav-freq-item").forEach(b=>b.classList.remove("active"));
-  document.getElementById("mobileMenu").value=id;
   document.getElementById("mobilePickerToggle").textContent=s.title;
   initSwipePanels();
   bindCalendarFilters();
