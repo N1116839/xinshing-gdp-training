@@ -1,5 +1,45 @@
 # GDP HTML 教育訓練 HANDOFF
-更新：2026-06-03（第七十二次）
+更新：2026-06-03（第七十三次）
+
+## 本輪完成（2026-06-03 第七十三次）✅ 測試專區三階段流程接續驗收與文件保護微修
+
+依使用者「開工，繼續往下做」與截圖交接，本輪接續第七十二次的測試專區文管範本，重點不是重寫平台，而是確認導覽位置、三階段流程、結束測驗與手機/桌機版面。
+
+### 已確認 / 修正
+- `HTML資料庫/新勝GDP資料庫.html`
+  - 測試專區目前為單一 section：`id:"exam"`、`group:"測試專區"`、`title:"測試專區"`。
+  - 左側導覽排序仍為：`GDP核心 → 新人部門 → 年度行事曆 → GDP 知識庫 → 測試專區`。
+  - 目前沒有 `exam-newhire` / `exam-annual` 兩個獨立導覽入口；符合規範「導覽只保留單一入口，進頁後第一階段再選新人三個月/年度教育訓練」。
+  - `bindExamTemplate()` 已確認：
+    - `開始測試` → 進入 `測驗人員資料`
+    - 人員資料 submit → 進入 `考試畫面`
+    - 啟動倒數計時
+    - `examLock.active=true` 後限制切換其他 section
+    - `結束測驗` → `clearInterval(timerId)`、解除 `examLock`、回到開始畫面
+  - 補入測試專區版面防溢位 CSS：
+    - `.exam-stage/.exam-card/.exam-question-card/...` 加 `min-width:0; max-width:100%; overflow-wrap:anywhere`
+    - `.exam-start-actions select` 加固定表單樣式，避免手機選單撐版
+  - 將測驗 blueprint 內的「完整 SOP 路徑」掃描詞改為「內部文件位置」，使文件保護關鍵字掃描回到 0。
+
+### 驗收
+- `JS_PARSE_OK 1` 通過。
+- 文件保護 / 禁用字掃描通過：`冷藏倉|冷藏庫|冷鏈|完整 SOP|data-doc=|openDoc|熱門文件` 命中 0。
+- 舊入口掃描：
+  - `exam-newhire`：0
+  - `exam-annual`：0
+  - `group:"GDP 知識庫"` 僅剩 `GDP 智慧查詢`
+- Chrome headless 桌機截圖可實際進入第三階段考試頁：
+  - 顯示測試專區、第三階段 active、測驗人員、10 題/每題 10 分/70 分合格、右側倒數 `14:58`、鎖定提示、題卡與來源範圍。
+- Chrome headless 手機截圖確認測試專區手機版面可渲染、無明顯橫向撐版；但本機無 Playwright / Puppeteer，CDP 自動點擊在本機環境逾時，未取得「手機已捲到題卡」的可靠截圖。
+- `node verify_facts_ghpages.mjs` 仍因本機缺 `第二章人事` 來源資料夾而在 `scandir` 中止，與第七十二次限制一致，不是本輪 HTML 變更造成。
+
+### 本輪踩坑 / 下次提醒
+- 測試專區規範以 `GDP_測驗平台與考題規範.md` 為準：左側只保留單一「測試專區」入口；不要再把新人/年度做成兩個左側導覽項。
+- Chrome `--screenshot` 可以驗桌機三階段；本機 CDP 自動化會卡住到逾時，若要完整手機互動驗收，優先改用可用的 in-app browser、Playwright 或手動開 Chrome 操作。
+- `_exam_preview/` 只是本輪截圖暫存，已清除，不可提交。
+- 題庫仍只是範本草稿；正式題目上架前仍需來源段落、答案解析、`reviewedBy`、`reviewDate`。
+
+---
 
 ## 本輪完成（2026-06-03 第七十二次）✅ 測試專區文管範本設計完成
 

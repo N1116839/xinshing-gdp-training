@@ -124,6 +124,8 @@
   .exam-option{display:grid;grid-template-columns:20px 1fr;gap:8px;align-items:start;padding:10px;border:1px solid var(--line);background:#f7fbfb}
   .exam-side{display:grid;gap:10px;align-content:start}
   .exam-mini-card{padding:12px;background:#f7fbfb;border:1px solid var(--line);font-size:13px;line-height:1.6;color:var(--ink-soft)}
+  .exam-stage,.exam-hero,.exam-card,.exam-question-card,.exam-mini-card,.exam-lock-note,.exam-option,.exam-source-grid,.exam-scope-grid{min-width:0;max-width:100%;overflow-wrap:anywhere}
+  .exam-start-actions select{max-width:100%;min-height:38px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:#fff;font:inherit;color:var(--ink)}
     .slide-label{display:inline-grid;place-items:center;width:40px;height:40px;margin-bottom:8px;color:#fff;background:var(--gold);border-radius:50%;font-weight:800}
     .audit-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
     .audit-card{min-height:140px;padding:14px;background:#f4faf9;border:1px solid #cde0dd;border-top:5px solid var(--brand);font-size:15px;line-height:1.55;text-align:left;cursor:pointer}
@@ -4311,7 +4313,7 @@ const examTemplates = {
     ],
     blueprints:[
       {topic:"GDP 系統原則與公司做法",source:"DM10-01 + WI10-01",type:"共同基礎",checks:["題目同時能回到 GDP 原則與公司實際做法","不得把 DM 與 SMF 切成兩張獨立試卷","解析寫員工能理解的短句"]},
-      {topic:"正式文件生命週期",source:"DP42-01",type:"文管專業",checks:["覆蓋制定、審查、核准、登錄、發行、訓練後生效","不得要求學員背完整 SOP 路徑","答案需可回到 DP42-01 原文"]},
+      {topic:"正式文件生命週期",source:"DP42-01",type:"文管專業",checks:["覆蓋制定、審查、核准、登錄、發行、訓練後生效","不得要求學員背內部文件位置","答案需可回到 DP42-01 原文"]},
       {topic:"文件修訂與定期審查",source:"DP42-01",type:"文管專業",checks:["覆蓋文件不合時宜、偏差後修訂、年度徵詢修改意見","時間點需與來源一致","需能形成稽查問答"]},
       {topic:"品質紀錄保存與處置",source:"DP42-02",type:"文管專業",checks:["覆蓋至少 5 年保存、跨年度歸檔、超期處置","不得自行補表單欄位","需區分文件與品質紀錄"]},
       {topic:"公開查核重點",source:"TFDA/PIC/S 官方來源",type:"年度加題",checks:["只能用官方公開來源或使用者確認資料","不得寫成本公司已發生缺失","需標來源標題與年度"]}
