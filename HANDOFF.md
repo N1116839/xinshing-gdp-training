@@ -7,7 +7,7 @@
 
 ### 已修正（已驗收）
 1. **§5.3 / §31.2 踩坑回歸 — 智慧查詢「尚未查詢」殘留**：`bindKbForm > doQuery` 開頭加 `const placeholder=box.querySelector("p");if(placeholder)placeholder.remove();`。實機確認查詢後不再殘留，首個元素為使用者氣泡。
-2. **§39.5 / §28 原始碼層暴露 — `projectSourceFiles` 完整路徑清單**：公開 GH Pages「檢視原始碼」可見全部文件資料夾結構。改為「代碼+中文名」（去資料夾、去副檔名），刪除 pptx。52→51 筆、0 路徑殘留、行數 −1。搜尋未受影響。
+2. **§39.5 / §28 原始碼層暴露 — 完整文件路徑（三處）**：公開 GH Pages「檢視原始碼」可見全部文件資料夾結構。處理 `projectSourceFiles`（52→51、去路徑去副檔名、刪 pptx）＋ `sopLibrary` **81 個 file: 去資料夾前綴** ＋ clarify file:。全檔資料夾路徑殘留=0，搜尋（含 SOP content 摘要）未受影響。⚠️ 首次只修 projectSourceFiles 即報已修，經 GH Pages 線上比對才發現 81 個 sopLibrary 路徑漏修→已補。教訓：§39.5 須掃全檔所有 `file:`，不可只看單一陣列。
 
 ### 撤銷（誤判，誠實更正）
 - 原列「§19.1 手機原生 select 導覽違規」**不成立**。`.mobile-menu{display:none}` 永遠隱藏（只是狀態鏡像）；手機實際主導覽是自製 `#mobilePicker` 按鈕面板（分組+可點 button+toggle+同步 active/標題，第 4733–4767、4792/4795 行），**完全符合 §19.1**。教訓：在 DOM 看到元素 ≠ 它就是使用者看到的；§19.1 類判斷須先確認 `display`/作用中元素。
