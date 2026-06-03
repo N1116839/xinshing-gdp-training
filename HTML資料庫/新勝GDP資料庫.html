@@ -94,13 +94,25 @@
   .exam-stage-tab{padding:10px 12px;background:#fff;border:1px solid var(--line);border-left:4px solid #cde0dd;color:var(--ink-soft);font-size:13px;font-weight:800}
   .exam-stage-tab.active{border-left-color:var(--brand);color:var(--brand);background:#f3fbf7}
   .exam-scope-grid,.exam-source-grid,.exam-build-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .exam-start-card{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,380px);gap:16px;align-items:stretch}
+  .exam-type-list{display:grid;gap:10px}
+  .exam-type-card{display:grid;grid-template-columns:20px 1fr auto;gap:10px;align-items:start;padding:14px;background:#fff;border:1px solid var(--line);border-left:5px solid #cde0dd;cursor:pointer}
+  .exam-type-card.active{border-left-color:var(--brand);background:#f3fbf7}
+  .exam-type-card input{margin-top:3px}
+  .exam-type-card strong{display:block;color:var(--brand);font-size:17px}
+  .exam-type-card span{display:block;margin-top:4px;color:var(--ink-soft);font-size:13px;line-height:1.55}
+  .exam-summary-box{display:grid;gap:10px;padding:16px;background:#fff;border:1px solid var(--line);border-top:5px solid var(--gold)}
+  .exam-summary-row{display:flex;justify-content:space-between;gap:12px;padding-bottom:8px;border-bottom:1px solid #ead6b6;font-size:13px;color:var(--ink-soft)}
+  .exam-summary-row strong{color:var(--ink);font-size:15px}
   .exam-card{padding:14px;background:#f7fbfb;border:1px solid var(--line);border-top:4px solid var(--brand)}
   .exam-card h4{display:flex;align-items:center;justify-content:space-between;gap:10px}
   .exam-card p{margin:8px 0 0;color:var(--ink-soft);font-size:13px;line-height:1.7}
   .exam-card ul{margin-top:8px;font-size:13px}
   .exam-badge{display:inline-flex;align-items:center;min-height:24px;padding:3px 8px;border-radius:4px;background:#e8f3f2;color:var(--brand);font-size:11px;font-weight:800;white-space:nowrap}
   .exam-badge.warn{background:#fff2de;color:#8a4d13}
-  .exam-form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  .exam-form-section{display:grid;gap:12px;padding:16px;background:#f7fbfb;border:1px solid var(--line);border-top:4px solid var(--brand)}
+  .exam-form-section h4{margin:0;color:var(--brand);font-size:18px}
+  .exam-form-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
   .exam-form-grid label{display:grid;gap:5px;color:var(--ink);font-size:13px;font-weight:700}
   .exam-form-grid input,.exam-form-grid select{width:100%;min-height:38px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:#fff;font:inherit;color:var(--ink)}
   .exam-flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
@@ -120,10 +132,20 @@
   .exam-lock-note{padding:10px 12px;background:#fff8f0;border:1px solid #ead6b6;color:#7b3f00;font-size:13px;line-height:1.6}
   .exam-question-shell{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:14px}
   .exam-question-card{padding:18px;background:#fff;border:1px solid var(--line)}
+  .exam-question-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+  .exam-question-index{font-size:15px;font-weight:900;color:var(--brand)}
+  .exam-progress-track{height:8px;background:#e8f3f2;border-radius:999px;overflow:hidden}
+  .exam-progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--brand),var(--gold));transition:width .2s}
   .exam-option-list{display:grid;gap:8px;margin-top:14px}
   .exam-option{display:grid;grid-template-columns:20px 1fr;gap:8px;align-items:start;padding:10px;border:1px solid var(--line);background:#f7fbfb}
+  .exam-option.selected{border-color:var(--brand);background:#eef8f5}
   .exam-side{display:grid;gap:10px;align-content:start}
   .exam-mini-card{padding:12px;background:#f7fbfb;border:1px solid var(--line);font-size:13px;line-height:1.6;color:var(--ink-soft)}
+  .exam-answer-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+  .exam-answer-dot{min-height:34px;border:1px solid var(--line);background:#fff;color:var(--ink-soft);font:inherit;font-size:12px;font-weight:800;border-radius:4px}
+  .exam-answer-dot.active{border-color:var(--brand);color:#fff;background:var(--brand)}
+  .exam-answer-dot.answered{border-color:#98c6bd;background:#e8f3f2;color:var(--brand)}
+  .exam-result-box{padding:16px;background:#f3fbf7;border:1px solid var(--line);border-left:5px solid var(--brand)}
   .exam-stage,.exam-hero,.exam-card,.exam-question-card,.exam-mini-card,.exam-lock-note,.exam-option,.exam-source-grid,.exam-scope-grid{min-width:0;max-width:100%;overflow-wrap:anywhere}
   .exam-start-actions select{max-width:100%;min-height:38px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:#fff;font:inherit;color:var(--ink)}
     .slide-label{display:inline-grid;place-items:center;width:40px;height:40px;margin-bottom:8px;color:#fff;background:var(--gold);border-radius:50%;font-weight:800}
@@ -366,7 +388,7 @@
     .ev-check-item span{font-weight:700;color:var(--brand)}
     .ev-check-item small{display:block;color:var(--ink-soft);font-size:12px;margin-top:3px}
     .ev-check-fill{height:6px;background:var(--brand);width:0%;transition:width .2s}
-    @media(max-width:680px){.evidence-map{grid-template-columns:1fr}.evidence-node.center{min-height:50px;flex-direction:row;gap:10px;padding:12px}.metric-strip{grid-template-columns:repeat(2,1fr)}.metric{border-bottom:1px solid #ead6b6}.doc-map-status,.ev-check-list,.exam-scope-grid,.exam-source-grid,.exam-build-grid,.exam-form-grid,.exam-flow,.exam-stage-tabs,.exam-question-shell{grid-template-columns:1fr}.exam-print-row{grid-template-columns:1fr}.exam-print-row.head{display:none}.exam-work-head{position:static;align-items:flex-start;flex-direction:column}.exam-timer{margin-left:0}.exam-hero{padding:18px;min-height:220px}}
+    @media(max-width:680px){.evidence-map{grid-template-columns:1fr}.evidence-node.center{min-height:50px;flex-direction:row;gap:10px;padding:12px}.metric-strip{grid-template-columns:repeat(2,1fr)}.metric{border-bottom:1px solid #ead6b6}.doc-map-status,.ev-check-list,.exam-scope-grid,.exam-source-grid,.exam-build-grid,.exam-form-grid,.exam-flow,.exam-stage-tabs,.exam-question-shell,.exam-start-card{grid-template-columns:1fr}.exam-print-row{grid-template-columns:1fr}.exam-print-row.head{display:none}.exam-work-head{position:static;align-items:flex-start;flex-direction:column}.exam-timer{margin-left:0}.exam-hero{padding:18px;min-height:220px}}
     @keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
     /* ── timeline ── */
     .timeline{display:grid;gap:8px}
@@ -4309,7 +4331,7 @@ const examTemplates = {
       {title:"共同基礎題",body:"DM10-01 與 WI10-01 視為同一題庫群，不切成兩科；題目同時考 GDP 原則與公司實際做法。",status:"必含"},
       {title:"文管專業題",body:"DP42-01 與 DP42-02 分別建立題庫，但測驗時合併成文管職務試卷。",status:"必含"},
       {title:"公開缺失題",body:"年度測驗可加入 TFDA/PIC/S 公開常見缺失；需有官方來源，不得寫成本公司缺失。",status:"年度可含"},
-      {title:"講師確認",body:"每題需有來源段落、答案、解析、reviewedBy 與 reviewDate，否則只能停在草稿。",status:"上架前"}
+      {title:"題目來源",body:"題目由文管維護，作答時只顯示題目、選項、進度與測驗規則。",status:"考生可見"}
     ],
     blueprints:[
       {topic:"GDP 系統原則與公司做法",source:"DM10-01 + WI10-01",type:"共同基礎",checks:["題目同時能回到 GDP 原則與公司實際做法","不得把 DM 與 SMF 切成兩張獨立試卷","解析寫員工能理解的短句"]},
@@ -4320,20 +4342,35 @@ const examTemplates = {
     ],
     draftQuestions:[
       {source:"DM10-01 + WI10-01",topic:"共同基礎",text:"遇到稽查員詢問公司如何落實 GDP 時，應同時能說明哪兩個層次？",options:["GDP 原則與公司實際做法","客戶資料與採購價格","員工出勤與薪資資料","網站操作與帳號設定"]},
+      {source:"DM10-01 + WI10-01",topic:"共同基礎",text:"共同基礎題為什麼不把 DM10-01 與 WI10-01 拆成兩張獨立試卷？",options:["需同時確認 GDP 原則與公司實際作業理解","可縮短上傳題庫的時間","只要讓題數看起來平均","避免學員知道測驗範圍"]},
+      {source:"DM10-01 + WI10-01",topic:"共同基礎",text:"文管人員回答 GDP 基本概念時，最適合的答題方向是什麼？",options:["用品質系統原則連結公司實際作法","只背誦文件名稱","只回答自己的登入權限","只描述網頁操作方式"]},
+      {source:"WI10-01",topic:"共同基礎",text:"SMF 廠商基本資料在文管測驗中主要用來確認什麼？",options:["公司場所、組織、職務與清冊等實際作業背景","每位員工薪資與出勤明細","客戶報價與交易條件","網站版面是否正確"]},
+      {source:"DP24-01",topic:"教育訓練",text:"內部訓練測驗未達合格標準時，正確處理方向是什麼？",options:["完成補訓後再次評鑑","直接視為通過","只改分數紀錄","不用再留下紀錄"]},
+      {source:"DP24-01",topic:"教育訓練",text:"教育訓練紀錄應能支持哪一件事？",options:["證明人員已完成訓練並評估有效性","替代所有作業紀錄","公開所有個人資料","取代文件審查程序"]},
+      {source:"DP24-01",topic:"教育訓練",text:"GDP 權責人外部訓練的紀錄應如何管理？",options:["留存外部訓練紀錄","只口頭說明即可","只放在個人手機","不用與訓練制度連結"]},
+      {source:"DP24-01",topic:"教育訓練",text:"參與 GDP 活動人員開始獨立作業前，最重要的條件是什麼？",options:["達到所界定能力並完成必要訓練","只要到職滿一天","只要有帳號即可","由同事口頭同意即可"]},
       {source:"DP42-01",topic:"文管專業",text:"文件修訂後，正式生效前最重要的確認事項是什麼？",options:["完成相關人員訓練與考核","只要電子檔更新即可","由使用者自行影印新版","舊版文件可留在現場對照"]},
-      {source:"DP42-02",topic:"文管專業",text:"品質紀錄管理最核心的要求之一是什麼？",options:["紀錄可識別、可檢索並依期限保存","紀錄可用鉛筆先暫填","跨年度紀錄可自行丟棄","只保存電子截圖即可"]}
+      {source:"DP42-01",topic:"文管專業",text:"文件管制作業的核心目的之一是什麼？",options:["確保正式文件經制修訂、審查、核准與發行管制","讓每個人自行保存不同版本","只保留未核准草稿","讓文件不用定期檢視"]},
+      {source:"DP42-01",topic:"文管專業",text:"現場使用文件時，最應避免哪一種狀況？",options:["使用未受管制或已作廢版本","使用已發行有效版本","依訓練後版本作業","依文件管制流程取得文件"]},
+      {source:"DP42-01",topic:"文管專業",text:"文件定期審查的主要目的為何？",options:["確認文件內容仍適用並可依需要修訂","增加測驗題目數量","取代人員訓練","讓使用者自行決定版本"]},
+      {source:"DP42-01",topic:"文管專業",text:"文件不合時宜或作業有變更時，文管應優先確認什麼？",options:["是否需依程序啟動文件修訂","是否可以先忽略不處理","是否能刪除舊紀錄","是否改由口頭通知即可"]},
+      {source:"DP42-02",topic:"文管專業",text:"品質紀錄管理最核心的要求之一是什麼？",options:["紀錄可識別、可檢索並依期限保存","紀錄可用鉛筆先暫填","跨年度紀錄可自行丟棄","只保存電子截圖即可"]},
+      {source:"DP42-02",topic:"文管專業",text:"品質紀錄保存時，文管人員應優先確保什麼？",options:["紀錄完整、可追溯且保存期限符合規定","紀錄越少越好","只保留自己看得懂的頁面","到期前先全部丟棄"]},
+      {source:"DP42-02",topic:"文管專業",text:"品質紀錄與正式文件在管理上最應區分的是什麼？",options:["文件是作業依據，紀錄是作業執行後留下的證據","兩者可以完全混用","紀錄不需要保存","文件不需要版本管制"]},
+      {source:"DP42-02",topic:"文管專業",text:"品質紀錄到保存期限後，正確方向是什麼？",options:["依品質紀錄程序處置","由任何人自行丟棄","直接刪除不留管理痕跡","改成未受管制文件"]},
+      {source:"DP42-02",topic:"文管專業",text:"稽查要求調閱品質紀錄時，良好的紀錄管理應能做到什麼？",options:["依識別與檢索方式找到所需紀錄","只回答找不到","改用記憶重寫紀錄","要求稽查員自行查找"]},
+      {source:"TFDA/PIC/S 官方來源",topic:"年度加題",text:"年度測驗若加入公開常見缺失題，最重要的前提是什麼？",options:["來源需為官方公開資料或經使用者確認","可自行假設公司發生缺失","題目越嚇人越好","不需要標示來源屬性"]},
+      {source:"TFDA/PIC/S 官方來源",topic:"年度加題",text:"公開常見缺失題在公司訓練中應如何呈現？",options:["作為外部查核重點學習，不寫成本公司已發生缺失","直接列為公司缺失","取代 SOP 題庫","不需與 GDP 主題連結"]}
     ]
   }
 };
 function examTemplateSection(s){
   const tpl=examTemplates[s.examTemplate];
   if(!tpl) return "";
-  const defaultType="newhire";
   const count=10;
   const point=100/count;
   const docs=[...tpl.commonDocs,...tpl.roleDocs];
   const docCards=docs.map(d=>`<article class="exam-card"><h4>${sourceToChapter(d.code).split(" ")[0]}：${esc(d.name)}<span class="exam-badge">${esc(d.role)}</span></h4><p>${esc(d.why)}</p></article>`).join("");
-  const q=tpl.draftQuestions[0];
   return panel("測試專區",`
     <div class="exam-stage-tabs">
       <div class="exam-stage-tab active" data-exam-tab="start">1. 開始測試</div>
@@ -4343,27 +4380,50 @@ function examTemplateSection(s){
     <section class="exam-stage" data-exam-stage="start">
       <div class="exam-hero">
         <h4>文管測驗</h4>
-        <p>測驗開始後將限制切換到部門文件與智慧查詢。請先確認測驗類型，按下開始後再依序輸入測驗人員資料。</p>
-        <div class="exam-scope-grid">
-          <article class="exam-card"><h4>新人三個月測驗<span class="exam-badge">10 題</span></h4><p>每題 10 分，適合確認文管新人核心概念。</p></article>
-          <article class="exam-card"><h4>年度教育訓練測驗<span class="exam-badge">20 題</span></h4><p>每題 5 分，可含公開常見缺失與年度複習。</p></article>
-        </div>
-        <div class="exam-start-actions">
-          <select id="examTypeSelect" aria-label="測驗類型">
-            <option value="newhire" selected>新人三個月測驗｜10 題｜15 分鐘</option>
-            <option value="annual">年度教育訓練測驗｜20 題｜25 分鐘</option>
-          </select>
-          <button type="button" class="primary" data-exam-action="to-profile">開始測試</button>
+        <p>請先選擇測驗別，系統會依題數設定作答時間並在開考時重新抽題。進入考試後需完成或結束測驗才可切換其他學習區。</p>
+        <div class="exam-start-card">
+          <div class="exam-type-list" role="radiogroup" aria-label="測驗類型">
+            <label class="exam-type-card active" data-exam-type-card>
+              <input type="radio" name="examType" value="newhire" checked>
+              <span><strong>新人三個月測驗</strong><span>適合確認文管新人核心概念，含共同基礎與文管專業題。</span></span>
+              <b class="exam-badge">10 題</b>
+            </label>
+            <label class="exam-type-card" data-exam-type-card>
+              <input type="radio" name="examType" value="annual">
+              <span><strong>年度教育訓練測驗</strong><span>年度複習用，可納入公開常見缺失學習題。</span></span>
+              <b class="exam-badge">20 題</b>
+            </label>
+          </div>
+          <div class="exam-summary-box">
+            <div class="exam-summary-row"><span>測驗別</span><strong data-exam-start-label>新人三個月測驗</strong></div>
+            <div class="exam-summary-row"><span>題數</span><strong data-exam-start-count>10 題</strong></div>
+            <div class="exam-summary-row"><span>作答時間</span><strong data-exam-start-time>10 分鐘</strong></div>
+            <div class="exam-summary-row"><span>合格標準</span><strong>70 分</strong></div>
+            <button type="button" class="primary" data-exam-action="to-profile">填寫應試資料</button>
+          </div>
         </div>
       </div>
       <div class="exam-source-grid">${docCards}</div>
     </section>
     <section class="exam-stage" data-exam-stage="profile" hidden>
       <form id="examProfileForm">
-        <div class="exam-form-grid">
-          <label>姓名<input name="name" type="text" autocomplete="name" required></label>
-          <label>職稱<input name="title" type="text" value="${esc(tpl.role)}" required></label>
-          <label>兼任/代理職務<input name="acting" type="text" placeholder="無則留空"></label>
+        <div class="exam-form-section">
+          <h4>測驗人員資料</h4>
+          <div class="exam-form-grid">
+            <label>姓名<input name="name" type="text" autocomplete="name" required></label>
+            <label>部門<input name="department" type="text" value="文管" required></label>
+            <label>職稱<input name="title" type="text" value="${esc(tpl.role)}" required></label>
+            <label>兼任/代理職務<input name="acting" type="text" placeholder="無則填無"></label>
+          </div>
+        </div>
+        <div class="exam-form-section" style="margin-top:12px">
+          <h4>教育訓練紀錄欄位</h4>
+          <div class="exam-form-grid">
+            <label>訓練日期<input name="trainingDate" type="date" required></label>
+            <label>訓練項目<input name="trainingItem" type="text" value="文管 GDP 教育訓練" required></label>
+            <label>授課講師<input name="trainer" type="text" placeholder="請填講師姓名" required></label>
+            <label>評核方式<select name="method" required><option value="線上測驗">線上測驗</option><option value="紙本測驗">紙本測驗</option><option value="口頭評核">口頭評核</option></select></label>
+          </div>
         </div>
         <div class="exam-start-actions" style="margin-top:14px">
           <button type="button" class="secondary" data-exam-action="to-start">返回</button>
@@ -4379,21 +4439,21 @@ function examTemplateSection(s){
       <div class="exam-lock-note">考試進行中：部門文件閱讀地圖與 GDP 智慧查詢暫停切換，請完成測驗或重新整理頁面後再查詢教材。</div>
       <div class="exam-question-shell">
         <article class="exam-question-card">
-          <h4>第 1 題 / <span data-exam-count>${count}</span></h4>
-          <p style="line-height:1.8">${esc(q.text)}</p>
-          <div class="exam-option-list">
-            ${q.options.map((opt,i)=>`<label class="exam-option"><input type="radio" name="draftExamQ1"><span>${String.fromCharCode(65+i)}. ${esc(opt)}</span></label>`).join("")}
-          </div>
+          <div class="exam-question-top"><div class="exam-question-index" data-exam-question-index>第 1 題 / <span data-exam-count>${count}</span></div><span class="exam-badge" data-exam-topic>共同基礎</span></div>
+          <div class="exam-progress-track"><div class="exam-progress-fill" data-exam-progress></div></div>
+          <p style="line-height:1.8;margin-top:16px" data-exam-question>題目載入中</p>
+          <div class="exam-option-list" data-exam-options></div>
           <div class="exam-start-actions" style="margin-top:16px">
-            <button type="button" class="secondary">上一題</button>
-            <button type="button" class="primary">下一題</button>
-            <button type="button" class="secondary" data-exam-action="finish">結束測驗</button>
+            <button type="button" class="secondary" data-exam-action="prev">上一題</button>
+            <button type="button" class="primary" data-exam-action="next">下一題</button>
+            <button type="button" class="secondary" data-exam-action="finish">提交測驗</button>
           </div>
+          <div class="exam-result-box" data-exam-result hidden></div>
         </article>
         <aside class="exam-side">
-          <div class="exam-mini-card"><strong>來源範圍</strong><br>${esc(q.source)}｜${esc(q.topic)}</div>
-          <div class="exam-mini-card"><strong>題庫狀態</strong><br>目前為版型測試題。正式題需補來源段落、答案解析、reviewedBy、reviewDate 後才能上架。</div>
-          <div class="exam-mini-card"><strong>測驗規則</strong><br>題數依文件多寡選 10 / 20 / 25 / 50，滿分 100，70 分合格。</div>
+          <div class="exam-mini-card"><strong>作答進度</strong><br><span data-exam-answer-summary>已作答 0 / ${count} 題</span></div>
+          <div class="exam-mini-card"><strong>題號速覽</strong><div class="exam-answer-grid" data-exam-answer-grid></div></div>
+          <div class="exam-mini-card"><strong>測驗規則</strong><br>滿分 100，70 分合格；未合格需重新測驗。</div>
         </aside>
       </div>
     </section>
@@ -4580,16 +4640,55 @@ function bindExamTemplate(){
   if(!root) return;
   const tabs=[...root.querySelectorAll("[data-exam-tab]")];
   const stages=[...root.querySelectorAll("[data-exam-stage]")];
-  const typeSelect=root.querySelector("#examTypeSelect");
+  const typeCards=[...root.querySelectorAll("[data-exam-type-card]")];
+  const typeRadios=[...root.querySelectorAll('input[name="examType"]')];
+  const startLabel=root.querySelector("[data-exam-start-label]");
+  const startCount=root.querySelector("[data-exam-start-count]");
+  const startTime=root.querySelector("[data-exam-start-time]");
   const timer=root.querySelector("#examTimer");
   const profile=root.querySelector("#examProfileForm");
   const person=root.querySelector("[data-exam-person]");
   const meta=root.querySelector("[data-exam-meta]");
   const countEl=root.querySelector("[data-exam-count]");
+  const questionIndex=root.querySelector("[data-exam-question-index]");
+  const questionText=root.querySelector("[data-exam-question]");
+  const questionTopic=root.querySelector("[data-exam-topic]");
+  const optionList=root.querySelector("[data-exam-options]");
+  const progressFill=root.querySelector("[data-exam-progress]");
+  const answerSummary=root.querySelector("[data-exam-answer-summary]");
+  const answerGrid=root.querySelector("[data-exam-answer-grid]");
+  const resultBox=root.querySelector("[data-exam-result]");
+  const nextBtn=root.querySelector('[data-exam-action="next"]');
+  const prevBtn=root.querySelector('[data-exam-action="prev"]');
+  const finishBtn=root.querySelector('[data-exam-action="finish"]');
+  const tpl=examTemplates.doc;
+  let session={questions:[],answers:[],index:0,info:null};
   let timerId=null;
   function typeInfo(){
-    const annual=typeSelect?.value==="annual";
-    return annual?{label:"年度教育訓練測驗",count:20,point:5,seconds:25*60}:{label:"新人三個月測驗",count:10,point:10,seconds:15*60};
+    const annual=typeRadios.find(r=>r.checked)?.value==="annual";
+    return annual?{label:"年度教育訓練測驗",count:20,point:5,minutes:25,seconds:25*60}:{label:"新人三個月測驗",count:10,point:10,minutes:10,seconds:10*60};
+  }
+  function shuffle(items){
+    const arr=[...items];
+    for(let i=arr.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [arr[i],arr[j]]=[arr[j],arr[i]];
+    }
+    return arr;
+  }
+  function buildQuestions(count){
+    const pool=shuffle(tpl.draftQuestions).slice(0,count);
+    return pool.map(q=>{
+      const options=shuffle(q.options.map((text,i)=>({text,correct:i===0})));
+      return {...q,options,correctIndex:options.findIndex(o=>o.correct)};
+    });
+  }
+  function refreshStartSummary(){
+    const info=typeInfo();
+    typeCards.forEach(card=>card.classList.toggle("active",card.querySelector("input")?.checked));
+    if(startLabel) startLabel.textContent=info.label;
+    if(startCount) startCount.textContent=`${info.count} 題`;
+    if(startTime) startTime.textContent=`${info.minutes} 分鐘`;
   }
   function setStage(stage){
     stages.forEach(el=>el.hidden=el.dataset.examStage!==stage);
@@ -4612,24 +4711,97 @@ function bindExamTemplate(){
       if(left===0) clearInterval(timerId);
     },1000);
   }
+  function updateAnswerGrid(){
+    if(!answerGrid) return;
+    answerGrid.innerHTML=session.questions.map((_,i)=>`<button type="button" class="exam-answer-dot ${i===session.index?"active":""} ${session.answers[i]!=null?"answered":""}" data-exam-jump="${i}">${i+1}</button>`).join("");
+    answerGrid.querySelectorAll("[data-exam-jump]").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        session.index=Number(btn.dataset.examJump);
+        renderQuestion();
+      });
+    });
+  }
+  function renderQuestion(){
+    const q=session.questions[session.index];
+    if(!q||!optionList) return;
+    const total=session.questions.length;
+    const selected=session.answers[session.index];
+    if(questionIndex) questionIndex.innerHTML=`第 ${session.index+1} 題 / <span data-exam-count>${total}</span>`;
+    if(countEl) countEl.textContent=String(total);
+    if(questionText) questionText.textContent=q.text;
+    if(questionTopic) questionTopic.textContent=q.topic;
+    if(progressFill) progressFill.style.width=`${((session.index+1)/total)*100}%`;
+    optionList.innerHTML=q.options.map((opt,i)=>`
+      <label class="exam-option ${selected===i?"selected":""}">
+        <input type="radio" name="examAnswer" value="${i}" ${selected===i?"checked":""}>
+        <span>${String.fromCharCode(65+i)}. ${esc(opt.text)}</span>
+      </label>`).join("");
+    optionList.querySelectorAll('input[name="examAnswer"]').forEach(input=>{
+      input.addEventListener("change",()=>{
+        session.answers[session.index]=Number(input.value);
+        renderQuestion();
+      });
+    });
+    const answered=session.answers.filter(v=>v!=null).length;
+    if(answerSummary) answerSummary.textContent=`已作答 ${answered} / ${total} 題`;
+    if(prevBtn) prevBtn.disabled=session.index===0;
+    if(nextBtn) nextBtn.textContent=session.index===total-1?"完成檢查":"下一題";
+    if(resultBox) resultBox.hidden=true;
+    updateAnswerGrid();
+  }
+  function finishExam(){
+    if(!session.questions.length) return;
+    const total=session.questions.length;
+    const answered=session.answers.filter(v=>v!=null).length;
+    if(answered<total){
+      if(resultBox){
+        resultBox.hidden=false;
+        resultBox.innerHTML=`尚有 ${total-answered} 題未作答。請先完成所有題目再提交。`;
+      }
+      return;
+    }
+    clearInterval(timerId);
+    const correct=session.questions.reduce((sum,q,i)=>sum+(session.answers[i]===q.correctIndex?1:0),0);
+    const score=Math.round((correct/total)*100);
+    const pass=score>=70;
+    if(resultBox){
+      resultBox.hidden=false;
+      resultBox.innerHTML=`<strong>${pass?"測驗合格":"未達合格標準"}</strong><br>得分 ${score} 分，答對 ${correct} / ${total} 題。${pass?"":"請重新測驗。"} `;
+    }
+    examLock.active=false;
+    if(finishBtn) finishBtn.textContent="返回測試首頁";
+  }
+  typeRadios.forEach(radio=>radio.addEventListener("change",refreshStartSummary));
+  typeCards.forEach(card=>card.addEventListener("click",()=>{
+    const radio=card.querySelector("input");
+    if(radio){radio.checked=true;refreshStartSummary();}
+  }));
   root.querySelector('[data-exam-action="to-profile"]')?.addEventListener("click",()=>setStage("profile"));
   root.querySelector('[data-exam-action="to-start"]')?.addEventListener("click",()=>setStage("start"));
-  root.querySelector('[data-exam-action="finish"]')?.addEventListener("click",()=>{
-    clearInterval(timerId);
-    examLock.active=false;
-    setStage("start");
+  prevBtn?.addEventListener("click",()=>{if(session.index>0){session.index-=1;renderQuestion();}});
+  nextBtn?.addEventListener("click",()=>{
+    if(session.index<session.questions.length-1){session.index+=1;renderQuestion();return;}
+    if(resultBox){resultBox.hidden=false;resultBox.innerHTML="已到最後一題，確認所有題目作答後請按「提交測驗」。";}
+  });
+  finishBtn?.addEventListener("click",()=>{
+    if(!examLock.active && session.questions.length){setStage("start");session={questions:[],answers:[],index:0,info:null};if(finishBtn) finishBtn.textContent="提交測驗";return;}
+    finishExam();
   });
   profile?.addEventListener("submit",e=>{
     e.preventDefault();
     const info=typeInfo();
+    session={questions:buildQuestions(info.count),answers:Array(info.count).fill(null),index:0,info};
     examLock.active=true;
     examLock.sectionId=current;
-    if(person) person.textContent=`${profile.name.value.trim()}｜${profile.title.value.trim()}`;
-    if(meta) meta.textContent=`${info.label}｜${info.count} 題｜每題 ${info.point} 分｜70 分合格`;
+    if(person) person.textContent=`${profile.name.value.trim()}｜${profile.department.value.trim()}｜${profile.title.value.trim()}`;
+    if(meta) meta.textContent=`${info.label}｜${info.count} 題｜${info.minutes} 分鐘｜70 分合格`;
     if(countEl) countEl.textContent=String(info.count);
     setStage("exam");
+    if(finishBtn) finishBtn.textContent="提交測驗";
+    renderQuestion();
     startTimer();
   });
+  refreshStartSummary();
 }
 function bindKbForm(){
   const form=document.getElementById("kbForm");
