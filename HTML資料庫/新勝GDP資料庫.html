@@ -80,10 +80,32 @@
   .doc-map-filter button.active{background:var(--brand);border-color:var(--brand);color:#fff}
   .doc-map-status{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:12px}
   .doc-map-status button{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:6px;padding:7px 5px;font:inherit;font-size:12px;cursor:pointer;line-height:1.35}
-  .doc-map-status button.active{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:700}
+    .doc-map-status button.active{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:700}
   .doc-map-card[data-docmap-status="assist"]{border-top-color:#a83232;background:#fff8f8}
   .doc-map-card[data-docmap-status="applied"]{border-top-color:var(--gold);background:#fffaf0}
   .doc-map-card[data-docmap-status="read"]{border-top-color:#0b7a43;background:#f3fbf7}
+  .exam-scope-grid,.exam-source-grid,.exam-build-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .exam-card{padding:14px;background:#f7fbfb;border:1px solid var(--line);border-top:4px solid var(--brand)}
+  .exam-card h4{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .exam-card p{margin:8px 0 0;color:var(--ink-soft);font-size:13px;line-height:1.7}
+  .exam-card ul{margin-top:8px;font-size:13px}
+  .exam-badge{display:inline-flex;align-items:center;min-height:24px;padding:3px 8px;border-radius:4px;background:#e8f3f2;color:var(--brand);font-size:11px;font-weight:800;white-space:nowrap}
+  .exam-badge.warn{background:#fff2de;color:#8a4d13}
+  .exam-form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  .exam-form-grid label{display:grid;gap:5px;color:var(--ink);font-size:13px;font-weight:700}
+  .exam-form-grid input,.exam-form-grid select{width:100%;min-height:38px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:#fff;font:inherit;color:var(--ink)}
+  .exam-flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+  .exam-step{padding:12px;background:#fff;border:1px solid var(--line);border-left:4px solid var(--gold)}
+  .exam-step strong{display:block;color:var(--brand);margin-bottom:6px}
+  .exam-step span{display:block;color:var(--ink-soft);font-size:13px;line-height:1.55}
+  .exam-checklist{display:grid;gap:8px;margin-top:10px}
+  .exam-check{display:grid;grid-template-columns:18px 1fr;gap:8px;align-items:start;padding:9px;background:#fff;border:1px solid var(--line);border-radius:6px}
+  .exam-check input{width:16px;height:16px;margin-top:2px}
+  .exam-check span{font-size:13px;line-height:1.55;color:var(--ink-soft)}
+  .exam-print-preview{display:grid;gap:8px;padding:14px;background:#fffaf0;border:1px solid #ead6b6}
+  .exam-print-row{display:grid;grid-template-columns:1fr 110px 90px 110px;gap:8px;font-size:13px;color:var(--ink)}
+  .exam-print-row.head{font-weight:800;color:#fff;background:var(--brand);padding:8px}
+  .exam-print-row:not(.head){padding:8px;border-bottom:1px solid #ead6b6}
     .slide-label{display:inline-grid;place-items:center;width:40px;height:40px;margin-bottom:8px;color:#fff;background:var(--gold);border-radius:50%;font-weight:800}
     .audit-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
     .audit-card{min-height:140px;padding:14px;background:#f4faf9;border:1px solid #cde0dd;border-top:5px solid var(--brand);font-size:15px;line-height:1.55;text-align:left;cursor:pointer}
@@ -324,7 +346,7 @@
     .ev-check-item span{font-weight:700;color:var(--brand)}
     .ev-check-item small{display:block;color:var(--ink-soft);font-size:12px;margin-top:3px}
     .ev-check-fill{height:6px;background:var(--brand);width:0%;transition:width .2s}
-    @media(max-width:680px){.evidence-map{grid-template-columns:1fr}.evidence-node.center{min-height:50px;flex-direction:row;gap:10px;padding:12px}.metric-strip{grid-template-columns:repeat(2,1fr)}.metric{border-bottom:1px solid #ead6b6}.doc-map-status,.ev-check-list{grid-template-columns:1fr}}
+    @media(max-width:680px){.evidence-map{grid-template-columns:1fr}.evidence-node.center{min-height:50px;flex-direction:row;gap:10px;padding:12px}.metric-strip{grid-template-columns:repeat(2,1fr)}.metric{border-bottom:1px solid #ead6b6}.doc-map-status,.ev-check-list,.exam-scope-grid,.exam-source-grid,.exam-build-grid,.exam-form-grid,.exam-flow{grid-template-columns:1fr}.exam-print-row{grid-template-columns:1fr}.exam-print-row.head{display:none}}
     @keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
     /* ── timeline ── */
     .timeline{display:grid;gap:8px}
@@ -1094,6 +1116,30 @@ const sections = [
     qa:true
   },
   {
+    id:"exam-newhire",
+    group:"測試專區",
+    title:"新人三個月測驗",
+    tag:"文管範本・10 題",
+    lead:"新人三個月測驗用來確認員工已理解共同 GDP 基礎與自己職務的核心 SOP。文管範本先把 DM10-01 與 WI10-01 視為同一組共同基礎，再接 DP42-01 與 DP42-02 作為文管專業範圍；因文管專業文件目前只有兩份，題數採 10 題，每題 10 分，避免過度出題。",
+    pills:["文管範本","DM+SMF一體","DP42-01","DP42-02","10題"],
+    examTemplate:"doc",
+    examType:"newhire",
+    examQuestionCount:10,
+    qa:false
+  },
+  {
+    id:"exam-annual",
+    group:"測試專區",
+    title:"年度教育訓練測驗",
+    tag:"文管範本・20 題",
+    lead:"年度教育訓練測驗用來確認年度訓練後是否仍能掌握共同 GDP 基礎、文管專業 SOP 與公開常見缺失查核重點。文管範本採 20 題，每題 5 分；其他部門後續依文件多寡與風險在 10、20、25、50 題中選擇。",
+    pills:["年度訓練","文管範本","公開缺失","20題","70分合格"],
+    examTemplate:"doc",
+    examType:"annual",
+    examQuestionCount:20,
+    qa:false
+  },
+  {
     id:"gdp-kb",
     group:"GDP 知識庫",
     title:"GDP 智慧查詢",
@@ -1153,6 +1199,8 @@ const visualAssets = {
   qa:"assets/gdp-training-doc-audit.png",warehouse:"assets/gdp-training-warehouse.png",
   purchase:"assets/gdp-training-supply-chain.png",sales:"assets/gdp-training-people.png",
   doc:"assets/gdp-training-doc-audit.png"
+  ,"exam-newhire":"assets/gdp-training-doc-audit.png"
+  ,"exam-annual":"assets/gdp-training-doc-audit.png"
 };
 
 const departmentDocumentMaps = {
@@ -4239,8 +4287,86 @@ function kbSection(){
     </div>`,"wide")
   ].join("");
 }
+const examTemplates = {
+  doc:{
+    role:"文管",
+    roleSource:"WI10-01 SMF 廠商基本資料：文管需具備企管或會計相關背景與行政管理經驗，受訓範圍連結文件管制與品質紀錄。",
+    commonDocs:[
+      {code:"DM10-01",name:"品質手冊",role:"共同基礎",why:"回答 GDP 應該怎麼做，是所有部門都要理解的品質系統原則。"},
+      {code:"WI10-01",name:"SMF 廠商基本資料",role:"共同基礎",why:"回答公司實際如何做 GDP，含場所、組織、職務、委外與清冊。"}
+    ],
+    roleDocs:[
+      {code:"DP42-01",name:"文件管制作業程序書",role:"文管專業",why:"考文件制修訂、審查核准、登錄發行、訓練後生效、作廢與定期審查。"},
+      {code:"DP42-02",name:"品質紀錄作業程序書",role:"文管專業",why:"考品質紀錄鑑別、儲存、完整性、檢索、保存期限與處置。"}
+    ],
+    printItems:["DM10-01 / WI10-01 GDP 共同基礎訓練","DP42-01 文件管制作業程序訓練","DP42-02 品質紀錄作業程序訓練"],
+    sourceBlocks:[
+      {title:"共同基礎題",body:"DM10-01 與 WI10-01 視為同一題庫群，不切成兩科；題目同時考 GDP 原則與公司實際做法。",status:"必含"},
+      {title:"文管專業題",body:"DP42-01 與 DP42-02 分別建立題庫，但測驗時合併成文管職務試卷。",status:"必含"},
+      {title:"公開缺失題",body:"年度測驗可加入 TFDA/PIC/S 公開常見缺失；需有官方來源，不得寫成本公司缺失。",status:"年度可含"},
+      {title:"講師確認",body:"每題需有來源段落、答案、解析、reviewedBy 與 reviewDate，否則只能停在草稿。",status:"上架前"}
+    ],
+    blueprints:[
+      {topic:"GDP 系統原則與公司做法",source:"DM10-01 + WI10-01",type:"共同基礎",checks:["題目同時能回到 GDP 原則與公司實際做法","不得把 DM 與 SMF 切成兩張獨立試卷","解析寫員工能理解的短句"]},
+      {topic:"正式文件生命週期",source:"DP42-01",type:"文管專業",checks:["覆蓋制定、審查、核准、登錄、發行、訓練後生效","不得要求學員背完整 SOP 路徑","答案需可回到 DP42-01 原文"]},
+      {topic:"文件修訂與定期審查",source:"DP42-01",type:"文管專業",checks:["覆蓋文件不合時宜、偏差後修訂、年度徵詢修改意見","時間點需與來源一致","需能形成稽查問答"]},
+      {topic:"品質紀錄保存與處置",source:"DP42-02",type:"文管專業",checks:["覆蓋至少 5 年保存、跨年度歸檔、超期處置","不得自行補表單欄位","需區分文件與品質紀錄"]},
+      {topic:"公開查核重點",source:"TFDA/PIC/S 官方來源",type:"年度加題",checks:["只能用官方公開來源或使用者確認資料","不得寫成本公司已發生缺失","需標來源標題與年度"]}
+    ]
+  }
+};
+function examTemplateSection(s){
+  const tpl=examTemplates[s.examTemplate];
+  if(!tpl) return "";
+  const count=s.examQuestionCount||20;
+  const point=100/count;
+  const allowed=[10,20,25,50].includes(count);
+  const docs=[...tpl.commonDocs,...tpl.roleDocs];
+  const scopeCards=[
+    {title:"題數規則",body:`本頁設定 ${count} 題，每題 ${point} 分。各部門依文件多寡選 10、20、25 或 50 題，確保 100 分可整除。`,status:allowed?"符合":"需修正"},
+    {title:"共同基礎",body:"DM10-01 與 WI10-01 視為一體：DM 是 GDP 原則，SMF 是公司實際做法。",status:"已納入"},
+    {title:"文管專業",body:"文管範本先以 DP42-01 與 DP42-02 建題，其他部門仿照替換為該職務必測 SOP。",status:"範本"},
+    {title:"正式上架條件",body:"題目、選項、答案與解析均需來源段落與講師確認；未確認題不得進正式測驗。",status:"硬性"}
+  ].map(x=>`<article class="exam-card"><h4>${esc(x.title)}<span class="exam-badge ${x.status==="需修正"?"warn":""}">${esc(x.status)}</span></h4><p>${esc(x.body)}</p></article>`).join("");
+  const sourceCards=tpl.sourceBlocks.map(x=>`<article class="exam-card"><h4>${esc(x.title)}<span class="exam-badge">${esc(x.status)}</span></h4><p>${esc(x.body)}</p></article>`).join("");
+  const docCards=docs.map(d=>`<article class="exam-card"><h4>${sourceToChapter(d.code).split(" ")[0]}：${esc(d.name)}<span class="exam-badge">${esc(d.role)}</span></h4><p>${esc(d.why)}</p></article>`).join("");
+  const blueprintCards=tpl.blueprints.map((b,i)=>`<article class="exam-card">
+    <h4>${esc(b.topic)}<span class="exam-badge">${esc(b.type)}</span></h4>
+    <p><strong>來源：</strong>${esc(b.source)}</p>
+    <div class="exam-checklist" data-exam-checks="${esc(s.id)}-${i}">
+      ${b.checks.map((c,j)=>`<label class="exam-check"><input type="checkbox" data-exam-check="${esc(s.id)}-${i}" data-exam-key="${j}"><span>${esc(c)}</span></label>`).join("")}
+    </div>
+  </article>`).join("");
+  const printRows=tpl.printItems.map(item=>`<div class="exam-print-row"><span>${esc(item)}</span><span>__ / __</span><span>□ 合格</span><span>______</span></div>`).join("");
+  return [
+    panel("文管測驗範本總覽",`<div class="exam-scope-grid">${scopeCards}</div>`,"wide"),
+    panel("開始測驗前資料",`<div class="exam-form-grid">
+      <label>姓名<input type="text" placeholder="列印 FR24-03 使用"></label>
+      <label>單位<input type="text" value="${esc(tpl.role)}" aria-label="單位"></label>
+      <label>職稱<input type="text" value="${esc(tpl.role)}" aria-label="職稱"></label>
+      <label>兼任/代理職務<input type="text" placeholder="選填，後續取 SOP 聯集"></label>
+      <label>測驗類型<input type="text" value="${esc(s.title)}" aria-label="測驗類型"></label>
+      <label>題數<input type="text" value="${count} 題，每題 ${point} 分" aria-label="題數" readonly></label>
+    </div><p class="lead" style="font-size:14px;margin-top:12px">正式登入前，此區只作前端填寫與列印包預覽；數位成績保存需等登入與 Firestore 權限確認後再做。</p>`,"wide"),
+    panel("受測範圍",`<div class="exam-source-grid">${docCards}</div>`,"wide"),
+    panel("題庫來源分層",`<div class="exam-source-grid">${sourceCards}</div>`,"wide"),
+    panel("題庫建置檢核",`<div class="exam-build-grid">${blueprintCards}</div>`,"wide"),
+    panel("FR24-03 列印包預覽",`<div class="exam-print-preview">
+      <div class="exam-print-row head"><span>訓練項目</span><span>得分</span><span>結果</span><span>人事簽核</span></div>
+      ${printRows}
+      <div class="exam-print-row"><span>總分與補考紀錄</span><span>__ / 100</span><span>□ ≥70</span><span>______</span></div>
+    </div>`,"wide"),
+    panel("其他部門仿照流程",`<div class="exam-flow">
+      <div class="exam-step"><strong>1. 共通底稿</strong><span>每個部門先放 DM10-01 + WI10-01，視為同一組共同基礎題庫。</span></div>
+      <div class="exam-step"><strong>2. 職務 SOP</strong><span>依 WI10-01 職務訓練要求加入該部門專業 SOP，兼任職務取聯集。</span></div>
+      <div class="exam-step"><strong>3. 題數選擇</strong><span>依來源資料量選 10、20、25 或 50 題；文件少不硬塞題，且 100 分可整除。</span></div>
+      <div class="exam-step"><strong>4. 審核上架</strong><span>每題補來源段落、答案解析、reviewedBy 與 reviewDate 後才可啟用。</span></div>
+    </div>`,"wide")
+  ].join("");
+}
 function renderContent(s){
   if(s.id==="gdp-kb") return kbSection();
+  if(s.examTemplate) return examTemplateSection(s);
   return [
     panel("視覺導讀",visualIntro(s),""),
     s.coreBrief ? panel("學習重點",coreBriefHtml(s),"wide") : "",
@@ -4412,6 +4538,13 @@ function bindDocumentMap(){
     }
     buttons.forEach(btn=>btn.addEventListener("click",()=>apply(btn.dataset.docmapScenario||"")));
     apply("");
+  });
+}
+function bindExamTemplate(){
+  document.querySelectorAll("[data-exam-check]").forEach(box=>{
+    const key=`exam-check:${box.dataset.examCheck}:${box.dataset.examKey}`;
+    box.checked=localStorage.getItem(key)==="1";
+    box.addEventListener("change",()=>localStorage.setItem(key,box.checked?"1":"0"));
   });
 }
 function bindKbForm(){
@@ -4773,7 +4906,7 @@ function renderNav(){
   const pickerPanel=document.getElementById("mobilePickerPanel");
   nav.innerHTML="";
   pickerPanel.innerHTML="";
-  const navGroups=["GDP核心","新人部門","年度行事曆","GDP 知識庫"];
+  const navGroups=["GDP核心","新人部門","年度行事曆","測試專區","GDP 知識庫"];
   navGroups.forEach(group=>{
     const groupSections=sections.filter(s=>s.group===group);
     if(!groupSections.length) return;
@@ -4857,6 +4990,7 @@ async function showSection(id){
   bindFocusInteractives();
   bindTrainingInteractives();
   bindDocumentMap();
+  bindExamTemplate();
   bindQaForm(id);
   bindEvidenceMap();
   bindKbForm();
