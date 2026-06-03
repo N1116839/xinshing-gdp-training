@@ -1,4 +1,34 @@
 # GDP HTML 教育訓練 HANDOFF
+更新：2026-06-03（第六十五次）
+
+## 本輪完成（2026-06-03 第六十五次）✅ mobileMenu 清理（已在 HEAD）、Phase 1 釐清標記完成、揪出 Google Drive 工作檔漂移
+
+依使用者「開工，列出待辦/待改正」→ 選定順序 **① 清理 mobileMenu → ② 補常見缺失逐筆來源 → ③ 釐清收尾 Phase 1**。
+
+### ① 清理 mobileMenu 殘留 — 完成（但揭出部署落差）
+- 移除隱藏 `<select id="mobileMenu">`、`.mobile-menu{display:none}` CSS、`renderNav` 內 3 處 JS 參照、`showSection` 1 處同步。改後手機主導覽 `#mobilePicker` 實機正常（桌機 14 按鈕／手機 14 選項，切換同步、自動收合、無 console error）。
+- **重大發現（部署落差 + Google Drive 漂移）**：開工時 Grep 在工作檔找到 mobileMenu 3 處，但本地 **HEAD（`baec426` SessionEnd auto-save）早已是乾淨版**（4849 行、mobileMenu=0），與我改後的工作檔**位元組相同**。亦即清理其實已 commit 在本地，我的編輯等於把「被 Google Drive 舊版覆蓋的漂移工作檔（4856 行、含 mobileMenu）」重新對齊 HEAD。
+- **但 origin（=GH Pages 線上 repo `N1116839/xinshing-gdp-training`）仍是舊版**：線上實測 mobileMenu=3、4856 行。本地 HEAD 領先 origin 1 commit **未 push** → 線上尚未生效。**要讓清理上線，必須 push origin。**
+
+### ② 補常見缺失逐筆來源 — 使用者裁示「維持現狀、跳過」
+- 查證：113 年度 PDF 連結實測有效、確為食藥署 GDP 簡報（4MB 掃描型）；107 年度講義頁(id=27151)為真實官方頁；另查到真實 TFDA「我國實施藥品優良運銷規範制度之研究」報告。
+- 本機**無 pdftoppm、無 Python PDF 函式庫**，掃描型官方 PDF 無法 OCR／抽文字 → 逐筆頁碼＝杜撰，違反 §45，不可做。現有「文件層級官方來源＋連結」已是可負責上限。使用者選擇維持現狀。
+
+### ③ 釐清並收尾 Phase 1 — 完成
+- 盤點 fact 覆蓋：122 筆、全 8 章（1:37 / 2:27 / 3:33 / 4:10 / 5:22 / 6:8 / 7:4 / 8:4）、0 筆缺 `sop_ref`；驗收 1296/1296。
+- **§42.7「第四/六/七/八章待補」確認為過時**（第 33–34 次已全量校對），已改寫為完成狀態＋各章 fact 數表；註明第 7/8 章為單一 SOP 章，4 筆為自然上限、每筆 12–78 問法，不得為湊「每章 10 問題」捏造 fact（§11/§45）。
+- **§37.1 狀態表：Phase 1 標記「✅ 完成」**（4/5 條件明確達成，第 2 條 ch7/ch8 已正當解釋）；Phase 2 改「進行中」（45–64 次已做翻卡/Stepper/證據核對台）；Phase 3「設計完成待實作（登入暫停）」。
+
+### 驗收
+- `JS_PARSE_OK 1`、`node verify_facts_ghpages.mjs` `1296/1296`、實機手機+桌機導覽正常、無 console error。
+
+### 下次開工提醒
+1. **未 push**：本地領先 origin 1 commit（HTML 清理）＋本輪 `.md`（Phase 1 文件）變更未 commit。使用者說「上傳」才 commit + push origin → 部署到 GH Pages。
+2. **Google Drive 漂移教訓**：git 在此工作區會誤報 clean（系統開頭 gitStatus 也報 clean，實際工作檔是舊版）。動工前/收工前都要用 `git diff HEAD` + 線上永久網址雙重比對，勿只信 `git status`。
+3. 測驗平台（任務未選）仍待使用者補各部門受測 SOP 範圍與題庫來源才能實作。
+
+---
+
 更新：2026-06-03（第六十四次）
 
 ## 本輪完成（2026-06-03 第六十四次）✅ 依規範再檢 HTML，更新視覺權限報告
