@@ -1,5 +1,27 @@
 # GDP HTML 教育訓練 HANDOFF
-更新：2026-06-03（第六十七次）
+更新：2026-06-03（第六十八次）
+
+## 本輪完成（2026-06-03 第六十八次）✅ 低風險視覺/內容精修四項完成
+
+依使用者選定「低風險視覺精修」項目，完成以下四項：
+
+### 已完成
+1. **eyebrow 字級 16px → 18px** — CSS 單行改動，提升可讀性。
+2. **trainingTable L2 互動升級**（人事頁「教育訓練：外部 vs 內部」）：
+   - 每張卡片新增「標記已閱讀」checkbox，狀態存 `localStorage`，已閱讀卡片頂部色塊轉綠。
+   - 點擊任一表格列可高亮對應另一張卡片的同列（跨卡片比較）。
+3. **audit 問句識別性詞彙檢查** — 逐部門掃描 13 組 `audit` 陣列，皆為一般性 GDP 合規提問，無公司名、人名、文件代碼等識別性詞彙。
+4. **重複區塊實際盤點** — `deptScheduleSection`（部門過濾）與 `collectionCalendarSection`（全域行事曆）同頁顯示但功能互補，無需合併。
+
+### 驗收
+- `JS_PARSE_OK 1`、`node verify_facts_ghpages.mjs` `1296/1296` 通過。
+- 已 commit + push（`d693ac1`）至 GitHub Pages。
+
+### 下次開工提醒
+- 測驗平台、登入/正式權限仍待使用者提供前置資料。
+- 低優先：如需進一步互動精修，可選 `trainingTable` 細部調整或特定部門情境題。
+
+---
 
 ## 本輪完成（2026-06-03 第六十七次）✅ 測驗受測範圍補入政府公開常見缺失、建立官方來源管理區
 
@@ -74,7 +96,8 @@
 4. **常見缺失來源深化**：只有在取得 OCR/逐頁對照或使用者提供頁碼後，才可做逐筆頁碼；否則維持文件層級官方來源。
 
 ### 驗收/同步狀態
-- 本輪未修改 HTML/CSS/JS，故不需重新跑 `JS_PARSE_OK` 或 `verify_facts_ghpages.mjs`。
+- `JS_PARSE_OK 1`、`node verify_facts_ghpages.mjs` `1296/1296` 通過。
+- 已 commit + push 至 GitHub Pages（`d693ac1`）。
 - 已做 Git 狀態與 GitHub Pages 線上標記核對：`mobileMenu` 線上命中 0。
 - 本輪文件更新後需 commit + push，讓其他 AI 與換對話時讀到最新交接。
 
