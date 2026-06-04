@@ -127,6 +127,8 @@
   .exam-print-row{display:grid;grid-template-columns:1fr 110px 90px 110px;gap:8px;font-size:13px;color:var(--ink)}
   .exam-print-row.head{font-weight:800;color:#fff;background:var(--brand);padding:8px}
   .exam-print-row:not(.head){padding:8px;border-bottom:1px solid #ead6b6}
+  .exam-print-doc{display:none}
+  .exam-paper-note{margin-top:8px;color:var(--ink-soft);font-size:13px;line-height:1.6}
   .exam-work-head{position:sticky;top:0;z-index:3;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;background:#fff;border:1px solid var(--line);box-shadow:0 8px 22px rgba(20,64,61,.08)}
   .exam-timer{margin-left:auto;padding:8px 12px;background:#fff4e4;border:1px solid #ead6b6;color:#7b3f00;font-weight:900;border-radius:6px;white-space:nowrap}
   .exam-lock-note{padding:10px 12px;background:#fff8f0;border:1px solid #ead6b6;color:#7b3f00;font-size:13px;line-height:1.6}
@@ -389,6 +391,34 @@
     .ev-check-item small{display:block;color:var(--ink-soft);font-size:12px;margin-top:3px}
     .ev-check-fill{height:6px;background:var(--brand);width:0%;transition:width .2s}
     @media(max-width:680px){.evidence-map{grid-template-columns:1fr}.evidence-node.center{min-height:50px;flex-direction:row;gap:10px;padding:12px}.metric-strip{grid-template-columns:repeat(2,1fr)}.metric{border-bottom:1px solid #ead6b6}.doc-map-status,.ev-check-list,.exam-scope-grid,.exam-source-grid,.exam-build-grid,.exam-form-grid,.exam-flow,.exam-stage-tabs,.exam-question-shell,.exam-start-card{grid-template-columns:1fr}.exam-print-row{grid-template-columns:1fr}.exam-print-row.head{display:none}.exam-work-head{position:static;align-items:flex-start;flex-direction:column}.exam-timer{margin-left:0}.exam-hero{padding:18px;min-height:220px}}
+    @media print{
+      @page{size:A4 portrait;margin:10mm}
+      body{background:#fff;color:#000}
+      body *{visibility:hidden!important}
+      .exam-print-doc,.exam-print-doc *{visibility:visible!important}
+      .exam-print-doc{display:block!important;position:absolute;inset:0 auto auto 0;width:100%;padding:0;background:#fff;color:#000;font-family:"Microsoft JhengHei","Noto Sans TC",serif;font-size:11pt;line-height:1.35}
+      .exam-print-page{break-after:page;page-break-after:always}
+      .exam-print-page:last-child{break-after:auto;page-break-after:auto}
+      .exam-print-title{text-align:center;font-size:18pt;font-weight:800;letter-spacing:.08em;margin:0 0 10mm}
+      .exam-fr-table,.exam-paper-table{width:100%;border-collapse:collapse;table-layout:fixed}
+      .exam-fr-table th,.exam-fr-table td,.exam-paper-table th,.exam-paper-table td{border:1px solid #000;padding:6px 7px;vertical-align:top;word-break:break-word}
+      .exam-fr-table th{font-weight:700;text-align:center}
+      .exam-fr-table td{height:13mm}
+      .exam-fr-notes{margin-top:4mm;font-size:10pt;line-height:1.6}
+      .exam-paper-head{display:grid;grid-template-columns:1fr auto;gap:8mm;align-items:start;margin-bottom:6mm}
+      .exam-paper-head h1{margin:0;text-align:left;font-size:16pt;line-height:1.4}
+      .exam-paper-score{border:2px solid #000;padding:5mm 8mm;text-align:center;font-size:14pt;font-weight:800;min-width:34mm}
+      .exam-paper-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:2mm;margin:0 0 5mm;font-size:11pt}
+      .exam-paper-meta span{border-bottom:1px solid #000;padding:0 2mm 1mm}
+      .exam-question-print{break-inside:avoid;page-break-inside:avoid;margin:0 0 4mm}
+      .exam-question-print h3{margin:0 0 2mm;color:#000;font-size:11pt;line-height:1.5}
+      .exam-print-options{display:grid;grid-template-columns:1fr 1fr;gap:1.5mm 5mm}
+      .exam-print-option{font-size:10.5pt;line-height:1.45}
+      .exam-print-answer{margin-top:1.5mm;font-size:10.5pt}
+      .exam-print-answer strong{border-bottom:1px solid #000;padding:0 12mm 0 1mm}
+      .exam-print-result{font-weight:800}
+      nav,.topbar,.hero,.mobile-picker,.floating-jump{display:none!important}
+    }
     @keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
     /* ── timeline ── */
     .timeline{display:grid;gap:8px}
@@ -4379,8 +4409,8 @@ function examTemplateSection(s){
     </div>
     <section class="exam-stage" data-exam-stage="start">
       <div class="exam-hero">
-        <h4>文管測驗</h4>
-        <p>請先選擇測驗別，系統會依題數設定作答時間並在開考時重新抽題。進入考試後需完成或結束測驗才可切換其他學習區。</p>
+        <h4>測試專區</h4>
+        <p>請先選擇測驗別與目前可用範本。文管是第一個建置完成的範本；其他部門需依 WI10-01 與該部門 SOP 建立受測範圍後再啟用。進入考試後需完成或結束測驗才可切換其他學習區。</p>
         <div class="exam-start-card">
           <div class="exam-type-list" role="radiogroup" aria-label="測驗類型">
             <label class="exam-type-card active" data-exam-type-card>
@@ -4414,7 +4444,7 @@ function examTemplateSection(s){
             <label>性別<select name="sex"><option value="">未填</option><option value="男">男</option><option value="女">女</option></select></label>
             <label>部門<input name="department" type="text" value="文管" required></label>
             <label>職稱<input name="title" type="text" value="${esc(tpl.role)}" required></label>
-            <label>報到日期<input name="onboardDate" type="date"></label>
+            <label>報到日期（列印採民國）<input name="onboardDate" type="date"></label>
             <label>學歷<input name="education" type="text" placeholder="可留空"></label>
             <label>兼任/代理職務<input name="acting" type="text" placeholder="無則填無"></label>
           </div>
@@ -4422,7 +4452,7 @@ function examTemplateSection(s){
         <div class="exam-form-section" style="margin-top:12px">
           <h4>教育訓練紀錄欄位</h4>
           <div class="exam-form-grid">
-            <label>訓練日期<input name="trainingDate" type="date" required></label>
+            <label>訓練日期（列印採民國）<input name="trainingDate" type="date" required></label>
             <label>訓練項目<input name="trainingItem" type="text" value="文管 GDP 教育訓練" required></label>
             <label>授課講師<input name="trainer" type="text" placeholder="請填講師姓名" required></label>
             <label>評核方式<select name="method" required><option value="線上測驗">線上測驗</option><option value="紙本測驗">紙本測驗</option><option value="口頭評核">口頭評核</option></select></label>
@@ -4759,6 +4789,136 @@ function bindExamTemplate(){
     const field=profile?.elements?.[name];
     return field ? String(field.value||"").trim() : "";
   }
+  function toRocDate(value){
+    if(!value) return "";
+    const m=String(value).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if(!m) return esc(value);
+    return `民國 ${Number(m[1])-1911} 年 ${Number(m[2])} 月 ${Number(m[3])} 日`;
+  }
+  function answerLabel(index){
+    return index==null ? "" : String.fromCharCode(65+Number(index));
+  }
+  function examShareText(correct,total,score,pass,timedOut){
+    const p=session.profile||{};
+    const resultText=pass?"合格":"未合格";
+    const answers=session.questions.map((q,i)=>{
+      const selected=session.answers[i];
+      const selectedLabel=answerLabel(selected)||"未作答";
+      const correctLabel=answerLabel(q.correctIndex);
+      return `${i+1}. ${q.text}\n作答：${selectedLabel}；正解：${correctLabel}；結果：${selected===q.correctIndex?"答對":"答錯"}`;
+    }).join("\n\n");
+    return [
+      "新勝醫藥 GDP 測驗送交文管資料包",
+      `測驗別：${session.info?.label||""}`,
+      `姓名：${p.name||""}`,
+      `性別：${p.sex||""}`,
+      `報到日期：${toRocDate(p.onboardDate)}`,
+      `學歷：${p.education||""}`,
+      `單位：${p.department||""}`,
+      `職稱：${p.title||""}`,
+      `兼任/代理：${p.acting||""}`,
+      `訓練日期：${toRocDate(p.trainingDate)}`,
+      `訓練項目：${p.trainingItem||""}`,
+      `訓練者：${p.trainer||""}`,
+      `評核方式：${p.method||""}`,
+      `分數：${score} 分`,
+      `結果：${resultText}`,
+      `答對：${correct} / ${total} 題`,
+      timedOut?"交卷狀態：逾時自動交卷":"交卷狀態：正常提交",
+      "",
+      "答題紀錄",
+      answers
+    ].join("\n");
+  }
+  function downloadExamShareText(){
+    if(!session.shareText) return;
+    const blob=new Blob([session.shareText],{type:"text/plain;charset=utf-8"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    const name=(session.profile?.name||"未填姓名").replace(/[\\/:*?"<>|]/g,"_");
+    a.href=url;
+    a.download=`GDP測驗送交文管_${name}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),800);
+  }
+  function examPrintDocumentHtml(correct,total,score,pass,timedOut){
+    const p=session.profile||{};
+    const resultText=pass?"合格":"未合格";
+    const rows=tpl.printItems.map(item=>`
+      <tr>
+        <td>${esc(item)}</td>
+        <td>新勝醫藥</td>
+        <td>${esc(p.trainer||"")}</td>
+        <td>${toRocDate(p.trainingDate)}</td>
+        <td>${score} 分，${resultText}</td>
+        <td></td>
+      </tr>`).join("");
+    const blankRows=Array.from({length:Math.max(0,7-tpl.printItems.length)},()=>`<tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>`).join("");
+    const questions=session.questions.map((q,i)=>{
+      const selected=session.answers[i];
+      const selectedLabel=answerLabel(selected)||"未作答";
+      const correctLabel=answerLabel(q.correctIndex);
+      const optionHtml=q.options.map((opt,idx)=>{
+        const mark=selected===idx?"●":"○";
+        return `<div class="exam-print-option">${mark} ${String.fromCharCode(65+idx)}. ${esc(opt.text)}</div>`;
+      }).join("");
+      return `<section class="exam-question-print">
+        <h3>${i+1}. ${esc(q.text)}</h3>
+        <div class="exam-print-options">${optionHtml}</div>
+        <div class="exam-print-answer">作答：<strong>${esc(selectedLabel)}</strong> 正解：${esc(correctLabel)}　<span class="exam-print-result">${selected===q.correctIndex?"答對":"答錯"}</span></div>
+      </section>`;
+    }).join("");
+    return `<div class="exam-print-doc" aria-hidden="true">
+      <section class="exam-print-page">
+        <h1 class="exam-print-title">員工教育訓練紀錄表</h1>
+        <table class="exam-fr-table">
+          <tr>
+            <td colspan="2">姓名：${esc(p.name||"")}</td>
+            <td>性別：${esc(p.sex||"")}</td>
+            <td colspan="2">報到日期：${toRocDate(p.onboardDate)}</td>
+            <td>學歷：${esc(p.education||"")}</td>
+          </tr>
+          <tr>
+            <td colspan="2">單位：${esc(p.department||"")}</td>
+            <td colspan="4">職稱：${esc(p.title||"")}${p.acting&&p.acting!=="無"?"；兼任/代理："+esc(p.acting):""}</td>
+          </tr>
+          <tr>
+            <th style="width:30%">訓練項目</th>
+            <th style="width:15%">訓練單位</th>
+            <th style="width:13%">訓練者</th>
+            <th style="width:18%">訓練日期</th>
+            <th style="width:14%">評核成效</th>
+            <th style="width:10%">人事簽核</th>
+          </tr>
+          ${rows}${blankRows}
+        </table>
+        <div class="exam-fr-notes">
+          備註：1. 本表由人事單位保存。2. 訓練後經訓練講師評鑑受訓成效，由人事簽核。3. 評核方式：${esc(p.method||"")}；${timedOut?"本次為逾時自動交卷。":"本次為測驗完成後列印。"}
+        </div>
+      </section>
+      <section class="exam-print-page">
+        <div class="exam-paper-head">
+          <h1>新勝醫藥 GDP ${esc(p.trainingItem||"教育訓練")}<br>${esc(session.info?.label||"測驗")}答題紀錄</h1>
+          <div class="exam-paper-score">${score} 分<br><small>${resultText}</small></div>
+        </div>
+        <div class="exam-paper-meta">
+          <span>姓名：${esc(p.name||"")}</span>
+          <span>單位：${esc(p.department||"")}</span>
+          <span>職稱：${esc(p.title||"")}</span>
+          <span>測驗日期：${toRocDate(p.trainingDate)}</span>
+        </div>
+        <div class="exam-paper-meta">
+          <span>題數：${total} 題</span>
+          <span>答對：${correct} 題</span>
+          <span>合格標準：70 分</span>
+          <span>結果：${resultText}</span>
+        </div>
+        ${questions}
+      </section>
+    </div>`;
+  }
   function printPacketHtml(correct,total,score,pass,timedOut){
     const p=session.profile||{};
     const rows=tpl.printItems.map(item=>`<div class="exam-print-row"><span>${esc(item)}</span><span>${score} 分</span><span>${pass?"合格":"未合格"}</span><span>________</span></div>`).join("");
@@ -4772,15 +4932,21 @@ function bindExamTemplate(){
       <div class="exam-print-preview">
         <strong>文管列印資料包${timedOut?"（逾時交卷）":""}</strong>
         <div class="exam-summary-row"><span>姓名</span><strong>${esc(p.name||"")}</strong></div>
-        <div class="exam-summary-row"><span>性別 / 報到日期 / 學歷</span><strong>${esc([p.sex||"未填",p.onboardDate||"未填",p.education||"未填"].join(" / "))}</strong></div>
+        <div class="exam-summary-row"><span>性別 / 報到日期 / 學歷</span><strong>${esc([p.sex||"未填",toRocDate(p.onboardDate)||"未填",p.education||"未填"].join(" / "))}</strong></div>
         <div class="exam-summary-row"><span>單位 / 職稱</span><strong>${esc([p.department||"",p.title||""].join(" / "))}</strong></div>
-        <div class="exam-summary-row"><span>訓練日期 / 講師 / 評核方式</span><strong>${esc([p.trainingDate||"",p.trainer||"",p.method||""].join(" / "))}</strong></div>
+        <div class="exam-summary-row"><span>訓練日期 / 講師 / 評核方式</span><strong>${esc([toRocDate(p.trainingDate)||"",p.trainer||"",p.method||""].join(" / "))}</strong></div>
         <div class="exam-print-row head"><span>訓練項目</span><span>得分</span><span>結果</span><span>人事簽核</span></div>
         ${rows}
         <div class="exam-summary-row"><span>總分</span><strong>${score} 分（答對 ${correct} / ${total} 題，合格標準 70 分）</strong></div>
-        <div class="exam-start-actions"><button type="button" class="secondary" data-exam-print>列印本頁</button></div>
+        <p class="exam-paper-note">列印會輸出兩份文件：FR24-03 員工教育訓練紀錄表，以及含作答答案與右上角分數的考卷式答題紀錄。無法列印時，請用送交文管資料包交給文管。</p>
+        <div class="exam-start-actions">
+          <button type="button" class="secondary" data-exam-print>列印本頁</button>
+          <button type="button" class="secondary" data-exam-copy>複製送交文管資料</button>
+          <button type="button" class="secondary" data-exam-download>下載送交文管資料</button>
+        </div>
       </div>
       <div style="margin-top:12px"><strong>受測考題回顧</strong><ol style="margin:8px 0 0 18px;display:grid;gap:8px">${review}</ol></div>
+      ${examPrintDocumentHtml(correct,total,score,pass,timedOut)}
     `;
   }
   function finishExam(force=false){
@@ -4798,6 +4964,7 @@ function bindExamTemplate(){
     const correct=session.questions.reduce((sum,q,i)=>sum+(session.answers[i]===q.correctIndex?1:0),0);
     const score=Math.round((correct/total)*100);
     const pass=score>=70;
+    session.shareText=examShareText(correct,total,score,pass,force);
     if(resultBox){
       resultBox.hidden=false;
       resultBox.innerHTML=`<strong>${pass?"測驗合格":"未達合格標準"}</strong><br>${force?"作答時間已結束，自動交卷。":""}得分 ${score} 分，答對 ${correct} / ${total} 題。${pass?"":"請重新測驗。"} ${printPacketHtml(correct,total,score,pass,force)}`;
@@ -4814,6 +4981,22 @@ function bindExamTemplate(){
   root.querySelector('[data-exam-action="to-start"]')?.addEventListener("click",()=>setStage("start"));
   root.addEventListener("click",e=>{
     if(e.target.closest("[data-exam-print]")) window.print();
+    if(e.target.closest("[data-exam-download]")) downloadExamShareText();
+    if(e.target.closest("[data-exam-copy]")){
+      if(!session.shareText) return;
+      const btn=e.target.closest("[data-exam-copy]");
+      navigator.clipboard?.writeText(session.shareText).then(()=>{
+        if(btn){btn.textContent="已複製";setTimeout(()=>btn.textContent="複製送交文管資料",1400);}
+      }).catch(()=>{
+        const area=document.createElement("textarea");
+        area.value=session.shareText;
+        document.body.appendChild(area);
+        area.select();
+        document.execCommand("copy");
+        area.remove();
+        if(btn){btn.textContent="已複製";setTimeout(()=>btn.textContent="複製送交文管資料",1400);}
+      });
+    }
   });
   prevBtn?.addEventListener("click",()=>{if(session.index>0){session.index-=1;renderQuestion();}});
   nextBtn?.addEventListener("click",()=>{
