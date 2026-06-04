@@ -1,3 +1,26 @@
+## 2026-06-04 第七十八次：列印頁首「新勝醫藥」根治、FR24-03 釘 A4 右下角 ✅
+
+接續第七十七次「使用者回報未生效」。使用者提供列印預覽截圖，確認根因：
+- 「新勝醫藥 GDP 教育訓練」是 **Chrome 列印頁首**（左上角日期＋置中標題），顯示的是使用者瀏覽器分頁的**舊 `<title>` 快取**。線上 `<title>` 早已是「GDP 教育訓練」（永久網址實測命中 0）。改 `<title>` 治不了根，只要列印頁首開著就會印。
+- FR24-03 因 `@page margin:10mm` ＋ `position:fixed;bottom:10mm;right:10mm` 被內縮約 20mm，且 fixed 會在第 2 頁答題紀錄重複印出。
+
+### 本輪變更（`HTML資料庫/新勝GDP資料庫.html`，兩份 CSS 同步）
+1. `@page{size:A4 portrait;margin:10mm}` → `margin:0`（@media print 與 standaloneExamHtml 各一處）→ Chrome 無空間畫頁首/頁尾，「新勝醫藥」「日期」「網址」「頁碼」全消失。
+2. `.exam-print-page` 加 `position:relative;min-height:100vh;box-sizing:border-box;padding:14mm 12mm 16mm`（取代原本 @page margin 的內距，並讓第一頁撐滿整張 A4）。
+3. standalone body `padding:10mm` → `padding:0`（內距移到 .exam-print-page）。
+4. `.exam-doc-number` `position:fixed;bottom:10mm;right:10mm` → `position:absolute;bottom:10mm;right:12mm`（釘在第一頁滿版高度的右下角，不再溢到第 2 頁）。
+
+### 驗收
+- `JS_PARSE_OK 1`、`node verify_facts_ghpages.mjs` 1296/1296 通過。
+- 永久網址實測：線上 `<title>`＝「GDP 教育訓練」/「GDP 測驗送交人事資料」，「新勝醫藥 GDP 教育訓練」命中 0。
+- **實機 headless Chrome 截圖驗證**（A4 794×1123，standalone CSS＝列印樣式）：頁首已無「新勝醫藥」/日期；FR24-03 釘在 A4 右下角。
+- 新人 vs 年度：共用 `examPrintDocumentHtml()` 與同一套 CSS，無分歧模板，本次一體生效。
+
+### 下次提醒
+- 使用者若仍看到舊頁首，是瀏覽器分頁舊快取；hard refresh（Ctrl+Shift+R）後重印即可，本次 margin:0 已從根本移除頁首。
+- 若 Chrome 列印對話框手動把「邊界」設成非「預設」，CSS `@page margin:0` 可能被覆蓋而頁首再現；預設值不受影響。
+- 本機無 pdftoppm；列印版面驗證改用 headless Chrome 對 standalone HTML（CSS 即列印樣式）截圖。
+
 ## 2026-06-04 第七十七次：下載改統一HTML、移除複製鈕、修改title、FR24-03位置調整—使用者回報未生效
 
 依使用者回饋：PDF（standalone HTML）與「列印本頁」格式不同 → 修正 standalone CSS 與 @media print 同步；去「複製送交人事資料」按鈕；列印第一頁移除「新勝醫藥」；FR24-03 放 A4 右下角。

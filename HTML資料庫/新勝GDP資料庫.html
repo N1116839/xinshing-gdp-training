@@ -392,12 +392,12 @@
     .ev-check-fill{height:6px;background:var(--brand);width:0%;transition:width .2s}
     @media(max-width:680px){.evidence-map{grid-template-columns:1fr}.evidence-node.center{min-height:50px;flex-direction:row;gap:10px;padding:12px}.metric-strip{grid-template-columns:repeat(2,1fr)}.metric{border-bottom:1px solid #ead6b6}.doc-map-status,.ev-check-list,.exam-scope-grid,.exam-source-grid,.exam-build-grid,.exam-form-grid,.exam-flow,.exam-stage-tabs,.exam-question-shell,.exam-start-card{grid-template-columns:1fr}.exam-print-row{grid-template-columns:1fr}.exam-print-row.head{display:none}.exam-work-head{position:static;align-items:flex-start;flex-direction:column}.exam-timer{margin-left:0}.exam-hero{padding:18px;min-height:220px}}
     @media print{
-      @page{size:A4 portrait;margin:10mm}
+      @page{size:A4 portrait;margin:0}
       body{background:#fff;color:#000}
       body *{visibility:hidden!important}
       .exam-print-doc,.exam-print-doc *{visibility:visible!important}
       .exam-print-doc{display:block!important;position:absolute;inset:0 auto auto 0;width:100%;padding:0;background:#fff;color:#000;font-family:"Microsoft JhengHei","Noto Sans TC",serif;font-size:11pt;line-height:1.35}
-      .exam-print-page{break-after:page;page-break-after:always}
+      .exam-print-page{position:relative;min-height:100vh;box-sizing:border-box;padding:14mm 12mm 16mm;break-after:page;page-break-after:always}
       .exam-print-page:last-child{break-after:auto;page-break-after:auto}
       .exam-print-title{text-align:center;font-size:18pt;font-weight:800;letter-spacing:.08em;margin:0 0 10mm}
       .exam-fr-table,.exam-paper-table{width:100%;border-collapse:collapse;table-layout:fixed}
@@ -405,7 +405,7 @@
       .exam-fr-table th{font-weight:700;text-align:center}
       .exam-fr-table td{height:13mm}
       .exam-fr-notes{margin-top:4mm;font-size:10pt;line-height:1.6}
-      .exam-doc-number{position:fixed;bottom:10mm;right:10mm;font-size:10pt}
+      .exam-doc-number{position:absolute;bottom:10mm;right:12mm;font-size:10pt}
       .exam-paper-head{display:grid;grid-template-columns:1fr auto;gap:8mm;align-items:start;margin-bottom:6mm}
       .exam-paper-head h1{margin:0;text-align:left;font-size:16pt;line-height:1.4}
       .exam-paper-score{border:2px solid #000;padding:5mm 8mm;text-align:center;font-size:14pt;font-weight:800;min-width:34mm}
@@ -4857,9 +4857,9 @@ function bindExamTemplate(){
   }
   function standaloneExamHtml(bodyHtml){
     return `<!DOCTYPE html><html lang="zh-TW"><head><meta charset="utf-8"><title>GDP 測驗送交人事資料</title><style>
-@page{size:A4 portrait;margin:10mm}
-body{margin:0;padding:10mm;background:#fff;color:#000;font-family:"Microsoft JhengHei","Noto Sans TC",serif;font-size:11pt;line-height:1.35}
-.exam-print-page{break-after:page;page-break-after:always}
+@page{size:A4 portrait;margin:0}
+body{margin:0;padding:0;background:#fff;color:#000;font-family:"Microsoft JhengHei","Noto Sans TC",serif;font-size:11pt;line-height:1.35}
+.exam-print-page{position:relative;min-height:100vh;box-sizing:border-box;padding:14mm 12mm 16mm;break-after:page;page-break-after:always}
 .exam-print-page:last-child{break-after:auto;page-break-after:auto}
 .exam-print-title{text-align:center;font-size:18pt;font-weight:800;letter-spacing:.08em;margin:0 0 10mm}
 .exam-fr-table,.exam-paper-table{width:100%;border-collapse:collapse;table-layout:fixed}
@@ -4867,7 +4867,7 @@ body{margin:0;padding:10mm;background:#fff;color:#000;font-family:"Microsoft Jhe
 .exam-fr-table th{font-weight:700;text-align:center}
 .exam-fr-table td{height:13mm}
 .exam-fr-notes{margin-top:4mm;font-size:10pt;line-height:1.6}
-.exam-doc-number{position:fixed;bottom:10mm;right:10mm;font-size:10pt}
+.exam-doc-number{position:absolute;bottom:10mm;right:12mm;font-size:10pt}
 .exam-paper-head{display:grid;grid-template-columns:1fr auto;gap:8mm;align-items:start;margin-bottom:6mm}
 .exam-paper-head h1{margin:0;text-align:left;font-size:16pt;line-height:1.4}
 .exam-paper-score{border:2px solid #000;padding:5mm 8mm;text-align:center;font-size:14pt;font-weight:800;min-width:34mm}
