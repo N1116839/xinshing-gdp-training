@@ -4444,7 +4444,7 @@ function examTemplateSection(s){
             <label>性別<select name="sex"><option value="">未填</option><option value="男">男</option><option value="女">女</option></select></label>
             <label>部門<input name="department" type="text" value="文管" required></label>
             <label>職稱<input name="title" type="text" value="${esc(tpl.role)}" required></label>
-            <label data-exam-date-label="onboard">報到日期（民國年，可留空）<input name="onboardDate" type="text" inputmode="numeric" placeholder="114/06/04"></label>
+            <label data-exam-date-label="onboard">報到日期<input name="onboardDate" type="text" inputmode="numeric" placeholder="114/06/04" required></label>
             <label>學歷<input name="education" type="text" placeholder="可留空"></label>
             <label>兼任/代理職務<input name="acting" type="text" placeholder="無則填無"></label>
           </div>
@@ -4452,7 +4452,7 @@ function examTemplateSection(s){
         <div class="exam-form-section" style="margin-top:12px">
           <h4>教育訓練紀錄欄位</h4>
           <div class="exam-form-grid">
-            <label data-exam-date-label="training">訓練日期（民國年，可留空）<input name="trainingDate" type="text" inputmode="numeric" placeholder="114/06/04"></label>
+            <label data-exam-date-label="training">年度教育訓練日期<input name="trainingDate" type="text" inputmode="numeric" placeholder="114/06/04" required></label>
             <label>訓練項目<input name="trainingItem" type="text" value="文管 GDP 教育訓練" required></label>
             <label>授課講師<input name="trainer" type="text" placeholder="請填講師姓名" required></label>
             <label>評核方式<select name="method" required><option value="線上測驗">線上測驗</option><option value="紙本測驗">紙本測驗</option><option value="口頭評核">口頭評核</option></select></label>
@@ -4722,14 +4722,14 @@ function bindExamTemplate(){
     const trainingLabel=root.querySelector('[data-exam-date-label="training"]');
     const onboardInput=root.querySelector('[name="onboardDate"]');
     const trainingInput=root.querySelector('[name="trainingDate"]');
-    if(onboardLabel) onboardLabel.childNodes[0].nodeValue=annual ? "報到日期（民國年，年度測驗可留空）" : "報到日期（民國年，可留空）";
-    if(trainingLabel) trainingLabel.childNodes[0].nodeValue=annual ? "年度教育訓練日期（民國年，可留空）" : "訓練日期（民國年，可留空）";
+    if(onboardLabel) onboardLabel.childNodes[0].nodeValue="報到日期";
+    if(trainingLabel) trainingLabel.childNodes[0].nodeValue="年度教育訓練日期";
     [onboardInput,trainingInput].forEach(input=>{
       if(!input) return;
       input.type="text";
       input.inputMode="numeric";
       input.placeholder="114/06/04";
-      input.required=false;
+      input.required=true;
     });
   }
   function refreshStartSummary(){

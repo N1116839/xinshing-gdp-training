@@ -7,8 +7,16 @@
 - 已在 `bindExamTemplate()` 補 `normalizeExamDateInputs()`：
   - 切換測驗類型與進入資料頁時，都會重新保護日期欄。
   - 年度教育訓練路徑顯示「報到日期（民國年，年度測驗可留空）」與「年度教育訓練日期（民國年，可留空）」。
-  - 兩個日期欄皆強制為 `type="text"`、`inputMode="numeric"`、placeholder `114/06/04`、非必填。
-- Chrome headless 實際點選「年度教育訓練測驗」→「填寫應試資料」驗收通過：`selected:"annual"`、`label:"年度教育訓練測驗"`、兩日期欄 `type:"text"`、`required:false`、畫面無 `yyyy`。
+  - 兩個日期欄皆強制為 `type="text"`、`inputMode="numeric"`、placeholder `114/06/04`；前次曾設為非必填，最新狀態依下方「再續修補記」改為必填。
+- 前次 Chrome headless 實際點選「年度教育訓練測驗」→「填寫應試資料」驗收時，兩日期欄已改為 `type:"text"` 且畫面無 `yyyy`；必填狀態依下方「再續修補記」更新為 `required:true`。
+
+### 再續修補記：日期欄只留欄名且必填
+- 使用者補充：前台不可留下「民國年、可留空」這類修正回饋文字；欄位本身要像姓名一樣必填。
+- 已調整測試專區日期欄：
+  - `報到日期`：只顯示欄名，`required:true`，placeholder `114/06/04`。
+  - `年度教育訓練日期`：只顯示欄名，`required:true`，placeholder `114/06/04`。
+- Chrome headless 年度路徑實測通過：兩欄 `type:"text"`、`required:true`，空白時表單不通過，欄名不含「民國年」或「可留空」。
+- 下次更新提醒：使用者回饋只能寫進 HANDOFF/第二大腦，不可塞進 learner-facing 欄名或說明文字。
 
 ### 本輪完成
 - `HTML資料庫/新勝GDP資料庫.html`
@@ -2676,3 +2684,4 @@ https://n1116839.github.io/xinshing-gdp-training/
 - 測驗題目前仍屬文管範本草稿；正式上架前仍需依 SOP/WI/FR 原文補完整題庫來源與文管審核流程，但這些內部欄位不得顯示在考生畫面。
 
 ---
+
