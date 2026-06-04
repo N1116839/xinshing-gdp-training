@@ -21,7 +21,14 @@
 - `JS_PARSE_OK 285366` 通過。
 - `node verify_facts_ghpages.mjs` 已恢復通過：`1296/1296`，0 失敗；來源資料盤點 37 份。
 - 文件保護/測試專區掃描通過：`reviewedBy|reviewDate|完整 SOP|冷藏倉|冷藏庫|冷鏈|data-doc=|openDoc|熱門文件|exam-newhire|exam-annual|內部題庫審查` 命中 0。
-- 本機無可用 Chrome / Edge / Playwright 指令，且 Node REPL 因 sandbox setup refresh 失敗不可用；本輪未完成實機瀏覽器點擊截圖驗收。後續若要上線前驗收，需用 in-app browser、可用 Chrome 或手動瀏覽器複測測試專區第三階段與列印資料包。
+- 2026-06-04 續查驗收工具：
+  - Chrome 實際存在：`C:\Program Files\Google\Chrome\Application\chrome.exe`，版本 `Chrome/149.0.7827.53`；Edge 實際存在：`C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe`。
+  - `where chrome` / `where msedge` 找不到，是因為不在 PATH，不代表未安裝。
+  - 專案未安裝 Playwright；不建議為了單次驗收把 `node_modules` 裝進 Google Drive 工作區。
+  - Node REPL 仍因 `windows sandbox failed: setup refresh failed` 不可用；Browser plugin 依賴 Node REPL，所以本輪改用系統 Chrome headless + DevTools Protocol。
+  - 已用 Chrome headless 實際操作本機 HTML：切到測試專區 → 填文管應試資料 → 進入考試 → 作答 10 題 → 提交 → 捲到結果區截圖。
+  - 實機結果：`printPacket:true`、`hasReview:true`、`reviewedByVisible:false`、`overflowX:false`。
+  - 結果截圖暫存：`C:\Users\user\AppData\Local\Temp\gdp-exam-result-visible-1780540695587.png`。
 
 ### 下次提醒
 - 第一章至第八章、官方常見缺失來源、HTML資料庫、Firebase設定、簡報資料皆不可清理或刪除；來源資料夾目前可能是 Git 未追蹤資料，不能因 `git status` 顯示未追蹤就處理。
