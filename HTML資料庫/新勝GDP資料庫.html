@@ -4851,45 +4851,13 @@ function bindExamTemplate(){
     return index==null ? "" : String.fromCharCode(65+Number(index));
   }
   function examShareText(correct,total,score,pass,timedOut){
-    const p=session.profile||{};
-    const resultText=pass?"合格":"未合格";
-    const answers=session.questions.map((q,i)=>{
-      const selected=session.answers[i];
-      const selectedLabel=answerLabel(selected)||"未作答";
-      const correctLabel=answerLabel(q.correctIndex);
-      return `${i+1}. ${q.text}\n作答：${selectedLabel}；正解：${correctLabel}；結果：${selected===q.correctIndex?"答對":"答錯"}`;
-    }).join("\n\n");
-    return [
-      "新勝醫藥 GDP 測驗送交人事資料包",
-      `測驗別：${session.info?.label||""}`,
-      `姓名：${p.name||""}`,
-      `性別：${p.sex||""}`,
-      `報到日期：${toRocDate(p.onboardDate)}`,
-      `學歷：${p.education||""}`,
-      `單位：${p.department||""}`,
-      `職稱：${p.title||""}`,
-      `兼任/代理：${p.acting||""}`,
-      `訓練日期：${toRocDate(p.trainingDate)}`,
-      `訓練項目：${p.trainingItem||""}`,
-      `訓練者：${p.trainer||""}`,
-      `評核方式：${p.method||""}`,
-      `分數：${score} 分`,
-      `結果：${resultText}`,
-      `答對：${correct} / ${total} 題`,
-      timedOut?"交卷狀態：逾時自動交卷":"交卷狀態：正常提交",
-      "",
-      "答題紀錄",
-      answers
-    ].join("\n");
+    const html=examPrintDocumentHtml(correct,total,score,pass,timedOut);
+    return standaloneExamHtml(html);
   }
-  function downloadExamShareText(){
-    if(!session.results) return;
-    const {correct,total,score,pass,timedOut}=session.results;
-    const htmlContent=examPrintDocumentHtml(correct,total,score,pass,timedOut);
-    const standalone=`<!DOCTYPE html><html lang="zh-TW"><head><meta charset="utf-8"><title>GDP 測驗送交人事資料</title><style>
+  function standaloneExamHtml(bodyHtml){
+    return `<!DOCTYPE html><html lang="zh-TW"><head><meta charset="utf-8"><title>GDP 測驗送交人事資料</title><style>
 @page{size:A4 portrait;margin:10mm}
-body{background:#fff;color:#000;font-family:"Microsoft JhengHei","Noto Sans TC",serif;font-size:11pt;line-height:1.35}
-.exam-print-doc{width:100%}
+body{margin:0;padding:10mm;background:#fff;color:#000;font-family:"Microsoft JhengHei","Noto Sans TC",serif;font-size:11pt;line-height:1.35}
 .exam-print-page{break-after:page;page-break-after:always}
 .exam-print-page:last-child{break-after:auto;page-break-after:auto}
 .exam-print-title{text-align:center;font-size:18pt;font-weight:800;letter-spacing:.08em;margin:0 0 10mm}
@@ -4910,8 +4878,11 @@ body{background:#fff;color:#000;font-family:"Microsoft JhengHei","Noto Sans TC",
 .exam-print-answer{margin-top:1.5mm;font-size:10.5pt}
 .exam-print-answer strong{border-bottom:1px solid #000;padding:0 12mm 0 1mm}
 .exam-print-result{font-weight:800}
-</style></head><body>${htmlContent}</body></html>`;
-    const blob=new Blob([standalone],{type:"text/html;charset=utf-8"});
+</style></head><body>${bodyHtml}</body></html>`;
+  }
+  function downloadExamShareText(){
+    if(!session.shareText) return;
+    const blob=new Blob([session.shareText],{type:"text/html;charset=utf-8"});
     const url=URL.createObjectURL(blob);
     const a=document.createElement("a");
     const name=(session.profile?.name||"未填姓名").replace(/[\\/:*?"<>|]/g,"_");
@@ -5065,17 +5036,19 @@ body{background:#fff;color:#000;font-family:"Microsoft JhengHei","Noto Sans TC",
     if(e.target.closest("[data-exam-copy]")){
       if(!session.shareText) return;
       const btn=e.target.closest("[data-exam-copy]");
-      navigator.clipboard?.writeText(session.shareText).then(()=>{
+      const htmlBlob=new Blob([session.shareText],{type:"text/html"});
+      navigator.clipboard.write([new ClipboardItem({"text/html":htmlBlob})]).then(()=>{
+        if(btn){btn.textContent="已複製";setTimeout(()=>btn.textContent="複製送交人事資料",1400);}
+      }).catch(()=>navigator.clipboard?.writeText(session.shareText.replace(/<[^>]+>/g,"")).then(()=>{
         if(btn){btn.textContent="已複製";setTimeout(()=>btn.textContent="複製送交人事資料",1400);}
       }).catch(()=>{
-        const area=document.createElement("textarea");
-        area.value=session.shareText;
-        document.body.appendChild(area);
-        area.select();
-        document.execCommand("copy");
-        area.remove();
+        const tmp=document.createElement("textarea");
+        tmp.value=session.shareText.replace(/<[^>]+>/g,"");
+        document.body.appendChild(tmp);
+        tmp.select();document.execCommand("copy");
+        tmp.remove();
         if(btn){btn.textContent="已複製";setTimeout(()=>btn.textContent="複製送交人事資料",1400);}
-      });
+      }));
     }
   });
   prevBtn?.addEventListener("click",()=>{if(session.index>0){session.index-=1;renderQuestion();}});
