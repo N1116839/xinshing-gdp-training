@@ -4411,8 +4411,11 @@ function examTemplateSection(s){
           <h4>測驗人員資料</h4>
           <div class="exam-form-grid">
             <label>姓名<input name="name" type="text" autocomplete="name" required></label>
+            <label>性別<select name="sex"><option value="">未填</option><option value="男">男</option><option value="女">女</option></select></label>
             <label>部門<input name="department" type="text" value="文管" required></label>
             <label>職稱<input name="title" type="text" value="${esc(tpl.role)}" required></label>
+            <label>報到日期<input name="onboardDate" type="date"></label>
+            <label>學歷<input name="education" type="text" placeholder="可留空"></label>
             <label>兼任/代理職務<input name="acting" type="text" placeholder="無則填無"></label>
           </div>
         </div>
@@ -4662,7 +4665,7 @@ function bindExamTemplate(){
   const prevBtn=root.querySelector('[data-exam-action="prev"]');
   const finishBtn=root.querySelector('[data-exam-action="finish"]');
   const tpl=examTemplates.doc;
-  let session={questions:[],answers:[],index:0,info:null};
+  let session={questions:[],answers:[],index:0,info:null,profile:null};
   let timerId=null;
   function typeInfo(){
     const annual=typeRadios.find(r=>r.checked)?.value==="annual";
@@ -4708,7 +4711,10 @@ function bindExamTemplate(){
     timerId=setInterval(()=>{
       left=Math.max(0,left-1);
       renderTimer(left);
-      if(left===0) clearInterval(timerId);
+      if(left===0){
+        clearInterval(timerId);
+        finishExam(true);
+      }
     },1000);
   }
   function updateAnswerGrid(){
@@ -4749,11 +4755,39 @@ function bindExamTemplate(){
     if(resultBox) resultBox.hidden=true;
     updateAnswerGrid();
   }
-  function finishExam(){
+  function profileValue(name){
+    const field=profile?.elements?.[name];
+    return field ? String(field.value||"").trim() : "";
+  }
+  function printPacketHtml(correct,total,score,pass,timedOut){
+    const p=session.profile||{};
+    const rows=tpl.printItems.map(item=>`<div class="exam-print-row"><span>${esc(item)}</span><span>${score} 分</span><span>${pass?"合格":"未合格"}</span><span>________</span></div>`).join("");
+    const review=session.questions.map((q,i)=>{
+      const selected=session.answers[i];
+      const chosen=selected==null?"未作答":q.options[selected]?.text||"";
+      const correctText=q.options[q.correctIndex]?.text||"";
+      return `<li>${esc(q.text)}<br><span class="note">作答：${esc(chosen)}｜正解：${esc(correctText)}</span></li>`;
+    }).join("");
+    return `
+      <div class="exam-print-preview">
+        <strong>文管列印資料包${timedOut?"（逾時交卷）":""}</strong>
+        <div class="exam-summary-row"><span>姓名</span><strong>${esc(p.name||"")}</strong></div>
+        <div class="exam-summary-row"><span>性別 / 報到日期 / 學歷</span><strong>${esc([p.sex||"未填",p.onboardDate||"未填",p.education||"未填"].join(" / "))}</strong></div>
+        <div class="exam-summary-row"><span>單位 / 職稱</span><strong>${esc([p.department||"",p.title||""].join(" / "))}</strong></div>
+        <div class="exam-summary-row"><span>訓練日期 / 講師 / 評核方式</span><strong>${esc([p.trainingDate||"",p.trainer||"",p.method||""].join(" / "))}</strong></div>
+        <div class="exam-print-row head"><span>訓練項目</span><span>得分</span><span>結果</span><span>人事簽核</span></div>
+        ${rows}
+        <div class="exam-summary-row"><span>總分</span><strong>${score} 分（答對 ${correct} / ${total} 題，合格標準 70 分）</strong></div>
+        <div class="exam-start-actions"><button type="button" class="secondary" data-exam-print>列印本頁</button></div>
+      </div>
+      <div style="margin-top:12px"><strong>受測考題回顧</strong><ol style="margin:8px 0 0 18px;display:grid;gap:8px">${review}</ol></div>
+    `;
+  }
+  function finishExam(force=false){
     if(!session.questions.length) return;
     const total=session.questions.length;
     const answered=session.answers.filter(v=>v!=null).length;
-    if(answered<total){
+    if(answered<total && !force){
       if(resultBox){
         resultBox.hidden=false;
         resultBox.innerHTML=`尚有 ${total-answered} 題未作答。請先完成所有題目再提交。`;
@@ -4766,7 +4800,7 @@ function bindExamTemplate(){
     const pass=score>=70;
     if(resultBox){
       resultBox.hidden=false;
-      resultBox.innerHTML=`<strong>${pass?"測驗合格":"未達合格標準"}</strong><br>得分 ${score} 分，答對 ${correct} / ${total} 題。${pass?"":"請重新測驗。"} `;
+      resultBox.innerHTML=`<strong>${pass?"測驗合格":"未達合格標準"}</strong><br>${force?"作答時間已結束，自動交卷。":""}得分 ${score} 分，答對 ${correct} / ${total} 題。${pass?"":"請重新測驗。"} ${printPacketHtml(correct,total,score,pass,force)}`;
     }
     examLock.active=false;
     if(finishBtn) finishBtn.textContent="返回測試首頁";
@@ -4778,19 +4812,34 @@ function bindExamTemplate(){
   }));
   root.querySelector('[data-exam-action="to-profile"]')?.addEventListener("click",()=>setStage("profile"));
   root.querySelector('[data-exam-action="to-start"]')?.addEventListener("click",()=>setStage("start"));
+  root.addEventListener("click",e=>{
+    if(e.target.closest("[data-exam-print]")) window.print();
+  });
   prevBtn?.addEventListener("click",()=>{if(session.index>0){session.index-=1;renderQuestion();}});
   nextBtn?.addEventListener("click",()=>{
     if(session.index<session.questions.length-1){session.index+=1;renderQuestion();return;}
     if(resultBox){resultBox.hidden=false;resultBox.innerHTML="已到最後一題，確認所有題目作答後請按「提交測驗」。";}
   });
   finishBtn?.addEventListener("click",()=>{
-    if(!examLock.active && session.questions.length){setStage("start");session={questions:[],answers:[],index:0,info:null};if(finishBtn) finishBtn.textContent="提交測驗";return;}
+    if(!examLock.active && session.questions.length){setStage("start");session={questions:[],answers:[],index:0,info:null,profile:null};if(finishBtn) finishBtn.textContent="提交測驗";return;}
     finishExam();
   });
   profile?.addEventListener("submit",e=>{
     e.preventDefault();
     const info=typeInfo();
-    session={questions:buildQuestions(info.count),answers:Array(info.count).fill(null),index:0,info};
+    session={questions:buildQuestions(info.count),answers:Array(info.count).fill(null),index:0,info,profile:{
+      name:profileValue("name"),
+      sex:profileValue("sex"),
+      onboardDate:profileValue("onboardDate"),
+      education:profileValue("education"),
+      department:profileValue("department"),
+      title:profileValue("title"),
+      acting:profileValue("acting"),
+      trainingDate:profileValue("trainingDate"),
+      trainingItem:profileValue("trainingItem"),
+      trainer:profileValue("trainer"),
+      method:profileValue("method")
+    }};
     examLock.active=true;
     examLock.sectionId=current;
     if(person) person.textContent=`${profile.name.value.trim()}｜${profile.department.value.trim()}｜${profile.title.value.trim()}`;

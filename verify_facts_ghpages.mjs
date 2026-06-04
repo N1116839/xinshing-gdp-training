@@ -4,7 +4,7 @@
  */
 
 import https from 'https';
-import { readdirSync, statSync } from 'fs';
+import { existsSync, readdirSync, statSync } from 'fs';
 import { join } from 'path';
 
 const GH_PAGES_URL = 'https://n1116839.github.io/xinshing-gdp-training/HTML%E8%B3%87%E6%96%99%E5%BA%AB/%E6%96%B0%E5%8B%9DGDP%E8%B3%87%E6%96%99%E5%BA%AB.html';
@@ -684,16 +684,24 @@ const TESTS = [
   { q: '偏差首次處理',              expectId: 'clarify-deviation-capa',            expectHint: '偏差事件處理' },
 ];
 
-const SOURCE_DIRS = [
-  '第一章品質手冊',
-  '第二章人事',
-  '第三章作業場所及設備',
-  '第四章文件管理',
-  '第五章作業',
-  '第六章申訴、退回、疑似偽、禁藥及藥品回收',
-  '第七章委外作業',
-  '第八章自我審查',
+const SOURCE_DIR_ALIASES = [
+  ['第一章品質手冊', '第一章品質管理'],
+  ['第二章人事'],
+  ['第三章作業場所及設備'],
+  ['第四章文件管理', '第四章文件'],
+  ['第五章作業'],
+  ['第六章申訴、退回、疑似偽、禁藥及藥品回收', '第六章申訴、退回、疑似偽禁藥及藥品回收'],
+  ['第七章委外作業'],
+  ['第八章自我審查', '第八章自我查核'],
 ];
+
+function resolveSourceDirs() {
+  return SOURCE_DIR_ALIASES.map(names => {
+    const found = names.find(name => existsSync(name));
+    if (!found) throw new Error(`找不到來源資料夾：${names.join(' 或 ')}`);
+    return found;
+  });
+}
 
 const SKIP_AUTO_KEYWORDS = new Set([
   'GDP', 'CAPA', 'FMEA', 'RPN', '品保', '文管', '採購', '業務', '倉管', '人事',
@@ -722,7 +730,7 @@ function listSourceFiles() {
       }
     }
   };
-  for (const dir of SOURCE_DIRS) walk(dir);
+  for (const dir of resolveSourceDirs()) walk(dir);
   return out;
 }
 
