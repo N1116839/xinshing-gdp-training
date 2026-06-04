@@ -4887,19 +4887,29 @@ function bindExamTemplate(){
     const {correct,total,score,pass,timedOut}=session.results;
     const htmlContent=examPrintDocumentHtml(correct,total,score,pass,timedOut);
     const standalone=`<!DOCTYPE html><html lang="zh-TW"><head><meta charset="utf-8"><title>GDP 測驗送交人事資料</title><style>
-body{font-family:sans-serif;max-width:800px;margin:auto;padding:20px;font-size:14px}
-.exam-print-page{margin-bottom:30px;page-break-after:always}
-.exam-fr-table{width:100%;border-collapse:collapse;margin:12px 0}
-.exam-fr-table th,.exam-fr-table td{border:1px solid #333;padding:6px;text-align:left;font-size:13px}
-.exam-fr-table th{background:#eaeaea}
-.exam-paper-head{display:flex;justify-content:space-between;align-items:center}
-.exam-paper-score{font-size:28px;font-weight:700;color:#1a6b3c}
-.exam-question-print{margin:12px 0;padding:10px;border:1px solid #ccc;border-radius:6px}
-.exam-print-options{margin:6px 0}
-.exam-print-option{margin:2px 0}
-.exam-print-answer{font-size:13px;color:#555;border-top:1px solid #eee;padding-top:4px;margin-top:4px}
-.exam-paper-meta{display:flex;gap:16px;margin:4px 0;font-size:13px;color:#555}
-.exam-fr-notes{font-size:12px;color:#555;margin-top:8px}
+@page{size:A4 portrait;margin:10mm}
+body{background:#fff;color:#000;font-family:"Microsoft JhengHei","Noto Sans TC",serif;font-size:11pt;line-height:1.35}
+.exam-print-doc{width:100%}
+.exam-print-page{break-after:page;page-break-after:always}
+.exam-print-page:last-child{break-after:auto;page-break-after:auto}
+.exam-print-title{text-align:center;font-size:18pt;font-weight:800;letter-spacing:.08em;margin:0 0 10mm}
+.exam-fr-table,.exam-paper-table{width:100%;border-collapse:collapse;table-layout:fixed}
+.exam-fr-table th,.exam-fr-table td,.exam-paper-table th,.exam-paper-table td{border:1px solid #000;padding:6px 7px;vertical-align:top;word-break:break-word}
+.exam-fr-table th{font-weight:700;text-align:center}
+.exam-fr-table td{height:13mm}
+.exam-fr-notes{margin-top:4mm;font-size:10pt;line-height:1.6}
+.exam-paper-head{display:grid;grid-template-columns:1fr auto;gap:8mm;align-items:start;margin-bottom:6mm}
+.exam-paper-head h1{margin:0;text-align:left;font-size:16pt;line-height:1.4}
+.exam-paper-score{border:2px solid #000;padding:5mm 8mm;text-align:center;font-size:14pt;font-weight:800;min-width:34mm}
+.exam-paper-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:2mm;margin:0 0 5mm;font-size:11pt}
+.exam-paper-meta span{border-bottom:1px solid #000;padding:0 2mm 1mm}
+.exam-question-print{break-inside:avoid;page-break-inside:avoid;margin:0 0 4mm}
+.exam-question-print h3{margin:0 0 2mm;color:#000;font-size:11pt;line-height:1.5}
+.exam-print-options{display:grid;grid-template-columns:1fr 1fr;gap:1.5mm 5mm}
+.exam-print-option{font-size:10.5pt;line-height:1.45}
+.exam-print-answer{margin-top:1.5mm;font-size:10.5pt}
+.exam-print-answer strong{border-bottom:1px solid #000;padding:0 12mm 0 1mm}
+.exam-print-result{font-weight:800}
 </style></head><body>${htmlContent}</body></html>`;
     const blob=new Blob([standalone],{type:"text/html;charset=utf-8"});
     const url=URL.createObjectURL(blob);
