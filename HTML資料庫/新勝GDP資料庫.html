@@ -4946,11 +4946,12 @@ body{margin:0;padding:10mm;background:#fff;color:#000;font-family:"Microsoft Jhe
         </table>
         <div class="exam-fr-notes">
           備註：1. 本表由人事單位保存。2. 訓練後經訓練講師評鑑受訓成效，由人事簽核。3. 評核方式：${esc(p.method||"")}；${timedOut?"本次為逾時自動交卷。":"本次為測驗完成後列印。"}
+          <div style="text-align:right;margin-top:4mm;font-size:10pt">文件編號：FR24-03</div>
         </div>
       </section>
       <section class="exam-print-page">
         <div class="exam-paper-head">
-          <h1>新勝醫藥 GDP ${esc(p.trainingItem||"教育訓練")}<br>${esc(session.info?.label||"測驗")}答題紀錄</h1>
+          <h1>GDP ${esc(p.trainingItem||"教育訓練")}<br>${esc(session.info?.label||"測驗")}答題紀錄</h1>
           <div class="exam-paper-score">${score} 分<br><small>${resultText}</small></div>
         </div>
         <div class="exam-paper-meta">
@@ -4991,7 +4992,6 @@ body{margin:0;padding:10mm;background:#fff;color:#000;font-family:"Microsoft Jhe
         <p class="exam-paper-note">列印會輸出兩份文件：FR24-03 員工教育訓練紀錄表，以及含作答答案與右上角分數的考卷式答題紀錄。無法列印時，請用送交人事資料包交給人事。</p>
         <div class="exam-start-actions">
           <button type="button" class="secondary" data-exam-print>列印本頁</button>
-          <button type="button" class="secondary" data-exam-copy>複製送交人事資料</button>
           <button type="button" class="secondary" data-exam-download>下載送交人事資料</button>
         </div>
       </div>
@@ -5033,23 +5033,6 @@ body{margin:0;padding:10mm;background:#fff;color:#000;font-family:"Microsoft Jhe
   root.addEventListener("click",e=>{
     if(e.target.closest("[data-exam-print]")) window.print();
     if(e.target.closest("[data-exam-download]")) downloadExamShareText();
-    if(e.target.closest("[data-exam-copy]")){
-      if(!session.shareText) return;
-      const btn=e.target.closest("[data-exam-copy]");
-      const htmlBlob=new Blob([session.shareText],{type:"text/html"});
-      navigator.clipboard.write([new ClipboardItem({"text/html":htmlBlob})]).then(()=>{
-        if(btn){btn.textContent="已複製";setTimeout(()=>btn.textContent="複製送交人事資料",1400);}
-      }).catch(()=>navigator.clipboard?.writeText(session.shareText.replace(/<[^>]+>/g,"")).then(()=>{
-        if(btn){btn.textContent="已複製";setTimeout(()=>btn.textContent="複製送交人事資料",1400);}
-      }).catch(()=>{
-        const tmp=document.createElement("textarea");
-        tmp.value=session.shareText.replace(/<[^>]+>/g,"");
-        document.body.appendChild(tmp);
-        tmp.select();document.execCommand("copy");
-        tmp.remove();
-        if(btn){btn.textContent="已複製";setTimeout(()=>btn.textContent="複製送交人事資料",1400);}
-      }));
-    }
   });
   prevBtn?.addEventListener("click",()=>{if(session.index>0){session.index-=1;renderQuestion();}});
   nextBtn?.addEventListener("click",()=>{
