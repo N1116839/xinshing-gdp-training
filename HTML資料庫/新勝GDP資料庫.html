@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>新勝GDP資料庫</title>
+  <title>新勝醫藥 GDP 教育訓練</title>
   <style>
     :root {
       --ink:#173c3a;--ink-soft:#4f6966;--brand:#0f5b50;--brand-2:#2f7c74;
@@ -4375,20 +4375,51 @@ const examTemplates = {
       {source:"DM10-01 + WI10-01",topic:"共同基礎",text:"共同基礎題為什麼不把 DM10-01 與 WI10-01 拆成兩張獨立試卷？",options:["需同時確認 GDP 原則與公司實際作業理解","可縮短上傳題庫的時間","只要讓題數看起來平均","避免學員知道測驗範圍"]},
       {source:"DM10-01 + WI10-01",topic:"共同基礎",text:"文管人員回答 GDP 基本概念時，最適合的答題方向是什麼？",options:["用品質系統原則連結公司實際作法","只背誦文件名稱","只回答自己的登入權限","只描述網頁操作方式"]},
       {source:"WI10-01",topic:"共同基礎",text:"SMF 廠商基本資料在文管測驗中主要用來確認什麼？",options:["公司場所、組織、職務與清冊等實際作業背景","每位員工薪資與出勤明細","客戶報價與交易條件","網站版面是否正確"]},
+      {source:"DM10-01",topic:"共同基礎",text:"公司文件層級由高到低的正確順序是什麼？",options:["品質手冊（DM）→程序書（DP）→作業指導書（WI）→表單（FR）","表單（FR）→程序書（DP）→品質手冊（DM）→作業指導書（WI）","品質手冊（DM）→表單（FR）→程序書（DP）→作業指導書（WI）","程序書（DP）→品質手冊（DM）→表單（FR）→作業指導書（WI）"]},
+      {source:"DM10-01",topic:"共同基礎",text:"品質政策與品質目標應記載於哪一份文件中？",options:["DM10-01 品質手冊","DP12-01 品質管理系統程序書","WI10-01 SMF 廠商基本資料","FR42-02 文件制修訂申請單"]},
+      {source:"WI10-01",topic:"共同基礎",text:"WI10-01 SMF 廠商基本資料的內容不包括下列哪一項？",options:["公司產品售價與市場策略","場所、組織架構與職掌","委外作業與運輸管理","主要職務與代理人員"]},
+      {source:"DM10-01",topic:"共同基礎",text:"品質系統的核心運作機制涵蓋哪些面向？",options:["變更管制、偏差管理、CAPA、管理審查與品質風險","僅限文件管制與紀錄保存","只包含進出貨與倉儲作業","僅涵蓋人員訓練與教育"]},
       {source:"DP24-01",topic:"教育訓練",text:"內部訓練測驗未達合格標準時，正確處理方向是什麼？",options:["完成補訓後再次評鑑","直接視為通過","只改分數紀錄","不用再留下紀錄"]},
       {source:"DP24-01",topic:"教育訓練",text:"教育訓練紀錄應能支持哪一件事？",options:["證明人員已完成訓練並評估有效性","替代所有作業紀錄","公開所有個人資料","取代文件審查程序"]},
       {source:"DP24-01",topic:"教育訓練",text:"GDP 權責人外部訓練的紀錄應如何管理？",options:["留存外部訓練紀錄","只口頭說明即可","只放在個人手機","不用與訓練制度連結"]},
       {source:"DP24-01",topic:"教育訓練",text:"參與 GDP 活動人員開始獨立作業前，最重要的條件是什麼？",options:["達到所界定能力並完成必要訓練","只要到職滿一天","只要有帳號即可","由同事口頭同意即可"]},
+      {source:"DP24-01",topic:"教育訓練",text:"教育訓練紀錄由哪個單位保存，保存年限為何？",options:["人事部保存至少五年","文管保存三年後銷毀","各部門自行保存無限期","訓練後由學員自行保管"]},
+      {source:"DP24-01",topic:"教育訓練",text:"GDP 相關訓練的有效性評估，應在哪個會議中審查？",options:["每年管理審查會議","每月部門晨會","每季業務檢討會","專案結案會議"]},
       {source:"DP42-01",topic:"文管專業",text:"文件修訂後，正式生效前最重要的確認事項是什麼？",options:["完成相關人員訓練與考核","只要電子檔更新即可","由現場人員自行影印新版","舊版文件可留在現場對照"]},
       {source:"DP42-01",topic:"文管專業",text:"文件管制作業的核心目的之一是什麼？",options:["確保正式文件經制修訂、審查、核准與發行管制","讓每個人自行保存不同版本","只保留未核准草稿","讓文件不用定期檢視"]},
       {source:"DP42-01",topic:"文管專業",text:"現場使用文件時，最應避免哪一種狀況？",options:["使用未受管制或已作廢版本","使用已發行有效版本","依訓練後版本作業","依文件管制流程取得文件"]},
       {source:"DP42-01",topic:"文管專業",text:"文件定期審查的主要目的為何？",options:["確認文件內容仍適用並可依需要修訂","增加測驗題目數量","取代人員訓練","讓各部門自行決定版本"]},
       {source:"DP42-01",topic:"文管專業",text:"文件不合時宜或作業有變更時，文管應優先確認什麼？",options:["是否需依程序啟動文件修訂","是否可以先忽略不處理","是否能刪除舊紀錄","是否改由口頭通知即可"]},
+      {source:"DP42-01",topic:"文管專業",text:"文件代碼中的 X/Y 格式代表什麼意義？",options:["X 為章節編號，Y 為該章節流水序號","X 為部門代號，Y 為人員編號","X 為文件種類，Y 為文件年份","X 為文件版次，Y 為文件張數"]},
+      {source:"DP42-01",topic:"文管專業",text:"新制定文件經核准後，正式生效前必須完成哪一程序？",options:["相關人員接受訓練並經考核通過","直接公告使用即可","由文管自行決定生效日","口頭通知各部門主管"]},
+      {source:"DP42-01",topic:"文管專業",text:"文件定期審查的時間為下列何者？",options:["每年十二月由各部門審查管轄文件","每月由文管逐份檢查","每季由總經理批示","每兩年由品質委員會審查"]},
+      {source:"DP42-01",topic:"文管專業",text:"文件審查與核准的時限規定為何？",options:["一般文件兩天內審查、五天內核准；重大變更依流程","全部文件一天內完成","無時間限制，有空再處理","僅需當天核准即可"]},
+      {source:"DP42-01",topic:"文管專業",text:"文件修訂的觸發條件包括下列哪些？",options:["法規變更、作業變更、偏差改善、定期審查發現不合時宜","僅限法規變更","僅限主管要求","僅限外部稽查發現"]},
+      {source:"DP42-01",topic:"文管專業",text:"作廢文件應如何處理？",options:["蓋作廢章、與有效文件區隔保存、必要時留存一份備查","直接丟棄不留記錄","繼續放在現場供參考","由各部門自行銷毀"]},
+      {source:"DP42-01",topic:"文管專業",text:"電子形式文件或電子檔使用的正確原則是什麼？",options:["僅供查閱與備份使用，不得作為簽署與簽核依據","與紙本文件具有同等效力可簽核","可直接取代所有紙本紀錄","不需經過核准即可使用"]},
+      {source:"DP42-01",topic:"文管專業",text:"文件制定流程中，提出申請應使用哪一張表單？",options:["FR42-02 文件制修訂申請單","FR42-03 文件清冊","FR42-05 廢止申請單","FR10-01 文件總覽表"]},
+      {source:"DP42-01",topic:"文管專業",text:"緊急修訂或臨時需要變更文件時，應如何處理？",options:["依實際需要先以書面核准暫行，再補完整修訂流程","直接用口頭通知即可生效","等待下次定期審查才修正","自行修改文件內容不須記錄"]},
+      {source:"DP42-01",topic:"文管專業",text:"文件發行前，文管應完成哪一項作業？",options:["登錄至文件清冊並確認分發對象","直接將檔案寄給所有人","公告於公布欄即可","交由各部門自行影印"]},
+      {source:"DP42-01",topic:"文管專業",text:"外部來文或外部技術文件應如何管理？",options:["納入文件管制系統並標示來源與適用範圍","直接交給現場使用","不需登錄也不需追蹤","由各部門自行決定是否採用"]},
+      {source:"DP42-01",topic:"文管專業",text:"文件遺失時正確的處理方式是什麼？",options:["通知文管補發，並依文件管制程序辦理","自行影印同事的版本繼續使用","直接從檔案伺服器複製","自行重寫一份替代"]},
       {source:"DP42-02",topic:"文管專業",text:"品質紀錄管理最核心的要求之一是什麼？",options:["紀錄可識別、可檢索並依期限保存","紀錄可用鉛筆先暫填","跨年度紀錄可自行丟棄","只保存電子截圖即可"]},
       {source:"DP42-02",topic:"文管專業",text:"品質紀錄保存時，文管人員應優先確保什麼？",options:["紀錄完整、可追溯且保存期限符合規定","紀錄越少越好","只保留自己看得懂的頁面","到期前先全部丟棄"]},
       {source:"DP42-02",topic:"文管專業",text:"品質紀錄與正式文件在管理上最應區分的是什麼？",options:["文件是作業依據，紀錄是作業執行後留下的證據","兩者可以完全混用","紀錄不需要保存","文件不需要版本管制"]},
-      {source:"DP42-02",topic:"文管專業",text:"品質紀錄到保存期限後，正確方向是什麼？",options:["依品質紀錄程序處置","由任何人自行丟棄","直接刪除不留管理痕跡","改成未受管制文件"]},
+      {source:"DP42-02",topic:"文管專業",text:"品質紀錄到保存期限後，正確方向是什麼？",options:["依品質紀錄程序處置，必要時留存處置記錄","由任何人自行丟棄","直接刪除不留管理痕跡","改成未受管制文件繼續擺放"]},
       {source:"DP42-02",topic:"文管專業",text:"稽查要求調閱品質紀錄時，良好的紀錄管理應能做到什麼？",options:["依識別與檢索方式找到所需紀錄","只回答找不到","改用記憶重寫紀錄","要求稽查員自行查找"]},
+      {source:"DP42-02",topic:"文管專業",text:"品質紀錄的最低保存年限為多少？",options:["至少五年","一年","三年","十年"]},
+      {source:"DP42-02",topic:"文管專業",text:"品質紀錄填寫時應注意哪一項原則？",options:["內容完整、不得以鉛筆填寫、修改時須簽名","可用鉛筆暫填日後再謄寫","可塗改不需任何簽名","由一人統一填寫即可"]},
+      {source:"DP42-02",topic:"文管專業",text:"品質紀錄保存期滿後如仍有參考價值，應如何處理？",options:["留存並註明延長保存原因與期限","直接丟棄","重新抄寫一份","歸檔到無人管理的儲藏室"]},
+      {source:"DP42-02",topic:"文管專業",text:"跨年度的品質紀錄在歸檔時應如何處理？",options:["依年度與類別分別歸檔，確保可依時間與內容檢索","全部集中塞入同一個檔案夾","只保留最新一年的記錄","不須歸檔，放原處即可"]},
+      {source:"DP42-02",topic:"文管專業",text:"品質紀錄廢止或銷毀前，應使用哪一張表單申請？",options:["FR42-05 廢止申請單","FR42-02 文件制修訂申請單","FR42-03 文件清冊","FR42-06 文件分發清冊"]},
+      {source:"DP42-02",topic:"文管專業",text:"品質紀錄保存方式的基本要求是什麼？",options:["實體與電子紀錄皆應妥善保存，防止破損、遺失與未授權存取","只能保存紙本","只能保存電子檔","不需特別保護，遺失可重做"]},
+      {source:"DP42-02",topic:"文管專業",text:"文管人員接手其他部門品質紀錄時，應優先確認什麼？",options:["紀錄是否完整、可識別並符合保存期限要求","紀錄數量是否最少","是否所有紀錄都已數位化","是否超過十年前的紀錄都可銷毀"]},
+      {source:"DP42-01 + DP42-02",topic:"文管專業",text:"現場人員向文管申請發行新版文件時，文管應優先確認什麼？",options:["申請人已完成訓練並了解新版變更內容","新版文件是否比舊版更長","申請人主管是否同意簽名","新舊版的差異處是否夠多"]},
+      {source:"DP42-01 + DP42-02",topic:"文管專業",text:"稽查員發現現場使用的 SOP 版本與文件清冊不一致時，代表什麼問題？",options:["文件發行與作廢管制可能未確實執行","文件內容有誤","稽查員看錯了","現場人員版本比較新是正常的"]},
+      {source:"DP42-01 + DP42-02",topic:"文管專業",text:"文管進行年度文件審查時，若某份 SOP 經審查認為無需修訂，應如何記錄？",options:["於審查清冊標示「無需修訂」並留存審查記錄","不須任何記錄","口頭告知各單位即可","直接刪除該份文件"]},
+      {source:"DP42-01 + DP42-02",topic:"文管專業",text:"文件內容涉及職責分工改變時，生效前最重要的步驟是什麼？",options:["確認所有相關人員已完成訓練並了解新職責分配","直接更新文件即可","只通知部門主管即可","不需訓練，公告後自動生效"]},
+      {source:"DP42-01 + DP42-02",topic:"文管專業",text:"文管收到各部門反映某份表單設計不易填寫時，應如何處理？",options:["收集意見後評估是否啟動文件修訂","直接修改表單內容","要求各部門自行克服","不予理會"]},
+      {source:"DP42-01 + DP42-02",topic:"文管專業",text:"文管人員離職或職務變動時，文件與紀錄的保管責任應如何處理？",options:["列入職務交接清冊，由接任人員確認保管範圍與狀態","由其他部門自行接收","直接封存不再管理","由總經理辦公室代管"]},
       {source:"TFDA/PIC/S 官方來源",topic:"年度加題",text:"年度測驗若加入公開常見缺失題，最重要的前提是什麼？",options:["來源需為官方公開資料或已完成內部確認","可自行假設公司發生缺失","題目越嚇人越好","不需要標示來源屬性"]},
       {source:"TFDA/PIC/S 官方來源",topic:"年度加題",text:"公開常見缺失題在公司訓練中應如何呈現？",options:["作為外部查核重點學習，不寫成本公司已發生缺失","直接列為公司缺失","取代 SOP 題庫","不需與 GDP 主題連結"]}
     ]
@@ -4829,7 +4860,7 @@ function bindExamTemplate(){
       return `${i+1}. ${q.text}\n作答：${selectedLabel}；正解：${correctLabel}；結果：${selected===q.correctIndex?"答對":"答錯"}`;
     }).join("\n\n");
     return [
-      "新勝醫藥 GDP 測驗送交文管資料包",
+      "新勝醫藥 GDP 測驗送交人事資料包",
       `測驗別：${session.info?.label||""}`,
       `姓名：${p.name||""}`,
       `性別：${p.sex||""}`,
@@ -4852,13 +4883,30 @@ function bindExamTemplate(){
     ].join("\n");
   }
   function downloadExamShareText(){
-    if(!session.shareText) return;
-    const blob=new Blob([session.shareText],{type:"text/plain;charset=utf-8"});
+    if(!session.results) return;
+    const {correct,total,score,pass,timedOut}=session.results;
+    const htmlContent=examPrintDocumentHtml(correct,total,score,pass,timedOut);
+    const standalone=`<!DOCTYPE html><html lang="zh-TW"><head><meta charset="utf-8"><title>GDP 測驗送交人事資料</title><style>
+body{font-family:sans-serif;max-width:800px;margin:auto;padding:20px;font-size:14px}
+.exam-print-page{margin-bottom:30px;page-break-after:always}
+.exam-fr-table{width:100%;border-collapse:collapse;margin:12px 0}
+.exam-fr-table th,.exam-fr-table td{border:1px solid #333;padding:6px;text-align:left;font-size:13px}
+.exam-fr-table th{background:#eaeaea}
+.exam-paper-head{display:flex;justify-content:space-between;align-items:center}
+.exam-paper-score{font-size:28px;font-weight:700;color:#1a6b3c}
+.exam-question-print{margin:12px 0;padding:10px;border:1px solid #ccc;border-radius:6px}
+.exam-print-options{margin:6px 0}
+.exam-print-option{margin:2px 0}
+.exam-print-answer{font-size:13px;color:#555;border-top:1px solid #eee;padding-top:4px;margin-top:4px}
+.exam-paper-meta{display:flex;gap:16px;margin:4px 0;font-size:13px;color:#555}
+.exam-fr-notes{font-size:12px;color:#555;margin-top:8px}
+</style></head><body>${htmlContent}</body></html>`;
+    const blob=new Blob([standalone],{type:"text/html;charset=utf-8"});
     const url=URL.createObjectURL(blob);
     const a=document.createElement("a");
     const name=(session.profile?.name||"未填姓名").replace(/[\\/:*?"<>|]/g,"_");
     a.href=url;
-    a.download=`GDP測驗送交文管_${name}.txt`;
+    a.download=`GDP測驗送交人事_${name}.html`;
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -4951,7 +4999,7 @@ function bindExamTemplate(){
     }).join("");
     return `
       <div class="exam-print-preview">
-        <strong>文管列印資料包${timedOut?"（逾時交卷）":""}</strong>
+        <strong>人事列印資料包${timedOut?"（逾時交卷）":""}</strong>
         <div class="exam-summary-row"><span>姓名</span><strong>${esc(p.name||"")}</strong></div>
         <div class="exam-summary-row"><span>性別 / 報到日期 / 學歷</span><strong>${esc([p.sex||"未填",toRocDate(p.onboardDate)||"未填",p.education||"未填"].join(" / "))}</strong></div>
         <div class="exam-summary-row"><span>單位 / 職稱</span><strong>${esc([p.department||"",p.title||""].join(" / "))}</strong></div>
@@ -4959,11 +5007,11 @@ function bindExamTemplate(){
         <div class="exam-print-row head"><span>訓練項目</span><span>得分</span><span>結果</span><span>人事簽核</span></div>
         ${rows}
         <div class="exam-summary-row"><span>總分</span><strong>${score} 分（答對 ${correct} / ${total} 題，合格標準 70 分）</strong></div>
-        <p class="exam-paper-note">列印會輸出兩份文件：FR24-03 員工教育訓練紀錄表，以及含作答答案與右上角分數的考卷式答題紀錄。無法列印時，請用送交文管資料包交給文管。</p>
+        <p class="exam-paper-note">列印會輸出兩份文件：FR24-03 員工教育訓練紀錄表，以及含作答答案與右上角分數的考卷式答題紀錄。無法列印時，請用送交人事資料包交給人事。</p>
         <div class="exam-start-actions">
           <button type="button" class="secondary" data-exam-print>列印本頁</button>
-          <button type="button" class="secondary" data-exam-copy>複製送交文管資料</button>
-          <button type="button" class="secondary" data-exam-download>下載送交文管資料</button>
+          <button type="button" class="secondary" data-exam-copy>複製送交人事資料</button>
+          <button type="button" class="secondary" data-exam-download>下載送交人事資料</button>
         </div>
       </div>
       <div style="margin-top:12px"><strong>受測考題回顧</strong><ol style="margin:8px 0 0 18px;display:grid;gap:8px">${review}</ol></div>
@@ -4986,6 +5034,7 @@ function bindExamTemplate(){
     const score=Math.round((correct/total)*100);
     const pass=score>=70;
     session.shareText=examShareText(correct,total,score,pass,force);
+    session.results={correct,total,score,pass,timedOut:force};
     if(resultBox){
       resultBox.hidden=false;
       resultBox.innerHTML=`<strong>${pass?"測驗合格":"未達合格標準"}</strong><br>${force?"作答時間已結束，自動交卷。":""}得分 ${score} 分，答對 ${correct} / ${total} 題。${pass?"":"請重新測驗。"} ${printPacketHtml(correct,total,score,pass,force)}`;
@@ -5007,7 +5056,7 @@ function bindExamTemplate(){
       if(!session.shareText) return;
       const btn=e.target.closest("[data-exam-copy]");
       navigator.clipboard?.writeText(session.shareText).then(()=>{
-        if(btn){btn.textContent="已複製";setTimeout(()=>btn.textContent="複製送交文管資料",1400);}
+        if(btn){btn.textContent="已複製";setTimeout(()=>btn.textContent="複製送交人事資料",1400);}
       }).catch(()=>{
         const area=document.createElement("textarea");
         area.value=session.shareText;
@@ -5015,7 +5064,7 @@ function bindExamTemplate(){
         area.select();
         document.execCommand("copy");
         area.remove();
-        if(btn){btn.textContent="已複製";setTimeout(()=>btn.textContent="複製送交文管資料",1400);}
+        if(btn){btn.textContent="已複製";setTimeout(()=>btn.textContent="複製送交人事資料",1400);}
       });
     }
   });
