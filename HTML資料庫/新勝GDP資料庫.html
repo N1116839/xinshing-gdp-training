@@ -99,6 +99,9 @@
   .exam-dept-card{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;background:#fff;border:1px solid var(--line);border-bottom:3px solid #cde0dd;cursor:pointer;font-weight:600;color:var(--ink-soft)}
   .exam-dept-card.active{border-bottom-color:var(--brand);background:#f3fbf7;color:var(--brand)}
   .exam-dept-card input{margin:0}
+  .exam-dept-card.disabled{opacity:.45;cursor:not-allowed}
+  .exam-rule-list{max-width:760px;margin:14px 0 18px;padding-left:20px;color:var(--ink-soft);line-height:1.85;font-size:14px}
+  .exam-rule-list li{margin:0 0 6px}
   .exam-start-card{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,380px);gap:16px;align-items:stretch}
   .exam-type-list{display:grid;gap:10px}
   .exam-type-card{display:grid;grid-template-columns:20px 1fr auto;gap:10px;align-items:start;padding:14px;background:#fff;border:1px solid var(--line);border-left:5px solid #cde0dd;cursor:pointer}
@@ -1197,8 +1200,8 @@ const sections = [
     id:"exam",
     group:"測試專區",
     title:"測試專區",
-    tag:"文管／人事／採購・三階段測驗",
-    lead:"測試專區採三階段流程：開始測試、填寫測驗人員資料、進入考試畫面。考試期間會限制切換至部門文件與智慧查詢，右上角顯示倒數時間。進入後請先選擇受測部門（文管、人事、採購），各部門受測範圍依 WI10-01 職務訓練要求與該部門 SOP 加上 DM10-01/WI10-01 共同基礎建立。",
+    tag:"依職責自動抽題・三階段測驗",
+    lead:"測試專區採三階段流程：第一頁說明測驗規則並開始，第二頁登載員工教育訓練紀錄表基本資料並選擇職責與兼任職務，第三頁進入考試畫面。受測範圍依登載的職責與兼任自動帶出（取所選職務 SOP 聯集，DM10-01／WI10-01 共同基礎只計一次）；考試期間限制切換部門文件與智慧查詢，右上角顯示倒數時間。",
     pills:["開始測試","人員資料","考試畫面","倒數計時","限制查詢"],
     examTemplate:"doc",
     qa:false
@@ -4565,18 +4568,24 @@ function examTemplateSection(s){
     <section class="exam-stage" data-exam-stage="start">
       <div class="exam-hero">
         <h4>測試專區</h4>
-        <p>請先選擇受測部門與測驗別。目前已建置文管、人事、採購三個範本，受測範圍依 WI10-01 職務訓練要求與各部門 SOP 設定。進入考試後需完成或結束測驗才可切換其他學習區。</p>
-        <div class="exam-dept-hint">受測部門（可複選；兼任或代理職務請一起勾選，受測範圍取所選部門 SOP 聯集，DM10-01／WI10-01 共同基礎只計一次）</div>
-        <div class="exam-dept-list" role="group" aria-label="受測部門（可複選）">
-          <label class="exam-dept-card active" data-exam-dept-card><input type="checkbox" name="examDept" value="doc" checked><span>文管</span></label>
-          <label class="exam-dept-card" data-exam-dept-card><input type="checkbox" name="examDept" value="hr"><span>人事</span></label>
-          <label class="exam-dept-card" data-exam-dept-card><input type="checkbox" name="examDept" value="purchase"><span>採購</span></label>
-        </div>
-        <div class="exam-start-card">
+        <p>本測驗依「員工教育訓練紀錄表（FR24-03）」與 WI10-01 職務訓練要求設計。受測範圍會依你在下一頁登載的職責自動帶出，請先了解測驗規則後再開始。</p>
+        <ul class="exam-rule-list">
+          <li>滿分 100 分，70 分（含）以上為合格；未合格需重新測驗。</li>
+          <li>受測範圍依下一頁登載的「職責」與「兼任職務」自動帶出；兼任或代理多個職務時，受測 SOP 取聯集，DM10-01／WI10-01 共同基礎只計一次。</li>
+          <li>題目由題庫隨機抽出，每次題目與選項順序皆不同；新人三個月測驗 10 題、年度教育訓練測驗 20 題。</li>
+          <li>作答倒數歸零會自動交卷，未作答題以未作答計；考試進行中暫停切換部門文件與智慧查詢。</li>
+        </ul>
+        <button type="button" class="primary" data-exam-action="to-profile">開始測試</button>
+      </div>
+    </section>
+    <section class="exam-stage" data-exam-stage="profile" hidden>
+      <form id="examProfileForm">
+        <div class="exam-form-section">
+          <h4>測驗別</h4>
           <div class="exam-type-list" role="radiogroup" aria-label="測驗類型">
             <label class="exam-type-card active" data-exam-type-card>
               <input type="radio" name="examType" value="newhire" checked>
-              <span><strong>新人三個月測驗</strong><span>適合確認文管新人核心概念，含共同基礎與文管專業題。</span></span>
+              <span><strong>新人三個月測驗</strong><span>核心概念，含共同基礎與職務專業題。</span></span>
               <b class="exam-badge">10 題</b>
             </label>
             <label class="exam-type-card" data-exam-type-card>
@@ -4585,30 +4594,31 @@ function examTemplateSection(s){
               <b class="exam-badge">20 題</b>
             </label>
           </div>
-          <div class="exam-summary-box">
+          <div class="exam-summary-box" style="margin-top:10px">
             <div class="exam-summary-row"><span>測驗別</span><strong data-exam-start-label>新人三個月測驗</strong></div>
             <div class="exam-summary-row"><span>題數</span><strong data-exam-start-count>10 題</strong></div>
             <div class="exam-summary-row"><span>作答時間</span><strong data-exam-start-time>10 分鐘</strong></div>
             <div class="exam-summary-row"><span>合格標準</span><strong>70 分</strong></div>
-            <button type="button" class="primary" data-exam-action="to-profile">填寫應試資料</button>
           </div>
         </div>
-      </div>
-      <div class="exam-source-grid" data-exam-source-grid>${docCards}</div>
-    </section>
-    <section class="exam-stage" data-exam-stage="profile" hidden>
-      <form id="examProfileForm">
-        <div class="exam-form-section">
+        <div class="exam-form-section" style="margin-top:12px">
           <h4>測驗人員資料</h4>
           <div class="exam-form-grid">
             <label>姓名<input name="name" type="text" autocomplete="name" required></label>
             <label>性別<select name="sex"><option value="">未填</option><option value="男">男</option><option value="女">女</option></select></label>
-            <label>部門<input name="department" type="text" value="${esc(deptDisplayName(s.examTemplate))}" data-exam-dept-field required></label>
-            <label>職稱<input name="title" type="text" value="${esc(tpl.role)}" data-exam-title-field required></label>
+            <label>職責（主要職稱）<select name="roleKey" data-exam-role-select required>${Object.entries(examDeptNames).map(([k,n])=>`<option value="${esc(k)}">${esc(n)}</option>`).join("")}</select></label>
             <label data-exam-date-label="onboard">報到日期<input name="onboardDate" type="text" inputmode="numeric" placeholder="114/06/04" required></label>
             <label>學歷<input name="education" type="text" placeholder="可留空"></label>
-            <label>兼任/代理職務<input name="acting" type="text" placeholder="無則填無"></label>
           </div>
+          <div style="margin-top:10px">
+            <div class="exam-dept-hint">兼任 / 代理職務（可複選；與主要職責不同者才勾選，受測範圍取所選職務 SOP 聯集，共同基礎只計一次）</div>
+            <div class="exam-dept-list" data-exam-acting-list role="group" aria-label="兼任職務（可複選）">${Object.entries(examDeptNames).map(([k,n])=>`<label class="exam-dept-card" data-exam-acting-card><input type="checkbox" name="actingKey" value="${esc(k)}"><span>${esc(n)}</span></label>`).join("")}</div>
+          </div>
+          <div class="exam-dept-hint" style="margin-top:6px">受測範圍（依職責與兼任自動帶出）</div>
+          <div class="exam-source-grid" data-exam-source-grid>${docCards}</div>
+          <input type="hidden" name="department" data-exam-dept-field>
+          <input type="hidden" name="title" data-exam-title-field>
+          <input type="hidden" name="acting" data-exam-acting-field>
         </div>
         <div class="exam-form-section" style="margin-top:12px">
           <h4>教育訓練紀錄欄位</h4>
@@ -4855,11 +4865,12 @@ function bindExamTemplate(){
   const nextBtn=root.querySelector('[data-exam-action="next"]');
   const prevBtn=root.querySelector('[data-exam-action="prev"]');
   const finishBtn=root.querySelector('[data-exam-action="finish"]');
-  const deptBoxes=[...root.querySelectorAll('input[name="examDept"]')];
-  const deptCards=[...root.querySelectorAll("[data-exam-dept-card]")];
+  const roleSelect=root.querySelector("[data-exam-role-select]");
+  const actingBoxes=[...root.querySelectorAll('input[name="actingKey"]')];
   const sourceGrid=root.querySelector("[data-exam-source-grid]");
   const deptField=root.querySelector("[data-exam-dept-field]");
   const titleField=root.querySelector("[data-exam-title-field]");
+  const actingField=root.querySelector("[data-exam-acting-field]");
   const trainItemField=root.querySelector("[data-exam-trainitem-field]");
   let tpl=composeTemplate(["doc"]);
   let session={questions:[],answers:[],index:0,info:null,profile:null};
@@ -4880,25 +4891,41 @@ function bindExamTemplate(){
     const commonItems=base.printItems.filter(isCommon);
     return {role:keys.map(deptDisplayName).join("、"),commonDocs:base.commonDocs,roleDocs,printItems:[...commonItems,...roleItems],draftQuestions};
   }
-  function selectedDeptKeys(){
-    let keys=deptBoxes.filter(b=>b.checked).map(b=>b.value);
-    if(!keys.length){const docBox=deptBoxes.find(b=>b.value==="doc");if(docBox) docBox.checked=true;keys=["doc"];}
+  function selectedKeys(){
+    const primary=roleSelect?.value||"doc";
+    const keys=[primary];
+    actingBoxes.forEach(b=>{if(b.checked&&b.value!==primary&&!keys.includes(b.value)) keys.push(b.value);});
     return keys;
   }
-  function applyDept(){
-    const keys=selectedDeptKeys();
+  function applyRole(){
+    const primary=roleSelect?.value||"doc";
+    const keys=selectedKeys();
     tpl=composeTemplate(keys);
-    deptCards.forEach(card=>card.classList.toggle("active",card.querySelector("input")?.checked));
+    actingBoxes.forEach(b=>{
+      const isPrimary=b.value===primary;
+      b.disabled=isPrimary;
+      if(isPrimary) b.checked=false;
+      const card=b.closest("[data-exam-acting-card]");
+      if(card){card.classList.toggle("disabled",isPrimary);card.classList.toggle("active",b.checked&&!isPrimary);}
+    });
     if(sourceGrid){
       const docs=[...tpl.commonDocs,...tpl.roleDocs];
       sourceGrid.innerHTML=docs.map(d=>`<article class="exam-card"><h4>${sourceToChapter(d.code).split(" ")[0]}：${esc(d.name)}<span class="exam-badge">${esc(d.role)}</span></h4><p>${esc(d.why)}</p></article>`).join("");
     }
-    const deptName=keys.map(deptDisplayName).join("、");
-    if(deptField) deptField.value=deptName;
-    if(titleField) titleField.value=tpl.role;
-    if(trainItemField) trainItemField.value=`${deptName} GDP 教育訓練`;
+    const primaryName=deptDisplayName(primary);
+    const actingKeys=keys.slice(1);
+    const allName=keys.map(deptDisplayName).join("、");
+    if(deptField) deptField.value=primaryName;
+    if(titleField) titleField.value=primaryName;
+    if(actingField) actingField.value=actingKeys.length?actingKeys.map(deptDisplayName).join("、"):"無";
+    if(trainItemField) trainItemField.value=`${allName} GDP 教育訓練`;
   }
-  deptBoxes.forEach(b=>b.addEventListener("change",applyDept));
+  function examRoleLabel(p){
+    const base=[p.department||"",p.title||""].filter(Boolean).join(" / ");
+    return p.acting&&p.acting!=="無"?`${base}；兼任/代理：${p.acting}`:base;
+  }
+  roleSelect?.addEventListener("change",applyRole);
+  actingBoxes.forEach(b=>b.addEventListener("change",applyRole));
   function typeInfo(){
     const annual=typeRadios.find(r=>r.checked)?.value==="annual";
     return annual?{label:"年度教育訓練測驗",count:20,point:5,minutes:25,seconds:25*60}:{label:"新人三個月測驗",count:10,point:10,minutes:10,seconds:10*60};
@@ -5156,7 +5183,7 @@ body{margin:0;padding:0;background:#fff;color:#000;font-family:"Microsoft JhengH
         <strong>人事列印資料包${timedOut?"（逾時交卷）":""}</strong>
         <div class="exam-summary-row"><span>姓名</span><strong>${esc(p.name||"")}</strong></div>
         <div class="exam-summary-row"><span>性別 / 報到日期 / 學歷</span><strong>${esc([p.sex||"未填",toRocDate(p.onboardDate)||"未填",p.education||"未填"].join(" / "))}</strong></div>
-        <div class="exam-summary-row"><span>單位 / 職稱</span><strong>${esc([p.department||"",p.title||""].join(" / "))}</strong></div>
+        <div class="exam-summary-row"><span>單位 / 職稱</span><strong>${esc(examRoleLabel(p))}</strong></div>
         <div class="exam-summary-row"><span>訓練日期 / 講師 / 評核方式</span><strong>${esc([toRocDate(p.trainingDate)||"",p.trainer||"",p.method||""].join(" / "))}</strong></div>
         <div class="exam-print-row head"><span>訓練項目</span><span>得分</span><span>結果</span><span>人事簽核</span></div>
         ${rows}
@@ -5217,6 +5244,7 @@ body{margin:0;padding:0;background:#fff;color:#000;font-family:"Microsoft JhengH
   });
   profile?.addEventListener("submit",e=>{
     e.preventDefault();
+    applyRole();
     const info=typeInfo();
     session={questions:buildQuestions(info.count),answers:Array(info.count).fill(null),index:0,info,profile:{
       name:profileValue("name"),
@@ -5233,7 +5261,7 @@ body{margin:0;padding:0;background:#fff;color:#000;font-family:"Microsoft JhengH
     }};
     examLock.active=true;
     examLock.sectionId=current;
-    if(person) person.textContent=`${profile.name.value.trim()}｜${profile.department.value.trim()}｜${profile.title.value.trim()}`;
+    if(person) person.textContent=`${session.profile.name}｜${examRoleLabel(session.profile)}`;
     if(meta) meta.textContent=`${info.label}｜${info.count} 題｜${info.minutes} 分鐘｜70 分合格`;
     if(countEl) countEl.textContent=String(info.count);
     setStage("exam");
@@ -5241,6 +5269,7 @@ body{margin:0;padding:0;background:#fff;color:#000;font-family:"Microsoft JhengH
     renderQuestion();
     startTimer();
   });
+  applyRole();
   refreshStartSummary();
 }
 function bindKbForm(){
