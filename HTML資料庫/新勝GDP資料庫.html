@@ -99,7 +99,6 @@
   .exam-dept-card{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;background:#fff;border:1px solid var(--line);border-bottom:3px solid #cde0dd;cursor:pointer;font-weight:600;color:var(--ink-soft)}
   .exam-dept-card.active{border-bottom-color:var(--brand);background:#f3fbf7;color:var(--brand)}
   .exam-dept-card input{margin:0}
-  .exam-dept-card.disabled{opacity:.45;cursor:not-allowed}
   .exam-rule-list{max-width:760px;margin:14px 0 18px;padding-left:20px;color:var(--ink-soft);line-height:1.85;font-size:14px}
   .exam-rule-list li{margin:0 0 6px}
   .exam-start-card{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,380px);gap:16px;align-items:stretch}
@@ -4610,9 +4609,8 @@ function examTemplateSection(s){
             <label data-exam-date-label="onboard">報到日期<input name="onboardDate" type="text" inputmode="numeric" placeholder="114/06/04" required></label>
             <label>學歷<input name="education" type="text" placeholder="可留空"></label>
           </div>
-          <div style="margin-top:10px">
-            <div class="exam-dept-hint">兼任 / 代理職務（可複選；與主要職責不同者才勾選，受測範圍取所選職務 SOP 聯集，共同基礎只計一次）</div>
-            <div class="exam-dept-list" data-exam-acting-list role="group" aria-label="兼任職務（可複選）">${Object.entries(examDeptNames).map(([k,n])=>`<label class="exam-dept-card" data-exam-acting-card><input type="checkbox" name="actingKey" value="${esc(k)}"><span>${esc(n)}</span></label>`).join("")}</div>
+          <div class="exam-form-grid" style="margin-top:10px">
+            <label>兼任 / 代理職務<select name="actingKey" data-exam-acting-select><option value="">無兼任 / 代理</option>${Object.entries(examDeptNames).map(([k,n])=>`<option value="${esc(k)}">${esc(n)}</option>`).join("")}</select></label>
           </div>
           <div class="exam-dept-hint" style="margin-top:6px">受測範圍（依職責與兼任自動帶出）</div>
           <div class="exam-source-grid" data-exam-source-grid>${docCards}</div>
@@ -4866,7 +4864,7 @@ function bindExamTemplate(){
   const prevBtn=root.querySelector('[data-exam-action="prev"]');
   const finishBtn=root.querySelector('[data-exam-action="finish"]');
   const roleSelect=root.querySelector("[data-exam-role-select]");
-  const actingBoxes=[...root.querySelectorAll('input[name="actingKey"]')];
+  const actingSelect=root.querySelector("[data-exam-acting-select]");
   const sourceGrid=root.querySelector("[data-exam-source-grid]");
   const deptField=root.querySelector("[data-exam-dept-field]");
   const titleField=root.querySelector("[data-exam-title-field]");
@@ -4894,20 +4892,19 @@ function bindExamTemplate(){
   function selectedKeys(){
     const primary=roleSelect?.value||"doc";
     const keys=[primary];
-    actingBoxes.forEach(b=>{if(b.checked&&b.value!==primary&&!keys.includes(b.value)) keys.push(b.value);});
+    const acting=actingSelect?.value||"";
+    if(acting&&acting!==primary) keys.push(acting);
     return keys;
   }
   function applyRole(){
     const primary=roleSelect?.value||"doc";
+    if(actingSelect){
+      const current=actingSelect.value;
+      actingSelect.innerHTML=`<option value="">無兼任 / 代理</option>${Object.entries(examDeptNames).filter(([k])=>k!==primary).map(([k,n])=>`<option value="${esc(k)}">${esc(n)}</option>`).join("")}`;
+      actingSelect.value=current!==primary&&examDeptNames[current]?current:"";
+    }
     const keys=selectedKeys();
     tpl=composeTemplate(keys);
-    actingBoxes.forEach(b=>{
-      const isPrimary=b.value===primary;
-      b.disabled=isPrimary;
-      if(isPrimary) b.checked=false;
-      const card=b.closest("[data-exam-acting-card]");
-      if(card){card.classList.toggle("disabled",isPrimary);card.classList.toggle("active",b.checked&&!isPrimary);}
-    });
     if(sourceGrid){
       const docs=[...tpl.commonDocs,...tpl.roleDocs];
       sourceGrid.innerHTML=docs.map(d=>`<article class="exam-card"><h4>${sourceToChapter(d.code).split(" ")[0]}：${esc(d.name)}<span class="exam-badge">${esc(d.role)}</span></h4><p>${esc(d.why)}</p></article>`).join("");
@@ -4925,7 +4922,7 @@ function bindExamTemplate(){
     return p.acting&&p.acting!=="無"?`${base}；兼任/代理：${p.acting}`:base;
   }
   roleSelect?.addEventListener("change",applyRole);
-  actingBoxes.forEach(b=>b.addEventListener("change",applyRole));
+  actingSelect?.addEventListener("change",applyRole);
   function typeInfo(){
     const annual=typeRadios.find(r=>r.checked)?.value==="annual";
     return annual?{label:"年度教育訓練測驗",count:20,point:5,minutes:25,seconds:25*60}:{label:"新人三個月測驗",count:10,point:10,minutes:10,seconds:10*60};
