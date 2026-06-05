@@ -94,6 +94,11 @@
   .exam-stage-tab{padding:10px 12px;background:#fff;border:1px solid var(--line);border-left:4px solid #cde0dd;color:var(--ink-soft);font-size:13px;font-weight:800}
   .exam-stage-tab.active{border-left-color:var(--brand);color:var(--brand);background:#f3fbf7}
   .exam-scope-grid,.exam-source-grid,.exam-build-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .exam-dept-hint{font-size:12.5px;color:var(--ink-soft);line-height:1.55;margin:0 0 8px}
+  .exam-dept-list{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 14px}
+  .exam-dept-card{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;background:#fff;border:1px solid var(--line);border-bottom:3px solid #cde0dd;cursor:pointer;font-weight:600;color:var(--ink-soft)}
+  .exam-dept-card.active{border-bottom-color:var(--brand);background:#f3fbf7;color:var(--brand)}
+  .exam-dept-card input{margin:0}
   .exam-start-card{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,380px);gap:16px;align-items:stretch}
   .exam-type-list{display:grid;gap:10px}
   .exam-type-card{display:grid;grid-template-columns:20px 1fr auto;gap:10px;align-items:start;padding:14px;background:#fff;border:1px solid var(--line);border-left:5px solid #cde0dd;cursor:pointer}
@@ -1192,8 +1197,8 @@ const sections = [
     id:"exam",
     group:"測試專區",
     title:"測試專區",
-    tag:"文管範本・三階段測驗",
-    lead:"測試專區採三階段流程：開始測試、填寫測驗人員資料、進入考試畫面。考試期間會限制切換至部門文件與智慧查詢，右上角顯示倒數時間。文管範本以 DM10-01/WI10-01 共同基礎加 DP42-01/DP42-02 文管專業範圍建立。",
+    tag:"文管／人事／採購・三階段測驗",
+    lead:"測試專區採三階段流程：開始測試、填寫測驗人員資料、進入考試畫面。考試期間會限制切換至部門文件與智慧查詢，右上角顯示倒數時間。進入後請先選擇受測部門（文管、人事、採購），各部門受測範圍依 WI10-01 職務訓練要求與該部門 SOP 加上 DM10-01/WI10-01 共同基礎建立。",
     pills:["開始測試","人員資料","考試畫面","倒數計時","限制查詢"],
     examTemplate:"doc",
     qa:false
@@ -4424,8 +4429,126 @@ const examTemplates = {
       {source:"TFDA/PIC/S 官方來源",topic:"年度加題",text:"年度測驗若加入公開常見缺失題，最重要的前提是什麼？",options:["來源需為官方公開資料或已完成內部確認","可自行假設公司發生缺失","題目越嚇人越好","不需要標示來源屬性"]},
       {source:"TFDA/PIC/S 官方來源",topic:"年度加題",text:"公開常見缺失題在公司訓練中應如何呈現？",options:["作為外部查核重點學習，不寫成本公司已發生缺失","直接列為公司缺失","取代 SOP 題庫","不需與 GDP 主題連結"]}
     ]
+  },
+  hr:{
+    role:"人事",
+    roleSource:"WI10-01 SMF 廠商基本資料：人事須具企管、會計或相關科系背景與人事管理經驗，受訓範圍連結組織與職掌、員工教育訓練。",
+    commonDocs:[
+      {code:"DM10-01",name:"品質手冊",role:"共同基礎",why:"回答 GDP 應該怎麼做，是所有部門都要理解的品質系統原則。"},
+      {code:"WI10-01",name:"SMF 廠商基本資料",role:"共同基礎",why:"回答公司實際如何做 GDP，含場所、組織、職務、委外與清冊。"}
+    ],
+    roleDocs:[
+      {code:"DP22-01",name:"組織與職掌標準作業程序",role:"人事專業",why:"考組織三層級、職責指派、代理人制度、職前與每年定期能力評鑑。"},
+      {code:"DP24-01",name:"員工教育訓練作業程序",role:"人事專業",why:"考訓練需求、計畫、通知、執行、考核 70 分合格與紀錄保存。"}
+    ],
+    printItems:["DM10-01 GDP 共同基礎訓練","WI10-01 GDP 共同基礎訓練","DP22-01 組織與職掌作業程序訓練","DP24-01 員工教育訓練作業程序訓練"],
+    sourceBlocks:[
+      {title:"共同基礎題",body:"DM10-01 與 WI10-01 視為同一題庫群，不切成兩科；題目同時考 GDP 原則與公司實際做法。",status:"必含"},
+      {title:"人事專業題",body:"DP22-01 與 DP24-01 分別建立題庫，但測驗時合併成人事職務試卷。",status:"必含"},
+      {title:"公開缺失題",body:"年度測驗可加入 TFDA/PIC/S 公開常見缺失；需有官方來源，不得寫成本公司缺失。",status:"年度可含"},
+      {title:"題目來源",body:"題目由人事維護，作答時只顯示題目、選項、進度與測驗規則。",status:"考生可見"}
+    ],
+    blueprints:[
+      {topic:"GDP 系統原則與公司做法",source:"DM10-01 + WI10-01",type:"共同基礎",checks:["題目同時能回到 GDP 原則與公司實際做法","不得把 DM 與 SMF 切成兩張獨立試卷"]},
+      {topic:"組織職掌與能力評鑑",source:"DP22-01",type:"人事專業",checks:["覆蓋組織三層級、職責指派、代理人制度","覆蓋職前訓練合格才可派任與每年定期評鑑","答案需可回到 DP22-01 原文"]},
+      {topic:"教育訓練全流程",source:"DP24-01",type:"人事專業",checks:["覆蓋需求調查、計畫、通知、執行、考核、紀錄保存","合格標準 70 分需與來源一致","區分內部與外部教育訓練"]},
+      {topic:"公開查核重點",source:"TFDA/PIC/S 官方來源",type:"年度加題",checks:["只能用官方公開來源或已完成內部確認的資料","不得寫成本公司已發生缺失"]}
+    ],
+    draftQuestions:[
+      {source:"DM10-01 + WI10-01",topic:"共同基礎",text:"遇到稽查員詢問公司如何落實 GDP 時，應同時能說明哪兩個層次？",options:["GDP 原則與公司實際做法","客戶名單與薪資資料","網站帳號與登入流程","個人考績與獎金"]},
+      {source:"DM10-01",topic:"共同基礎",text:"公司文件層級由高到低的正確順序為何？",options:["品質手冊（DM）→程序書（DP）→作業指導書（WI）→表單（FR）","表單（FR）→程序書（DP）→品質手冊（DM）→作業指導書（WI）","作業指導書（WI）→品質手冊（DM）→表單（FR）→程序書（DP）","程序書（DP）→品質手冊（DM）→表單（FR）→作業指導書（WI）"]},
+      {source:"WI10-01",topic:"共同基礎",text:"WI10-01 SMF 廠商基本資料主要用來確認什麼？",options:["公司場所、組織架構、職務與清冊等實際作業背景","每位員工的薪資與出勤明細","客戶報價與交易條件","網站版面是否正確"]},
+      {source:"DP22-01",topic:"組織與職掌",text:"依組織與職掌作業程序，組織的規劃與改善由誰負責？",options:["GDP 權責主管","人事單位","各部門組長","外部顧問"]},
+      {source:"DP22-01",topic:"組織與職掌",text:"組織的執行與管理由哪個單位負責？",options:["人事單位","品保單位","倉管單位","業務單位"]},
+      {source:"DP22-01",topic:"組織與職掌",text:"各職稱的職責授權規定於哪一份文件？",options:["WI22-01 組織圖暨員工職務說明書","FR54-01 到貨驗收紀錄表","DP42-01 文件管制作業程序書","DM10-01 品質手冊"]},
+      {source:"DP22-01",topic:"組織與職掌",text:"各職稱承辦者確認其職責，應填於哪一張表單？",options:["FR22-01 組織各職稱指派名單","FR24-01 年度訓練計畫表","FR52-02 合格藥品供應廠商名冊","FR72-03 合格委外作業廠商名冊"]},
+      {source:"DP22-01",topic:"組織與職掌",text:"公司對於職務代理人的規定為何？",options:["所有職務皆須安排代理人","僅主管職須安排代理人","代理人可有可無","僅倉管須安排代理人"]},
+      {source:"DP22-01",topic:"組織與職掌",text:"員工接受職前訓練時，依據哪一張對照表安排訓練項目？",options:["FR22-02 職責【職前】訓練對照表","FR24-03 員工教育訓練記錄表","FR52-01 藥品供應新廠商登錄暨定期評鑑表","FR57-01 進銷存電腦化系統確效報告書"]},
+      {source:"DP22-01",topic:"組織與職掌",text:"員工在什麼條件下才可被指派擔任其職稱的工作？",options:["完成職前訓練並評鑑合格","到職滿一天","取得系統帳號","主管口頭同意"]},
+      {source:"DP22-01",topic:"組織與職掌",text:"組織對所有人員的適任性評鑑多久執行一次？",options:["每年定期執行一次","每三年一次","每月一次","不需定期評鑑"]},
+      {source:"DP22-01",topic:"組織與職掌",text:"公司組織架構區分為哪三個層級？",options:["領導層級、管理層級、作業層級","董事層級、股東層級、員工層級","總公司、分公司、辦事處","內部、外部、委外"]},
+      {source:"DP22-01",topic:"組織與職掌",text:"為因應緊急事件或回收，組織應提供什麼聯繫窗口？",options:["非營業時段的 24 小時聯繫窗口","僅上班時間的聯繫窗口","僅電子郵件聯繫","不需設置聯繫窗口"]},
+      {source:"DP24-01",topic:"教育訓練",text:"教育訓練的訓練需求調查由誰負責？",options:["各部門","人事部彙總","訓練講師","GDP 權責主管"]},
+      {source:"DP24-01",topic:"教育訓練",text:"年度訓練計畫由哪個單位彙總？",options:["人事部","品保部","各單位主管","總經理室"]},
+      {source:"DP24-01",topic:"教育訓練",text:"下列何者屬於「內部教育訓練」的定義？",options:["由公司內部員工擔任講師對其他人員進行訓練","由公司外部人員擔任講師授課","人員至公司外部接受訓練","參加政府機關舉辦的研討會"]},
+      {source:"DP24-01",topic:"教育訓練",text:"下列何者屬於「外部教育訓練」？",options:["人員至公司外部接受教育訓練","由公司內部員工對部屬授課","部門內部的工作交接","主管的口頭提醒"]},
+      {source:"DP24-01",topic:"教育訓練",text:"人員依哪一張表接受職前及定期再訓練？",options:["FR24-01 年度訓練計畫表","FR22-01 組織各職稱指派名單","FR52-03 藥品訂購缺失登錄表","FR72-05 委外作業缺失登錄表"]},
+      {source:"DP24-01",topic:"教育訓練",text:"新進人員的正確訓練流程為何？",options:["先依職責職前訓練對照表完成訓練再行派任","先派任上工，有空再補訓練","由同事口頭教學即可","到職後三個月內免訓練"]},
+      {source:"DP24-01",topic:"教育訓練",text:"教育訓練的考核由誰執行？",options:["部門主管或訓練講師","受訓學員自評","人事部統一打分","客戶評分"]},
+      {source:"WI10-01",topic:"教育訓練",text:"教育訓練的合格標準為何？",options:["評鑑成績 70 分以上","評鑑成績 60 分以上","只要出席即合格","由講師自由認定"]},
+      {source:"DP24-01",topic:"教育訓練",text:"員工的教育訓練紀錄由哪個單位保存？",options:["人事部","文管部","各部門自存","品保部"]},
+      {source:"WI10-01",topic:"教育訓練",text:"參與公司外部訓練的人員，結束後應繳回什麼給人事單位？",options:["上課教材、心得報告或證書影本","個人手機","出差收據","名片"]},
+      {source:"DP24-01",topic:"教育訓練",text:"GDP 相關訓練的有效性，應在哪個會議中評估？",options:["每年管理審查會議","每月部門晨會","每週業務會報","年終尾牙"]},
+      {source:"WI10-01",topic:"教育訓練",text:"參與訓練人員在哪一張表簽到，以證明確實有上課紀錄？",options:["FR24-02 定期訓練簽到與評估表","FR24-03 員工教育訓練記錄表","FR22-02 職責職前訓練對照表","FR54-01 到貨驗收紀錄表"]},
+      {source:"WI10-01",topic:"教育訓練",text:"員工訓練考核通過後，合格結果記錄於哪一張表？",options:["FR24-03 員工教育訓練記錄表","FR24-01 年度訓練計畫表","FR52-02 合格藥品供應廠商名冊","FR72-04 委外廠商符合GDP評鑑表"]}
+    ]
+  },
+  purchase:{
+    role:"採購",
+    roleSource:"WI10-01 SMF 廠商基本資料：採購須具採購業務及相關經驗，受訓範圍連結供應商評鑑、藥品進出貨管理與委外作業。",
+    commonDocs:[
+      {code:"DM10-01",name:"品質手冊",role:"共同基礎",why:"回答 GDP 應該怎麼做，是所有部門都要理解的品質系統原則。"},
+      {code:"WI10-01",name:"SMF 廠商基本資料",role:"共同基礎",why:"回答公司實際如何做 GDP，含場所、組織、職務、委外與清冊。"}
+    ],
+    roleDocs:[
+      {code:"DP52-01",name:"藥品供應商評鑑作業程序",role:"採購專業",why:"考供應商資格認可、合格名冊核准、每年評鑑與每月查違規。"},
+      {code:"DP54-01",name:"藥品進出貨管理程序書",role:"採購專業",why:"考採購單編碼、到貨溫度、點收驗收、合格與不合格處置。"},
+      {code:"DP72-01",name:"委外作業程序書",role:"採購專業",why:"考委外廠商評估、合約責任歸屬、緊急配送與年度考核獎懲。"}
+    ],
+    printItems:["DM10-01 GDP 共同基礎訓練","WI10-01 GDP 共同基礎訓練","DP52-01 藥品供應商評鑑作業程序訓練","DP54-01 藥品進出貨管理作業程序訓練","DP72-01 委外作業程序訓練"],
+    sourceBlocks:[
+      {title:"共同基礎題",body:"DM10-01 與 WI10-01 視為同一題庫群，不切成兩科；題目同時考 GDP 原則與公司實際做法。",status:"必含"},
+      {title:"採購專業題",body:"DP52-01、DP54-01、DP72-01 分別建立題庫，但測驗時合併成採購職務試卷。",status:"必含"},
+      {title:"公開缺失題",body:"年度測驗可加入 TFDA/PIC/S 公開常見缺失；需有官方來源，不得寫成本公司缺失。",status:"年度可含"},
+      {title:"題目來源",body:"題目由採購維護，作答時只顯示題目、選項、進度與測驗規則。",status:"考生可見"}
+    ],
+    blueprints:[
+      {topic:"GDP 系統原則與公司做法",source:"DM10-01 + WI10-01",type:"共同基礎",checks:["題目同時能回到 GDP 原則與公司實際做法","不得把 DM 與 SMF 切成兩張獨立試卷"]},
+      {topic:"供應商資格與評鑑",source:"DP52-01",type:"採購專業",checks:["覆蓋國內外資格證照、合格名冊核准、每年評鑑與每月查違規","答案需可回到 DP52-01 原文"]},
+      {topic:"採購與進出貨管制",source:"DP54-01",type:"採購專業",checks:["覆蓋採購單編碼、到貨溫度、點收驗收項目、合格與不合格處置","時間點與表單需與來源一致"]},
+      {topic:"委外作業管理",source:"DP72-01",type:"採購專業",checks:["覆蓋委外評估時機、合約責任歸屬、緊急配送、年度考核獎懲","不得自行補制度"]},
+      {topic:"公開查核重點",source:"TFDA/PIC/S 官方來源",type:"年度加題",checks:["只能用官方公開來源或已完成內部確認的資料","不得寫成本公司已發生缺失"]}
+    ],
+    draftQuestions:[
+      {source:"DM10-01 + WI10-01",topic:"共同基礎",text:"遇到稽查員詢問公司如何落實 GDP 時，應同時能說明哪兩個層次？",options:["GDP 原則與公司實際做法","供應商報價與利潤","個人考績與獎金","網站操作流程"]},
+      {source:"DM10-01",topic:"共同基礎",text:"公司文件層級由高到低的正確順序為何？",options:["品質手冊（DM）→程序書（DP）→作業指導書（WI）→表單（FR）","表單（FR）→程序書（DP）→品質手冊（DM）→作業指導書（WI）","作業指導書（WI）→品質手冊（DM）→表單（FR）→程序書（DP）","程序書（DP）→品質手冊（DM）→表單（FR）→作業指導書（WI）"]},
+      {source:"WI10-01",topic:"共同基礎",text:"採購向供應商取得藥品時，最基本的合法性要求是什麼？",options:["供應商須持有政府核發的合格販賣許可證且通過 GDP","只要價格最低即可","只要交期最快即可","只要對方願意供貨即可"]},
+      {source:"DP52-01",topic:"供應商評鑑",text:"新藥品供應廠商的評估與定期考核由誰提出與負責？",options:["採購","倉管","業務","管理藥師"]},
+      {source:"DP52-01",topic:"供應商評鑑",text:"與合格藥品供應廠商簽約由誰負責？",options:["GDP 權責人員","採購人員","倉管人員","業務人員"]},
+      {source:"DP52-01",topic:"供應商評鑑",text:"國內藥品供應廠商必須持有下列何種證照？",options:["衛福部核發的藥品販賣或製造之藥商許可執照","公司營利事業登記證","食品業者登錄字號","ISO 9001 證書"]},
+      {source:"DP52-01",topic:"供應商評鑑",text:"國外藥品供應廠商必須持有什麼，才可向其取得藥品？",options:["衛福部核發的 PIC/S GMP 核備函","國外公司的名片","國際快遞合約","原廠出貨單"]},
+      {source:"DP52-01",topic:"供應商評鑑",text:"經評鑑合格的供應商應登錄於哪一張名冊？",options:["FR52-02 合格藥品供應廠商名冊","FR52-03 藥品訂購缺失登錄表","FR54-01 到貨驗收紀錄表","FR72-03 合格委外作業廠商名冊"]},
+      {source:"DP52-01",topic:"供應商評鑑",text:"公司多久至食藥署網站確認藥商是否嚴重違反 GMP/GDP？",options:["每月定期確認","每年一次","每三年一次","不需確認"]},
+      {source:"DP52-01",topic:"供應商評鑑",text:"藥品供應廠商的績效評鑑頻率為何？",options:["每年定期監測及審查","每月一次","每季一次","僅簽約時評鑑一次"]},
+      {source:"DP52-01",topic:"供應商評鑑",text:"與新供應商締約前進行實質檢核時，下列何者是需特別注意的風險？",options:["供應商聲譽、是否為偽禁藥、限量藥品大量供應、價格超出範圍","供應商辦公室裝潢","業務員的學歷","供應商的成立年份"]},
+      {source:"DP52-01",topic:"供應商評鑑",text:"合格供應商名冊的核准程序為何？",options:["單位主管審核後上呈 GDP 權責主管最終核准","由採購自行核准","由倉管核准後即可","由業務核准後發行"]},
+      {source:"DP52-01",topic:"供應商評鑑",text:"供應商本年度的供應缺失應登錄於哪一張表？",options:["FR52-03 藥品訂購缺失登錄表","FR52-01 藥品供應新廠商登錄暨定期評鑑表","FR54-01 到貨驗收紀錄表","FR24-03 員工教育訓練記錄表"]},
+      {source:"DP54-01",topic:"進出貨管理",text:"藥品到貨的收貨（點收）由哪個單位負責？",options:["倉管","採購","品管","業務"]},
+      {source:"DP54-01",topic:"進出貨管理",text:"到貨的收貨驗收由哪個單位負責？",options:["品管","倉管","採購","管理藥師"]},
+      {source:"DP54-01",topic:"進出貨管理",text:"正航系統的採購單單號採幾碼編碼？",options:["11 碼（前 8 碼為年月日，後 3 碼為流水號）","8 碼","6 碼（純流水號）","10 碼（部門代號加流水號）"]},
+      {source:"DP54-01",topic:"進出貨管理",text:"採購進行採購前，必須先確認什麼？",options:["供應商已依 DP52-01 完成資格認可","倉庫是否有空位","業務是否同意","物流車是否到場"]},
+      {source:"DP54-01",topic:"進出貨管理",text:"貨品運送到下貨區時，應立即執行什麼？",options:["運輸車廂溫度測量並記錄於 FR54-01","直接搬入庫存區","開立發票","通知客戶取貨"]},
+      {source:"DP54-01",topic:"進出貨管理",text:"到貨運輸溫度不符合規定時，正確處理為何？",options:["通報相關單位處理，不得逕行後續作業","先入庫再說","自行調整溫度紀錄","退回給司機即可"]},
+      {source:"DP54-01",topic:"進出貨管理",text:"貨品在未完成驗收前，應如何處置？",options:["置於待進貨區棧板，不得入庫","直接上架","先出貨給客戶","堆放在下貨區走道"]},
+      {source:"DP54-01",topic:"進出貨管理",text:"點收作業時應核對哪些項目？",options:["品名、規格、數量、批號、有效期限","只核對數量","只核對價格","只核對供應商名稱"]},
+      {source:"DP54-01",topic:"進出貨管理",text:"驗收合格的藥品，其到貨結果記錄於哪一張表？",options:["FR54-01 到貨驗收紀錄表","FR52-02 合格藥品供應廠商名冊","FR24-02 定期訓練簽到與評估表","FR72-02 委外作業新廠商登錄暨定期廠商評鑑表"]},
+      {source:"DP54-01",topic:"進出貨管理",text:"驗收不合格的藥品應如何處理？",options:["記錄於 FR52-03 並通報採購辦理退換貨","直接報廢不留紀錄","照常入庫","由倉管自行處置"]},
+      {source:"DP54-01",topic:"進出貨管理",text:"物流運輸溫度多久抽查一次、抽查幾筆？",options:["每月抽查三筆物流車輛運輸溫度","每年抽查一筆","每日全部抽查","不需抽查"]},
+      {source:"DP72-01",topic:"委外作業",text:"新委外廠商的詢價與評估由誰負責？",options:["稽核／採購","倉管","業務","人事"]},
+      {source:"DP72-01",topic:"委外作業",text:"委外作業廠商的考核以多久為一期？",options:["一年為一期","一季為一期","一個月為一期","三年為一期"]},
+      {source:"DP72-01",topic:"委外作業",text:"委外廠商首次評估結果記錄於哪一張表（已取得 GDP 證書者可以證書取代）？",options:["FR72-04 委外廠商符合GDP評鑑表","FR52-01 藥品供應新廠商登錄暨定期評鑑表","FR54-01 到貨驗收紀錄表","FR24-01 年度訓練計畫表"]},
+      {source:"DP72-01",topic:"委外作業",text:"受託者（委外廠商）可否擅自將作業再委託給第三方？",options:["不得擅自再委託，必要時須於合約註記並重新簽約","可以自行決定","只要口頭告知即可","只要不影響交期即可"]},
+      {source:"DP72-01",topic:"委外作業",text:"屬於醫療配方用藥的產品，必須與委外物流業者簽訂什麼？",options:["緊急配送協議","保密協議","租賃合約","保險合約"]},
+      {source:"DP72-01",topic:"委外作業",text:"委外廠商定期考核 90 分以上的獎懲為何？",options:["增加交易量或縮短票期","暫停交易","減少交易量","撤銷合格登錄"]},
+      {source:"DP72-01",topic:"委外作業",text:"委外廠商定期考核 60 分以上（未達 70 分）的處置為何？",options:["暫停交易","增加交易量","維持不予獎懲","縮短票期"]},
+      {source:"DP72-01",topic:"委外作業",text:"委外作業若有缺失，應登錄於哪一張表作為評鑑與改善依據？",options:["FR72-05 委外作業缺失登錄表","FR52-03 藥品訂購缺失登錄表","FR54-01 到貨驗收紀錄表","FR22-01 組織各職稱指派名單"]},
+      {source:"TFDA/PIC/S 官方來源",topic:"年度加題",text:"年度測驗若加入公開常見缺失題，最重要的前提是什麼？",options:["來源需為官方公開資料或已完成內部確認","可自行假設公司發生缺失","題目越嚇人越好","不需要標示來源屬性"]},
+      {source:"TFDA/PIC/S 官方來源",topic:"年度加題",text:"公開常見缺失題在公司訓練中應如何呈現？",options:["作為外部查核重點學習，不寫成本公司已發生缺失","直接列為公司缺失","取代 SOP 題庫","不需與 GDP 主題連結"]}
+    ]
   }
 };
+const examDeptNames={doc:"文管",hr:"人事",purchase:"採購"};
+function deptDisplayName(key){return examDeptNames[key]||"文管";}
 function examTemplateSection(s){
   const tpl=examTemplates[s.examTemplate];
   if(!tpl) return "";
@@ -4442,7 +4565,13 @@ function examTemplateSection(s){
     <section class="exam-stage" data-exam-stage="start">
       <div class="exam-hero">
         <h4>測試專區</h4>
-        <p>請先選擇測驗別與目前可用範本。文管是第一個建置完成的範本；其他部門需依 WI10-01 與該部門 SOP 建立受測範圍後再啟用。進入考試後需完成或結束測驗才可切換其他學習區。</p>
+        <p>請先選擇受測部門與測驗別。目前已建置文管、人事、採購三個範本，受測範圍依 WI10-01 職務訓練要求與各部門 SOP 設定。進入考試後需完成或結束測驗才可切換其他學習區。</p>
+        <div class="exam-dept-hint">受測部門（可複選；兼任或代理職務請一起勾選，受測範圍取所選部門 SOP 聯集，DM10-01／WI10-01 共同基礎只計一次）</div>
+        <div class="exam-dept-list" role="group" aria-label="受測部門（可複選）">
+          <label class="exam-dept-card active" data-exam-dept-card><input type="checkbox" name="examDept" value="doc" checked><span>文管</span></label>
+          <label class="exam-dept-card" data-exam-dept-card><input type="checkbox" name="examDept" value="hr"><span>人事</span></label>
+          <label class="exam-dept-card" data-exam-dept-card><input type="checkbox" name="examDept" value="purchase"><span>採購</span></label>
+        </div>
         <div class="exam-start-card">
           <div class="exam-type-list" role="radiogroup" aria-label="測驗類型">
             <label class="exam-type-card active" data-exam-type-card>
@@ -4465,7 +4594,7 @@ function examTemplateSection(s){
           </div>
         </div>
       </div>
-      <div class="exam-source-grid">${docCards}</div>
+      <div class="exam-source-grid" data-exam-source-grid>${docCards}</div>
     </section>
     <section class="exam-stage" data-exam-stage="profile" hidden>
       <form id="examProfileForm">
@@ -4474,8 +4603,8 @@ function examTemplateSection(s){
           <div class="exam-form-grid">
             <label>姓名<input name="name" type="text" autocomplete="name" required></label>
             <label>性別<select name="sex"><option value="">未填</option><option value="男">男</option><option value="女">女</option></select></label>
-            <label>部門<input name="department" type="text" value="文管" required></label>
-            <label>職稱<input name="title" type="text" value="${esc(tpl.role)}" required></label>
+            <label>部門<input name="department" type="text" value="${esc(deptDisplayName(s.examTemplate))}" data-exam-dept-field required></label>
+            <label>職稱<input name="title" type="text" value="${esc(tpl.role)}" data-exam-title-field required></label>
             <label data-exam-date-label="onboard">報到日期<input name="onboardDate" type="text" inputmode="numeric" placeholder="114/06/04" required></label>
             <label>學歷<input name="education" type="text" placeholder="可留空"></label>
             <label>兼任/代理職務<input name="acting" type="text" placeholder="無則填無"></label>
@@ -4485,7 +4614,7 @@ function examTemplateSection(s){
           <h4>教育訓練紀錄欄位</h4>
           <div class="exam-form-grid">
             <label data-exam-date-label="training">年度教育訓練日期<input name="trainingDate" type="text" inputmode="numeric" placeholder="114/06/04" required></label>
-            <label>訓練項目<input name="trainingItem" type="text" value="文管 GDP 教育訓練" required></label>
+            <label>訓練項目<input name="trainingItem" type="text" value="${esc(deptDisplayName(s.examTemplate))} GDP 教育訓練" data-exam-trainitem-field required></label>
             <label>授課講師<input name="trainer" type="text" placeholder="請填講師姓名" required></label>
             <label>評核方式<select name="method" required><option value="線上測驗">線上測驗</option><option value="紙本測驗">紙本測驗</option><option value="口頭評核">口頭評核</option></select></label>
           </div>
@@ -4726,9 +4855,50 @@ function bindExamTemplate(){
   const nextBtn=root.querySelector('[data-exam-action="next"]');
   const prevBtn=root.querySelector('[data-exam-action="prev"]');
   const finishBtn=root.querySelector('[data-exam-action="finish"]');
-  const tpl=examTemplates.doc;
+  const deptBoxes=[...root.querySelectorAll('input[name="examDept"]')];
+  const deptCards=[...root.querySelectorAll("[data-exam-dept-card]")];
+  const sourceGrid=root.querySelector("[data-exam-source-grid]");
+  const deptField=root.querySelector("[data-exam-dept-field]");
+  const titleField=root.querySelector("[data-exam-title-field]");
+  const trainItemField=root.querySelector("[data-exam-trainitem-field]");
+  let tpl=composeTemplate(["doc"]);
   let session={questions:[],answers:[],index:0,info:null,profile:null};
   let timerId=null;
+  function composeTemplate(keys){
+    if(!keys.length) keys=["doc"];
+    const base=examTemplates[keys[0]]||examTemplates.doc;
+    const isCommon=it=>/^DM10-01|^WI10-01/.test(it);
+    const roleDocs=[];const seenDoc=new Set();
+    const roleItems=[];const seenItem=new Set();
+    const draftQuestions=[];const seenQ=new Set();
+    keys.forEach(k=>{
+      const t=examTemplates[k];if(!t) return;
+      t.roleDocs.forEach(d=>{if(!seenDoc.has(d.code)){seenDoc.add(d.code);roleDocs.push(d);}});
+      t.printItems.forEach(it=>{if(!isCommon(it)&&!seenItem.has(it)){seenItem.add(it);roleItems.push(it);}});
+      t.draftQuestions.forEach(q=>{if(!seenQ.has(q.text)){seenQ.add(q.text);draftQuestions.push(q);}});
+    });
+    const commonItems=base.printItems.filter(isCommon);
+    return {role:keys.map(deptDisplayName).join("、"),commonDocs:base.commonDocs,roleDocs,printItems:[...commonItems,...roleItems],draftQuestions};
+  }
+  function selectedDeptKeys(){
+    let keys=deptBoxes.filter(b=>b.checked).map(b=>b.value);
+    if(!keys.length){const docBox=deptBoxes.find(b=>b.value==="doc");if(docBox) docBox.checked=true;keys=["doc"];}
+    return keys;
+  }
+  function applyDept(){
+    const keys=selectedDeptKeys();
+    tpl=composeTemplate(keys);
+    deptCards.forEach(card=>card.classList.toggle("active",card.querySelector("input")?.checked));
+    if(sourceGrid){
+      const docs=[...tpl.commonDocs,...tpl.roleDocs];
+      sourceGrid.innerHTML=docs.map(d=>`<article class="exam-card"><h4>${sourceToChapter(d.code).split(" ")[0]}：${esc(d.name)}<span class="exam-badge">${esc(d.role)}</span></h4><p>${esc(d.why)}</p></article>`).join("");
+    }
+    const deptName=keys.map(deptDisplayName).join("、");
+    if(deptField) deptField.value=deptName;
+    if(titleField) titleField.value=tpl.role;
+    if(trainItemField) trainItemField.value=`${deptName} GDP 教育訓練`;
+  }
+  deptBoxes.forEach(b=>b.addEventListener("change",applyDept));
   function typeInfo(){
     const annual=typeRadios.find(r=>r.checked)?.value==="annual";
     return annual?{label:"年度教育訓練測驗",count:20,point:5,minutes:25,seconds:25*60}:{label:"新人三個月測驗",count:10,point:10,minutes:10,seconds:10*60};

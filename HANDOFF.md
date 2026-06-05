@@ -1,3 +1,42 @@
+## 2026-06-05 第七十九次：列印 FR24-03 去前綴 + 測試專區新增人事/採購題庫 ✅
+
+### A. 列印第一頁右下角去「文件編號：」前綴
+- `HTML資料庫/新勝GDP資料庫.html` 第 4952 行 `<div class="exam-doc-number">文件編號：FR24-03</div>` → `FR24-03`。共用 `examPrintDocumentHtml()`，新人/年度、列印版與 standalone 送交版一體生效。
+- commit `c7b8266`（已 push）。
+
+### B. 用文管模板建立人事、採購測驗題庫
+- 依 WI10-01 職務訓練要求逐字確認受測 SOP（不照部門名稱推測）：
+  - 人事：DM10-01+WI10-01 共同基礎 ＋ DP22-01 組織與職掌、DP24-01 員工教育訓練 → 題庫 26 題。
+  - 採購：DM10-01+WI10-01 共同基礎 ＋ DP52-01 供應商評鑑、DP54-01 進出貨管理、DP72-01 委外作業 → 題庫 34 題。
+- 題目全部回 SOP 原文（unzip docx → word/document.xml 逐段比對），AI 未自行補制度。每題 `options[0]` 為正解（撰寫慣例），`buildQuestions()` 作答時洗牌選項並重算 `correctIndex`，考生畫面與列印考卷選項位置隨機。
+- HTML 變更：
+  - 新增 `examTemplates.hr`、`examTemplates.purchase`（commonDocs/roleDocs/printItems/sourceBlocks/blueprints/draftQuestions，結構同 doc）。
+  - 起始頁新增「受測部門」選擇器（`.exam-dept-list`/`.exam-dept-card`，文管／人事／採購）。
+  - `examTemplateSection` 來源卡容器與部門/職稱/訓練項目欄加 data 屬性；新增 `deptDisplayName()`。
+  - `bindExamTemplate` 的 `const tpl` 改 `let tpl` + `applyDept()`：切換部門時更新 tpl、來源卡、表單預設與列印 `printItems`。
+  - section `exam` 的 tag/lead 由「文管範本」改為「文管／人事／採購」三部門說明。
+
+### B-2. 兼任/代理職務取 SOP 聯集（依範本第 3 條）
+- 使用者指出「採購兼人事是否出現 採購＋人事＋DM＋WI 聯集題」。範本明定兼任取聯集，原單選 radio 未達成 → 已修正。
+- 受測部門選擇器由**單選 radio 改為複選 checkbox**（`.exam-dept-hint` 說明、至少留一個的保護）。
+- 新增 `composeTemplate(keys)`：合併所選部門的 `roleDocs`、`printItems`、`draftQuestions`，DM10-01／WI10-01 共同基礎只計一次（依題目 text 去重），`role`/單位欄以「、」串接。
+- 實機驗證（人事＋採購、年度 20 題）：來源卡 7 張（無文管 DP42）；20 題＝9 純人事＋11 純採購，文管專業題 0；100 分列印包單位＝人事、採購，printItems＝DM/WI＋DP22/DP24＋DP52/54/72 共 7 列（共同基礎未重複）、FR24-03 無前綴。
+- 文件：`測試專區製作方法_文管範本.md` 新增「已建置部門」表與規則。
+
+### 驗收
+- `JS_PARSE_OK 1`、`verify_facts_ghpages.mjs` 1296/1296。
+- 三部門題庫結構驗證：文管 51／人事 26／採購 34 題，每題 4 選項且 `options[0]` 正解，0 異常。
+- 禁用字掃描 `reviewedBy|reviewDate|冷藏倉|冷鏈|文件編號：FR24-03` 命中 0。
+- **實機驗證（Launch 預覽 MCP，本機 npx serve:3333）**：
+  - 部門切換文管→人事→採購，來源卡與部門/職稱/訓練項目欄即時同步。
+  - 人事新人＝10 題 10 分鐘、來源卡 DP22-01/DP24-01（第二章）。
+  - 採購年度 20 題全部來自採購題庫，全對 100 分合格；列印包單位＝採購、5 列採購 SOP、FR24-03 無前綴、無 reviewedBy 外洩。
+
+### 下次提醒
+- 三部門題庫仍為**草稿**；正式上架前需講師逐題確認並補 `reviewedBy`、`reviewDate` 改 `active`，並設計登入/權限後的內部送交流程。
+- 其餘部門（倉管、品保、業務、管理藥師等）若要擴充，照 `測試專區製作方法_文管範本.md`，先讀 WI10-01 與該部門 SOP，題數依文件量選 10/20/25/50。
+- `.claude/launch.json`（name=gdp，npx serve HTML資料庫 -l 3333）已建立供 Launch 預覽驗收使用。
+
 ## 2026-06-04 第七十八次續：FR24-03 訓練項目 DM10-01/WI10-01 拆成兩列 ✅
 
 使用者要求 FR24-03 列印表「訓練項目」欄的「DM10-01 / WI10-01 GDP 共同基礎訓練」拆成兩格（兩列），與 DP42-01／DP42-02 一致。
