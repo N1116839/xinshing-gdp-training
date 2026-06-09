@@ -1,3 +1,32 @@
+## 2026-06-09 第九十二次：其餘6職務各補3題政府公開查核重點題＋派工線備妥（隔離worktree）✅
+
+依使用者「兩個同步進行」：軍師本機補政府公開缺失題（敏感正確性，不派雲端），同時把純前端 UX/CSS 重構切窄版任務書派給 NVIDIA 士兵在隔離 worktree 出工。
+
+### Task A（軍師本機執行，已完成並 commit `5961877`）
+- `HTML資料庫/新勝GDP資料庫.html`：doc/purchase/sales/pharmacist/warehouse/qa **各補 3 題** `topic:"年度加題"`，附加在原 2 題通用佔位題之後（HR 第八十九次已補 4 題，本輪不動）。
+- 取材：各職務對應 SOP 領域的**已驗證 `focus` 陣列缺失項**（TFDA/PIC/S 來源），轉成測驗題，非 AI 新編：
+  - 文管：SOP與現場一致性、品質紀錄保存、紀錄即時填寫（TFDA113／PIC/S PI044-1）
+  - 採購：供應商GDP符合性、採購紀錄追溯、委外書面合約（TFDA111／PI044-1）
+  - 業務：客戶認可涵蓋、客訴區分品質/運銷、運銷紀錄追溯（TFDA111／PI044-1）
+  - 管理藥師：模擬回收有效性、疑似偽禁仿冒藥來源、品質風險管理（TFDA111／PI044-1）
+  - 倉管：溫度測繪夏冬代表性、FEFO、溫度設備校正（TFDA111）
+  - 品管：CAPA根因、自我查核缺失追蹤結案、偏差提報根因（TFDA111／PI044-1）
+- 守紅線：框為「政府公開查核重點/常見缺失」，**不寫成本公司缺失**；每題 `options[0]` 為正解；逐題標 TFDA 111/113 或 PIC/S PI044-1 來源。
+- 驗收：`JS_PARSE_OK 1`；examTemplates eval 題庫 275→**293 題**，每題 4 選項（`OPTIONS_NOT_4 0`）、`GOV_BAD_PHRASE 0`；`verify_facts 1296/1296`＋合規掃描通過；Launch 預覽實機品管年度卷「第1題/20」正常渲染、零 console error。
+
+### Task B（派工，已備妥，待使用者啟動）
+- 建 git worktree `C:\Users\user\gdp-dispatch-wt`（分支 `dispatch/frontend-ux`，base=`1d12465`）。
+- **關鍵安全性質**：worktree 只 checkout tracked 檔，**第一～八章 SOP 原文資料夾是 untracked → 天然排除在 worktree 外**，士兵結構上碰不到 SOP 原文，自動滿足「SOP 不外送 NVIDIA 雲端」紅線。
+- 窄版任務書 `dispatch/task_frontend_ux.md`（在 worktree 內）：白名單＝作答頁鍵盤快捷鍵＋進度/選項 CSS＋手機 RWD；紅線＝不可碰 examTemplates題目/抽題分層 buildQuestions/KB facts/focus/列印FR24-03定位。
+- `opencode run --dangerously-skip-permissions` **被 Claude auto-mode classifier 擋**（同第八十五次已知限制），需使用者本人在終端機執行派工指令。士兵寫完 `dispatch/result_frontend_ux.md` 後，軍師讀 result＋`git diff` 驗收，安全則用 Edit 把 hunk 併回主檔（不直接 merge 漂移檔）。
+
+### 下次待辦
+1. 使用者啟動派工後，軍師驗收 `result_frontend_ux.md`＋worktree `git diff`，決定併回主檔。
+2. 官方缺失做 Firestore `gdpGovDeficiencySources`／`gdpGovDeficiencyItems`（先確認 collection 與 rules，§43 需先問使用者）。
+3. 若發現 PIC/S 明文要檢查但公司 SOP 漏列之項目，提報使用者評估是否修改 SOP。
+
+---
+
 ## 2026-06-09 第九十一次：Stage4 測驗 275 題逐題回 SOP 原文核對 ✅
 
 依使用者「開始核對」，本機解壓 30 份 SOP docx（第一～八章），把測試專區 7 職務試卷逐題答案回 SOP 原文比對（數字／頻率／表單編號／職稱／代碼）。不派 NVIDIA。
