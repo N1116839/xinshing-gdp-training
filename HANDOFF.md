@@ -1,3 +1,35 @@
+## 2026-06-09 第八十七次：OpenCode 派工授權明確化＋剩餘稽核任務書 ✅
+
+使用者明確授權 Claude / Codex 在本專案中使用 OpenCode CLI 派工。
+
+### 授權範圍
+- 可由 Claude / Codex 先撰寫 `dispatch/task_*.md` 任務書。
+- 可執行 `opencode run`，包含 `--dangerously-skip-permissions` 無頭派工。
+- 可指定 NVIDIA DeepSeek V4 Flash 等 OpenCode 已登入模型執行**非敏感任務**。
+- 士兵完成後只需寫入 `dispatch/result_*.md`。
+- Claude / Codex 只讀 result 檔與 `git diff` 進行驗收，不讀完整事件流。
+
+### 安全限制
+- 公司 SOP 原文、個資、成績、內部機密資料不得送 NVIDIA 或其他雲端免費模型。
+- 敏感任務只能由 Claude / Codex 本機處理，或改用本地模型。
+- 派工任務書只能包含必要規格，不可包含完整 SOP 原文。
+- 派工後仍由 Claude / Codex 最終審查與決定是否採用。
+
+### 本輪處理
+- 已 push 既有完成項目：
+  - `509c86d`：補四部門頁「考得到學不到」第三章 SOP 教學。
+  - `3bbb7ff`：行事曆完成狀態依民國年度隔離。
+- 新增剩餘任務書：`dispatch/task_remaining_audit_and_exam.md`。
+  - 將 Stage4 拆成 HR 補政府公開缺失題、抽題改分層、275 題逐題回 SOP 核對。
+  - 明確標示逐題回 SOP 核對不可派 NVIDIA 雲端，需本機執行。
+
+### 下次待辦
+1. 依 `dispatch/task_remaining_audit_and_exam.md` 執行 Stage4。
+2. 若只做抽題分層等非敏感程式結構，可派 OpenCode/NVIDIA。
+3. 若涉及 SOP 原文與答案核對，必須本機處理。
+
+---
+
 ## 2026-06-09 第八十六次：Stage3 年度行事曆狀態依民國年隔離 ✅
 
 接續第八十五次待辦 1。原計畫用 OpenCode/NVIDIA 派工處理 `dispatch/task_calendar_year.md`，但外部雲端模型派工被安全審查擋下（會把工作區內容交給外部模型並允許修改本機檔案）。本輪改由 Codex 本機直接完成，未把 SOP 原文或專案內容送外部模型。
