@@ -1,3 +1,35 @@
+## 2026-06-09 第八十八次：OpenCode 派工抽題分層，Codex 審查補強 ✅
+
+依使用者「執行派工」要求，先建立窄版非敏感任務書 `dispatch/task_exam_stratified_draw.md`，只允許處理測試專區抽題分層，不允許讀第一章至第八章、不允許核對 SOP 原文、不允許改題目內容。
+
+### OpenCode 派工狀態
+- `opencode --version`：1.16.2。
+- `opencode auth list`：Nvidia api 已登入。
+- smoke test 成功，證明 OpenCode/NVIDIA 無頭派工可建立 result；smoke `_暫存` 檔已由 Codex 刪除。
+- 正式抽題分層任務兩次逾時，未寫出 result；第二次逾時前有修改 HTML。
+- Codex 已停止逾時的 `opencode` 程序，未留下背景任務。
+
+### 採用內容
+- Codex 只看 `git diff` 審查，未讀 OpenCode 事件流。
+- OpenCode 修改集中於 `bindExamTemplate()` 內 `buildQuestions`，未碰題目內容、KB facts、部門頁或來源資料夾。
+- Codex 本機補強：
+  - 增加 `questionSource(q)`，避免 `q.source` 空值造成錯誤。
+  - 共同基礎題安全辨識 DM10-01 / WI10-01。
+  - 年度測驗若有政府公開缺失題且題數大於 1，保留 1 題名額。
+  - 保留 `options[0]` 為資料層正解，仍由既有洗牌邏輯產生考生選項順序。
+- 結果檔：`dispatch/result_exam_stratified_draw.md`。
+
+### 驗收
+- `JS_PARSE_OK 1` 通過。
+- `node verify_facts_ghpages.mjs`：`1296/1296` 通過，0 失敗。
+
+### 下次待辦
+1. 本機做抽題來源統計檢查（不輸出題目全文），確認各職責新人/年度抽題符合 common / roleDocs / gov 分層。
+2. Stage4 HR 補政府公開缺失題，需來源足夠；不足則列需使用者補來源。
+3. 275 題逐題答案回 SOP 核對仍不可派 NVIDIA，需本機處理。
+
+---
+
 ## 2026-06-09 第八十七次：OpenCode 派工授權明確化＋剩餘稽核任務書 ✅
 
 使用者明確授權 Claude / Codex 在本專案中使用 OpenCode CLI 派工。

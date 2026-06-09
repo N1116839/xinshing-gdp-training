@@ -5257,9 +5257,52 @@ function bindExamTemplate(){
     }
     return arr;
   }
+  function questionSource(q){return String(q?.source||q?.sourceDoc||q?.sourceTitle||"");}
+  function isCommon(q){return /(?:^|\s|\+|、)(?:DM10-01|WI10-01)(?:\s|\+|、|$)/.test(questionSource(q));}
+  function isGov(q){return /TFDA|PIC\/S|公開查核|公開缺失|官方來源|政府/.test(questionSource(q));}
   function buildQuestions(count){
-    const pool=shuffle(tpl.draftQuestions).slice(0,count);
-    return pool.map(q=>{
+    const all=tpl.draftQuestions;
+    const common=all.filter(isCommon);
+    const gov=all.filter(isGov);
+    const role=all.filter(q=>!isCommon(q)&&!isGov(q));
+    const roleByDoc={};
+    role.forEach(q=>{
+      const doc=q.source.trim();
+      if(!roleByDoc[doc]) roleByDoc[doc]=[];
+      roleByDoc[doc].push(q);
+    });
+    const selected=[];
+    const used=new Set();
+    function pick(arr){
+      const pool=arr.filter(q=>!used.has(q));
+      if(!pool.length) return null;
+      const picked=pool[Math.floor(Math.random()*pool.length)];
+      used.add(picked);
+      return picked;
+    }
+    const isAnnual=typeRadios.find(r=>r.checked)?.value==="annual";
+    const reserveGov=isAnnual&&gov.length&&count>1;
+    const targetCount=reserveGov?count-1:count;
+    const commonCount=Math.min(common.length,targetCount,Math.max(1,Math.ceil(count*0.2)));
+    for(let i=0;i<commonCount;i++){const q=pick(common);if(q) selected.push(q);}
+    const docKeys=Object.keys(roleByDoc);
+    const shuffledDocs=shuffle(docKeys);
+    let roleTaken=0;
+    for(const doc of shuffledDocs){
+      if(selected.length>=targetCount) break;
+      const q=pick(roleByDoc[doc]);
+      if(q){selected.push(q);roleTaken++;}
+    }
+    if(reserveGov){
+      const g=pick(gov);
+      if(g&&selected.length<count) selected.push(g);
+    }
+    const extras=shuffle(all.filter(q=>!used.has(q)));
+    while(selected.length<count&&extras.length){
+      const q=extras.shift();
+      if(!used.has(q)){used.add(q);selected.push(q);}
+    }
+    return selected.map(q=>{
       const options=shuffle(q.options.map((text,i)=>({text,correct:i===0})));
       return {...q,options,correctIndex:options.findIndex(o=>o.correct)};
     });
