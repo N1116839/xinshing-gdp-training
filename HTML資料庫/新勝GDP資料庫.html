@@ -1491,50 +1491,64 @@ const calendarStatusStore = {
   sectionId:"collection-calendar",
   cache:null,
   _unsub:null,
-  key(itemId){ return `gdp-calendar-status-${itemId}`; },
-  fallbackKey(index){ return `gdp-calendar-status-${index}`; },
-  docId(itemId){ return itemId; },
-  async load(){
-    if(this.cache) return this.cache;
-    this.cache = new Map();
-    if(!qaStore.db) return this.cache;
+  currentYear(){ return new Date().getFullYear()-1911; },
+  selectedYear(){ return Number(document.getElementById("calYearSelect")?.value)||this.currentYear(); },
+  key(itemId,year=this.selectedYear()){ return `gdp-calendar-status-${year}-${itemId}`; },
+  fallbackKey(index,year=this.selectedYear()){ return `gdp-calendar-status-${year}-${index}`; },
+  legacyKey(itemId){ return `gdp-calendar-status-${itemId}`; },
+  legacyFallbackKey(index){ return `gdp-calendar-status-${index}`; },
+  docId(itemId,year=this.selectedYear()){ return `${year}__${itemId}`; },
+  async load(year=this.selectedYear()){
+    if(!this.cache) this.cache = new Map();
+    if(this.cache.has(year)) return this.cache.get(year);
+    const yearCache = new Map();
+    this.cache.set(year,yearCache);
+    if(!qaStore.db) return yearCache;
     try{
       const {collection,getDocs} = qaStore.firebase;
       const snap = await getDocs(collection(qaStore.db,"gdpTrainingCalendarStatus",this.sectionId,"items"));
       snap.docs.forEach(d=>{
         const data=d.data();
-        if(data.status==="done"||data.status==="pending") this.cache.set(d.id,data.status);
+        if((data.status==="done"||data.status==="pending") && d.id.startsWith(`${year}__`)){
+          yearCache.set(d.id,data.status);
+        }
       });
     }catch(e){ console.warn("行事曆狀態讀取失敗，使用本機狀態",e); }
-    return this.cache;
+    return yearCache;
   },
-  async get(index,itemId){
-    const local=localStorage.getItem(this.key(itemId))||localStorage.getItem(this.fallbackKey(index))||"pending";
+  async get(index,itemId,year=this.selectedYear()){
+    const legacy=year===this.currentYear()
+      ? localStorage.getItem(this.legacyKey(itemId))||localStorage.getItem(this.legacyFallbackKey(index))
+      : null;
+    const local=localStorage.getItem(this.key(itemId,year))||localStorage.getItem(this.fallbackKey(index,year))||legacy||"pending";
     if(!qaStore.db) return local;
-    const remote = (await this.load()).get(this.docId(itemId));
+    const remote = (await this.load(year)).get(this.docId(itemId,year));
     if(remote==="done"||remote==="pending"){
-      localStorage.setItem(this.key(itemId),remote);
+      localStorage.setItem(this.key(itemId,year),remote);
       return remote;
     }
     return local;
   },
-  async set(index,itemId,status){
-    localStorage.setItem(this.key(itemId),status);
-    localStorage.setItem(this.fallbackKey(index),status);
-    if(this.cache) this.cache.set(this.docId(itemId),status);
+  async set(index,itemId,status,year=this.selectedYear()){
+    localStorage.setItem(this.key(itemId,year),status);
+    localStorage.setItem(this.fallbackKey(index,year),status);
+    if(!this.cache) this.cache = new Map();
+    if(!this.cache.has(year)) this.cache.set(year,new Map());
+    this.cache.get(year).set(this.docId(itemId,year),status);
     if(!qaStore.db) return;
     try{
       const {doc,setDoc,serverTimestamp} = qaStore.firebase;
-      await setDoc(doc(qaStore.db,"gdpTrainingCalendarStatus",this.sectionId,"items",this.docId(itemId)),{
+      await setDoc(doc(qaStore.db,"gdpTrainingCalendarStatus",this.sectionId,"items",this.docId(itemId,year)),{
         sectionId:this.sectionId,
-        itemId:this.docId(itemId),
+        itemId,
+        statusYear:Number(year),
         itemIndex:Number(index),
         status,
         updatedAt:serverTimestamp()
       },{merge:true});
     }catch(e){ console.warn("行事曆狀態同步失敗，已保留本機狀態",e); }
   },
-  subscribe(onChange){
+  subscribe(onChange,year=this.selectedYear()){
     if(this._unsub){ this._unsub(); this._unsub=null; }
     if(!qaStore.db) return;
     try{
@@ -1545,10 +1559,14 @@ const calendarStatusStore = {
           snap.docChanges().forEach(ch=>{
             if(ch.type==="added"||ch.type==="modified"){
               const d=ch.doc.data();
-              if(d.status==="done"||d.status==="pending"){
-                if(this.cache) this.cache.set(d.itemId,d.status);
-                localStorage.setItem(this.key(d.itemId),d.status);
-                onChange(d.itemId,d.status);
+              const itemId=d.itemId||ch.doc.id.replace(/^\d+__/,"");
+              const docYear=Number(d.statusYear)||Number((ch.doc.id.match(/^(\d+)__/)||[])[1]);
+              if((d.status==="done"||d.status==="pending") && docYear===Number(year)){
+                if(!this.cache) this.cache = new Map();
+                if(!this.cache.has(year)) this.cache.set(year,new Map());
+                this.cache.get(year).set(this.docId(itemId,year),d.status);
+                localStorage.setItem(this.key(itemId,year),d.status);
+                onChange(itemId,d.status);
               }
             }
           });
@@ -4164,6 +4182,8 @@ function respMatrix(s){
 function collectionCalendarSection(s){
   if(!s.collectionCalendar) return "";
   const items=s.collectionCalendar;
+  const rocYear=calendarStatusStore.currentYear();
+  const yearOptions=[rocYear,rocYear-1,rocYear-2].map(y=>`<option value="${y}">民國 ${y} 年</option>`).join("");
   const freqOrder=["發生時啟動","每日","每月","每兩個月","每季","每半年","每年","每三年"];
   const depts=["GDP 權責人","管理藥師","品保","倉管","採購","業務","文管","人事"];
   const byFreq={};
@@ -4177,6 +4197,10 @@ function collectionCalendarSection(s){
       <button type="button" class="dept-filter-btn active" data-dept="">全部部門</button>
       ${depts.map(d=>`<button type="button" class="dept-filter-btn" data-dept="${esc(d)}">${esc(d)}</button>`).join("")}
     </div>
+  </div>`;
+  const yearFilter=`<div class="dept-filter-wrap" style="align-items:center">
+    <label class="dept-filter-lbl" for="calYearSelect">年度</label>
+    <select id="calYearSelect" class="dept-filter-btn" style="min-width:132px">${yearOptions}</select>
   </div>`;
   const list=items.map((x,i)=>{
     const itemId=stableCalendarItemId(x,i);
@@ -4208,7 +4232,7 @@ function collectionCalendarSection(s){
     kpiHtml+
     `<div class="equip-menu">
       <div class="equip-menu-list" id="calMenuList">${menu}</div>
-      <div id="calItemList">${deptFilter}<div class="equip-item-list">${list}</div></div>
+      <div id="calItemList">${yearFilter}${deptFilter}<div class="equip-item-list">${list}</div></div>
     </div>`,
     "wide");
 }
@@ -5669,23 +5693,47 @@ function initSwipePanels(){
   });
 }
 function bindCalendarFilters(){
-  document.querySelectorAll("[data-calendar-status]").forEach(group=>{
+  const yearSelect=document.getElementById("calYearSelect");
+  const statusGroups=[...document.querySelectorAll("[data-calendar-status]")];
+  function selectedYear(){
+    return Number(yearSelect?.value)||calendarStatusStore.currentYear();
+  }
+  function applyStatus(group,status){
+    group.querySelectorAll("button").forEach(btn=>btn.classList.toggle("active",btn.dataset.status===status));
+  }
+  function loadStatusesForYear(year=selectedYear()){
+    calendarStatusStore.load(year).then(()=>{
+      statusGroups.forEach(group=>{
+        const index=group.dataset.calendarStatus;
+        const itemId=group.dataset.calendarStatusId;
+        const saved=localStorage.getItem(calendarStatusStore.key(itemId,year))||localStorage.getItem(calendarStatusStore.fallbackKey(index,year))||"pending";
+        applyStatus(group,saved);
+        calendarStatusStore.get(index,itemId,year).then(status=>applyStatus(group,status));
+      });
+    });
+    calendarStatusStore.subscribe((itemId,status)=>{
+      const group=statusGroups.find(g=>g.dataset.calendarStatusId===itemId);
+      if(group) applyStatus(group,status);
+    },year);
+  }
+  statusGroups.forEach(group=>{
     const index=group.dataset.calendarStatus;
     const itemId=group.dataset.calendarStatusId;
-    const saved=localStorage.getItem(calendarStatusStore.key(itemId))||localStorage.getItem(calendarStatusStore.fallbackKey(index))||"pending";
+    const saved=localStorage.getItem(calendarStatusStore.key(itemId,selectedYear()))||localStorage.getItem(calendarStatusStore.fallbackKey(index,selectedYear()))||"pending";
     const buttons=[...group.querySelectorAll("button")];
-    calendarStatusStore.get(index,itemId).then(status=>{
-      buttons.forEach(btn=>btn.classList.toggle("active",btn.dataset.status===status));
-    });
+    calendarStatusStore.get(index,itemId,selectedYear()).then(status=>applyStatus(group,status));
     buttons.forEach(btn=>{
       btn.classList.toggle("active",btn.dataset.status===saved);
       btn.addEventListener("click",async()=>{
-        await calendarStatusStore.set(index,itemId,btn.dataset.status);
-        analyticsStore.log("calendar_status",{sectionId:"collection-calendar",targetId:itemId,targetLabel:group.dataset.calendarLabel||"",status:btn.dataset.status});
+        const year=selectedYear();
+        await calendarStatusStore.set(index,itemId,btn.dataset.status,year);
+        analyticsStore.log("calendar_status",{sectionId:"collection-calendar",targetId:itemId,targetLabel:group.dataset.calendarLabel||"",status:btn.dataset.status,statusYear:year});
         buttons.forEach(x=>x.classList.toggle("active",x===btn));
       });
     });
   });
+  yearSelect?.addEventListener("change",()=>loadStatusesForYear(selectedYear()));
+  loadStatusesForYear(selectedYear());
   const menuBtns=[...document.querySelectorAll("[data-cal-freq]")];
   const calItems=[...document.querySelectorAll("[data-cal-item]")];
   const deptBtns=[...document.querySelectorAll("#calDeptBtns [data-dept]")];
