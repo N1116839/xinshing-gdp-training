@@ -1,3 +1,37 @@
+## 2026-06-09 第八十九次：HR 補政府公開缺失題＋官方來源實檔下載 ✅
+
+依使用者要求，針對 Stage4「HR 補政府公開缺失題，需來源足夠」上網查找台灣食藥署與 PIC/S 官方 GDP 資料，並依全域命名規範下載保存。
+
+### 官方來源下載
+- 新增 `官方常見缺失來源/TFDA/`
+  - `codex_113年度GDP申請資料準備與常見缺失.pdf`
+  - `codex_111年度GDP實地查核流程與常見缺失.pdf`
+  - `codex_111年度GDP書面審查流程與常見缺失.pdf`
+- 新增 `官方常見缺失來源/PICS/`
+  - `codex_PI044-1_GDP_Aide_Memoire.pdf`
+  - `codex_PS-INF-22-2017_GDP_QA.pdf`
+- 已更新 `官方常見缺失來源/README.md`，列出本機檔名、官方 URL、用途與題庫使用限制。
+
+### HR 題庫補強
+- `HTML資料庫/新勝GDP資料庫.html`
+  - `examTemplates.hr.draftQuestions` 補 4 題 `topic:"年度加題"`。
+  - 來源為 TFDA 111/113 年 GDP 常見缺失與 PIC/S PI044-1。
+  - 題目呈現為「政府公開查核重點」，不寫成本公司缺失。
+  - HR 題庫統計：30 題；年度加題 4 題；來源字串含 TFDA/PIC/S，可被年度測驗政府題保留邏輯辨識。
+
+### 驗收
+- `JS_PARSE_OK 1` 通過。
+- `node verify_facts_ghpages.mjs`：`1296/1296` 通過，0 失敗。
+- 下載檔案均以 `codex_` 前綴命名。
+- 未刪除、移動、改名、覆蓋第一章至第八章或任何未命名使用者資料。
+
+### 下次待辦
+1. 其餘職責若要補政府公開缺失題，可沿用本輪已下載官方來源，但仍需逐題標示 TFDA/PIC/S 來源，不得寫成本公司缺失。
+2. Stage4：275 題逐題答案回 SOP 核對仍需本機處理，不可派 NVIDIA。
+3. 若要把官方缺失做成 Firestore `gdpGovDeficiencySources` / `gdpGovDeficiencyItems`，需先確認 collection 與 rules。
+
+---
+
 ## 2026-06-09 第八十八次：OpenCode 派工抽題分層，Codex 審查補強 ✅
 
 依使用者「執行派工」要求，先建立窄版非敏感任務書 `dispatch/task_exam_stratified_draw.md`，只允許處理測試專區抽題分層，不允許讀第一章至第八章、不允許核對 SOP 原文、不允許改題目內容。

@@ -70,12 +70,28 @@
 
 ## 目前已知官方來源線索
 
-正式建立逐筆資料前，需再次開啟官方頁確認連結與檔案仍可用。
+正式建立逐筆資料前，需再次開啟官方頁確認連結與檔案仍可用。2026-06-09 已補下載下列官方 PDF，檔名依全域規則加 `codex_` 前綴。
 
 - 食藥署藥品 GDP 專區：藥品 GDP 相關活動/訓練講義。
 - 食藥署藥品 GDP 專區：申請 GDP 檢查。
 - 食藥署最新消息/活動：GDP 業者說明會。
 - PIC/S：`PI 044-1 Aide-Memoire - Inspection of Good Distribution Practice (GDP)`.
+
+### 已下載官方來源（2026-06-09）
+
+| 類型 | 本機檔案 | 官方 URL | 可用於 |
+|------|----------|----------|--------|
+| TFDA | `TFDA/codex_113年度GDP申請資料準備與常見缺失.pdf` | `https://www.fda.gov.tw/tc/includes/GetFile.ashx?id=f638768789562401428&type=1` | GDP 申請資料、檢查重點、常見缺失態樣；含人員定期教育訓練、紀錄保存、SOP 與實際作業一致性等題材。 |
+| TFDA | `TFDA/codex_111年度GDP實地查核流程與常見缺失.pdf` | `https://www.fda.gov.tw/tc/includes/GetFile.ashx?id=f637913384797731043&type=1` | 實地查核流程、常見缺失、落實 GDP 各章節重點；含職務說明、職務指派、教育訓練紀錄、持續教育訓練。 |
+| TFDA | `TFDA/codex_111年度GDP書面審查流程與常見缺失.pdf` | `https://www.fda.gov.tw/tc/includes/GetFile.ashx?id=f637913384797371040&type=1` | 書面審查常見缺失與申請資料準備；供補強查核準備題與文件完整性題。 |
+| PIC/S | `PICS/codex_PI044-1_GDP_Aide_Memoire.pdf` | `https://picscheme.org/docview/6234` | 國際 GDP 查核備忘錄；含 personnel、training、records、assessment 等查核問題。 |
+| PIC/S | `PICS/codex_PS-INF-22-2017_GDP_QA.pdf` | `https://picscheme.org/docview/6235` | PIC/S GDP Guide Q&A；供年度測驗補國際規範解釋題。 |
+
+### 2026-06-09 題庫使用紀錄
+
+- `HTML資料庫/新勝GDP資料庫.html` 的 `examTemplates.hr.draftQuestions` 已補 4 題年度加題。
+- 題目來源限於 TFDA/PIC/S 官方資料，呈現為「政府公開查核重點」或「年度加題」。
+- 題目不得寫成「本公司常見缺失」；也不得把 TFDA 範例中的冷藏相關文字套用為新勝做法。
 
 ---
 
