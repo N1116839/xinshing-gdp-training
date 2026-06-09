@@ -5268,7 +5268,9 @@ function bindExamTemplate(){
     const all=tpl.draftQuestions;
     const common=all.filter(isCommon);
     const gov=all.filter(isGov);
-    const role=all.filter(q=>!isCommon(q)&&!isGov(q));
+    const roleDocCodes=new Set((tpl.roleDocs||[]).map(d=>d.code));
+    const matchesRoleDoc=q=>[...roleDocCodes].some(code=>questionSource(q).includes(code));
+    const role=all.filter(q=>!isCommon(q)&&!isGov(q)&&matchesRoleDoc(q));
     const roleByDoc={};
     role.forEach(q=>{
       const doc=q.source.trim();
@@ -5301,7 +5303,12 @@ function bindExamTemplate(){
       const g=pick(gov);
       if(g&&selected.length<count) selected.push(g);
     }
-    const extras=shuffle(all.filter(q=>!used.has(q)));
+    const extraPool=all.filter(q=>{
+      if(used.has(q)) return false;
+      if(isGov(q)) return false;
+      return isCommon(q)||matchesRoleDoc(q);
+    });
+    const extras=shuffle(extraPool);
     while(selected.length<count&&extras.length){
       const q=extras.shift();
       if(!used.has(q)){used.add(q);selected.push(q);}
