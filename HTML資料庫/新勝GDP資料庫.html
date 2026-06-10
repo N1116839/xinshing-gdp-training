@@ -6258,9 +6258,11 @@ function bindFocusInteractives(){
       });
     });
     update();
-    panel.querySelector(".focus-header")?.addEventListener("click",function(){
-      const body=this.parentElement.querySelector(".focus-body");
-      if(body) body.classList.toggle("show");
+    panel.querySelectorAll(".focus-header").forEach(function(hdr){
+      hdr.addEventListener("click",function(){
+        const body=this.parentElement.querySelector(".focus-body");
+        if(body) body.classList.toggle("show");
+      });
     });
     panel.querySelector(".focus-reset")?.addEventListener("click",function(){
       const puid=this.dataset.fuid;
