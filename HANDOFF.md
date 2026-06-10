@@ -1,3 +1,40 @@
+## 2026-06-10 第九十七次：GitHub Pages 線上驗收＋查出行事曆多人不同步根因（rules 與程式不同步）＋寫入歸屬設計 ⚠️待部署
+
+使用者開工選「GitHub Pages 實測」，過程中追問「多人共用時，031 把 1 月標完成要看得出是誰做的」，並回報「看不到另一個使用者的勾選」。
+
+### 1. 線上驗收（第九十六次成果，已上線）✅
+- 永久網址 HTTP 200、642KB；第九十六次九個新功能標記全數命中（renderSharedExamPacket/examPacketCss/buildExamShareUrl/exampkt=/calStatusMonths/cal-month-btn/data-status-mode/sharedExamPrintDoc/bindCalendarStatusGroups）。線上＝本機。
+- 用 Launch 預覽實機驗：
+  - 分享網址 → 渲染人事列印頁（FR24-03＋答題紀錄＋工具列），主導覽/Firebase 沒載入（navStillThere:false）；中文編解碼來回無損、URL 1385 bytes。
+  - 月份按鈕 144 顆/16 月份群組/44 二元群組；每月1-12、每季1/4/7/10、每半年6/12、每兩個月2/4/6/8/10/12 全正確；單擊正確 toggle、雙鍵同步、年度隔離（115↔116）正確。
+  - 已產生一個指向線上永久網址的範例分享連結交使用者手機實測（手機實體分享/列印對話框只能本人測）。
+
+### 2. 🔴 行事曆多人不同步根因（已查明＋REST 鐵證；缺的是「部署」不是「改檔」）
+- 症狀：A 使用者勾選，B 使用者看不到。
+- 根因：第八十六次（2026-06-09）加「年度隔離」時，`calendarStatusStore.set()` 改寫入 `statusYear`、docId 改為 `${年度}__${itemId}`，但**線上部署的** `gdpTrainingCalendarStatus` rules 仍是舊版（5 欄、不含 statusYear，且 `data.itemId==路徑itemId` 因 docId 加年度前綴而永不相等）→ 新格式寫入被 deny。
+- 程式 `set()` 內 try/catch 把 permission-denied 吃掉、fallback localStorage（每台瀏覽器各存各的）→ 多人完全不同步。
+- **REST 實測鐵證**（讀 `allow read:if true`）：線上 `gdpTrainingCalendarStatus/collection-calendar/items` 只有 5 筆舊格式 doc（全 `statusYear:undefined`、docId 無年度前綴、最新停在 **2026-06-08**）；`equipment-calendar` **0 筆**。6/9 起新格式一筆都沒進雲端。
+- ⚠️ **重要釐清**：`firestore.rules` **檔案在 git 裡其實早已是正確版**（commit `6cffb78` SessionEnd auto-save 就含 statusYear＋docId 綁定）。問題是**那份正確 rules 從沒被「部署」到 Firebase**（auto-save 只進 git，不 deploy；上一次真正 deploy 是 `1314b6b`，舊版）。本機 Read 到舊版是 Google Drive 過期快取，已查證 HEAD blob == disk blob。
+- **所以這不是「要改檔」，是「要部署」。** 本機無 firebase CLI、此版 Cowork 不載 firebase MCP，無法從這裡 deploy → 需使用者部署。
+
+### 3. 寫入歸屬設計已寫入規範（使用者要求「先寫進去」）
+- `GDP_智慧查詢規範.md` 升 v3.0，新增 §47：
+  - §47.1 目前行事曆只記「做了沒」不記「誰做的」（狀態本體無人欄；事件流 visitorId 是匿名每台瀏覽器 id，非工號）。
+  - §47.2 登入/權限開工時必做：加 `markedBy`(工號)/`markedByName`/`markedAt`＋稽核軌跡 append log＋rules 強制 `markedBy==auth.uid` 防冒名（屬 §43 需先確認 collection/rules，不可自行實作）。
+  - §47.3 硬性規則：改 store 寫入欄位/docId 必須同步改 rules 並重新部署；同步功能須正式網域雙裝置實測，正式網域 permission-denied 是 bug 不是 fallback。
+
+### 下次必做（優先）
+1. **部署 firestore.rules**（檔案已是正確版，只缺部署；不部署行事曆多人同步永遠壞）。方式擇一：
+   - Firebase Console → xinshing-gdp-training-20260525 → Firestore Database → 規則 → 貼上 `Firebase設定/firestore.rules` 全文 → 發布；或
+   - 裝 `npm i -g firebase-tools` → 在 `Firebase設定/` 下 `firebase deploy --only firestore:rules`（project xinshing-gdp-training-20260525）。
+2. 部署後**正式網域用兩台瀏覽器/裝置實測**：A 勾選 1 月 → B 重整看得到；或用 REST 再讀 `gdpTrainingCalendarStatus/collection-calendar/items` 確認出現含 `statusYear`、docId 為 `年度__itemId` 的新 doc。
+3. 注意：6/9 起既有勾選只在各自 localStorage、未進 Firestore；部署後是「之後的勾選才開始同步」，舊的不會自動補上雲端。
+4. 收工建議在收工流程加一條：**改 store 寫入欄位/docId 後，rules 不能只 commit，必須實際 deploy 並 REST 驗證寫入**（本案 auto-save 進 git 卻沒 deploy，潛伏兩天才被使用者發現）。
+4. 登入系統開工時依 §47.2 做「誰做的」歸屬＋稽核軌跡。
+5. 既有待辦續：官方缺失 Firestore（§43）、前端 UX/CSS 派工驗收、PIC/S 明文但 SOP 漏列盤點。
+
+---
+
 ## 2026-06-10 第九十六次：手機分享改產出列印網址＋行事曆依時程做月份按鈕（FR10-01 對照） ✅
 
 依使用者指示三件事，push 前一次做完。

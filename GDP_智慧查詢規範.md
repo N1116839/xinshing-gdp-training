@@ -1,6 +1,6 @@
 # 新勝醫藥 GDP 智慧查詢 — 正式專案規範文件
 
-> 版本：2.9　　建立：2026-05-28　　依據：15 次開工踩坑點整合＋部門頁精準性＋三階段藍圖＋帳號審核＋知識安全邊界＋資料庫維護機制＋常見缺失來源規則＋開工自動檢查規則＋部門權限邊界＋互動視覺化規則＋角色拒答規則＋互動等級驗收＋快速查詢全量違規掃描＋交接狀態判讀優先序
+> 版本：3.0　　建立：2026-05-28　　依據：15 次開工踩坑點整合＋部門頁精準性＋三階段藍圖＋帳號審核＋知識安全邊界＋資料庫維護機制＋常見缺失來源規則＋開工自動檢查規則＋部門權限邊界＋互動視覺化規則＋角色拒答規則＋互動等級驗收＋快速查詢全量違規掃描＋交接狀態判讀優先序
 > 適用範圍：`HTML資料庫/新勝GDP資料庫.html` **全頁面**（智慧查詢、年度行事曆、各部門頁、互動元件、Firebase 功能）
 > **本文件為規範，不修改任何 HTML / Firebase / 程式碼**
 
@@ -2630,6 +2630,41 @@ docs.push({
 
 ---
 
+## 四十七、行事曆勾選的多人同步與「誰做的」歸屬（登入系統開工時必做）
+
+> 背景：年度資料收件行事曆與關鍵設備行事曆為**全公司共用的一份核對表**（單一 Firestore 文件 + `merge:true`，多人寫同一份）。使用者要求：之後做權限時，「假設 031 把 1 月份資料標完成，要看得出這個月是誰做的」。
+
+### 47.1 目前資料模型只記「做了沒」，不記「誰做的」
+
+| 寫入位置 | 記錄內容 | 有沒有「誰」 |
+|---------|---------|-----------|
+| `gdpTrainingCalendarStatus/{sectionId}/items/{年度__itemId}` | `sectionId, itemId, statusYear, itemIndex, status, updatedAt` | ❌ 無人欄；多人共用同一份、`merge:true`，只留最後一次 `updatedAt` |
+| `gdpUsageEvents`（analyticsStore 事件流） | `eventType, visitorId, displayName, targetLabel, status, createdAt` | △ 有 `visitorId`/`displayName`，但 `visitorId` 是**每台瀏覽器隨機 id**（localStorage `gdp-visitor-id`），`displayName` 預設「匿名使用者」，**無法對應真實員工工號 031** |
+
+**結論：登入系統做起來之前，無法可靠查出「1 月是誰標的」。** 這是預期內，因為登入/權限為暫停項。
+
+### 47.2 登入/權限開工時必做（先決策，不可 AI 自行實作）
+
+1. **先拍板語意**：行事曆是「全公司共用一份核對表 + 標記誰做的」（依使用者意圖），不是每人各自一份。
+2. **狀態本體加人欄**：`markedBy`（工號，如 031）、`markedByName`、`markedAt`，可查「目前這個狀態是誰設的」（只留最後一人）。
+3. **加稽核軌跡（GDP 紀錄可追溯，更該有）**：每次點擊 append 一筆 `{工號, 姓名, sectionId, itemId, 月份, 狀態, 時間}`，保留**完整「誰在何時把哪個月標完成/取消」歷史**，不被覆蓋。現有 `gdpUsageEvents` 已 90% 是此形狀，登入後把匿名 `visitorId` 換成已驗證工號即可。
+4. **Firestore rules 防冒名**：強制 `markedBy == request.auth.uid`，否則 047 可寫假裝是 031 的紀錄。
+5. 上述屬 §43「帳號/權限設計需先與使用者確認 collection 與 rules」，與官方缺失 collection 同一類，不得在權限表（部門 × 角色 × 可見資料）確認前自行實作。
+
+### 47.3 硬性規則：行事曆 set() 欄位異動必須同步改 Firestore rules（本案踩坑）
+
+**根因案例（2026-06-09 加年度隔離時引入、2026-06-10 才發現）**：`calendarStatusStore.set()` 改寫入 `statusYear`、docId 改為 `${年度}__${itemId}` 後，**線上部署的** `gdpTrainingCalendarStatus` rules 仍是舊版（`hasOnly` 不含 `statusYear`、且 `data.itemId == 路徑itemId` 因 docId 加年度前綴而永遠不等），導致**所有行事曆勾選 Firestore 寫入 permission-denied**，程式 fallback 到 localStorage（只存自己這台瀏覽器）→ **多人之間完全不同步，各看各的勾選**。REST 實測：線上只有 5 筆舊格式 doc、最新停在 6/8、equipment-calendar 0 筆，6/9 起新格式一筆沒進雲端。
+
+**更深一層**：`firestore.rules` **檔案其實早已改對**（auto-save 進 git），但**從沒被 deploy 到 Firebase**。「git 裡 rules 正確」≠「線上 rules 正確」。auto-save 只進版本控制，不部署。
+
+**規則：**
+- 任何改 `calendarStatusStore`（或其他 store）的**寫入欄位集合或 docId 命名**時，**必須同時更新 `firestore.rules` 的 `hasOnly`/`hasAll`/docId 綁定，並實際 `deploy`（不是只 commit），再用 REST 讀回確認新格式 doc 寫得進去**。否則寫入被靜默 catch、退回 localStorage，症狀是「線上看起來能勾、但別人看不到、重整後可能消失」，且可潛伏多日。
+- 驗收同步功能不可只靠單機 localStorage：須在**正式網域**用兩個瀏覽器/裝置實測 A 勾選 B 看得到；或用 REST 讀 `gdpTrainingCalendarStatus/<section>/items` 確認出現含 `statusYear`、docId 為 `年度__itemId` 的新 doc。
+- 本機 localhost 出現 permission-denied 屬非授權網域正常 fallback；但**正式 GH Pages 網域若也 permission-denied，就是 rules 與程式（或部署）不同步的 bug，不是「設計上的 fallback」**，不可當正常。
+- 此 Google Drive 工作區連 Read 檔案內容都可能是漂移舊版；重大判斷（尤其 rules/部署）要用 `git show HEAD:<檔>`、`git hash-object` 對齊，不可只信單次 Read。
+
+---
+
 ## 附錄 C：文件結構說明
 
 | 路徑 | 用途 |
@@ -2644,6 +2679,6 @@ docs.push({
 
 ---
 
-*本文件 v2.9 補強 §43.1.1 交接狀態判讀優先序，明定開工時必須依最新 HANDOFF、最新報告、規範、第二大腦、AGENTS 的權威順序淘汰舊待辦，並將 2026-06-03「混用舊待辦導致誤列未完成」案例納入正式規範。v2.8 曾補強 §26 快速查詢全量驗收規則、§27 冷藏/冷鏈相關字樣硬性掃描、§43 自動修正固定清單。後續如有新踩坑點，應同步更新此規範，並更新版本號。*
+*本文件 v3.0 新增 §47 行事曆勾選的多人同步與「誰做的」歸屬設計，並明定「改 store 寫入欄位/docId 必須同步改 Firestore rules 並重新部署」硬性規則（2026-06-10 發現行事曆 statusYear/docId 改版後 rules 未同步、寫入全 permission-denied、多人各看各的 localStorage 之踩坑）。v2.9 補強 §43.1.1 交接狀態判讀優先序。v2.8 曾補強 §26 快速查詢全量驗收規則、§27 冷藏/冷鏈相關字樣硬性掃描、§43 自動修正固定清單。後續如有新踩坑點，應同步更新此規範，並更新版本號。*
 
 *規範更新責任：每次收工若發現新踩坑，先寫入踩坑紀錄.md，再決定是否需補入本規範；若屬新規則（非已有章節覆蓋）則必須補入。*
