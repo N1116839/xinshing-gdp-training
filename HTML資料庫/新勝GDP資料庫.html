@@ -728,7 +728,6 @@
       <div class="status"><span id="dbDot" class="dot"></span><span id="dbStatus">Q&A 連線中</span></div>
     </div>
     <section class="hero">
-      <p class="eyebrow" id="pageTag2"></p>
       <p class="lead" id="pageLead"></p>
       <div class="pill-row" id="pagePills"></div>
     </section>
@@ -4302,7 +4301,6 @@ function equipmentOnlySection(s){
   }).join("");
   return panel("關鍵設備時間核對台",`<p class="lead" style="font-size:15px">這一頁跟年度資料收件行事曆一樣，先依時間點篩選，再看該找誰、要確認哪些設備保養/校驗/確效證據。完整作業依據請依文管程序調閱核准文件。</p><div class="equip-menu"><div class="equip-menu-list">${menu}</div><div>${yearFilter}<div class="equip-item-list">${list}</div></div></div>`,"wide");
 }
-function docButtons(s){ return ""; }
 function evidenceMap(s){
   const uid=`em-${s.id}`;
   const focusItems=(s.focus||[]).slice(0,4);
@@ -6346,7 +6344,6 @@ async function showSection(id){
   const s=sections.find(x=>x.id===id)||sections[0];
   document.getElementById("pageTitle").textContent=s.title;
   document.getElementById("pageTag").textContent=s.tag;
-  document.getElementById("pageTag2").textContent=s.tag;
   document.getElementById("pageLead").textContent=s.lead;
   const pillEl=document.getElementById("pagePills");
   const hidePills=departmentDocumentMaps[s.id]||["collection-calendar","equipment-calendar"].includes(s.id)||!s.focus?.length;
