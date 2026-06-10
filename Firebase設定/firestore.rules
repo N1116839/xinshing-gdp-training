@@ -60,5 +60,27 @@ service cloud.firestore {
         && request.resource.data.title is string
         && request.resource.data.title.size() <= 100;
     }
+    match /gdpGovDeficiencySources/{docId} {
+      allow read: if true;
+      allow create, update: if request.resource.data.keys().hasOnly(['sourceId','title','type','year','url','localFile','description','createdAt'])
+        && request.resource.data.keys().hasAll(['sourceId','title','type','year','url'])
+        && request.resource.data.sourceId == docId
+        && request.resource.data.title is string
+        && request.resource.data.title.size() <= 200
+        && request.resource.data.type in ['TFDA','PICS']
+        && request.resource.data.year is int;
+    }
+    match /gdpGovDeficiencyItems/{docId} {
+      allow read: if true;
+      allow create, update: if request.resource.data.keys().hasOnly(['itemId','text','source','year','type','sectionId','sectionTitle','sourceId','evidenceToPrepare','auditQuestion','answerDirection','createdAt'])
+        && request.resource.data.keys().hasAll(['itemId','text','source','year','type','sectionId','sourceId'])
+        && request.resource.data.itemId == docId
+        && request.resource.data.text is string
+        && request.resource.data.text.size() <= 1000
+        && request.resource.data.source in ['TFDA','PICS','EU']
+        && request.resource.data.year is int
+        && request.resource.data.sectionId is string
+        && request.resource.data.sourceId is string;
+    }
   }
 }

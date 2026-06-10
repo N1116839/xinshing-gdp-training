@@ -1488,6 +1488,43 @@ const qaStore = {
   }
 };
 
+/* ═══════════════════════════════════════════════
+   DEFICIENCY STORE（§43 官方缺失 Firestore 同步）
+═══════════════════════════════════════════════ */
+const deficiencyStore = {
+  bySectionId: {},
+  loaded: false,
+  loading: null,
+  init() {
+    if (this.loading) return this.loading;
+    this.loading = this._load();
+    return this.loading;
+  },
+  async _load() {
+    if (!qaStore.db) return false;
+    try {
+      const { collection, getDocs } = qaStore.firebase;
+      const snap = await getDocs(collection(qaStore.db, "gdpGovDeficiencyItems"));
+      const items = snap.docs.map(d => d.data());
+      this.bySectionId = {};
+      for (const item of items) {
+        const sid = item.sectionId || 'unknown';
+        if (!this.bySectionId[sid]) this.bySectionId[sid] = [];
+        this.bySectionId[sid].push(item);
+      }
+      this.loaded = true;
+      console.log("[deficiencyStore] Loaded "+items.length+" items from Firestore");
+    } catch (e) {
+      console.warn("[deficiencyStore] Failed to load from Firestore, using embedded data", e);
+    }
+    return this.loaded;
+  },
+  getItems(sectionId) {
+    const items = this.bySectionId[sectionId];
+    if (items && items.length > 0) return items;
+    return null;
+  }
+};
 const calendarStatusStore = {
   sectionId:"collection-calendar",
   cache:null,
@@ -6341,7 +6378,20 @@ async function showSection(id){
     return;
   }
   current=id;
-  const s=sections.find(x=>x.id===id)||sections[0];
+  let s=sections.find(x=>x.id===id)||sections[0];
+  // Merge Firestore deficiency data if available
+  const fsItems=deficiencyStore.getItems(id);
+  if(fsItems&&fsItems.length>0){
+    s={...s,focus:fsItems.map(item=>({
+      text:item.text,
+      source:item.source,
+      year:item.year,
+      type:item.type,
+      evidenceToPrepare:item.evidenceToPrepare||'',
+      auditQuestion:item.auditQuestion||'',
+      answerDirection:item.answerDirection||''
+    }))};
+  }
   document.getElementById("pageTitle").textContent=s.title;
   document.getElementById("pageTag").textContent=s.tag;
   document.getElementById("pageLead").textContent=s.lead;
@@ -6408,6 +6458,7 @@ function fmtDate(v){
   if(renderSharedExamPacket()) return;
   renderNav();
   await qaStore.init();
+  await deficiencyStore.init();
   await analyticsStore.ensureQuarterReview();
   // mobile TOC button handlers
   const fab=document.getElementById("deptTocFab");

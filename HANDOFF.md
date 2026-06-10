@@ -1,24 +1,32 @@
-## 2026-06-10 第九十八次：移除重複區塊（pageTag2 與 docButtons 死程式）＋確認 eyebrow 已是 18px ✅
+## 2026-06-10 第九十九次：官方缺失 Firestore（§43）完成 ✅
 
-使用者開工選「重複區塊實機盤點」與「eyebrow 16px→18px」一起做。
+使用者開工後依「Continue」指示處理 §43，已完成 Firestore 同步與 HTML 動態載入。
 
 ### 本次完成
-1. **Eyebrow 字體** — 已在 CSS 第 47 行設為 `font-size:18px`（第六十八次完成），無需變更。
-2. **移除 `#pageTag2` 重複 eyebrow** — hero 區的第二個 eyebrow 與 topbar 的 `#pageTag` 顯示相同 `s.tag`。已移除 HTML 元素與 JS setter。
-3. **移除 `docButtons()` 死程式** — 函式回傳 `""` 且未被呼叫，已移除。
+1. **Firestore rules 新增兩個 collection**
+   - `gdpGovDeficiencySources` — 常見缺失來源資料（3 筆：113年度說明會、111年度說明會、GDP 檢查注意事項）
+   - `gdpGovDeficiencyItems` — 59 筆 TFDA 常見缺失項目，含 `evidenceToPrepare`/`auditQuestion`/`answerDirection`
+   - Rules 已用 `npx firebase-tools deploy --only firestore:rules` 部署
 
-### 驗收
-- `JS_PARSE_OK 1` ✅
-- `verify_facts 1296/1296` ✅
-- commit `1920938`，已 push
+2. **同步腳本** — `Firebase設定/sync-gov-deficiency-sources.mjs`
+   - 從 HTML 的 `sections` 陣列萃取 focus 資料，寫入 Firestore
+   - 使用 OAuth2 Bearer token（從 `firebase-tools.json` 讀取，自動 refresh）
 
-### 下次待辦（不變）
+3. **HTML 動態載入**
+   - 新增 `deficiencyStore`（位於 `qaStore` 之後），頁面初始化時從 `gdpGovDeficiencyItems` 預載資料，按 `sectionId` 分組快取
+   - `showSection()` 在渲染前檢查 deficiencyStore，有 Firestore 資料則取代 `s.focus`
+   - 離線或 Firestore 初始化失敗時自動 fallback 到內嵌資料
+
+### 踩坑
+- Firestore REST API `?key=API_KEY` 不支援 write（403 Missing or insufficient permissions）
+- 解法：改用 firebase-tools 的 OAuth2 refresh token 取得 Bearer token（存在 `~/.config/configstore/firebase-tools.json` 的 `tokens` 區塊）
+
+### 下次待辦
 1. 登入/正式權限（⏸️ 需權限表）
-2. 官方缺失 Firestore（§43）
-3. 前端 UX/CSS 派工驗收
-4. PIC/S 明文但 SOP 漏列項目盤點
-5. 測驗平台正式上架（需講師審查）
-6. 全站互動性精修
+2. 前端 UX/CSS 派工驗收
+3. PIC/S 明文但 SOP 漏列項目盤點
+4. 測驗平台正式上架（需講師審查）
+5. 全站互動性精修
 
 ---
 
