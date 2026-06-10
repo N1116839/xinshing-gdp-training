@@ -6,12 +6,13 @@ service cloud.firestore {
       allow create: if request.resource.data.keys().hasAll(['name','question','sectionId','createdAt']) && request.resource.data.name is string && request.resource.data.name.size() <= 50 && request.resource.data.question is string && request.resource.data.question.size() <= 1000;
       allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['replies']);
     }
-    match /gdpTrainingCalendarStatus/{sectionId}/items/{itemId} {
+    match /gdpTrainingCalendarStatus/{sectionId}/items/{docId} {
       allow read: if true;
-      allow create, update: if request.resource.data.keys().hasOnly(['sectionId','itemId','itemIndex','status','updatedAt'])
-        && request.resource.data.keys().hasAll(['sectionId','itemId','itemIndex','status','updatedAt'])
+      allow create, update: if request.resource.data.keys().hasOnly(['sectionId','itemId','statusYear','itemIndex','status','updatedAt'])
+        && request.resource.data.keys().hasAll(['sectionId','itemId','statusYear','itemIndex','status','updatedAt'])
         && request.resource.data.sectionId == sectionId
-        && request.resource.data.itemId == itemId
+        && request.resource.data.statusYear is int
+        && docId == string(request.resource.data.statusYear) + '__' + request.resource.data.itemId
         && request.resource.data.itemIndex is int
         && request.resource.data.status in ['done','pending'];
     }
