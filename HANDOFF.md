@@ -1,3 +1,24 @@
+## 2026-06-10 第一百次：常見缺失全部卡片可點擊展開 ✅
+
+使用者開工後檢查常見缺失區塊，發現只有第一張卡片可點擊展開詳細內容。
+
+### 本次完成
+1. **修正 `bindFocusInteractives()`** — line 6261 原使用 `querySelector`（只抓第一個 `.focus-header`），改為 `querySelectorAll` + `forEach`，所有卡片 header 都可點擊 toggle 展開/收起。
+   - 詳細內容含：證據準備、稽查員問法、公司回答方向、官方來源連結。
+
+### 驗收
+- `JS_PARSE_OK 1`、`verify_facts_ghpages.mjs` 1296/1296
+- commit `474bba3`，已 push 至 `origin/codex/gdp-html-training-pages`
+
+### 下次待辦
+1. 登入/正式權限（⏸️ 需權限表）
+2. 前端 UX/CSS 派工驗收
+3. PIC/S 明文但 SOP 漏列項目盤點
+4. 測驗平台正式上架（需講師審查）
+5. 全站互動性精修
+
+---
+
 ## 2026-06-10 第九十九次：官方缺失 Firestore（§43）完成 ✅
 
 使用者開工後依「Continue」指示處理 §43，已完成 Firestore 同步與 HTML 動態載入。
