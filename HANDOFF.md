@@ -1,3 +1,27 @@
+## 2026-06-10 第九十三次：年度行事曆選單補後續年份 ✅
+
+依使用者確認「行事曆只到115年，明年是否會自動加116年；若不是先製作後續年份」處理。
+
+### 判斷與修正
+- 既有 `calendarStatusStore.currentYear()` 已用當下日期換算民國年，因此 2027 年會自動以民國 116 年作為目前年度。
+- 但前台年度下拉原本只顯示「目前年度、前一年、前兩年」，2026 年畫面只會看到 115/114/113，無法今年先勾選 116 年後續收件狀態。
+- 已修改 `HTML資料庫/新勝GDP資料庫.html` 的 `collectionCalendarSection()`：
+  - 年度選單改為目前年度 + 後續 5 年 + 前 2 年。
+  - 2026 年實際輸出：民國 115、116、117、118、119、120、114、113。
+  - 既有年度隔離儲存不變：localStorage 使用 `gdp-calendar-status-${year}-${itemId}`，Firestore docId 使用 `${year}__${itemId}` 並寫入 `statusYear`。
+
+### 驗收
+- `JS_PARSE_OK 1`
+- `node verify_facts_ghpages.mjs`：`1296/1296` 通過。
+- 本機靜態檢查年度選單邏輯：`CAL_YEAR_LOGIC_OK true`，選項包含民國 116～120 年。
+- 瀏覽器 MCP 驗證在本機 Windows sandbox 啟動失敗（`CreateProcessWithLogonW failed: 267`），已改用語法檢查與年度選單產生邏輯檢查補驗。
+
+### 下次待辦
+1. 若需要永久網址立即生效，確認本輪 commit/push 狀態與 GitHub Pages 線上更新。
+2. 後續仍可接：官方缺失 Firestore collections、前端 UX/CSS 派工驗收、PIC/S 明文但 SOP 未列項目盤點。
+
+---
+
 ## 2026-06-09 第九十二次：其餘6職務各補3題政府公開查核重點題＋派工線備妥（隔離worktree）✅
 
 依使用者「兩個同步進行」：軍師本機補政府公開缺失題（敏感正確性，不派雲端），同時把純前端 UX/CSS 重構切窄版任務書派給 NVIDIA 士兵在隔離 worktree 出工。

@@ -4183,7 +4183,8 @@ function collectionCalendarSection(s){
   if(!s.collectionCalendar) return "";
   const items=s.collectionCalendar;
   const rocYear=calendarStatusStore.currentYear();
-  const yearOptions=[rocYear,rocYear-1,rocYear-2].map(y=>`<option value="${y}">民國 ${y} 年</option>`).join("");
+  const selectableYears=[rocYear,...Array.from({length:5},(_,i)=>rocYear+i+1),rocYear-1,rocYear-2];
+  const yearOptions=selectableYears.map(y=>`<option value="${y}">民國 ${y} 年</option>`).join("");
   const freqOrder=["發生時啟動","每日","每月","每兩個月","每季","每半年","每年","每三年"];
   const depts=["GDP 權責人","管理藥師","品保","倉管","採購","業務","文管","人事"];
   const byFreq={};
