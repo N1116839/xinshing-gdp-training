@@ -14,11 +14,12 @@
 - `JS_PARSE_OK 1`
 - `node verify_facts_ghpages.mjs`：`1296/1296` 通過。
 - 本機靜態檢查年度選單邏輯：`CAL_YEAR_LOGIC_OK true`，選項包含民國 116～120 年。
+- 已 commit `845e2ef` 並 push 至 `origin/codex/gdp-html-training-pages`。
+- GitHub Pages 永久網址 HTTP 200，線上 HTML 已命中 `selectableYears` 後續 5 年邏輯。
 - 瀏覽器 MCP 驗證在本機 Windows sandbox 啟動失敗（`CreateProcessWithLogonW failed: 267`），已改用語法檢查與年度選單產生邏輯檢查補驗。
 
 ### 下次待辦
-1. 若需要永久網址立即生效，確認本輪 commit/push 狀態與 GitHub Pages 線上更新。
-2. 後續仍可接：官方缺失 Firestore collections、前端 UX/CSS 派工驗收、PIC/S 明文但 SOP 未列項目盤點。
+1. 後續仍可接：官方缺失 Firestore collections、前端 UX/CSS 派工驗收、PIC/S 明文但 SOP 未列項目盤點。
 
 ---
 
