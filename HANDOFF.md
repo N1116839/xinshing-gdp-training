@@ -1,3 +1,44 @@
+## 2026-06-10 第九十六次：手機分享改產出列印網址＋行事曆依時程做月份按鈕（FR10-01 對照） ✅
+
+依使用者指示三件事，push 前一次做完。
+
+### 1. 手機分享 → 產出網址（人事點開直接列印）
+- `HTML資料庫/新勝GDP資料庫.html`
+  - 新增頂層 `examPacketCss()`（抽出列印 CSS，`standaloneExamHtml` 共用）、`sharedExamPrintDoc(d)`（用純資料重建 FR24-03＋答題紀錄兩頁）、`renderSharedExamPacket()`（解析網址 hash → 直接以列印介面取代整頁）。
+  - `bindExamTemplate` 內新增 `examPacketData()`（產生顯示就緒資料）與 `buildExamShareUrl()`（資料 → `btoa(unescape(encodeURIComponent(JSON)))` → `location.origin+pathname+#exampkt=`）。
+  - `finishExam` 設 `session.shareUrl`；`shareExamPacket()` 改為 `navigator.share({url})`，不支援時複製連結，再不行才開資料包。
+  - `init()` 第一行 `if(renderSharedExamPacket()) return;`：人事打開連結時只渲染列印頁，不載入主程式（無導覽、無 Firebase）。
+  - 資料只存在網址 hash 內、不上傳伺服器，符合「不放無權限保護雲端」紅線。
+  - 實機驗證（Launch 預覽）：編碼/解碼來回中文無損；人事端連結開啟＝藍色工具列＋「列印/存成 PDF」按鈕＋兩頁列印文件＋FR24-03；`navStillThere:false`。
+
+### 2. 行事曆只列「有文件編號/紀錄/報告」項目（回 FR10-01 對照）
+- 解開 `第一章品質管理/FR10-01 ...(有時程NEW).xlsx` 逐列對照。
+- 移除 collectionCalendar「溫度計電池更換與時間校正（每三個月換電池）」：FR10-01 無任何電池更換表單/報告，屬純動作（正是使用者舉的例子）。同步移除關鍵設備 `schedule` 摘要中該句。
+- 其餘項目皆對得到 FR 表單或報告（外部校正報告、溫度測繪報告等），保留。
+- 註：KB 智慧查詢仍保留「溫度計電池更換週期」fact（教育用，非行事曆收件項），不動。
+
+### 3. 依時程做按鈕（年度行事曆＋關鍵設備一體）
+- 新增 `calStatusMonths(freq)` / `calStatusInner(freq)`：每月→1-12月、每兩個月→2/4/6/8/10/12月、每季→1/4/7/10月、每半年→6/12月；每日/每年/每三年/發生時啟動→已完成/未完成（使用者拍板）。
+- 兩個行事曆 section 的狀態格改用 `data-status-mode`（month/binary）。
+- 抽出共用 `bindCalendarStatusGroups()`：月份模式每顆月份按鈕獨立 toggle，itemId=`${base}__m${月}`、index=`${index}_m${月}`，沿用 `calendarStatusStore` 年度隔離儲存；subscribe 以 `^(.*)__m(\d+)$` 對回月份按鈕。
+- 新增 `.cal-month-btn` CSS。
+- 實機驗證：年度行事曆 16 月份群組/44 二元群組；每月顯示 1-12 月、每季 1/4/7/10、設備頁每半年 6/12；點月份按鈕 done 切換並寫入 localStorage。
+
+### 驗收
+- `JS_PARSE_OK 436172`；`node verify_facts_ghpages.mjs` `1296/1296` 通過。
+- Launch 預覽實機：行事曆月份按鈕、設備頁、分享網址列印頁全部正常，console 無 error（僅 Firebase permission-denied 警告＝本機非授權網域，設計上 fallback localStorage）。
+
+### 副作用（需知）
+- 移除電池項目使其後 collectionCalendar 項目 index 位移 → `stableCalendarItemId` 改變，這些項目今年既有勾選狀態會重置（下次重勾即可）。
+- 月份模式項目由原本單一 done/pending 改為每月獨立狀態，舊的二元勾選成為孤兒資料（無害）。
+
+### 下次待辦
+1. 使用者用 GitHub Pages 永久網址實測：① 手機作答完按「分享送交人事資料」傳連結，人事點開直接進列印頁；② 年度行事曆／關鍵設備月份按鈕可逐月勾選並切年度。
+2. 官方缺失 Firestore collections（§43 先確認 collection 與 rules）。
+3. 前端 UX/CSS 派工驗收；PIC/S 明文但 SOP 漏列項目盤點。
+
+---
+
 ## 2026-06-10 第九十五次：測驗手機送交資料 fallback 改為開啟資料包 ✅
 
 依使用者回報：手機點「分享送交人事資料」與「下載送交人事資料」時，瀏覽器顯示「不支援檔案下載功能，請透過其他瀏覽器再試一次」。

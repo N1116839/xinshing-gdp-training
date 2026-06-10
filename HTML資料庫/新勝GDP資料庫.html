@@ -315,6 +315,9 @@
     .calendar-status button{padding:8px 9px;border:1px solid var(--line);background:#fff;color:var(--ink-soft);border-radius:6px;cursor:pointer;font:inherit;font-size:12px;font-weight:800}
     .calendar-status button.active[data-status="done"]{color:#fff;background:var(--brand);border-color:var(--brand)}
     .calendar-status button.active[data-status="pending"]{color:#fff;background:var(--gold);border-color:var(--gold)}
+    .calendar-status[data-status-mode="month"]{display:grid;grid-template-columns:repeat(auto-fit,minmax(38px,1fr));gap:4px;min-width:200px}
+    .calendar-status .cal-month-btn{padding:6px 4px;border:1px solid var(--line);background:#fff;color:var(--ink-soft);border-radius:6px;cursor:pointer;font:inherit;font-size:11px;font-weight:800;text-align:center}
+    .calendar-status .cal-month-btn.done{color:#fff;background:var(--brand);border-color:var(--brand)}
     .calendar-source-note{margin-bottom:12px;padding:10px 12px;background:#fff9ef;border:1px solid #ead6b6;color:#6f4d1e;font-size:13px;line-height:1.6}
     .freq-badge,.dept-badge{display:inline-block;white-space:nowrap;padding:3px 8px;border-radius:999px;font-weight:800;font-size:12px}
     .freq-badge{color:#fff;background:var(--gold)}
@@ -928,7 +931,6 @@ const sections = [
       {freq:"每季",dept:"倉管",data:"病媒防治器具更換紀錄",form:"FR25-05 病媒防治器具更換紀錄表",owner:"倉管",source:"DP25-02、FR10-01",note:"蟑螂屋、捕鼠器、誘蟻餌、捕蚊燈每季一次；若達異常條件或器具失效時即時更換。"},
       {freq:"每季",dept:"倉管",data:"分離式冷氣濾網保養",form:"FR34-03 設備定期保養維修紀錄表（分離式冷氣）",owner:"倉管",source:"DP34-01、FR10-01",note:"分離式冷氣濾網每季保養。"},
       {freq:"每季",dept:"倉管",data:"柴油發電機柴油量與充電電池檢查",form:"FR34-03 設備定期保養維修紀錄表（柴油發電機）",owner:"倉管",source:"DP34-01、FR10-01",note:"柴油量與充電電池每季檢查。"},
-      {freq:"每季",dept:"倉管",data:"溫度計電池更換與時間校正",form:"FR34-03 設備定期保養維修紀錄表",owner:"倉管",source:"DP34-01",note:"每三個月更換溫度計電池；電池更換後時間會初始化，需依中原標準時間重新校正。"},
       {freq:"每半年",dept:"倉管",data:"門禁警報系統保養檢查",form:"FR34-03 設備定期保養維修紀錄表（門禁警報系統）",owner:"倉管",source:"DP34-01、FR10-01",note:"門禁警報系統每半年保養檢查。"},
       {freq:"每年",dept:"業務",data:"合格客戶清單與客戶認可審查紀錄",form:"FR53-01 合格客戶清單、FR53-02 客戶認可審查紀錄表",owner:"業務主管",source:"DP53-01",note:"每年將客戶清冊發給業務核對；每位合格客戶每年至少評估一次，確認許可文件與 GDP 資格。"},
       {freq:"每年",dept:"採購 / 倉管 / 品保",data:"供應商定期評核資料與訂購缺失彙整",form:"供應商清冊、供應商評鑑表、FR52-03",owner:"採購 / 品保",source:"DP52-01",note:"年底由倉管、採購、品保針對藥品訂購缺失登錄表作為供應商定期評核依據。"},
@@ -988,7 +990,7 @@ const sections = [
       {text:"參與運輸車輛未訂有操作程序，包括出貨時之溫度與清潔度確認。",source:"TFDA",year:"2019",type:"研究年報",evidenceToPrepare:"運輸操作程序，含出貨溫度與清潔度確認紀錄。",auditQuestion:"出貨前如何確認車輛溫度與清潔度？",answerDirection:"出示運輸操作程序與出貨前確認紀錄。"}
     ],
     equipmentRef:"collection-calendar",
-    schedule:[["每月","UPS / 分離式冷氣外觀 / 柴油發電機發動 / 溫控警報功能測試。"],["每季","冷氣濾網保養、柴油量電池確認、溫度計電池更換與時間校正。"],["每半年","門禁警報系統保養檢查。"],["每年","冷氣外機鰭片、柴油引擎檢查、量測儀器外部校正（12 月底）。"],["每三年","倉儲環境夏季 7～9 月、冬季隔年 1～3 月溫度測繪，各 7 天。"],["重大事件/環境變更","立即評估是否需再確效或重新測繪，不等例行週期。"]],
+    schedule:[["每月","UPS / 分離式冷氣外觀 / 柴油發電機發動 / 溫控警報功能測試。"],["每季","冷氣濾網保養、柴油量電池確認。"],["每半年","門禁警報系統保養檢查。"],["每年","冷氣外機鰭片、柴油引擎檢查、量測儀器外部校正（12 月底）。"],["每三年","倉儲環境夏季 7～9 月、冬季隔年 1～3 月溫度測繪，各 7 天。"],["重大事件/環境變更","立即評估是否需再確效或重新測繪，不等例行週期。"]],
     audit:["FR34-02 設備清單是否涵蓋所有 GDP 關鍵設備，且與現場一致。","FR34-03 保養紀錄是否依計畫頻率執行，每次有日期、執行人與結果。","量測儀器外部校正報告是否在有效期內，校正結果在合格範圍。","校正報告是否保存 5 年，且可即時提供。","電池更換後是否即時校正時間至中原標準時間。","溫度測繪報告是否完整，夏季 7～9 月、冬季隔年 1～3 月各 7 天。","重大事件時是否啟動即時再確效評估，不等三年例行週期。","設備異常是否有偏差提報（FR12-03）與後續 CAPA 追蹤紀錄。"],
     qa:true
   },
@@ -4198,6 +4200,20 @@ function calendarYearOptions(){
   return [rocYear,...Array.from({length:5},(_,i)=>rocYear+i+1),rocYear-1,rocYear-2]
     .map(y=>`<option value="${y}">民國 ${y} 年</option>`).join("");
 }
+function calStatusMonths(freq){
+  switch(freq){
+    case "每月": return [1,2,3,4,5,6,7,8,9,10,11,12];
+    case "每兩個月": return [2,4,6,8,10,12];
+    case "每季": return [1,4,7,10];
+    case "每半年": return [6,12];
+    default: return null;
+  }
+}
+function calStatusInner(freq){
+  const months=calStatusMonths(freq);
+  if(!months) return {mode:"binary",html:`<button type="button" data-status="done">已完成</button><button type="button" data-status="pending">未完成</button>`};
+  return {mode:"month",html:months.map(m=>`<button type="button" class="cal-month-btn" data-month="${m}">${m}月</button>`).join("")};
+}
 function collectionCalendarSection(s){
   if(!s.collectionCalendar) return "";
   const items=s.collectionCalendar;
@@ -4222,6 +4238,7 @@ function collectionCalendarSection(s){
   </div>`;
   const list=items.map((x,i)=>{
     const itemId=stableCalendarItemId(x,i);
+    const st=calStatusInner(x.freq);
     return `<article class="equip-list-item" data-cal-item="${esc(x.freq)}" data-cal-dept="${esc(x.dept)}"${x.freq===firstFreq?"":" style=\"display:none\""}>
       <div>
         <span class="freq-badge">${esc(x.freq)}</span>
@@ -4232,10 +4249,7 @@ function collectionCalendarSection(s){
         <p style="font-size:14px;color:var(--ink-soft);line-height:1.62;margin-bottom:9px">${esc(stripInlineCode(x.note))}</p>
         <div class="equipment-meta">
           <span>找誰：${esc(x.owner)}</span>
-          <span class="calendar-status" data-calendar-status="${i}" data-calendar-status-id="${esc(itemId)}" aria-label="收件狀態">
-            <button type="button" data-status="done">已完成</button>
-            <button type="button" data-status="pending">未完成</button>
-          </span>
+          <span class="calendar-status" data-status-mode="${st.mode}" data-status-freq="${esc(x.freq)}" data-calendar-status="${i}" data-calendar-status-id="${esc(itemId)}" aria-label="收件狀態">${st.html}</span>
         </div>
       </div>
     </article>`;
@@ -4272,6 +4286,7 @@ function equipmentOnlySection(s){
   </div>`;
   const list=eq.map((x,i)=>{
     const itemId=stableEquipmentItemId(x,i);
+    const st=calStatusInner(x.freq);
     return `<article class="equip-list-item" data-equip-item="${esc(x.freq)}">
     <div><span class="freq-badge">${esc(x.freq)}</span></div>
     <div>
@@ -4280,10 +4295,7 @@ function equipmentOnlySection(s){
       <div class="equipment-meta">
         <span>負責人：${esc(x.owner)}</span>
         <span>要確認的證據：${esc(x.form==="FR34-03"?"設備保養維修紀錄":x.form)}</span>
-        <span class="calendar-status" data-equipment-status="${i}" data-equipment-status-id="${esc(itemId)}" data-equipment-label="${esc(x.equipment+"｜"+x.task)}" aria-label="設備核對狀態">
-          <button type="button" data-status="done">已完成</button>
-          <button type="button" data-status="pending">未完成</button>
-        </span>
+        <span class="calendar-status" data-status-mode="${st.mode}" data-status-freq="${esc(x.freq)}" data-equipment-status="${i}" data-equipment-status-id="${esc(itemId)}" data-equipment-label="${esc(x.equipment+"｜"+x.task)}" aria-label="設備核對狀態">${st.html}</span>
       </div>
     </div>
   </article>`;
@@ -5210,6 +5222,117 @@ function bindDocumentMap(){
     apply("");
   });
 }
+function examPacketCss(){
+  return `@page{size:A4 portrait;margin:0}
+body{margin:0;padding:0;background:#fff;color:#000;font-family:"Microsoft JhengHei","Noto Sans TC",serif;font-size:11pt;line-height:1.35}
+.exam-print-page{position:relative;min-height:100vh;box-sizing:border-box;padding:14mm 12mm 16mm;break-after:page;page-break-after:always}
+.exam-print-page:last-child{break-after:auto;page-break-after:auto}
+.exam-print-title{text-align:center;font-size:18pt;font-weight:800;letter-spacing:.08em;margin:0 0 10mm}
+.exam-fr-table,.exam-paper-table{width:100%;border-collapse:collapse;table-layout:fixed}
+.exam-fr-table th,.exam-fr-table td,.exam-paper-table th,.exam-paper-table td{border:1px solid #000;padding:6px 7px;vertical-align:top;word-break:break-word}
+.exam-fr-table th{font-weight:700;text-align:center}
+.exam-fr-table td{height:13mm}
+.exam-fr-notes{margin-top:4mm;font-size:10pt;line-height:1.6}
+.exam-doc-number{position:absolute;bottom:10mm;right:12mm;font-size:10pt}
+.exam-paper-head{display:grid;grid-template-columns:1fr auto;gap:8mm;align-items:start;margin-bottom:6mm}
+.exam-paper-head h1{margin:0;text-align:left;font-size:16pt;line-height:1.4}
+.exam-paper-score{border:2px solid #000;padding:5mm 8mm;text-align:center;font-size:14pt;font-weight:800;min-width:34mm}
+.exam-paper-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:2mm;margin:0 0 5mm;font-size:11pt}
+.exam-paper-meta span{border-bottom:1px solid #000;padding:0 2mm 1mm}
+.exam-question-print{break-inside:avoid;page-break-inside:avoid;margin:0 0 4mm}
+.exam-question-print h3{margin:0 0 2mm;color:#000;font-size:11pt;line-height:1.5}
+.exam-print-options{display:grid;grid-template-columns:1fr 1fr;gap:1.5mm 5mm}
+.exam-print-option{font-size:10.5pt;line-height:1.45}
+.exam-print-answer{margin-top:1.5mm;font-size:10.5pt}
+.exam-print-answer strong{border-bottom:1px solid #000;padding:0 12mm 0 1mm}
+.exam-print-result{font-weight:800}`;
+}
+function sharedExamPrintDoc(d){
+  const result=d.result||(d.pass?"合格":"未合格");
+  const rows=(d.pi||[]).map(item=>`
+      <tr>
+        <td>${esc(item)}</td>
+        <td>新勝醫藥</td>
+        <td>${esc(d.trainer)}</td>
+        <td>${esc(d.tdate)}</td>
+        <td>${d.score} 分，${esc(result)}</td>
+        <td></td>
+      </tr>`).join("");
+  const blankRows=Array.from({length:Math.max(0,7-(d.pi||[]).length)},()=>`<tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>`).join("");
+  const questions=(d.q||[]).map((q,i)=>{
+    const selLabel=q.s>=0?String.fromCharCode(65+q.s):"未作答";
+    const corLabel=String.fromCharCode(65+q.c);
+    const optionHtml=(q.o||[]).map((opt,idx)=>`<div class="exam-print-option">${q.s===idx?"●":"○"} ${String.fromCharCode(65+idx)}. ${esc(opt)}</div>`).join("");
+    return `<section class="exam-question-print">
+        <h3>${i+1}. ${esc(q.t)}</h3>
+        <div class="exam-print-options">${optionHtml}</div>
+        <div class="exam-print-answer">作答：<strong>${esc(selLabel)}</strong> 正解：${esc(corLabel)}　<span class="exam-print-result">${q.s===q.c?"答對":"答錯"}</span></div>
+      </section>`;
+  }).join("");
+  return `<div class="exam-print-doc">
+      <section class="exam-print-page">
+        <h1 class="exam-print-title">員工教育訓練紀錄表</h1>
+        <table class="exam-fr-table">
+          <tr>
+            <td colspan="2">姓名：${esc(d.name)}</td>
+            <td>性別：${esc(d.sex)}</td>
+            <td colspan="2">報到日期：${esc(d.onboard)}</td>
+            <td>學歷：${esc(d.edu)}</td>
+          </tr>
+          <tr>
+            <td colspan="2">單位：${esc(d.dept)}</td>
+            <td colspan="4">職稱：${esc(d.title)}${d.acting?"；兼任/代理："+esc(d.acting):""}</td>
+          </tr>
+          <tr>
+            <th style="width:30%">訓練項目</th>
+            <th style="width:15%">訓練單位</th>
+            <th style="width:13%">訓練者</th>
+            <th style="width:18%">訓練日期</th>
+            <th style="width:14%">評核成效</th>
+            <th style="width:10%">人事簽核</th>
+          </tr>
+          ${rows}${blankRows}
+        </table>
+        <div class="exam-fr-notes">
+          備註：1. 本表由人事單位保存。2. 訓練後經訓練講師評鑑受訓成效，由人事簽核。3. 評核方式：${esc(d.method)}；${d.timedOut?"本次為逾時自動交卷。":"本次為測驗完成後列印。"}
+        </div>
+        <div class="exam-doc-number">FR24-03</div>
+      </section>
+      <section class="exam-print-page">
+        <div class="exam-paper-head">
+          <h1>GDP ${esc(d.item||"教育訓練")}<br>${esc(d.label||"測驗")}答題紀錄</h1>
+          <div class="exam-paper-score">${d.score} 分<br><small>${esc(result)}</small></div>
+        </div>
+        <div class="exam-paper-meta">
+          <span>姓名：${esc(d.name)}</span>
+          <span>單位：${esc(d.dept)}</span>
+          <span>職稱：${esc(d.title)}</span>
+          <span>測驗日期：${esc(d.tdate)}</span>
+        </div>
+        <div class="exam-paper-meta">
+          <span>題數：${d.total} 題</span>
+          <span>答對：${d.correct} 題</span>
+          <span>合格標準：70 分</span>
+          <span>結果：${esc(result)}</span>
+        </div>
+        ${questions}
+      </section>
+    </div>`;
+}
+function renderSharedExamPacket(){
+  const m=(location.hash||"").match(/(?:^#|&)exampkt=([^&]+)/);
+  if(!m) return false;
+  let d;
+  try{ d=JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(m[1]))))); }
+  catch(e){ console.error("無法解析送交人事資料",e); return false; }
+  const toolbarCss=`.packet-toolbar{position:sticky;top:0;z-index:5;display:flex;gap:12px;align-items:center;justify-content:space-between;background:#0a4d8a;color:#fff;padding:10px 16px;font-family:"Microsoft JhengHei","Noto Sans TC",sans-serif}
+.packet-toolbar button{background:#fff;color:#0a4d8a;border:0;border-radius:6px;padding:8px 14px;font-weight:800;cursor:pointer}
+@media print{.packet-toolbar{display:none}}`;
+  const toolbar=`<div class="packet-toolbar"><strong>GDP 測驗送交人事資料</strong><button type="button" onclick="window.print()">🖨️ 列印 / 存成 PDF</button></div>`;
+  document.title="GDP 測驗送交人事資料";
+  document.documentElement.innerHTML=`<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GDP 測驗送交人事資料</title><style>${examPacketCss()}\n${toolbarCss}</style></head><body>${toolbar}${sharedExamPrintDoc(d)}</body>`;
+  return true;
+}
 function bindExamTemplate(){
   const root=document.querySelector('[data-exam-stage="start"]')?.closest(".panel");
   if(!root) return;
@@ -5473,31 +5596,23 @@ function bindExamTemplate(){
     return standaloneExamHtml(html);
   }
   function standaloneExamHtml(bodyHtml){
-    return `<!DOCTYPE html><html lang="zh-TW"><head><meta charset="utf-8"><title>GDP 測驗送交人事資料</title><style>
-@page{size:A4 portrait;margin:0}
-body{margin:0;padding:0;background:#fff;color:#000;font-family:"Microsoft JhengHei","Noto Sans TC",serif;font-size:11pt;line-height:1.35}
-.exam-print-page{position:relative;min-height:100vh;box-sizing:border-box;padding:14mm 12mm 16mm;break-after:page;page-break-after:always}
-.exam-print-page:last-child{break-after:auto;page-break-after:auto}
-.exam-print-title{text-align:center;font-size:18pt;font-weight:800;letter-spacing:.08em;margin:0 0 10mm}
-.exam-fr-table,.exam-paper-table{width:100%;border-collapse:collapse;table-layout:fixed}
-.exam-fr-table th,.exam-fr-table td,.exam-paper-table th,.exam-paper-table td{border:1px solid #000;padding:6px 7px;vertical-align:top;word-break:break-word}
-.exam-fr-table th{font-weight:700;text-align:center}
-.exam-fr-table td{height:13mm}
-.exam-fr-notes{margin-top:4mm;font-size:10pt;line-height:1.6}
-.exam-doc-number{position:absolute;bottom:10mm;right:12mm;font-size:10pt}
-.exam-paper-head{display:grid;grid-template-columns:1fr auto;gap:8mm;align-items:start;margin-bottom:6mm}
-.exam-paper-head h1{margin:0;text-align:left;font-size:16pt;line-height:1.4}
-.exam-paper-score{border:2px solid #000;padding:5mm 8mm;text-align:center;font-size:14pt;font-weight:800;min-width:34mm}
-.exam-paper-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:2mm;margin:0 0 5mm;font-size:11pt}
-.exam-paper-meta span{border-bottom:1px solid #000;padding:0 2mm 1mm}
-.exam-question-print{break-inside:avoid;page-break-inside:avoid;margin:0 0 4mm}
-.exam-question-print h3{margin:0 0 2mm;color:#000;font-size:11pt;line-height:1.5}
-.exam-print-options{display:grid;grid-template-columns:1fr 1fr;gap:1.5mm 5mm}
-.exam-print-option{font-size:10.5pt;line-height:1.45}
-.exam-print-answer{margin-top:1.5mm;font-size:10.5pt}
-.exam-print-answer strong{border-bottom:1px solid #000;padding:0 12mm 0 1mm}
-.exam-print-result{font-weight:800}
-</style></head><body>${bodyHtml}</body></html>`;
+    return `<!DOCTYPE html><html lang="zh-TW"><head><meta charset="utf-8"><title>GDP 測驗送交人事資料</title><style>${examPacketCss()}</style></head><body>${bodyHtml}</body></html>`;
+  }
+  function examPacketData(correct,total,score,pass,timedOut){
+    const p=session.profile||{};
+    return {
+      name:p.name||"",sex:p.sex||"",onboard:toRocDate(p.onboardDate),dept:p.department||"",
+      title:p.title||"",acting:(p.acting&&p.acting!=="無")?p.acting:"",edu:p.education||"",
+      trainer:p.trainer||"",tdate:toRocDate(p.trainingDate),method:p.method||"",
+      item:p.trainingItem||"教育訓練",label:session.info?.label||"測驗",
+      score,pass:!!pass,result:pass?"合格":"未合格",correct,total,timedOut:!!timedOut,
+      pi:tpl.printItems,
+      q:session.questions.map((q,i)=>({t:q.text,o:q.options.map(o=>o.text),s:(session.answers[i]==null?-1:Number(session.answers[i])),c:Number(q.correctIndex)}))
+    };
+  }
+  function buildExamShareUrl(data){
+    const b64=btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+    return location.origin+location.pathname+"#exampkt="+encodeURIComponent(b64);
   }
   function downloadExamShareText(){
     if(!session.shareText) return;
@@ -5531,18 +5646,24 @@ body{margin:0;padding:0;background:#fff;color:#000;font-family:"Microsoft JhengH
     setTimeout(()=>URL.revokeObjectURL(url),120000);
   }
   async function shareExamPacket(){
-    if(!session.shareText) return;
-    const name=(session.profile?.name||"未填姓名").replace(/[\\/:*?"<>|]/g,"_");
-    const fileName=`GDP測驗送交人事_${name}.html`;
-    const file=new File([session.shareText],fileName,{type:"text/html"});
-    if(navigator.canShare&&navigator.canShare({files:[file]})&&navigator.share){
+    if(!session.shareUrl) return;
+    const shareData={title:"GDP 測驗送交人事資料",text:"請點開連結，直接列印或存成 PDF 後交人事保存。",url:session.shareUrl};
+    if(navigator.share){
       try{
-        await navigator.share({title:"GDP 測驗送交人事資料",text:"請將此測驗資料交由人事列印保存。",files:[file]});
+        await navigator.share(shareData);
         return;
       }catch(e){
         if(e&&e.name==="AbortError") return;
       }
     }
+    try{
+      await navigator.clipboard.writeText(session.shareUrl);
+      if(resultBox){
+        resultBox.hidden=false;
+        resultBox.insertAdjacentHTML("afterbegin",`<div class="exam-lock-note" style="margin-bottom:10px">已複製送交人事連結，貼給人事即可直接開啟列印。</div>`);
+      }
+      return;
+    }catch(e){}
     openExamPacketPage();
   }
   function examPrintDocumentHtml(correct,total,score,pass,timedOut){
@@ -5641,7 +5762,7 @@ body{margin:0;padding:0;background:#fff;color:#000;font-family:"Microsoft JhengH
         <div class="exam-print-row head"><span>訓練項目</span><span>得分</span><span>結果</span><span>人事簽核</span></div>
         ${rows}
         <div class="exam-summary-row"><span>總分</span><strong>${score} 分（答對 ${correct} / ${total} 題，合格標準 70 分）</strong></div>
-        <p class="exam-paper-note">列印會輸出兩份文件：FR24-03 員工教育訓練紀錄表，以及含作答答案與右上角分數的考卷式答題紀錄。無法列印時，請用送交人事資料包交給人事。</p>
+        <p class="exam-paper-note">列印會輸出兩份文件：FR24-03 員工教育訓練紀錄表，以及含作答答案與右上角分數的考卷式答題紀錄。手機請按「分享送交人事資料」產生連結傳給人事，人事點開連結即可直接進入列印畫面。</p>
         <div class="exam-start-actions">
           <button type="button" class="secondary" data-exam-print>列印本頁</button>
           <button type="button" class="secondary" data-exam-share>分享送交人事資料</button>
@@ -5669,6 +5790,7 @@ body{margin:0;padding:0;background:#fff;color:#000;font-family:"Microsoft JhengH
     const score=Math.round((correct/total)*100);
     const pass=score>=70;
     session.shareText=examShareText(correct,total,score,pass,force);
+    session.shareUrl=buildExamShareUrl(examPacketData(correct,total,score,pass,force));
     session.results={correct,total,score,pass,timedOut:force};
     if(resultBox){
       resultBox.hidden=false;
@@ -5830,47 +5952,80 @@ function initSwipePanels(){
     goto(0, false);
   });
 }
+function bindCalendarStatusGroups(opts){
+  const {groups,statusAttr,idAttr,labelAttr,sectionId,selectedYear}=opts;
+  function applyBinary(group,status){
+    group.querySelectorAll("button").forEach(btn=>btn.classList.toggle("active",btn.dataset.status===status));
+  }
+  function applyGroup(group,year){
+    const index=group.dataset[statusAttr];
+    const itemId=group.dataset[idAttr];
+    if(group.dataset.statusMode==="month"){
+      group.querySelectorAll(".cal-month-btn").forEach(btn=>{
+        const m=btn.dataset.month;
+        const mId=`${itemId}__m${m}`,mIdx=`${index}_m${m}`;
+        const saved=localStorage.getItem(calendarStatusStore.key(mId,year))||localStorage.getItem(calendarStatusStore.fallbackKey(mIdx,year))||"pending";
+        btn.classList.toggle("done",saved==="done");
+        calendarStatusStore.get(mIdx,mId,year).then(s=>btn.classList.toggle("done",s==="done"));
+      });
+    }else{
+      const saved=localStorage.getItem(calendarStatusStore.key(itemId,year))||localStorage.getItem(calendarStatusStore.fallbackKey(index,year))||"pending";
+      applyBinary(group,saved);
+      calendarStatusStore.get(index,itemId,year).then(status=>applyBinary(group,status));
+    }
+  }
+  function loadForYear(year){
+    calendarStatusStore.load(year).then(()=>groups.forEach(g=>applyGroup(g,year)));
+    calendarStatusStore.subscribe((itemId,status)=>{
+      const mm=String(itemId).match(/^(.*)__m(\d+)$/);
+      if(mm){
+        const g=groups.find(x=>x.dataset[idAttr]===mm[1]);
+        const btn=g&&g.querySelector(`.cal-month-btn[data-month="${mm[2]}"]`);
+        if(btn) btn.classList.toggle("done",status==="done");
+      }else{
+        const g=groups.find(x=>x.dataset[idAttr]===itemId);
+        if(g&&g.dataset.statusMode!=="month") applyBinary(g,status);
+      }
+    },year);
+  }
+  groups.forEach(group=>{
+    const index=group.dataset[statusAttr];
+    const itemId=group.dataset[idAttr];
+    applyGroup(group,selectedYear());
+    if(group.dataset.statusMode==="month"){
+      group.querySelectorAll(".cal-month-btn").forEach(btn=>{
+        const m=btn.dataset.month;
+        const mId=`${itemId}__m${m}`,mIdx=`${index}_m${m}`;
+        btn.addEventListener("click",async()=>{
+          const year=selectedYear();
+          const next=btn.classList.contains("done")?"pending":"done";
+          await calendarStatusStore.set(mIdx,mId,next,year);
+          btn.classList.toggle("done",next==="done");
+          analyticsStore.log("calendar_status",{sectionId,targetId:mId,targetLabel:`${group.dataset[labelAttr]||""} ${m}月`,status:next,statusYear:year});
+        });
+      });
+    }else{
+      const buttons=[...group.querySelectorAll("button")];
+      buttons.forEach(btn=>{
+        btn.addEventListener("click",async()=>{
+          const year=selectedYear();
+          await calendarStatusStore.set(index,itemId,btn.dataset.status,year);
+          analyticsStore.log("calendar_status",{sectionId,targetId:itemId,targetLabel:group.dataset[labelAttr]||"",status:btn.dataset.status,statusYear:year});
+          buttons.forEach(x=>x.classList.toggle("active",x===btn));
+        });
+      });
+    }
+  });
+  return loadForYear;
+}
 function bindCalendarFilters(){
   calendarStatusStore.setSection("collection-calendar");
   const yearSelect=document.getElementById("calYearSelect");
-  const statusGroups=[...document.querySelectorAll("[data-calendar-status]")];
   function selectedYear(){
     return Number(yearSelect?.value)||calendarStatusStore.currentYear();
   }
-  function applyStatus(group,status){
-    group.querySelectorAll("button").forEach(btn=>btn.classList.toggle("active",btn.dataset.status===status));
-  }
-  function loadStatusesForYear(year=selectedYear()){
-    calendarStatusStore.load(year).then(()=>{
-      statusGroups.forEach(group=>{
-        const index=group.dataset.calendarStatus;
-        const itemId=group.dataset.calendarStatusId;
-        const saved=localStorage.getItem(calendarStatusStore.key(itemId,year))||localStorage.getItem(calendarStatusStore.fallbackKey(index,year))||"pending";
-        applyStatus(group,saved);
-        calendarStatusStore.get(index,itemId,year).then(status=>applyStatus(group,status));
-      });
-    });
-    calendarStatusStore.subscribe((itemId,status)=>{
-      const group=statusGroups.find(g=>g.dataset.calendarStatusId===itemId);
-      if(group) applyStatus(group,status);
-    },year);
-  }
-  statusGroups.forEach(group=>{
-    const index=group.dataset.calendarStatus;
-    const itemId=group.dataset.calendarStatusId;
-    const saved=localStorage.getItem(calendarStatusStore.key(itemId,selectedYear()))||localStorage.getItem(calendarStatusStore.fallbackKey(index,selectedYear()))||"pending";
-    const buttons=[...group.querySelectorAll("button")];
-    calendarStatusStore.get(index,itemId,selectedYear()).then(status=>applyStatus(group,status));
-    buttons.forEach(btn=>{
-      btn.classList.toggle("active",btn.dataset.status===saved);
-      btn.addEventListener("click",async()=>{
-        const year=selectedYear();
-        await calendarStatusStore.set(index,itemId,btn.dataset.status,year);
-        analyticsStore.log("calendar_status",{sectionId:"collection-calendar",targetId:itemId,targetLabel:group.dataset.calendarLabel||"",status:btn.dataset.status,statusYear:year});
-        buttons.forEach(x=>x.classList.toggle("active",x===btn));
-      });
-    });
-  });
+  const statusGroups=[...document.querySelectorAll("[data-calendar-status]")];
+  const loadStatusesForYear=bindCalendarStatusGroups({groups:statusGroups,statusAttr:"calendarStatus",idAttr:"calendarStatusId",labelAttr:"calendarLabel",sectionId:"collection-calendar",selectedYear});
   yearSelect?.addEventListener("change",()=>loadStatusesForYear(selectedYear()));
   loadStatusesForYear(selectedYear());
   const menuBtns=[...document.querySelectorAll("[data-cal-freq]")];
@@ -5989,40 +6144,7 @@ function bindEquipmentCalendarFilters(){
   function selectedYear(){
     return Number(yearSelect?.value)||calendarStatusStore.currentYear();
   }
-  function applyStatus(group,status){
-    group.querySelectorAll("button").forEach(btn=>btn.classList.toggle("active",btn.dataset.status===status));
-  }
-  function loadStatusesForYear(year=selectedYear()){
-    calendarStatusStore.load(year).then(()=>{
-      statusGroups.forEach(group=>{
-        const index=group.dataset.equipmentStatus;
-        const itemId=group.dataset.equipmentStatusId;
-        const saved=localStorage.getItem(calendarStatusStore.key(itemId,year))||localStorage.getItem(calendarStatusStore.fallbackKey(index,year))||"pending";
-        applyStatus(group,saved);
-        calendarStatusStore.get(index,itemId,year).then(status=>applyStatus(group,status));
-      });
-    });
-    calendarStatusStore.subscribe((itemId,status)=>{
-      const group=statusGroups.find(g=>g.dataset.equipmentStatusId===itemId);
-      if(group) applyStatus(group,status);
-    },year);
-  }
-  statusGroups.forEach(group=>{
-    const index=group.dataset.equipmentStatus;
-    const itemId=group.dataset.equipmentStatusId;
-    const saved=localStorage.getItem(calendarStatusStore.key(itemId,selectedYear()))||localStorage.getItem(calendarStatusStore.fallbackKey(index,selectedYear()))||"pending";
-    const buttons=[...group.querySelectorAll("button")];
-    calendarStatusStore.get(index,itemId,selectedYear()).then(status=>applyStatus(group,status));
-    buttons.forEach(btn=>{
-      btn.classList.toggle("active",btn.dataset.status===saved);
-      btn.addEventListener("click",async()=>{
-        const year=selectedYear();
-        await calendarStatusStore.set(index,itemId,btn.dataset.status,year);
-        analyticsStore.log("calendar_status",{sectionId:"equipment-calendar",targetId:itemId,targetLabel:group.dataset.equipmentLabel||"",status:btn.dataset.status,statusYear:year});
-        buttons.forEach(x=>x.classList.toggle("active",x===btn));
-      });
-    });
-  });
+  const loadStatusesForYear=bindCalendarStatusGroups({groups:statusGroups,statusAttr:"equipmentStatus",idAttr:"equipmentStatusId",labelAttr:"equipmentLabel",sectionId:"equipment-calendar",selectedYear});
   yearSelect?.addEventListener("change",()=>loadStatusesForYear(selectedYear()));
   loadStatusesForYear(selectedYear());
 }
@@ -6286,6 +6408,7 @@ function fmtDate(v){
    INIT
 ═══════════════════════════════════════════════ */
 (async function init(){
+  if(renderSharedExamPacket()) return;
   renderNav();
   await qaStore.init();
   await analyticsStore.ensureQuarterReview();
