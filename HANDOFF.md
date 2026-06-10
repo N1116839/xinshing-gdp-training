@@ -1,3 +1,41 @@
+## 2026-06-10 第九十四次：關鍵設備行事曆年度狀態＋測驗手機分享入口 ✅
+
+依使用者指定兩點先行調整：
+
+1. 「關鍵設備行事曆」原本沒有跟「年度資料收件行事曆」同步補年度區分，也沒有每筆已完成 / 未完成狀態。
+2. 「測試專區」桌面列印/下載正常，但手機作答完成後缺少可直接分享給人事列印資料的入口。
+
+### 本輪修正
+- `HTML資料庫/新勝GDP資料庫.html`
+  - `calendarStatusStore` 新增 `setSection(sectionId)`，讓年度資料收件行事曆與關鍵設備行事曆可共用同一套年度狀態邏輯，但分 section 儲存。
+  - 年度選單抽成共用 `calendarYearOptions()`：目前年度 + 後續 5 年 + 前 2 年，避免兩個行事曆未來不同步。
+  - 關鍵設備時間核對台新增年度下拉 `equipYearSelect`。
+  - 關鍵設備每筆項目新增「已完成 / 未完成」按鈕，使用穩定 `equipment-*` itemId。
+  - 設備狀態寫入 `gdpTrainingCalendarStatus/equipment-calendar/items`，並寫入 `statusYear`；localStorage fallback 對設備頁加上 section，避免與年度資料收件行事曆序號 key 撞名。
+  - 測驗結果資料包新增「分享送交人事資料」按鈕；手機支援 Web Share 檔案分享時直接分享 HTML 資料包，不支援時自動退回下載同一份 HTML。
+
+### 驗收
+- `JS_PARSE_OK 361585` 通過。
+- `node verify_facts_ghpages.mjs`：`1296/1296` 通過。
+- 靜態檢查確認：
+  - `equipYearSelect` 存在。
+  - `data-equipment-status` 模板存在，會依 12 筆設備清單渲染。
+  - `calendarStatusStore.setSection("equipment-calendar")` 存在。
+  - `data-exam-share` 與 `navigator.share` 存在。
+- 未修改 `examTemplates` 題目內容、答案、抽題分層或 SOP/KB facts。
+
+### 驗證限制
+- 本輪嘗試使用 Node REPL / Playwright 做桌機與手機瀏覽器實機檢查，但本機 Windows sandbox 仍失敗：`CreateProcessWithLogonW failed: 267`。此限制與第九十三次瀏覽器 MCP 失敗一致。
+- 已用 JavaScript 語法檢查、1296 facts 驗收與靜態功能檢查補驗；推送後仍需用 GitHub Pages 永久網址人工或可用瀏覽器工具再點一次關鍵設備年度狀態與手機分享按鈕。
+
+### 下次待辦
+1. 推送後用 GitHub Pages 永久網址確認：
+   - 關鍵設備行事曆可切換年度，且每筆設備有已完成 / 未完成。
+   - 手機測驗完成後可看到「分享送交人事資料」。
+2. 後續仍可接：官方缺失 Firestore collections、前端 UX/CSS 派工驗收、PIC/S 明文但 SOP 未列項目盤點。
+
+---
+
 ## 2026-06-10 第九十三次：年度行事曆選單補後續年份 ✅
 
 依使用者確認「行事曆只到115年，明年是否會自動加116年；若不是先製作後續年份」處理。

@@ -1491,12 +1491,18 @@ const calendarStatusStore = {
   sectionId:"collection-calendar",
   cache:null,
   _unsub:null,
+  setSection(sectionId){
+    if(this.sectionId===sectionId) return;
+    if(this._unsub){ this._unsub(); this._unsub=null; }
+    this.sectionId=sectionId;
+    this.cache=null;
+  },
   currentYear(){ return new Date().getFullYear()-1911; },
   selectedYear(){ return Number(document.getElementById("calYearSelect")?.value)||this.currentYear(); },
   key(itemId,year=this.selectedYear()){ return `gdp-calendar-status-${year}-${itemId}`; },
-  fallbackKey(index,year=this.selectedYear()){ return `gdp-calendar-status-${year}-${index}`; },
+  fallbackKey(index,year=this.selectedYear()){ return this.sectionId==="collection-calendar" ? `gdp-calendar-status-${year}-${index}` : `gdp-calendar-status-${this.sectionId}-${year}-${index}`; },
   legacyKey(itemId){ return `gdp-calendar-status-${itemId}`; },
-  legacyFallbackKey(index){ return `gdp-calendar-status-${index}`; },
+  legacyFallbackKey(index){ return this.sectionId==="collection-calendar" ? `gdp-calendar-status-${index}` : `gdp-calendar-status-${this.sectionId}-${index}`; },
   docId(itemId,year=this.selectedYear()){ return `${year}__${itemId}`; },
   async load(year=this.selectedYear()){
     if(!this.cache) this.cache = new Map();
@@ -3680,6 +3686,14 @@ function stableCalendarItemId(item,index){
   }
   return `item-${String(index).padStart(3,"0")}-${Math.abs(hash).toString(36)}`;
 }
+function stableEquipmentItemId(item,index){
+  const raw=[item.freq,item.equipment,item.task,item.owner,item.form,item.source].join("|");
+  let hash=0;
+  for(let i=0;i<raw.length;i++){
+    hash=((hash<<5)-hash+raw.charCodeAt(i))|0;
+  }
+  return `equipment-${String(index).padStart(3,"0")}-${Math.abs(hash).toString(36)}`;
+}
 
 /* ═══════════════════════════════════════════════
    RENDER HELPERS
@@ -4179,12 +4193,15 @@ function respMatrix(s){
     <tbody>${rows.map(([act,...cells])=>`<tr><td>${act}</td>${cells.map(c=>`<td class="${c==="主辦"?"r":"s"}">${c}</td>`).join("")}</tr>`).join("")}</tbody>
   </table></div>`;
 }
+function calendarYearOptions(){
+  const rocYear=calendarStatusStore.currentYear();
+  return [rocYear,...Array.from({length:5},(_,i)=>rocYear+i+1),rocYear-1,rocYear-2]
+    .map(y=>`<option value="${y}">民國 ${y} 年</option>`).join("");
+}
 function collectionCalendarSection(s){
   if(!s.collectionCalendar) return "";
   const items=s.collectionCalendar;
-  const rocYear=calendarStatusStore.currentYear();
-  const selectableYears=[rocYear,...Array.from({length:5},(_,i)=>rocYear+i+1),rocYear-1,rocYear-2];
-  const yearOptions=selectableYears.map(y=>`<option value="${y}">民國 ${y} 年</option>`).join("");
+  const yearOptions=calendarYearOptions();
   const freqOrder=["發生時啟動","每日","每月","每兩個月","每季","每半年","每年","每三年"];
   const depts=["GDP 權責人","管理藥師","品保","倉管","採購","業務","文管","人事"];
   const byFreq={};
@@ -4241,6 +4258,7 @@ function equipmentOnlySection(s){
   const src=sections.find(x=>x.id===s.equipmentRef);
   if(!src||!src.equipmentCalendar) return "";
   const eq=src.equipmentCalendar;
+  const yearOptions=calendarYearOptions();
   const freqOrder=["每月","每季","每半年","每年","每三年","發生時啟動"];
   const byFreq={};
   eq.forEach(x=>{if(!byFreq[x.freq])byFreq[x.freq]=[];byFreq[x.freq].push(x);});
@@ -4248,15 +4266,29 @@ function equipmentOnlySection(s){
     const items=byFreq[freq];if(!items||!items.length)return "";
     return `<button type="button" class="${i===0?"active":""}" data-equip-freq="${esc(freq)}"><span>${esc(freq)}</span><strong>${items.length}</strong></button>`;
   }).join("");
-  const list=eq.map(x=>`<article class="equip-list-item" data-equip-item="${esc(x.freq)}">
+  const yearFilter=`<div class="dept-filter-wrap" style="align-items:center;margin-bottom:12px">
+    <label class="dept-filter-lbl" for="equipYearSelect">年度</label>
+    <select id="equipYearSelect" class="dept-filter-btn" style="min-width:132px">${yearOptions}</select>
+  </div>`;
+  const list=eq.map((x,i)=>{
+    const itemId=stableEquipmentItemId(x,i);
+    return `<article class="equip-list-item" data-equip-item="${esc(x.freq)}">
     <div><span class="freq-badge">${esc(x.freq)}</span></div>
     <div>
       <h4>${esc(x.equipment)}</h4>
       <p>${esc(x.task)}</p>
-      <div class="equipment-meta"><span>負責人：${esc(x.owner)}</span><span>要確認的證據：${esc(x.form==="FR34-03"?"設備保養維修紀錄":x.form)}</span></div>
+      <div class="equipment-meta">
+        <span>負責人：${esc(x.owner)}</span>
+        <span>要確認的證據：${esc(x.form==="FR34-03"?"設備保養維修紀錄":x.form)}</span>
+        <span class="calendar-status" data-equipment-status="${i}" data-equipment-status-id="${esc(itemId)}" data-equipment-label="${esc(x.equipment+"｜"+x.task)}" aria-label="設備核對狀態">
+          <button type="button" data-status="done">已完成</button>
+          <button type="button" data-status="pending">未完成</button>
+        </span>
+      </div>
     </div>
-  </article>`).join("");
-  return panel("關鍵設備時間核對台",`<p class="lead" style="font-size:15px">這一頁跟年度資料收件行事曆一樣，先依時間點篩選，再看該找誰、要確認哪些設備保養/校驗/確效證據。完整作業依據請依文管程序調閱核准文件。</p><div class="equip-menu"><div class="equip-menu-list">${menu}</div><div class="equip-item-list">${list}</div></div>`,"wide");
+  </article>`;
+  }).join("");
+  return panel("關鍵設備時間核對台",`<p class="lead" style="font-size:15px">這一頁跟年度資料收件行事曆一樣，先依時間點篩選，再看該找誰、要確認哪些設備保養/校驗/確效證據。完整作業依據請依文管程序調閱核准文件。</p><div class="equip-menu"><div class="equip-menu-list">${menu}</div><div>${yearFilter}<div class="equip-item-list">${list}</div></div></div>`,"wide");
 }
 function docButtons(s){ return ""; }
 function evidenceMap(s){
@@ -5480,6 +5512,21 @@ body{margin:0;padding:0;background:#fff;color:#000;font-family:"Microsoft JhengH
     a.remove();
     setTimeout(()=>URL.revokeObjectURL(url),800);
   }
+  async function shareExamPacket(){
+    if(!session.shareText) return;
+    const name=(session.profile?.name||"未填姓名").replace(/[\\/:*?"<>|]/g,"_");
+    const fileName=`GDP測驗送交人事_${name}.html`;
+    const file=new File([session.shareText],fileName,{type:"text/html"});
+    if(navigator.canShare&&navigator.canShare({files:[file]})&&navigator.share){
+      try{
+        await navigator.share({title:"GDP 測驗送交人事資料",text:"請將此測驗資料交由人事列印保存。",files:[file]});
+        return;
+      }catch(e){
+        if(e&&e.name==="AbortError") return;
+      }
+    }
+    downloadExamShareText();
+  }
   function examPrintDocumentHtml(correct,total,score,pass,timedOut){
     const p=session.profile||{};
     const resultText=pass?"合格":"未合格";
@@ -5579,6 +5626,7 @@ body{margin:0;padding:0;background:#fff;color:#000;font-family:"Microsoft JhengH
         <p class="exam-paper-note">列印會輸出兩份文件：FR24-03 員工教育訓練紀錄表，以及含作答答案與右上角分數的考卷式答題紀錄。無法列印時，請用送交人事資料包交給人事。</p>
         <div class="exam-start-actions">
           <button type="button" class="secondary" data-exam-print>列印本頁</button>
+          <button type="button" class="secondary" data-exam-share>分享送交人事資料</button>
           <button type="button" class="secondary" data-exam-download>下載送交人事資料</button>
         </div>
       </div>
@@ -5619,6 +5667,7 @@ body{margin:0;padding:0;background:#fff;color:#000;font-family:"Microsoft JhengH
   root.querySelector('[data-exam-action="to-start"]')?.addEventListener("click",()=>setStage("start"));
   root.addEventListener("click",e=>{
     if(e.target.closest("[data-exam-print]")) window.print();
+    if(e.target.closest("[data-exam-share]")) shareExamPacket();
     if(e.target.closest("[data-exam-download]")) downloadExamShareText();
   });
   prevBtn?.addEventListener("click",()=>{if(session.index>0){session.index-=1;renderQuestion();}});
@@ -5762,6 +5811,7 @@ function initSwipePanels(){
   });
 }
 function bindCalendarFilters(){
+  calendarStatusStore.setSection("collection-calendar");
   const yearSelect=document.getElementById("calYearSelect");
   const statusGroups=[...document.querySelectorAll("[data-calendar-status]")];
   function selectedYear(){
@@ -5910,6 +5960,51 @@ function bindEquipmentMenu(){
   }
   buttons.forEach(btn=>btn.addEventListener("click",()=>show(btn.dataset.equipFreq)));
   show(buttons[0].dataset.equipFreq);
+}
+function bindEquipmentCalendarFilters(){
+  const statusGroups=[...document.querySelectorAll("[data-equipment-status]")];
+  const yearSelect=document.getElementById("equipYearSelect");
+  if(!statusGroups.length&&!yearSelect) return;
+  calendarStatusStore.setSection("equipment-calendar");
+  function selectedYear(){
+    return Number(yearSelect?.value)||calendarStatusStore.currentYear();
+  }
+  function applyStatus(group,status){
+    group.querySelectorAll("button").forEach(btn=>btn.classList.toggle("active",btn.dataset.status===status));
+  }
+  function loadStatusesForYear(year=selectedYear()){
+    calendarStatusStore.load(year).then(()=>{
+      statusGroups.forEach(group=>{
+        const index=group.dataset.equipmentStatus;
+        const itemId=group.dataset.equipmentStatusId;
+        const saved=localStorage.getItem(calendarStatusStore.key(itemId,year))||localStorage.getItem(calendarStatusStore.fallbackKey(index,year))||"pending";
+        applyStatus(group,saved);
+        calendarStatusStore.get(index,itemId,year).then(status=>applyStatus(group,status));
+      });
+    });
+    calendarStatusStore.subscribe((itemId,status)=>{
+      const group=statusGroups.find(g=>g.dataset.equipmentStatusId===itemId);
+      if(group) applyStatus(group,status);
+    },year);
+  }
+  statusGroups.forEach(group=>{
+    const index=group.dataset.equipmentStatus;
+    const itemId=group.dataset.equipmentStatusId;
+    const saved=localStorage.getItem(calendarStatusStore.key(itemId,selectedYear()))||localStorage.getItem(calendarStatusStore.fallbackKey(index,selectedYear()))||"pending";
+    const buttons=[...group.querySelectorAll("button")];
+    calendarStatusStore.get(index,itemId,selectedYear()).then(status=>applyStatus(group,status));
+    buttons.forEach(btn=>{
+      btn.classList.toggle("active",btn.dataset.status===saved);
+      btn.addEventListener("click",async()=>{
+        const year=selectedYear();
+        await calendarStatusStore.set(index,itemId,btn.dataset.status,year);
+        analyticsStore.log("calendar_status",{sectionId:"equipment-calendar",targetId:itemId,targetLabel:group.dataset.equipmentLabel||"",status:btn.dataset.status,statusYear:year});
+        buttons.forEach(x=>x.classList.toggle("active",x===btn));
+      });
+    });
+  });
+  yearSelect?.addEventListener("change",()=>loadStatusesForYear(selectedYear()));
+  loadStatusesForYear(selectedYear());
 }
 function bindAuditFocus(){
   const detail=document.getElementById("auditDetail");
@@ -6128,6 +6223,7 @@ async function showSection(id){
   initSwipePanels();
   bindCalendarFilters();
   bindEquipmentMenu();
+  bindEquipmentCalendarFilters();
   bindDeptSchedTabs();
   bindAuditFocus();
   bindFlowSteppers();
