@@ -5501,6 +5501,10 @@ body{margin:0;padding:0;background:#fff;color:#000;font-family:"Microsoft JhengH
   }
   function downloadExamShareText(){
     if(!session.shareText) return;
+    if(isMobileShareSurface()){
+      openExamPacketPage();
+      return;
+    }
     const blob=new Blob([session.shareText],{type:"text/html;charset=utf-8"});
     const url=URL.createObjectURL(blob);
     const a=document.createElement("a");
@@ -5511,6 +5515,20 @@ body{margin:0;padding:0;background:#fff;color:#000;font-family:"Microsoft JhengH
     a.click();
     a.remove();
     setTimeout(()=>URL.revokeObjectURL(url),800);
+  }
+  function isMobileShareSurface(){
+    return window.matchMedia?.("(max-width: 680px)").matches || /Android|iPhone|iPad|iPod|Line|FBAN|FBAV|Instagram/i.test(navigator.userAgent||"");
+  }
+  function openExamPacketPage(){
+    if(!session.shareText) return;
+    const blob=new Blob([session.shareText],{type:"text/html;charset=utf-8"});
+    const url=URL.createObjectURL(blob);
+    const opened=window.open(url,"_blank","noopener");
+    if(!opened&&resultBox){
+      resultBox.hidden=false;
+      resultBox.insertAdjacentHTML("afterbegin",`<div class="exam-lock-note" style="margin-bottom:10px">瀏覽器阻擋開啟資料包，請允許彈出視窗後再點一次「開啟送交人事資料」。</div>`);
+    }
+    setTimeout(()=>URL.revokeObjectURL(url),120000);
   }
   async function shareExamPacket(){
     if(!session.shareText) return;
@@ -5525,7 +5543,7 @@ body{margin:0;padding:0;background:#fff;color:#000;font-family:"Microsoft JhengH
         if(e&&e.name==="AbortError") return;
       }
     }
-    downloadExamShareText();
+    openExamPacketPage();
   }
   function examPrintDocumentHtml(correct,total,score,pass,timedOut){
     const p=session.profile||{};
@@ -5627,6 +5645,7 @@ body{margin:0;padding:0;background:#fff;color:#000;font-family:"Microsoft JhengH
         <div class="exam-start-actions">
           <button type="button" class="secondary" data-exam-print>列印本頁</button>
           <button type="button" class="secondary" data-exam-share>分享送交人事資料</button>
+          <button type="button" class="secondary" data-exam-open>開啟送交人事資料</button>
           <button type="button" class="secondary" data-exam-download>下載送交人事資料</button>
         </div>
       </div>
@@ -5668,6 +5687,7 @@ body{margin:0;padding:0;background:#fff;color:#000;font-family:"Microsoft JhengH
   root.addEventListener("click",e=>{
     if(e.target.closest("[data-exam-print]")) window.print();
     if(e.target.closest("[data-exam-share]")) shareExamPacket();
+    if(e.target.closest("[data-exam-open]")) openExamPacketPage();
     if(e.target.closest("[data-exam-download]")) downloadExamShareText();
   });
   prevBtn?.addEventListener("click",()=>{if(session.index>0){session.index-=1;renderQuestion();}});
