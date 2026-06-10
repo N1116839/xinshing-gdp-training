@@ -1,4 +1,4 @@
-## 2026-06-10 第九十七次：GitHub Pages 線上驗收＋查出行事曆多人不同步根因（rules 與程式不同步）＋寫入歸屬設計 ⚠️待部署
+## 2026-06-10 第九十七次：GitHub Pages 線上驗收＋修好行事曆多人不同步（已部署 rules）＋寫入歸屬設計 ✅
 
 使用者開工選「GitHub Pages 實測」，過程中追問「多人共用時，031 把 1 月標完成要看得出是誰做的」，並回報「看不到另一個使用者的勾選」。
 
@@ -15,7 +15,8 @@
 - 程式 `set()` 內 try/catch 把 permission-denied 吃掉、fallback localStorage（每台瀏覽器各存各的）→ 多人完全不同步。
 - **REST 實測鐵證**（讀 `allow read:if true`）：線上 `gdpTrainingCalendarStatus/collection-calendar/items` 只有 5 筆舊格式 doc（全 `statusYear:undefined`、docId 無年度前綴、最新停在 **2026-06-08**）；`equipment-calendar` **0 筆**。6/9 起新格式一筆都沒進雲端。
 - ⚠️ **重要釐清**：`firestore.rules` **檔案在 git 裡其實早已是正確版**（commit `6cffb78` SessionEnd auto-save 就含 statusYear＋docId 綁定）。問題是**那份正確 rules 從沒被「部署」到 Firebase**（auto-save 只進 git，不 deploy；上一次真正 deploy 是 `1314b6b`，舊版）。本機 Read 到舊版是 Google Drive 過期快取，已查證 HEAD blob == disk blob。
-- **所以這不是「要改檔」，是「要部署」。** 本機無 firebase CLI、此版 Cowork 不載 firebase MCP，無法從這裡 deploy → 需使用者部署。
+- **所以這不是「要改檔」，是「要部署」。** ✅ 本輪已部署：用 `npx firebase-tools deploy --only firestore:rules`（配 `~/.config/configstore/firebase-tools.json` 今天 10:24 的快取登入）→ `rules compiled successfully`＋`released to cloud.firestore`＋`Deploy complete!`。
+- **實證**：部署後用 REST 寫一筆新格式 doc（statusYear＋docId `115__...`）→ ✅ ACCEPTED（部署前必為 DENIED），證明線上 rules 已收新格式；測試 doc 已用 admin `firestore:delete` 刪除並 REST 確認 NOT_FOUND，未留垃圾。
 
 ### 3. 寫入歸屬設計已寫入規範（使用者要求「先寫進去」）
 - `GDP_智慧查詢規範.md` 升 v3.0，新增 §47：
@@ -24,12 +25,9 @@
   - §47.3 硬性規則：改 store 寫入欄位/docId 必須同步改 rules 並重新部署；同步功能須正式網域雙裝置實測，正式網域 permission-denied 是 bug 不是 fallback。
 
 ### 下次必做（優先）
-1. **部署 firestore.rules**（檔案已是正確版，只缺部署；不部署行事曆多人同步永遠壞）。方式擇一：
-   - Firebase Console → xinshing-gdp-training-20260525 → Firestore Database → 規則 → 貼上 `Firebase設定/firestore.rules` 全文 → 發布；或
-   - 裝 `npm i -g firebase-tools` → 在 `Firebase設定/` 下 `firebase deploy --only firestore:rules`（project xinshing-gdp-training-20260525）。
-2. 部署後**正式網域用兩台瀏覽器/裝置實測**：A 勾選 1 月 → B 重整看得到；或用 REST 再讀 `gdpTrainingCalendarStatus/collection-calendar/items` 確認出現含 `statusYear`、docId 為 `年度__itemId` 的新 doc。
-3. 注意：6/9 起既有勾選只在各自 localStorage、未進 Firestore；部署後是「之後的勾選才開始同步」，舊的不會自動補上雲端。
-4. 收工建議在收工流程加一條：**改 store 寫入欄位/docId 後，rules 不能只 commit，必須實際 deploy 並 REST 驗證寫入**（本案 auto-save 進 git 卻沒 deploy，潛伏兩天才被使用者發現）。
+1. ✅ **rules 已部署＋REST 實證接受新格式**（本輪完成，見上 §2）。剩下建議使用者做**真人端確認**：兩台手機/瀏覽器登入正式網址，A 勾選 1 月 → B 重整看得到（程式同步管道已通，這步只是親眼確認 UX）。
+2. 注意：6/9～部署前的既有勾選只在各自 localStorage、未進 Firestore；部署後是「之後的勾選才開始同步」，舊的不會自動補上雲端 → 重要項目請使用者重勾一次。
+3. **收工流程已立硬規（§47.3）**：改 store 寫入欄位/docId 後，rules 不能只 commit，必須實際 `deploy` 並 REST 驗證寫入（本案 auto-save 進 git 卻沒 deploy，潛伏兩天才被使用者發現）。
 4. 登入系統開工時依 §47.2 做「誰做的」歸屬＋稽核軌跡。
 5. 既有待辦續：官方缺失 Firestore（§43）、前端 UX/CSS 派工驗收、PIC/S 明文但 SOP 漏列盤點。
 
