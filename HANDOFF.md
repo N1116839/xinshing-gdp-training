@@ -1,3 +1,27 @@
+## 2026-06-10 第九十八次：移除重複區塊（pageTag2 與 docButtons 死程式）＋確認 eyebrow 已是 18px ✅
+
+使用者開工選「重複區塊實機盤點」與「eyebrow 16px→18px」一起做。
+
+### 本次完成
+1. **Eyebrow 字體** — 已在 CSS 第 47 行設為 `font-size:18px`（第六十八次完成），無需變更。
+2. **移除 `#pageTag2` 重複 eyebrow** — hero 區的第二個 eyebrow 與 topbar 的 `#pageTag` 顯示相同 `s.tag`。已移除 HTML 元素與 JS setter。
+3. **移除 `docButtons()` 死程式** — 函式回傳 `""` 且未被呼叫，已移除。
+
+### 驗收
+- `JS_PARSE_OK 1` ✅
+- `verify_facts 1296/1296` ✅
+- commit `1920938`，已 push
+
+### 下次待辦（不變）
+1. 登入/正式權限（⏸️ 需權限表）
+2. 官方缺失 Firestore（§43）
+3. 前端 UX/CSS 派工驗收
+4. PIC/S 明文但 SOP 漏列項目盤點
+5. 測驗平台正式上架（需講師審查）
+6. 全站互動性精修
+
+---
+
 ## 2026-06-10 第九十七次：GitHub Pages 線上驗收＋修好行事曆多人不同步（已部署 rules）＋寫入歸屬設計 ✅
 
 使用者開工選「GitHub Pages 實測」，過程中追問「多人共用時，031 把 1 月標完成要看得出是誰做的」，並回報「看不到另一個使用者的勾選」。
