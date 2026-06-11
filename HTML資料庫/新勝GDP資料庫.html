@@ -36,6 +36,8 @@
     .equip-freq-group{margin-bottom:18px}
     .equip-freq-lbl{display:inline-flex;align-items:center;gap:6px;margin-bottom:7px;padding:3px 12px;background:var(--brand);color:#fff;font-size:12px;font-weight:700;border-radius:20px}
     .equip-freq-list{display:flex;flex-direction:column;gap:4px}
+    /* 鍵盤可近用：僅鍵盤操作（focus-visible）顯示焦點框，不影響滑鼠點擊 */
+    a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2.5px solid var(--gold);outline-offset:2px}
     main{min-width:0;padding:28px clamp(18px,3vw,42px) 42px}
     .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px}
     .status{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;color:var(--ink-soft);background:#fff;border:1px solid var(--line);border-radius:999px;font-size:13px}
@@ -207,6 +209,16 @@
     .slide-vp{overflow:hidden}
     .slide-track{display:flex;transition:transform .45s cubic-bezier(.4,0,.2,1);will-change:transform}
     .slide-pane{flex:0 0 100%;min-height:180px}
+    /* 全部並列檢視（一次看到四層做橫向對照，非輪播） */
+    .slide-toolbar{display:flex;justify-content:flex-end;padding:8px 12px 0}
+    .slide-expand-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1.5px solid var(--brand);border-radius:8px;background:#fff;cursor:pointer;font:inherit;font-size:13px;font-weight:700;color:var(--brand);transition:background .2s,color .2s}
+    .slide-expand-btn:hover{background:var(--brand);color:#fff}
+    .swipe-panel.expanded .slide-track{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:12px;transform:none!important;transition:none}
+    .swipe-panel.expanded .slide-pane{flex:none;min-height:0;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+    .swipe-panel.expanded .slide-prev,.swipe-panel.expanded .slide-next,.swipe-panel.expanded .slide-dots{display:none}
+    .swipe-panel.expanded .slide-nav{justify-content:center}
+    .swipe-panel.expanded .pipe-progress-fill{width:100%!important}
+    @media(max-width:760px){.swipe-panel.expanded .slide-track{grid-template-columns:1fr}}
     /* pane header */
     .slide-hd{display:flex;align-items:center;gap:10px;padding:13px 18px;color:#fff;font-weight:800;font-size:15px;letter-spacing:.01em}
     .slide-hd-icon{font-size:22px}
@@ -370,6 +382,24 @@
       .ds-item-meta span{font-size:13px;padding:5px 10px}
     }
     @media(max-width:700px){.dept-sched{grid-template-columns:1fr}}
+    /* 時程表格總覽（一次掃完全部項目，與分頻分頁切換） */
+    .dept-sched-toolbar{display:flex;justify-content:flex-end;margin-bottom:10px}
+    .ds-view-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1.5px solid var(--brand);border-radius:8px;background:#fff;cursor:pointer;font:inherit;font-size:13px;font-weight:700;color:var(--brand);transition:background .2s,color .2s}
+    .ds-view-btn:hover{background:var(--brand);color:#fff}
+    .ds-table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+    .ds-table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:680px}
+    .ds-table th{background:var(--brand);color:#fff;text-align:left;padding:10px 12px;font-weight:800;white-space:nowrap}
+    .ds-table td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.6;color:var(--ink)}
+    .ds-table tbody tr:last-child td{border-bottom:none}
+    .ds-table tbody tr:nth-child(even){background:#f7fbfb}
+    .ds-table tbody tr:hover{background:#eef8f5}
+    .ds-td-do{font-weight:700;min-width:170px}
+    .ds-td-note{color:var(--muted,#5a7070);min-width:220px}
+    .ds-freq-cell{display:inline-block;padding:2px 9px;border-radius:999px;font-weight:700;font-size:12px;white-space:nowrap;background:#eef2f1;color:var(--ink)}
+    .ds-table tr[data-urg="red"] .ds-freq-cell{background:#fdecea;color:#a83232}
+    .ds-table tr[data-urg="amber"] .ds-freq-cell{background:#fbf3e0;color:#9a6f08}
+    .ds-table tr[data-urg="blue"] .ds-freq-cell{background:#e8f0fb;color:#0a4d8a}
+    .ds-table tr[data-urg="green"] .ds-freq-cell{background:#e8f3ee;color:#0f7a52}
     /* ── evidence / metric ── */
     .ev-chain-hdr{display:flex;align-items:center;gap:10px;padding:12px 18px;background:var(--brand);border-radius:10px 10px 0 0}
     .ev-chain-lbl{background:rgba(255,255,255,.18);color:#fff;font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;letter-spacing:.06em;flex-shrink:0}
@@ -678,10 +708,12 @@
     .fsv-chapter{display:inline-block;font-size:11px;background:#e6f2ef;color:var(--brand);border-radius:5px;padding:2px 8px;margin-top:6px}
     @media(max-width:640px){.fsh{display:none}.fsv{display:block}.fsh-detail{text-align:left}}
     /* ── dept quick nav ─────────────────────────────── */
-    .dept-quicknav{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+    .dept-quicknav{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:8px;position:sticky;top:0;z-index:20;margin:0 0 4px;padding:9px 14px;background:rgba(255,255,255,.96);backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:10px;box-shadow:0 4px 14px rgba(20,64,61,.10)}
+    .dept-qn-label{font-size:12px;font-weight:800;color:var(--ink-soft);margin-right:2px}
     .dept-qn-btn{display:inline-flex;align-items:center;gap:4px;padding:7px 16px;border-radius:20px;background:#f0f8f6;border:1.5px solid #cde0dd;font-size:13px;font-weight:600;color:var(--brand);text-decoration:none;transition:all .2s;cursor:pointer}
     .dept-qn-btn:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
-    @media(max-width:640px){.dept-qn-btn{font-size:12px;padding:6px 13px}}
+    .dept-qn-btn.active{background:var(--brand);color:#fff;border-color:var(--brand);box-shadow:0 2px 8px rgba(15,91,80,.3)}
+    @media(max-width:640px){.dept-qn-btn{font-size:12px;padding:6px 13px}.dept-qn-label{display:none}}
     /* ── mobile page TOC floating button ─────────────── */
     .dept-toc-fab{display:none;position:fixed;bottom:80px;right:14px;z-index:999;width:50px;height:50px;border-radius:50%;background:var(--brand);color:#fff;border:none;font-size:22px;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.25);transition:transform .2s;align-items:center;justify-content:center}
     .dept-toc-fab:active{transform:scale(.92)}
@@ -3954,13 +3986,13 @@ function deptQuickNav(s){
     return depts.some(d=>d===deptName||d.includes(deptName));
   });
   const links=[];
-  if(hasSchedule) links.push({label:'📅 資料時程',href:`#sec-${s.id}-schedule`});
-  if(s.deptFlow) links.push({label:'🔄 作業流程',href:`#sec-${s.id}-flow`});
-  if(s.audit&&s.audit.length) links.push({label:'🎯 稽查翻卡',href:`#sec-${s.id}-audit`});
-  if(departmentDocumentMaps[s.id]) links.push({label:'📖 文件地圖',href:`#sec-${s.id}-docmap`});
+  if(hasSchedule) links.push({label:'📅 資料時程',id:`sec-${s.id}-schedule`});
+  if(s.deptFlow) links.push({label:'🔄 作業流程',id:`sec-${s.id}-flow`});
+  if(s.audit&&s.audit.length) links.push({label:'🎯 稽查翻卡',id:`sec-${s.id}-audit`});
+  if(departmentDocumentMaps[s.id]) links.push({label:'📖 文件地圖',id:`sec-${s.id}-docmap`});
   if(!links.length) return '';
-  const qn=links.map(l=>`<a class="dept-qn-btn" href="${l.href}">${l.label}</a>`).join('');
-  return `<nav class="dept-quicknav">${qn}</nav>`;
+  const qn=links.map(l=>`<a class="dept-qn-btn" href="#${l.id}" data-qn-target="${l.id}">${l.label}</a>`).join('');
+  return `<nav class="dept-quicknav" data-dept-stickynav><span class="dept-qn-label">本頁段落：</span>${qn}</nav>`;
 }
 function updateDeptToc(s){
   const popup=document.getElementById("deptTocPopup");
@@ -3997,7 +4029,6 @@ function visualIntro(s){
     </div>
     ${pillsHtml?`<div class="dept-intro-pills">${pillsHtml}</div>`:''}
     <div class="dept-intro-goals">${goalsHtml}</div>
-    ${deptQuickNav(s)}
   </div>`;
 }
 function standardsSwipe(standards){
@@ -4130,6 +4161,7 @@ function standardsSwipe(standards){
   return `<div class="swipe-panel" data-uid="${uid}">
     <div class="pipe-hdr">${pipeSteps}</div>
     <div class="pipe-progress"><div class="pipe-progress-fill" style="width:25%"></div></div>
+    <div class="slide-toolbar"><button class="slide-expand-btn" type="button" aria-pressed="false">⊞ 全部並列檢視</button></div>
     <div class="slide-vp"><div class="slide-track" id="${uid}">${panes}</div></div>
     <div class="slide-nav">
       <button class="slide-btn slide-prev" disabled>‹ 上一層</button>
@@ -5086,6 +5118,7 @@ function renderContent(s){
   if(s.id==="gdp-kb") return kbSection();
   if(s.examTemplate) return examTemplateSection(s);
   return [
+    deptQuickNav(s),
     panel("視覺導讀",visualIntro(s),""),
     s.coreBrief ? panel("學習重點",coreBriefHtml(s),"wide") : "",
     scheduleTriggersSection(s),
@@ -6021,6 +6054,15 @@ function initSwipePanels(){
     dots.forEach((d,i)=>d.addEventListener("click",()=>goto(i)));
     prevBtn.addEventListener("click",()=>goto(cur-1));
     nextBtn.addEventListener("click",()=>goto(cur+1));
+    const expandBtn=panel.querySelector(".slide-expand-btn");
+    if(expandBtn){
+      expandBtn.addEventListener("click",()=>{
+        const exp=panel.classList.toggle("expanded");
+        expandBtn.setAttribute("aria-pressed",exp?"true":"false");
+        expandBtn.textContent=exp?"↔ 逐層瀏覽":"⊞ 全部並列檢視";
+        if(!exp) goto(cur,false);   // 收合時還原輪播位置
+      });
+    }
     goto(0, false);
   });
 }
@@ -6175,9 +6217,25 @@ function deptScheduleSection(s){
       </div>
     </div>`).join("")
   }</div>`).join("");
+  const allRows=orderedFreqs.flatMap(freq=>byFreq[freq].map(x=>({...x,freq})));
+  const tableRows=allRows.map(x=>{
+    const ch=sourceToChapter(x.source);
+    return `<tr data-urg="${urgMap[x.freq]||''}">
+      <td><span class="ds-freq-cell">${esc(x.freq)}</span></td>
+      <td>${ch?`<span class="chapter-tag">${esc(ch)}</span>`:'—'}</td>
+      <td class="ds-td-do">${esc(stripInlineCode(x.data))}</td>
+      <td class="ds-td-note">${esc(stripInlineCode(x.note))}</td>
+      <td>👤 ${esc(x.owner)}</td>
+    </tr>`;
+  }).join("");
+  const tableHtml=`<div class="ds-table-wrap" data-ds-table="${pid}" hidden>
+    <table class="ds-table"><thead><tr><th>頻率／觸發</th><th>章節</th><th>要做的事</th><th>備註</th><th>負責人</th></tr></thead><tbody>${tableRows}</tbody></table>
+  </div>`;
   return panel(`${deptName} 資料交付時程（${items.length} 項）`,
-    `<p style="font-size:14px;color:var(--muted);margin-bottom:6px">點擊左側頻率，查看「${deptName}」在各時間節點需要提交、啟動或確認的資料。</p><p style="font-size:12px;color:#aaa;margin-bottom:12px">以下資料僅為交付時程索引，實際作業請依核准文件與主管指示執行。</p>
-    <div class="dept-sched"><div class="dept-sched-tabs">${tabs}</div><div class="dept-sched-body">${panes}</div></div>`,
+    `<p style="font-size:14px;color:var(--muted);margin-bottom:6px">點擊左側頻率，查看「${deptName}」在各時間節點需要提交、啟動或確認的資料；或切換「表格總覽」一次掃完全部。</p><p style="font-size:12px;color:#aaa;margin-bottom:12px">以下資料僅為交付時程索引，實際作業請依核准文件與主管指示執行。</p>
+    <div class="dept-sched-toolbar"><button class="ds-view-btn" type="button" data-ds-view="${pid}" aria-pressed="false">▤ 表格總覽（全部 ${items.length} 項）</button></div>
+    <div class="dept-sched" data-ds-tabsview="${pid}"><div class="dept-sched-tabs">${tabs}</div><div class="dept-sched-body">${panes}</div></div>
+    ${tableHtml}`,
     "wide");
 }
 function bindDeptSchedTabs(){
@@ -6196,6 +6254,40 @@ function bindDeptSchedTabs(){
       });
     });
   });
+  // 表格總覽 ⇄ 分頻瀏覽 切換
+  document.querySelectorAll("[data-ds-view]").forEach(btn=>{
+    const pid=btn.dataset.dsView;
+    const tabsView=document.querySelector(`[data-ds-tabsview="${pid}"]`);
+    const tableView=document.querySelector(`[data-ds-table="${pid}"]`);
+    if(!tabsView||!tableView) return;
+    const total=tableView.querySelectorAll("tbody tr").length;
+    btn.addEventListener("click",()=>{
+      const showTable=tableView.hidden;
+      tableView.hidden=!showTable;
+      tabsView.hidden=showTable;
+      btn.setAttribute("aria-pressed",showTable?"true":"false");
+      btn.textContent=showTable?"▦ 分頻瀏覽":`▤ 表格總覽（全部 ${total} 項）`;
+    });
+  });
+}
+function bindDeptStickyNav(){
+  if(deptSpyHandler){ window.removeEventListener("scroll",deptSpyHandler); deptSpyHandler=null; }
+  const nav=document.querySelector("[data-dept-stickynav]");
+  if(!nav) return;
+  const btns=[...nav.querySelectorAll(".dept-qn-btn")];
+  const targets=btns.map(b=>({btn:b,el:document.getElementById(b.dataset.qnTarget)})).filter(t=>t.el);
+  if(!targets.length) return;
+  let ticking=false;
+  function spy(){
+    ticking=false;
+    let active=null;
+    targets.forEach(t=>{ if(t.el.getBoundingClientRect().top-110<=0) active=t; }); // 取最後一個已捲過頂部的段落
+    btns.forEach(b=>b.classList.remove("active"));
+    if(active) active.btn.classList.add("active");
+  }
+  deptSpyHandler=()=>{ if(!ticking){ ticking=true; requestAnimationFrame(spy); } };
+  window.addEventListener("scroll",deptSpyHandler,{passive:true});
+  spy();
 }
 function bindEquipmentMenu(){
   const buttons=[...document.querySelectorAll("[data-equip-freq]")];
@@ -6408,6 +6500,7 @@ function renderNav(){
 let current=sections[0].id;
 const examLock={active:false,sectionId:"exam"};
 let examKeyHandler=null;
+let deptSpyHandler=null;
 async function showSection(id){
   if(examLock.active && id!==examLock.sectionId){
     const lock=document.querySelector(".exam-lock-note");
@@ -6454,6 +6547,7 @@ async function showSection(id){
   bindEquipmentMenu();
   bindEquipmentCalendarFilters();
   bindDeptSchedTabs();
+  bindDeptStickyNav();
   bindAuditFocus();
   bindFlowSteppers();
   bindFlowDiagrams();
