@@ -142,12 +142,14 @@
   .exam-question-shell{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:14px}
   .exam-question-card{padding:18px;background:#fff;border:1px solid var(--line)}
   .exam-question-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
-  .exam-question-index{font-size:15px;font-weight:900;color:var(--brand)}
-  .exam-progress-track{height:8px;background:#e8f3f2;border-radius:999px;overflow:hidden}
+  .exam-question-index{font-size:17px;font-weight:900;color:var(--brand);letter-spacing:.3px}
+  .exam-progress-track{height:10px;background:#e8f3f2;border-radius:999px;overflow:hidden}
   .exam-progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--brand),var(--gold));transition:width .2s}
   .exam-option-list{display:grid;gap:8px;margin-top:14px}
-  .exam-option{display:grid;grid-template-columns:20px 1fr;gap:8px;align-items:start;padding:10px;border:1px solid var(--line);background:#f7fbfb}
-  .exam-option.selected{border-color:var(--brand);background:#eef8f5}
+  .exam-option{display:grid;grid-template-columns:20px 1fr;gap:8px;align-items:start;padding:11px 12px;border:1px solid var(--line);border-radius:8px;background:#f7fbfb;cursor:pointer;transition:border-color .15s,background .15s,box-shadow .15s}
+  .exam-option:hover{border-color:var(--brand);background:#eef8f5}
+  .exam-option.selected{border-color:var(--brand);background:#e3f3ee;box-shadow:inset 3px 0 0 var(--brand)}
+  .exam-option.selected span{color:var(--brand);font-weight:700}
   .exam-side{display:grid;gap:10px;align-content:start}
   .exam-mini-card{padding:12px;background:#f7fbfb;border:1px solid var(--line);font-size:13px;line-height:1.6;color:var(--ink-soft)}
   .exam-answer-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
@@ -157,6 +159,13 @@
   .exam-result-box{padding:16px;background:#f3fbf7;border:1px solid var(--line);border-left:5px solid var(--brand)}
   .exam-stage,.exam-hero,.exam-card,.exam-question-card,.exam-mini-card,.exam-lock-note,.exam-option,.exam-source-grid,.exam-scope-grid{min-width:0;max-width:100%;overflow-wrap:anywhere}
   .exam-start-actions select{max-width:100%;min-height:38px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:#fff;font:inherit;color:var(--ink)}
+  .exam-key-hint{margin-top:10px;font-size:12px;line-height:1.9;color:var(--ink-soft);background:#f3fbf7;border:1px dashed #b9ddd3;border-radius:6px;padding:7px 10px}
+  .exam-key-hint kbd{display:inline-block;min-width:16px;padding:1px 5px;margin:0 1px;font:inherit;font-size:11px;font-weight:800;color:var(--brand);background:#fff;border:1px solid #b9ddd3;border-bottom-width:2px;border-radius:4px;text-align:center}
+  @media(max-width:760px){
+    .exam-question-shell{grid-template-columns:1fr}
+    .exam-work-head{flex-wrap:wrap}
+    .exam-timer{margin-left:0}
+  }
     .slide-label{display:inline-grid;place-items:center;width:40px;height:40px;margin-bottom:8px;color:#fff;background:var(--gold);border-radius:50%;font-weight:800}
     .audit-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
     .audit-card{min-height:140px;padding:14px;background:#f4faf9;border:1px solid #cde0dd;border-top:5px solid var(--brand);font-size:15px;line-height:1.55;text-align:left;cursor:pointer}
@@ -5056,6 +5065,7 @@ function examTemplateSection(s){
           <div class="exam-progress-track"><div class="exam-progress-fill" data-exam-progress></div></div>
           <p style="line-height:1.8;margin-top:16px" data-exam-question>題目載入中</p>
           <div class="exam-option-list" data-exam-options></div>
+          <p class="exam-key-hint">鍵盤快捷：<kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> 選擇 A／B／C／D，<kbd>→</kbd>／<kbd>Enter</kbd> 下一題，<kbd>←</kbd> 上一題。</p>
           <div class="exam-start-actions" style="margin-top:16px">
             <button type="button" class="secondary" data-exam-action="prev">上一題</button>
             <button type="button" class="primary" data-exam-action="next">下一題</button>
@@ -5874,6 +5884,42 @@ function bindExamTemplate(){
     renderQuestion();
     startTimer();
   });
+  function onExamKey(e){
+    const examStageEl=root.querySelector('[data-exam-stage="exam"]');
+    if(!examStageEl||examStageEl.hidden) return;          // 只在考試作答畫面啟用
+    if(!session.questions.length||session.results) return; // 交卷計分後不再攔截
+    const ae=document.activeElement;
+    if(ae){
+      const tag=ae.tagName;
+      const type=String(ae.getAttribute&&ae.getAttribute("type")||"").toLowerCase();
+      // 焦點在打字欄位（文字 input / textarea / select）時快捷鍵失效，不干擾輸入；radio/button 不算打字
+      if(tag==="TEXTAREA"||tag==="SELECT"||(tag==="INPUT"&&!/^(radio|checkbox|button|submit|reset)$/.test(type))) return;
+    }
+    if(e.ctrlKey||e.altKey||e.metaKey) return;
+    const k=e.key;
+    if(k>="1"&&k<="4"){
+      const q=session.questions[session.index];
+      const idx=Number(k)-1;
+      if(q&&idx<q.options.length){
+        session.answers[session.index]=idx;
+        renderQuestion();
+        e.preventDefault();
+      }
+      return;
+    }
+    if(k==="Enter"||k==="ArrowRight"){
+      if(session.index<session.questions.length-1){session.index+=1;renderQuestion();} // 最後一題不提交，只停留
+      e.preventDefault();
+      return;
+    }
+    if(k==="ArrowLeft"){
+      if(session.index>0){session.index-=1;renderQuestion();}
+      e.preventDefault();
+    }
+  }
+  if(examKeyHandler) document.removeEventListener("keydown",examKeyHandler);
+  examKeyHandler=onExamKey;
+  document.addEventListener("keydown",onExamKey);
   applyRole();
   refreshStartSummary();
 }
@@ -6361,6 +6407,7 @@ function renderNav(){
 ═══════════════════════════════════════════════ */
 let current=sections[0].id;
 const examLock={active:false,sectionId:"exam"};
+let examKeyHandler=null;
 async function showSection(id){
   if(examLock.active && id!==examLock.sectionId){
     const lock=document.querySelector(".exam-lock-note");
