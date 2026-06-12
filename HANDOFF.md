@@ -1,3 +1,27 @@
+## 2026-06-12 第一百一十次：前端精修三項（手機 back-to-top 孤懸＋讀書單①fallback＋智慧查詢快速問題分組）✅
+
+接續第109次，使用者裁示做可選前端精修第1、3項並先實機複檢（第4）。只動 `HTML資料庫/新勝GDP資料庫.html` 一檔，不碰題庫/fact/SOP/權限/Firebase。
+
+### 開工複檢（baseline 零回歸）
+- Launch 預覽實機（須 `?v=` 強制重抓舊分頁）：第109次成果全在（token radius 14px/shadow/`--ink-soft` #3f5854、back-to-top 桌機膠囊/手機圓鈕 toggle＋平滑捲回、部門頁讀書單建構無代碼外洩、第108次死連結各模式 `dead:[]`）、console 無 error、無水平溢出。
+- **撤回一個誤判**：先前一度疑「back-to-top 隱藏態仍可點」，查 CSS 確認隱藏態是 `visibility:hidden`（`.show` 才 visible），本就不可點，無此 bug。
+
+### 本次完成
+1. **手機 back-to-top 孤懸修正**：原 `bottom:140px` 是為避開部門頁 `dept-toc-fab`(80)＋底部 dock(10)；但非部門頁（智慧查詢/手冊等無 dock/fab）時鈕孤懸偏高、下方空一塊。改：手機 media query 預設 `bottom:24px`、加 `body.dept-page .back-to-top{bottom:140px}`；`showSection` 加 `document.body.classList.toggle("dept-page",!!deptIdMap[s.id])`（deptIdMap 正好涵蓋 8 部門頁）。桌機不受影響（覆寫只在手機 media query 內）。
+2. **讀書單「① 本頁重點」fallback**：`buildDeptStudySheet` 原本只有 `coreBrief` 才出 ①，倉管等無 coreBrief 頁缺①。補 `else if(s.lead) parts.push("<h2>① 本頁重點</h2><p>"+esc(stripInlineCode(s.lead))+"</p>")`，讓每頁讀書單 ①②③④ 結構一致。只用既有已驗證 `lead`，不杜撰。
+3. **智慧查詢快速問題分組**：12 顆扁平 `.kb-quick` 按鈕依主題分 3 群（品質與管理／溫度與倉儲／廠商與作業，各 4），加 `.kb-quick-label`（`--ink-soft`）小標。**保留扁平 `quickQuestions` 陣列不動**、另建 `quickGroups`＋未分組「其他」fallback 防漏；`data-q` 字串與 `.kb-quick` class 完全不變（守規範 §26.3.1 固定驗收題）。
+
+### 驗收
+- `node verify_facts_ghpages.mjs` **1296/1296 通過**、合規掃描通過（冷鏈 0）。
+- 實機：非部門頁 back-to-top 24px／部門頁 140px；倉管讀書單 ①②③④齊全、無 SOP 代碼外洩；快速問題 3 群各 4、12 個 data-q 全在無重複、點擊查詢正常；console 無 error。
+- ⚠️ git 坑：SessionEnd auto-save 把 #1#2 先 commit 進 `310667e`（不含 #3 kb-quick-group），本輪補 descriptive commit 收編全部三項＋三份文件並 push（詳見踩坑同日條目）。
+- 永久網址線上複測：root 為轉址 stub，真正頁在編碼子路徑；本輪標記 `kb-quick-group / body.dept-page .back-to-top / else if(s.lead)` 全命中，線上＝本機。
+
+### 下次待辦
+1. 登入／正式權限（⏸️ 需使用者提供「部門×角色×可見資料」權限表）。
+
+---
+
 ## 2026-06-12 第一百零九次：全站「回到最上面」鈕＋圓角/陰影 token＋ink-soft 對比＋部門頁列印讀書單 ✅
 
 使用者裁示做第二、三項可選前端精修（並列操作、想看效果），並要求全站加「回到最上面」按鈕（讀 Q&A 長頁拖曳回頂不便）。本輪只動 `HTML資料庫/新勝GDP資料庫.html`，不碰題庫/fact/SOP/權限/Firebase。

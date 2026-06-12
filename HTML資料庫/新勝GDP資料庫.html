@@ -608,6 +608,10 @@
     @media(max-width:960px){.doc-pill-grid{grid-template-columns:1fr}.company-action-card,.spec-rule-card{padding:11px 14px}}
     .kb-wrap{display:grid;gap:16px}
     .kb-quick-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .kb-quick-group{margin-top:15px}
+    .kb-quick-group:first-child{margin-top:12px}
+    .kb-quick-group .kb-quick-btns{margin-top:0}
+    .kb-quick-label{display:block;font-size:12px;font-weight:800;color:var(--ink-soft);letter-spacing:.04em;margin-bottom:7px}
     .kb-quick{padding:7px 14px;border:1px solid var(--line);background:#fff;border-radius:6px;cursor:pointer;font:inherit;font-size:13px;color:var(--ink)}
     .kb-quick:hover{background:var(--bg);border-color:var(--brand);color:var(--brand)}
     .kb-messages{display:flex;flex-direction:column;gap:14px;min-height:120px;padding:4px 0}
@@ -4551,9 +4555,18 @@ function kbResultsHtml(results,query){
 }
 function kbSection(){
   const quickQuestions=["品質系統應包含哪些項目","變更管制怎麼申請","偏差要怎麼處理","溫度測繪夏季冬季是哪幾個月","溫度超標怎麼處理","供應商怎麼評鑑","退回品如何處理","委外作業多久評估一次","運輸溫度如何管控","內部稽核多久一次","倉庫多久盤點一次","教育訓練合格標準"];
-  const quickBtns=quickQuestions.map(q=>`<button type="button" class="kb-quick" data-q="${esc(q)}">${esc(q)}？</button>`).join("");
+  const quickGroups=[
+    {label:"品質與管理",items:["品質系統應包含哪些項目","變更管制怎麼申請","偏差要怎麼處理","內部稽核多久一次"]},
+    {label:"溫度與倉儲",items:["溫度測繪夏季冬季是哪幾個月","溫度超標怎麼處理","運輸溫度如何管控","倉庫多久盤點一次"]},
+    {label:"廠商與作業",items:["供應商怎麼評鑑","退回品如何處理","委外作業多久評估一次","教育訓練合格標準"]}
+  ];
+  const grouped=new Set(quickGroups.flatMap(g=>g.items));
+  const leftover=quickQuestions.filter(q=>!grouped.has(q));
+  if(leftover.length) quickGroups.push({label:"其他",items:leftover});
+  const qBtn=q=>`<button type="button" class="kb-quick" data-q="${esc(q)}">${esc(q)}？</button>`;
+  const quickBtns=quickGroups.map(g=>`<div class="kb-quick-group"><span class="kb-quick-label">${esc(g.label)}</span><div class="kb-quick-btns">${g.items.map(qBtn).join("")}</div></div>`).join("");
   return [
-    panel("常見問題快速查詢",`<p style="font-size:13px;color:var(--muted);margin-bottom:14px">點擊常見問題，或在下方輸入自定義問題後按查詢。</p><div class="kb-quick-btns">${quickBtns}</div>`,"wide"),
+    panel("常見問題快速查詢",`<p style="font-size:13px;color:var(--muted);margin-bottom:14px">點擊常見問題，或在下方輸入自定義問題後按查詢。</p>${quickBtns}`,"wide"),
     panel("查詢結果",`<div class="kb-messages" id="kbMessages"><p style="color:var(--muted);font-size:14px">尚未查詢。點擊上方常見問題或輸入問題後按「查詢」。</p></div><form class="kb-form" id="kbForm" style="margin-top:16px"><input type="text" id="kbInput" name="q" placeholder="例如：藥品過期了怎麼辦？" autocomplete="off" maxlength="100"><button type="submit" class="primary">查詢</button></form>`,"wide"),
     panel("使用統計與季度更新追蹤",`<div class="status" id="statsStatus" style="margin-bottom:14px"><span class="dot"></span>連線確認中…</div><div class="stats-grid">
       <div class="stats-card"><h4>問題排行榜</h4><div id="questionRank" class="rank-list"><span class="note">讀取中...</span></div></div>
