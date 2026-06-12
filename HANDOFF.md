@@ -1,3 +1,30 @@
+## 2026-06-12 第一百零五次：測驗作答頁鍵盤UX＋部門頁三項表格/視覺化（並列檢視・時程總表・sticky scroll-spy）✅
+
+開工自檢（雙向：未推送＋未提交）對齊 git，永久網址實測線上＝本機；確認唯一正式待辦仍是登入/權限（⏸️需權限表）。使用者選「先做前端 UX/CSS（第92次備好的 `dispatch/task_frontend_ux.md` 白名單）」，再續「依建議做視覺化/表格化、不違反理念與規範即可」。全程只動 `HTML資料庫/新勝GDP資料庫.html`，**純重排既有已驗證資料、零內容杜撰、前台零 SOP 代碼外洩**。
+
+### A. 測驗作答頁鍵盤 UX（白名單三項，軍師本機做非派工）
+- **鍵盤快捷**：`1`~`4` 選 A/B/C/D、`→`/`Enter` 下一題（**最後一題不提交只停留**）、`←` 上一題；焦點在打字欄位失效、交卷計分後（`session.results`）停用、只在 exam 階段啟用；document 層**單一監聽**（`examKeyHandler` 先移除再加，防 `bindExamTemplate` 每次切換重綁堆疊）。
+- **選項視覺**：hover/圓角/過渡、selected 左側品牌色條＋加粗變色；進度字級 15→17px、進度條 8→10px；作答頁加鍵盤提示列（`.exam-key-hint`＋`<kbd>`）。
+- **手機 RWD**：`@media(max-width:760px)` 作答頁雙欄→單欄、表頭 wrap。
+
+### B. 部門頁三項表格/視覺化（依使用者「依建議執行」）
+1. **規範對照「全部並列檢視」切換**（`standardsSwipe`）：輪播外加 `.slide-expand-btn`，一鍵把 PIC/S／食藥署／執行方式／常見缺失四層由 flex 輪播改 grid 2×2 並排。⚠️ **四欄非逐列對應同主題 → 刻意做「並列」非「逐列配對表」**，避免製造假對應（守正確性理念）。
+2. **時程「表格總覽」切換**（`deptScheduleSection`）：分頻分頁外加 `.ds-view-btn`，一鍵看全部 N 項總表（頻率色票／章節／要做的事／備註／負責人）；章節用 `sourceToChapter` 轉換，**前台不露 DP/WI 代碼**（實測 `sopCodeLeak:false`）。
+3. **sticky scroll-spy 跳轉列**：把原本嵌在視覺導讀的 `deptQuickNav` 移到 `#content` 頂層、`position:sticky`＋scroll-spy 高亮目前段落（`bindDeptStickyNav`，`deptSpyHandler` 全域先移除再加防堆疊）；FAB 彈出 TOC 保留，**無重複導覽**。
+4. **a11y**：全域 `:focus-visible` 焦點框（純附加 CSS，滑鼠點擊不受影響）。
+
+### 驗收
+- 每塊都 `JS_PARSE_OK`＋`verify_facts 1296/1296`；Launch 實機：鍵盤作答全行為正確、並列 flex↔grid 切換、時程 27 列表格切換、sticky scroll-spy 高亮（捲到作業流程該鈕亮）、手機 375px **無水平溢出**（表格在 `.ds-table-wrap` 內橫捲不撐破頁）、console 無 error。
+
+### ⚠️ git 坑（再次踩到 auto-save 缺口，已沉澱踩坑）
+- 收工 `git diff HEAD` 報空、HTML 0 新增（Google Drive 誤報 clean）。但 grep 工作檔本輪標記全命中、且 `hash-object`==`HEAD:file` blob → **SessionEnd auto-save 已把本輪改動 commit 進 HEAD（`e187d42`/`a363e0f`）**，但 `origin..HEAD` 顯示這兩個 auto-save commit **未推送** → 線上仍舊版。本輪已補 descriptive commit（含本三份文件）＋push，永久網址複測命中本輪標記。
+
+### 下次待辦
+1. 登入／正式權限（⏸️ 需使用者提供「部門×角色×可見資料」權限表）。
+2. （可選）視覺④其餘大範圍項：全站圓角/陰影 token、`--ink-soft` 對比加深、部門頁「列印一頁讀書單」——屬全站變動，使用者決定再做。
+
+---
+
 ## 2026-06-11 第一百零四次：補部署第103次五欄成果＋官方缺失改年度標註＋講師簽核裁示取消 ✅
 
 開工選「先對齊 git 真實狀態」，查出第103次成果未部署，補上後依使用者裁示處理兩個待辦。
