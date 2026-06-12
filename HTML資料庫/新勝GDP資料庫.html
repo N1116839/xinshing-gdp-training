@@ -194,6 +194,35 @@
     .dept-intro-goal .dig-icon{font-size:20px;display:block;margin-bottom:4px}
     .dept-intro-goal .dig-txt{font-size:12px;color:var(--brand);font-weight:700;line-height:1.3}
     @media(max-width:700px){.dept-intro-goals{grid-template-columns:repeat(2,1fr)}}
+    .dept-mode-bar{position:sticky;top:0;z-index:6;display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;margin:0 0 14px;padding:10px 12px;background:rgba(255,255,255,.96);border:1px solid var(--line);box-shadow:0 8px 18px rgba(20,64,61,.08)}
+    .dept-mode-label{color:var(--brand);font-size:13px;font-weight:800;white-space:nowrap}
+    .dept-mode-buttons{display:flex;flex-wrap:wrap;gap:7px}
+    .dept-mode-btn{min-height:34px;padding:7px 11px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink-soft);font:inherit;font-size:13px;font-weight:800;cursor:pointer}
+    .dept-mode-btn.active{background:var(--brand);border-color:var(--brand);color:#fff}
+    .dept-priority-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    .dept-priority-card{padding:15px;background:#f7fbfb;border:1px solid var(--line);border-top:4px solid var(--brand);min-width:0}
+    .dept-priority-card strong{display:block;margin-bottom:7px;color:var(--brand);font-size:16px}
+    .dept-priority-card p{margin:0;color:var(--ink-soft);font-size:13.5px;line-height:1.7}
+    .dept-priority-card .mini-link{display:inline-flex;margin-top:9px;color:var(--gold);font-size:12px;font-weight:800;text-decoration:none}
+    #content [data-ux-kind]{display:contents}
+    #content[data-read-mode="quick"] [data-ux-kind],
+    #content[data-read-mode="inspection"] [data-ux-kind],
+    #content[data-read-mode="schedule"] [data-ux-kind],
+    #content[data-read-mode="review"] [data-ux-kind]{display:none}
+    #content[data-read-mode="quick"] [data-ux-kind~="quick"],
+    #content[data-read-mode="inspection"] [data-ux-kind~="inspection"],
+    #content[data-read-mode="schedule"] [data-ux-kind~="schedule"],
+    #content[data-read-mode="review"] [data-ux-kind~="review"]{display:contents}
+    .dept-mobile-dock{display:none}
+    @media(max-width:760px){
+      main{padding-bottom:92px}
+      .dept-mode-bar{top:0;grid-template-columns:1fr;gap:8px;margin-left:-4px;margin-right:-4px}
+      .dept-mode-buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+      .dept-mode-btn{width:100%;font-size:12.5px}
+      .dept-priority-grid{grid-template-columns:1fr}
+      .dept-mobile-dock{position:fixed;left:10px;right:10px;bottom:10px;z-index:20;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:8px;background:rgba(255,255,255,.97);border:1px solid var(--line);box-shadow:0 10px 26px rgba(20,64,61,.22)}
+      .dept-mobile-dock a{display:grid;place-items:center;min-height:38px;padding:6px 4px;border:1px solid #cde0dd;border-radius:6px;background:#f7fbfb;color:var(--brand);font-size:12px;font-weight:800;text-decoration:none;text-align:center;line-height:1.25}
+    }
     /* ── pipeline slider ── */
     .swipe-panel{width:100%;border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:0 8px 24px rgba(20,64,61,.10)}
     /* pipeline stepper header */
@@ -5114,28 +5143,89 @@ function examTemplateSection(s){
     </section>
   `,"wide");
 }
+function deptUxSection(kind,html){
+  return html ? `<div data-ux-kind="${esc(kind)}">${html}</div>` : "";
+}
+function deptModeBar(s){
+  const hasDeptTools=s.schedule||s.deptFlow||s.audit?.length||departmentDocumentMaps[s.id]||s.focus?.length;
+  if(!hasDeptTools) return "";
+  const modes=[
+    ["all","完整閱讀"],
+    ["quick","新人快讀"],
+    ["inspection","稽查準備"],
+    ["schedule","文件時程"],
+    ["review","測驗複習"]
+  ];
+  return `<div class="dept-mode-bar" data-dept-modebar>
+    <span class="dept-mode-label">閱讀模式</span>
+    <div class="dept-mode-buttons">
+      ${modes.map(([mode,label])=>`<button type="button" class="dept-mode-btn${mode==="all"?" active":""}" data-read-mode="${mode}">${label}</button>`).join("")}
+    </div>
+  </div>`;
+}
+function deptPrioritySummary(s){
+  const hasSchedule=s.schedule||sections.find(x=>x.id==="collection-calendar")?.schedule?.some(x=>x.dept===s.title||x.owner===s.title);
+  const hasAudit=s.audit?.length||s.focus?.length;
+  const hasDocs=departmentDocumentMaps[s.id];
+  if(!hasSchedule&&!hasAudit&&!hasDocs&&!s.coreBrief) return "";
+  const cards=[
+    {
+      title:"先抓本頁重點",
+      body:s.coreBrief ? "先看學習重點，建立這個部門在 GDP 裡的責任輪廓，再往下看細節。" : "先看視覺導讀，確認這一頁和自己工作最相關的任務。",
+      href:""
+    },
+    {
+      title:"稽查時怎麼回答",
+      body:hasAudit ? "再看稽查翻卡與公開缺失，練習把重點說成員工能回答的短句。" : "本頁以制度與時程為主，稽查應答可搭配智慧查詢複習。",
+      href:hasAudit ? `#sec-${s.id}-audit` : ""
+    },
+    {
+      title:"平常何時做資料",
+      body:hasSchedule ? "最後看資料時程與文件地圖，確認要準備什麼、什麼時候要做、向誰調閱。" : hasDocs ? "最後看文件閱讀地圖，確認遇到情境時要向文管調閱哪些資料。" : "最後用證據鏈核對自己是否知道要準備哪些紀錄。",
+      href:hasSchedule ? `#sec-${s.id}-schedule` : (hasDocs ? `#sec-${s.id}-docmap` : "")
+    }
+  ];
+  return panel("本頁三件事",`<div class="dept-priority-grid">
+    ${cards.map(c=>`<article class="dept-priority-card"><strong>${esc(c.title)}</strong><p>${esc(c.body)}</p>${c.href?`<a class="mini-link" href="${esc(c.href)}">跳到此區</a>`:""}</article>`).join("")}
+  </div>`,"wide");
+}
+function deptMobileDock(s){
+  const links=[];
+  const calSrc=sections.find(x=>x.id==="collection-calendar");
+  const hasSchedule=s.schedule||calSrc?.schedule?.some(x=>x.dept===s.title||x.owner===s.title);
+  if(hasSchedule) links.push({label:"時程",id:`sec-${s.id}-schedule`});
+  if(s.audit?.length||s.focus?.length) links.push({label:"稽查",id:`sec-${s.id}-audit`});
+  if(departmentDocumentMaps[s.id]) links.push({label:"文件",id:`sec-${s.id}-docmap`});
+  links.push({label:"證據",id:`sec-${s.id}-evidence`});
+  const visible=links.slice(0,4);
+  if(!visible.length) return "";
+  return `<div class="dept-mobile-dock" aria-label="手機快速跳轉">${visible.map(x=>`<a href="#${esc(x.id)}">${esc(x.label)}</a>`).join("")}</div>`;
+}
 function renderContent(s){
   if(s.id==="gdp-kb") return kbSection();
   if(s.examTemplate) return examTemplateSection(s);
   return [
+    deptModeBar(s),
     deptQuickNav(s),
-    panel("視覺導讀",visualIntro(s),""),
-    s.coreBrief ? panel("學習重點",coreBriefHtml(s),"wide") : "",
-    scheduleTriggersSection(s),
-    `<span id="sec-${s.id}-schedule" class="sec-anchor"></span>`+deptScheduleSection(s),
-    `<span id="sec-${s.id}-flow" class="sec-anchor"></span>`+deptFlowSection(s),
-    s.id==="collection-calendar" ? panel("年度保存與交接策略",annualGovernanceSection(),"wide") : "",
-    s.qualityPolicy ? panel("品質政策與目標 KPI",policyTable(s.qualityPolicy),"wide") : "",
-    s.companyProfile ? panel("公司 GDP 執行概況",companyProfileHtml(s.companyProfile),"wide") : "",
-    s.trainingInfo ? panel("教育訓練：外部 vs 內部",trainingTable(s.trainingInfo),"wide") : "",
-    s.respMatrix   ? panel("跨部門責任矩陣",respMatrix(s),"") : "",
-    collectionCalendarSection(s),
-    s.equipmentRef ? equipmentOnlySection(s) : "",
-    panel("規範到現場與公開缺失",standardsSwipe({...(s.standards||{}),focus:s.focus||[]}),"wide"),
-    `<span id="sec-${s.id}-audit" class="sec-anchor"></span>`+auditSlides(s),
-    departmentDocumentMaps[s.id] ? `<span id="sec-${s.id}-docmap" class="sec-anchor"></span>`+panel("部門文件閱讀地圖",documentMapSection(s),"wide") : "",
-    panel("稽查時最常看的證據鏈",evidenceMap(s),"wide"),
-    panel("部門 Q&A 討論區",qaHtml(s),"")
+    deptUxSection("quick inspection schedule review",deptPrioritySummary(s)),
+    deptUxSection("quick review",panel("視覺導讀",visualIntro(s),"")),
+    deptUxSection("quick review",s.coreBrief ? panel("學習重點",coreBriefHtml(s),"wide") : ""),
+    deptUxSection("schedule",scheduleTriggersSection(s)),
+    deptUxSection("quick schedule",`<span id="sec-${s.id}-schedule" class="sec-anchor"></span>`+deptScheduleSection(s)),
+    deptUxSection("schedule",`<span id="sec-${s.id}-flow" class="sec-anchor"></span>`+deptFlowSection(s)),
+    deptUxSection("schedule",s.id==="collection-calendar" ? panel("年度保存與交接策略",annualGovernanceSection(),"wide") : ""),
+    deptUxSection("quick review",s.qualityPolicy ? panel("品質政策與目標 KPI",policyTable(s.qualityPolicy),"wide") : ""),
+    deptUxSection("quick review",s.companyProfile ? panel("公司 GDP 執行概況",companyProfileHtml(s.companyProfile),"wide") : ""),
+    deptUxSection("quick review",s.trainingInfo ? panel("教育訓練：外部 vs 內部",trainingTable(s.trainingInfo),"wide") : ""),
+    deptUxSection("schedule inspection",s.respMatrix   ? panel("跨部門責任矩陣",respMatrix(s),"") : ""),
+    deptUxSection("schedule",collectionCalendarSection(s)),
+    deptUxSection("schedule",s.equipmentRef ? equipmentOnlySection(s) : ""),
+    deptUxSection("inspection review",panel("規範到現場與公開缺失",standardsSwipe({...(s.standards||{}),focus:s.focus||[]}),"wide")),
+    deptUxSection("quick inspection review",`<span id="sec-${s.id}-audit" class="sec-anchor"></span>`+auditSlides(s)),
+    deptUxSection("inspection schedule review",departmentDocumentMaps[s.id] ? `<span id="sec-${s.id}-docmap" class="sec-anchor"></span>`+panel("部門文件閱讀地圖",documentMapSection(s),"wide") : ""),
+    deptUxSection("inspection review",`<span id="sec-${s.id}-evidence" class="sec-anchor"></span>`+panel("稽查時最常看的證據鏈",evidenceMap(s),"wide")),
+    deptUxSection("review",panel("部門 Q&A 討論區",qaHtml(s),"")),
+    deptMobileDock(s)
   ].filter(Boolean).join("");
 }
 
@@ -6289,6 +6379,22 @@ function bindDeptStickyNav(){
   window.addEventListener("scroll",deptSpyHandler,{passive:true});
   spy();
 }
+function bindDeptReadModes(){
+  const content=document.getElementById("content");
+  const bar=document.querySelector("[data-dept-modebar]");
+  if(!content) return;
+  if(!bar){ delete content.dataset.readMode; return; }
+  const buttons=[...bar.querySelectorAll("[data-read-mode]")];
+  const key="gdpDeptReadMode";
+  function apply(mode){
+    const next=mode&&mode!=="all"?mode:"";
+    content.dataset.readMode=next;
+    buttons.forEach(btn=>btn.classList.toggle("active",(btn.dataset.readMode==="all"&&!next)||btn.dataset.readMode===next));
+    if(mode) localStorage.setItem(key,mode);
+  }
+  buttons.forEach(btn=>btn.addEventListener("click",()=>apply(btn.dataset.readMode)));
+  apply(localStorage.getItem(key)||"all");
+}
 function bindEquipmentMenu(){
   const buttons=[...document.querySelectorAll("[data-equip-freq]")];
   const items=[...document.querySelectorAll("[data-equip-item]")];
@@ -6548,6 +6654,7 @@ async function showSection(id){
   bindEquipmentCalendarFilters();
   bindDeptSchedTabs();
   bindDeptStickyNav();
+  bindDeptReadModes();
   bindAuditFocus();
   bindFlowSteppers();
   bindFlowDiagrams();
