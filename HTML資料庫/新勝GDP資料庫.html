@@ -6386,10 +6386,24 @@ function bindDeptReadModes(){
   if(!bar){ delete content.dataset.readMode; return; }
   const buttons=[...bar.querySelectorAll("[data-read-mode]")];
   const key="gdpDeptReadMode";
+  function syncQuickNav(active){
+    // 導覽列跟著閱讀模式走：目標段落被該模式隱藏時，連同按鈕一起隱藏，避免死連結（按了無動作）
+    document.querySelectorAll("[data-dept-stickynav] .dept-qn-btn").forEach(btn=>{
+      const el=document.getElementById(btn.dataset.qnTarget);
+      let show=true;
+      if(active&&el){
+        const host=el.closest("[data-ux-kind]");
+        const kinds=host?host.getAttribute("data-ux-kind").split(/\s+/):[];
+        show=kinds.includes(active);
+      }
+      btn.style.display=show?"":"none";
+    });
+  }
   function apply(mode){
     const next=mode&&mode!=="all"?mode:"";
     content.dataset.readMode=next;
     buttons.forEach(btn=>btn.classList.toggle("active",(btn.dataset.readMode==="all"&&!next)||btn.dataset.readMode===next));
+    syncQuickNav(next);
     if(mode) localStorage.setItem(key,mode);
   }
   buttons.forEach(btn=>btn.addEventListener("click",()=>apply(btn.dataset.readMode)));
