@@ -1,3 +1,23 @@
+## 2026-06-12 第一百零九次：全站「回到最上面」鈕＋圓角/陰影 token＋ink-soft 對比＋部門頁列印讀書單 ✅
+
+使用者裁示做第二、三項可選前端精修（並列操作、想看效果），並要求全站加「回到最上面」按鈕（讀 Q&A 長頁拖曳回頂不便）。本輪只動 `HTML資料庫/新勝GDP資料庫.html`，不碰題庫/fact/SOP/權限/Firebase。
+
+### 本次完成
+- **全站「回到最上面」浮動鈕**（`#backToTop`）：右下角圓角膠囊「↑ 回到最上面」，`position:fixed` z1000；捲動 >400px 才淡入、頁頂隱藏，點擊 `scrollTo({top:0,behavior:smooth})`；於 `init()` 綁一次（passive scroll）。手機版縮成右下圓形圖示鈕並上移 `bottom:140px`，避開 `dept-toc-fab`(bottom:80)＋底部 dock(bottom:10) 不重疊。全頁面通用（Q&A/智慧查詢/部門頁）。
+- **設計 token**：新增 `--radius:14px / --radius-sm:9px / --shadow-sm`，套到原本直角的 `.hero`、`.panel`（實測 computed border-radius:14px）。`--ink-soft` `#4f6966`→`#3f5854` 加深，次級文字對比更清楚。
+- **部門頁列印一頁讀書單**：閱讀模式列右側加 `🖨 列印讀書單`（`data-print-studysheet`，`bindDeptStudySheet()` 綁定）。`buildDeptStudySheet(s)` 由該頁既有已驗證資料組一頁 A4：①本頁重點(coreBrief)→②平常何時做資料(時程頻率/要做的事/負責人表)→③稽查時怎麼回答(audit Q＋checklist 首項)→④常見缺失(focus)；`printDeptStudySheet()` 注入 `#studySheetPrint`＋body `printing-studysheet` class→`window.print()`→`afterprint` 清除。沿用既有 `@page{margin:0}`，以 `printing-studysheet` class 覆寫既有「只顯示考卷」列印規則，兩者不衝突。**前台不露 SOP 代碼**（實測 studySheetLeaksCode:false，內文走 stripInlineCode）。
+
+### 驗收
+- `JS_PARSE_OK`（vm 解析通過）、`verify_facts_ghpages.mjs` `1296/1296` 通過、合規掃描通過（冷鏈 0）。
+- Launch 預覽實機（localhost:3333 倉管頁，**須加 ?v= 強制重抓，舊分頁會是改前版**）：token 全套用、back-to-top 頁頂隱藏/捲動顯示、讀書單注入產 h1＋27 列時程表、`①本頁重點` 在有 coreBrief 頁(品質手冊)出現、console 無 error。
+- 截圖工具逾時（此環境截圖一向不穩，與頁面無關；eval 確認頁面正常回應），改以 DOM 實測佐證。
+
+### 下次待辦
+1. 登入／正式權限（⏸️ 需使用者提供「部門×角色×可見資料」權限表）。
+2. （可選）back-to-top／讀書單若要再微調樣式或措辭，使用者看實際效果後再定。
+
+---
+
 ## 2026-06-12 第一百零八次：修復部門頁導覽列死連結（閱讀模式下「資料時程／作業流程」按了無動作）✅
 
 使用者回報品保頁截圖（網址 `#sec-qa-schedule`、畫面卻停在稽查翻卡）：本頁段落的「資料時程」「作業流程」按了沒反應。本輪只動 `HTML資料庫/新勝GDP資料庫.html` 一個函式。

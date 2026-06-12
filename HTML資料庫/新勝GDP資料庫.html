@@ -6,9 +6,10 @@
   <title>GDP 教育訓練</title>
   <style>
     :root {
-      --ink:#173c3a;--ink-soft:#4f6966;--brand:#0f5b50;--brand-2:#2f7c74;
+      --ink:#173c3a;--ink-soft:#3f5854;--brand:#0f5b50;--brand-2:#2f7c74;
       --gold:#b8832f;--line:#c9d9d6;--paper:#f7fbfb;--panel:#ffffff;
       --warn:#a8562c;--ok:#26705d;--shadow:0 14px 36px rgba(20,64,61,.12);
+      --radius:14px;--radius-sm:9px;--shadow-sm:0 8px 22px rgba(20,64,61,.07);
       font-family:"Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;
     }
     *{box-sizing:border-box}
@@ -43,7 +44,7 @@
     .status{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;color:var(--ink-soft);background:#fff;border:1px solid var(--line);border-radius:999px;font-size:13px}
     .dot{width:9px;height:9px;border-radius:999px;background:var(--warn)}
     .dot.connected{background:var(--ok)}
-    .hero{position:relative;display:grid;gap:18px;margin-bottom:22px;min-height:300px;padding:34px;background:rgba(255,255,255,.88);border:1px solid var(--line);box-shadow:var(--shadow);overflow:hidden;isolation:isolate}
+    .hero{position:relative;display:grid;gap:18px;margin-bottom:22px;min-height:300px;padding:34px;background:rgba(255,255,255,.88);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;isolation:isolate}
     .hero::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(247,251,251,.98) 0%,rgba(247,251,251,.88) 42%,rgba(247,251,251,.28) 76%),var(--hero-image,url("assets/gdp-training-hero.png")) center right/cover no-repeat;z-index:-2}
     .hero::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:7px;background:linear-gradient(90deg,var(--brand),var(--gold));z-index:-1}
     .eyebrow{margin:0;color:var(--gold);font-weight:700;font-size:18px}
@@ -51,7 +52,7 @@
     .lead{max-width:980px;margin:0;color:var(--ink-soft);font-size:17px;line-height:1.8}
     .hero .lead{max-width:680px;color:#315753;font-weight:600}
     .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
-    .panel{grid-column:span 12;padding:22px;background:var(--panel);border:1px solid var(--line);box-shadow:0 8px 22px rgba(20,64,61,.06)}
+    .panel{grid-column:span 12;padding:22px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-sm)}
     .half{grid-column:span 6}.third{grid-column:span 4}.wide{grid-column:span 12}
     h3{margin:0 0 14px;color:var(--brand);font-size:22px;line-height:1.35}
     h4{margin:0 0 8px;color:var(--ink);font-size:16px}
@@ -773,6 +774,39 @@
     .dept-sched-tab[data-urg="amber"]{border-left:3px solid #e8a020}
     .dept-sched-tab[data-urg="blue"] {border-left:3px solid #4a80c4}
     .dept-sched-tab[data-urg="green"]{border-left:3px solid #3a9c68}
+
+    /* ── 回到最上面 浮動按鈕 ───────────────────────── */
+    .back-to-top{position:fixed;right:24px;bottom:24px;z-index:1000;display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border:none;border-radius:999px;background:var(--brand);color:#fff;font:inherit;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 6px 18px rgba(15,91,80,.35);opacity:0;visibility:hidden;transform:translateY(12px);transition:opacity .25s,transform .25s,background .15s}
+    .back-to-top.show{opacity:1;visibility:visible;transform:translateY(0)}
+    .back-to-top:hover{background:var(--brand-2)}
+    .back-to-top:active{transform:scale(.94)}
+    .back-to-top .bt-arrow{font-size:15px;line-height:1}
+    @media(max-width:640px){.back-to-top{right:14px;bottom:140px;padding:9px 13px;font-size:12px}.back-to-top .bt-label{display:none}.back-to-top{padding:11px;border-radius:50%}}
+
+    /* ── 部門頁列印讀書單 按鈕 ─────────────────────── */
+    .dept-print-btn{margin-left:auto;display:inline-flex;align-items:center;gap:6px;padding:6px 13px;border:1px solid var(--gold);border-radius:999px;background:#fff;color:var(--gold);font:inherit;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap}
+    .dept-print-btn:hover{background:var(--gold);color:#fff}
+    @media(max-width:640px){.dept-print-btn .dpb-label{display:none}}
+
+    /* ── 讀書單列印版面 ─────────────────────────────── */
+    #studySheetPrint{display:none}
+    .study-sheet{color:#173c3a;max-width:190mm}
+    .study-sheet h1{font-size:19px;margin:0 0 2px}
+    .study-sheet .ss-sub{font-size:11px;color:#555;margin:0 0 10px}
+    .study-sheet h2{font-size:13px;margin:12px 0 4px;padding:3px 8px;background:#eaf3f1;border-left:3px solid var(--brand);color:var(--brand)}
+    .study-sheet ul{margin:4px 0 0;padding-left:18px;font-size:11.5px;line-height:1.6}
+    .study-sheet li{margin-bottom:3px}
+    .study-sheet b{color:#0c4e45}
+    .study-sheet table{width:100%;border-collapse:collapse;font-size:11px;margin-top:4px}
+    .study-sheet th,.study-sheet td{border:1px solid #c9d9d6;padding:3px 6px;text-align:left;vertical-align:top}
+    .study-sheet th{background:#f0f8f6}
+    .study-sheet .ss-foot{margin-top:12px;font-size:10px;color:#888}
+    @media print{
+      body.printing-studysheet #studySheetPrint,
+      body.printing-studysheet #studySheetPrint *{visibility:visible!important}
+      body.printing-studysheet #studySheetPrint{display:block!important;position:absolute;inset:0 auto auto 0;width:100%;padding:14mm 12mm;background:#fff;color:#000}
+      .back-to-top{display:none!important}
+    }
   </style>
 </head>
 <body>
@@ -807,6 +841,8 @@
     <div class="dept-toc-overlay" id="deptTocOverlay"></div>
   </main>
 </div>
+<button class="back-to-top" id="backToTop" type="button" aria-label="回到最上面"><span class="bt-arrow">↑</span><span class="bt-label">回到最上面</span></button>
+<div id="studySheetPrint" aria-hidden="true"></div>
 <script>
 window.GDP_FIREBASE_CONFIG = {
   apiKey: "AIzaSyBX6Z31XPRIMEzQuIpHL-6ptgV40rum8gI",
@@ -5161,7 +5197,59 @@ function deptModeBar(s){
     <div class="dept-mode-buttons">
       ${modes.map(([mode,label])=>`<button type="button" class="dept-mode-btn${mode==="all"?" active":""}" data-read-mode="${mode}">${label}</button>`).join("")}
     </div>
+    <button type="button" class="dept-print-btn" data-print-studysheet="${s.id}" title="列印本頁一頁讀書單"><span aria-hidden="true">🖨</span><span class="dpb-label">列印讀書單</span></button>
   </div>`;
+}
+function buildDeptStudySheet(s){
+  const deptName=deptIdMap[s.id]||s.title;
+  const now=new Date();
+  const dstr=`民國 ${now.getFullYear()-1911} 年 ${now.getMonth()+1} 月 ${now.getDate()} 日`;
+  const parts=[`<div class="study-sheet">
+    <h1>${esc(deptName)}　GDP 一頁讀書單</h1>
+    <p class="ss-sub">${s.tag?esc(s.tag)+"｜":""}${esc(s.title)}　·　列印日期：${dstr}</p>`];
+  // 學習重點
+  const brief=(s.coreBrief||[]).map(x=>`<li><b>${esc(x.title)}</b>：${esc(stripInlineCode(x.body))}</li>`).join("");
+  if(brief) parts.push(`<h2>① 本頁重點</h2><ul>${brief}</ul>`);
+  // 平常何時做資料（時程）
+  const calSrc=sections.find(x=>x.id==="collection-calendar");
+  if(calSrc&&calSrc.collectionCalendar){
+    const freqOrder=["發生時啟動","每日","每月","每兩個月","每季","每半年","每年","每三年"];
+    const items=calSrc.collectionCalendar.filter(x=>{
+      const depts=String(x.dept).split("/").map(d=>d.trim());
+      return depts.some(d=>d===deptName||d.includes(deptName));
+    }).slice().sort((a,b)=>freqOrder.indexOf(a.freq)-freqOrder.indexOf(b.freq));
+    if(items.length){
+      const rows=items.map(x=>`<tr><td>${esc(x.freq)}</td><td>${esc(stripInlineCode(x.data))}</td><td>${esc(x.owner)}</td></tr>`).join("");
+      parts.push(`<h2>② 平常何時做資料</h2><table><thead><tr><th style="width:70px">頻率</th><th>要做的事</th><th style="width:78px">負責人</th></tr></thead><tbody>${rows}</tbody></table>`);
+    }
+  }
+  // 稽查怎麼回答
+  const audit=(s.audit||[]).map(item=>{
+    const checks=auditChecklistFor(item);
+    return `<li><b>Q：</b>${esc(stripInlineCode(item))}<br><b>答：</b>${esc(checks[0]||"依現場紀錄與核准文件據實回答")}</li>`;
+  }).join("");
+  if(audit) parts.push(`<h2>③ 稽查時怎麼回答</h2><ul>${audit}</ul>`);
+  // 常見缺失
+  const focus=(s.focus||[]).map(x=>`<li>${esc(stripInlineCode(x.text||x))}</li>`).join("");
+  if(focus) parts.push(`<h2>④ 常見缺失提醒</h2><ul>${focus}</ul>`);
+  parts.push(`<p class="ss-foot">本讀書單為學習索引，數字、頻率與表單以公司核准 SOP／WI／FR 原文為準。</p></div>`);
+  return parts.join("");
+}
+function printDeptStudySheet(id){
+  const s=sections.find(x=>x.id===id);
+  if(!s) return;
+  const host=document.getElementById("studySheetPrint");
+  if(!host) return;
+  host.innerHTML=buildDeptStudySheet(s);
+  document.body.classList.add("printing-studysheet");
+  const cleanup=()=>{document.body.classList.remove("printing-studysheet");window.removeEventListener("afterprint",cleanup);};
+  window.addEventListener("afterprint",cleanup);
+  window.print();
+}
+function bindDeptStudySheet(){
+  document.querySelectorAll("[data-print-studysheet]").forEach(btn=>{
+    btn.addEventListener("click",()=>printDeptStudySheet(btn.dataset.printStudysheet));
+  });
 }
 function deptPrioritySummary(s){
   const hasSchedule=s.schedule||sections.find(x=>x.id==="collection-calendar")?.schedule?.some(x=>x.dept===s.title||x.owner===s.title);
@@ -6669,6 +6757,7 @@ async function showSection(id){
   bindDeptSchedTabs();
   bindDeptStickyNav();
   bindDeptReadModes();
+  bindDeptStudySheet();
   bindAuditFocus();
   bindFlowSteppers();
   bindFlowDiagrams();
@@ -6723,6 +6812,14 @@ function fmtDate(v){
     fab.addEventListener("click",e=>{e.stopPropagation();popup.classList.toggle("open");overlay.classList.toggle("open");});
     overlay.addEventListener("click",()=>{popup.classList.remove("open");overlay.classList.remove("open");});
     popup.addEventListener("click",e=>{if(e.target.tagName==="A"){popup.classList.remove("open");overlay.classList.remove("open");}});
+  }
+  // 回到最上面 浮動按鈕
+  const toTop=document.getElementById("backToTop");
+  if(toTop){
+    const onScroll=()=>toTop.classList.toggle("show",window.scrollY>400);
+    window.addEventListener("scroll",onScroll,{passive:true});
+    toTop.addEventListener("click",()=>window.scrollTo({top:0,behavior:"smooth"}));
+    onScroll();
   }
   const hash=location.hash.slice(1);
   await showSection(sections.some(s=>s.id===hash)?hash:current);
