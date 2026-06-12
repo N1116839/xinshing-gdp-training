@@ -870,6 +870,7 @@ function withTimeout(promise, ms, label){
 const sections = [
   {
     id:"manual",group:"GDP核心",title:"品質手冊",tag:"為何要做 GDP",
+    departments:["*"],allowedRoles:["staff","leader"],
     lead:"品質手冊回答的是「為什麼公司必須做 GDP」。藥品離開製造廠後，批發、儲存、運輸、退回、回收與紀錄保存都可能影響品質；GDP 不是額外文件工作，而是確保藥品在供應鏈中仍維持安全、有效與可追溯的品質系統。品質手冊是本公司 GDP 系統最高層級文件，用來把法規要求、管理責任、偏差/CAPA、風險管理、內部稽核與管理審查串成同一套品質邏輯。",
     pills:["品質手冊","品質系統程序","偏差/CAPA","管理審查","內部稽核"],
     coreBrief:[
@@ -903,6 +904,7 @@ const sections = [
   },
   {
     id:"smf",group:"GDP核心",title:"SMF廠商清冊",tag:"公司怎麼做 GDP",
+    departments:["*"],allowedRoles:["staff","leader"],
     lead:"SMF 回答的是「公司實際怎麼做 GDP」。它把公司場所、組織架構、產品範圍、儲存條件、委外物流、供應商、客戶與產品清冊放在同一個脈絡中，讓稽查員能快速理解公司作業邊界與證據來源。新人不需要一開始背完整清冊，但要知道遇到供應商、客戶、產品、儲位、委外物流或緊急聯絡問題時，應回到 SMF 廠商基本資料與相關清冊確認。",
     pills:["SMF基本資料","藥品清冊","嘉里醫藥物流","合約/品質協議","24hr 緊急聯絡"],
     coreBrief:[
@@ -952,6 +954,7 @@ const sections = [
   },
   {
     id:"departments",group:"新人部門",title:"各部門分類",tag:"新人入口與跨部門責任",
+    departments:["*"],allowedRoles:["staff","leader"],
     lead:"這一頁是新人入口。每個單位先看自己日常要做什麼、會跟哪些部門交接、哪些文件是必讀、哪些文件是共用、哪些文件通常在異常或稽查時才會被翻出來。進出貨、客訴、退回、回收、供應商與客戶資格都需要跨部門共同完成。",
     pills:["GDP權責人","管理藥師","品保","人事","倉管","採購","業務","文管"],
     standards:{
@@ -985,6 +988,7 @@ const sections = [
   },
   {
     id:"collection-calendar",group:"年度行事曆",title:"年度資料收件行事曆",tag:"各部門資料收件與啟動時機",
+    departments:["*"],allowedRoles:["leader"],
     lead:"站在負責收資料的人角度，整理何時要向哪個部門收哪些紀錄、清冊、表單與報告。固定週期與發生時啟動項目分開管理，避免年度稽核或管理審查前才回頭補資料。",
     pills:["偏差管理","管審","教育訓練","溫度監控","文件管制","供應商評鑑","客戶審查","訂單揀貨","藥品回收","內部稽核"],
     standards:{
@@ -1082,6 +1086,7 @@ const sections = [
   },
   {
     id:"equipment-calendar",group:"年度行事曆",title:"關鍵設備行事曆",tag:"保養・校驗・確效",
+    departments:["*"],allowedRoles:["leader"],
     lead:"依第三章場所與設備規範整理關鍵設備的定期保養、外部校正與溫度測繪週期。每次執行均填寫設備保養維修紀錄，由倉管或品保留存；校正報告需保存 5 年。",
     pills:["關鍵設備SOP","量測儀器","溫度監控","驗證確效","設備保養紀錄"],
     standards:{
@@ -1105,6 +1110,7 @@ const sections = [
   },
   {
     id:"personnel",group:"新人部門",title:"人事",tag:"人員資格與教育訓練",
+    departments:["personnel"],allowedRoles:["staff","leader"],
     lead:"人事單元確保所有參與 GDP 活動的人員具備資格、完成訓練並留有紀錄。訓練區分外部（GDP 權責人年度必修）與內部（全員，授課講師主導，測驗合格）兩類。",
     pills:["組織職掌","教育訓練","人員衛生","外部訓練紀錄","內部訓練紀錄"],
     standards:{
@@ -1134,6 +1140,7 @@ const sections = [
   },
   {
     id:"rp",group:"新人部門",title:"GDP權責人",tag:"品質系統責任",
+    departments:["rp"],allowedRoles:["staff","leader"],
     lead:"GDP 權責人是品質系統維持與重大決策授權的核心角色。所有部門需知道哪些事項必須升級到 GDP 權責人，以及權責人如何追蹤結案。",
     pills:["任命書","訓練計畫","供應商/客戶核准","自我查核","委外作業"],
     standards:{
@@ -1158,6 +1165,7 @@ const sections = [
   },
   {
     id:"pharmacist",group:"新人部門",title:"管理藥師",tag:"品質風險、藥品安全與回收",
+    departments:["pharmacist"],allowedRoles:["staff","leader"],
     lead:"管理藥師訓練重點放在品質風險管理、藥品供應鏈安全、疑似偽禁仿冒藥判斷、退回品風險、回收與模擬回收。異常事件需能立即隔離、判斷、通知與紀錄。",
     pills:["品質風險","偽禁仿冒藥程序","藥品回收程序","疑似偽禁仿冒藥","回收","模擬回收"],
     standards:{
@@ -1183,6 +1191,7 @@ const sections = [
   },
   {
     id:"qa",group:"新人部門",title:"品保",tag:"偏差、CAPA、內稽、變更與確效",
+    departments:["qa"],allowedRoles:["staff","leader"],
     lead:"品保（品管）是內部稽核、缺失判定、CAPA 跟催與品質系統改善的主要執行者，並負責變更管制評估、量測儀器校正、電腦化系統與關鍵設備確效。訓練聚焦在證據、期限、原因分析、改善有效性確認，以及變更、校正與確效的管制。",
     pills:["偏差管理","CAPA","內部稽核","變更管制","量測儀器校正","電腦化系統","驗證確效"],
     standards:{
@@ -1207,6 +1216,7 @@ const sections = [
   },
   {
     id:"warehouse",group:"新人部門",title:"倉管",tag:"場所、收貨、儲存、設備與溫控",
+    departments:["warehouse"],allowedRoles:["staff","leader"],
     lead:"倉管單元讓同仁熟悉作業場所分區與門禁、收貨、驗收、入庫、儲位、溫度監測、關鍵設備保養、人員衛生、廢棄物銷毀、異常提報、揀貨與出貨複查。稽核重點通常回到紀錄是否即時、完整、可追溯。",
     pills:["作業場所規劃","溫度監控","進出貨管理","儲存管理","關鍵設備","人員衛生","廢棄物銷毀"],
     standards:{
@@ -1233,6 +1243,7 @@ const sections = [
   },
   {
     id:"purchase",group:"新人部門",title:"採購",tag:"供應商資格、進出貨與委外",
+    departments:["purchase"],allowedRoles:["staff","leader"],
     lead:"採購單元重點是只向核准供應商採購、保存可追溯的採購與到貨驗收紀錄，並管理委外（儲存、配送）廠商。新供應商或異常條件需完成資格認可、實質檢核與風險評估。",
     pills:["供應商程序","供應商評鑑","PIC/S GMP","進出貨","委外作業","採購紀錄"],
     standards:{
@@ -1258,6 +1269,7 @@ const sections = [
   },
   {
     id:"sales",group:"新人部門",title:"業務",tag:"客戶資格、訂單與客訴",
+    departments:["sales"],allowedRoles:["staff","leader"],
     lead:"業務單元涵蓋客戶資格確認、訂單輸入、出貨資訊完整性、客訴受理、退貨查證與回收聯繫。強調客戶合法資格與紀錄完整。",
     pills:["客戶審查","訂單揀貨","客訴處理","退回品","藥品回收"],
     standards:{
@@ -1283,6 +1295,7 @@ const sections = [
   },
   {
     id:"doc",group:"新人部門",title:"文管",tag:"文件發行、紀錄保存與版本",
+    departments:["doc"],allowedRoles:["staff","leader"],
     lead:"文管確保正式文件、表單與品質紀錄可被找到、可辨識、版本正確且保存期限清楚。文件未經訓練與考核前，不應視為已正式生效。",
     pills:["文件管制","品質紀錄","文件總覽表","版本管制","保存年限"],
     standards:{
@@ -1308,6 +1321,7 @@ const sections = [
   },
   {
     id:"exam",
+    departments:["*"],allowedRoles:["staff","leader"],
     group:"測試專區",
     title:"測試專區",
     tag:"依職責自動抽題・三階段測驗",
@@ -1318,6 +1332,7 @@ const sections = [
   },
   {
     id:"gdp-kb",
+    departments:["*"],allowedRoles:["staff","leader"],
     group:"GDP 知識庫",
     title:"GDP 智慧查詢",
     tag:"依問題自動查詢法規與公司做法",
@@ -1774,6 +1789,7 @@ const kbStore = {
         id:`sop-${code}`,
         sourceType:"SOP 摘要",
         searchOnly:true,
+        departments:["*"],allowedRoles:["staff","leader"],
         visibilityLayer:"internal-index",
         topic:doc.title||code,
         international:`PIC/S GDP 要求相關作業建立並維持標準化程序，確保品質與可追溯性。`,
@@ -1807,6 +1823,7 @@ const kbStore = {
         id:`section-${s.id}`,
         sourceType:"頁面資料",
         searchOnly:true,
+        departments:s.departments||["*"],allowedRoles:s.allowedRoles||["staff","leader"],
         visibilityLayer:"internal-index",
         topic:s.title,
         international:picsgdpContent||"PIC/S GDP 相關作業要求依 PIC/S GDP 規範。",
@@ -1822,6 +1839,7 @@ const kbStore = {
         id:`docmap-${id}`,
         sourceType:"部門文件地圖",
         searchOnly:true,
+        departments:[id],allowedRoles:["staff","leader"],
         visibilityLayer:"internal-index",
         topic:`${map.intro||id}`,
         international:"PIC/S GDP 要求各部門文件應分類管理，確保人員可依職能取得對應文件。",
@@ -1839,6 +1857,7 @@ const kbStore = {
         id:`file-${path}`,
         sourceType:"資料夾檔案",
         searchOnly:true,
+        departments:["*"],allowedRoles:["staff","leader"],
         visibilityLayer:"internal-index",
         topic:name,
         international:"PIC/S GDP 要求所有運銷作業應有書面標準程序作為執行依據。",
@@ -4555,6 +4574,8 @@ function kbResultsHtml(results,query){
 }
 function kbSection(){
   const quickQuestions=["品質系統應包含哪些項目","變更管制怎麼申請","偏差要怎麼處理","溫度測繪夏季冬季是哪幾個月","溫度超標怎麼處理","供應商怎麼評鑑","退回品如何處理","委外作業多久評估一次","運輸溫度如何管控","內部稽核多久一次","倉庫多久盤點一次","教育訓練合格標準"];
+  // §44.5／§48.7 快速查詢部門標籤（休眠：目前無 chokepoint 讀取，登入後依角色過濾按鈕用）。依各題 SOP 部門歸屬；data-q 字串不動（守 §26.3.1 固定驗收題）。
+  const quickQuestionDepts={"品質系統應包含哪些項目":["qa"],"變更管制怎麼申請":["qa","doc"],"偏差要怎麼處理":["qa"],"溫度測繪夏季冬季是哪幾個月":["warehouse"],"溫度超標怎麼處理":["warehouse"],"供應商怎麼評鑑":["purchase"],"退回品如何處理":["sales","warehouse"],"委外作業多久評估一次":["purchase"],"運輸溫度如何管控":["warehouse"],"內部稽核多久一次":["qa"],"倉庫多久盤點一次":["warehouse"],"教育訓練合格標準":["personnel"]};
   const quickGroups=[
     {label:"品質與管理",items:["品質系統應包含哪些項目","變更管制怎麼申請","偏差要怎麼處理","內部稽核多久一次"]},
     {label:"溫度與倉儲",items:["溫度測繪夏季冬季是哪幾個月","溫度超標怎麼處理","運輸溫度如何管控","倉庫多久盤點一次"]},

@@ -1,3 +1,30 @@
+## 2026-06-12 第一百一十一次：部門權限設計定版（規範 §48 ERP 式角色權限矩陣）＋補 §44.5 資料層權限標籤 ✅
+
+使用者裁示「#2＋#3 前端精修**依後續各部門權限設定來規劃**」，並提供①現行組織職稱表 ②正航 ERP「用戶權限設置」畫面，要求做「群組(角色)×功能×動作」可勾選、**預設模板＋可微調**的權限方式。經兩輪 AskUserQuestion 拍板：**顆粒度＝預設模板＋可微調；動工＝設計定版＋補標籤**（不接登入/不接過濾/不建矩陣 UI＝守 §37 Phase 3「可設計不可寫 code」）。
+
+### 開工複檢（baseline 零回歸）
+- git 對齊：`HEAD==origin==b8f0029`，無未推送/未拉取，工作樹僅 4 個 `??` 章節 SOP 來源資料夾（untracked 正常，不 commit）。
+- Launch 實機（`?v=` 強抓）：第109/110 成果全在（backToTop、kb-quick-group、`body.dept-page` CSS、讀書單 fallback、`--radius:14px`、`--ink-soft:#3f5854`），console 無 error、桌機/手機無溢出。
+- 盤點現況：KB facts **170/170 已帶 `departments`+`allowedRoles`**（§44.5 已部分鋪墊），但**無任何 chokepoint 在讀**（休眠標籤）；sections 本體/focus/快速查詢尚無部門關聯。
+
+### 本次完成
+1. **規範 §48 定版**（`GDP_智慧查詢規範.md` v3.1→v3.2）：ERP 式角色權限矩陣設計——①兩條鐵則（一人多職取聯集／角色清單管理員維護不 hardcode）②角色群組表（依組織表 10 roleId＋層級，本公司現況「組長即管理員」、文管=超管）③模組×功能×動作矩陣＋三套預設模板④Firestore collection（gdpRolePermissions/gdpUsers/…）⑤單一 chokepoint 架構（未登入預設全顯示＝現狀，雙層過濾、拒答中性）⑥§44.5 資料標籤對應⑦Phase 規則與 §38.9 前置。
+2. **補 §44.5 資料層權限標籤**（`新勝GDP資料庫.html`，純附加休眠欄位、無 chokepoint 讀取＝零行為改變）：
+   - 15 個 section 本體加 `departments`+`allowedRoles`（8 部門頁對 deptIdMap、GDP核心/索引/測驗/智慧查詢=`["*"]`、兩個行事曆=`allowedRoles:["leader"]` 對 §38.7 組長以上）。
+   - localDocs() 4 個 searchOnly 索引衍生 dept（section→s.departments、docmap→`[id]`、sop/file→`["*"]`）。
+   - 加 `quickQuestionDepts` 平行對應表（12 題依 SOP 部門歸屬；**data-q 字串與 .kb-quick class 不動**，守 §26.3.1）。
+   - focus（常見缺失）設計沿用「繼承所屬 section.departments」，不逐項標。
+
+### 驗收
+- `verify_facts_ghpages.mjs` **1296/1296 通過**、合規掃描通過（冷鏈 0）。
+- 實機（`?v=` 重抓）：導覽 15 section 全渲染（navBtns/pickerOptions 皆 15＝零過濾）、智慧查詢 3 群 12 顆 kb-quick、12 個 data-q 不變、點題查詢正常出 PIC/S 答案、console 無 error、無溢出。
+
+### 下次待辦
+1. **登入／正式權限（Phase 3 實作）**：⏸️ 需 §38.9 前置——使用者補完 §44.4 正式權限表的「可見部門/可查主題/收件時程範圍」欄（組織表已給角色×層級，跨部門可見仍須逐項確認，§44.3）、管理員 email 清單、超管 email；並先 §43 確認 `gdpRolePermissions`/`gdpUsers` collection 與 rules 才可寫 code。
+2. （可選）§48.4 預設模板的 JSON 草案落地（仍屬設計，可先備）。
+
+---
+
 ## 2026-06-12 第一百一十次：前端精修三項（手機 back-to-top 孤懸＋讀書單①fallback＋智慧查詢快速問題分組）✅
 
 接續第109次，使用者裁示做可選前端精修第1、3項並先實機複檢（第4）。只動 `HTML資料庫/新勝GDP資料庫.html` 一檔，不碰題庫/fact/SOP/權限/Firebase。
