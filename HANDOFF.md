@@ -7,15 +7,23 @@
 - **本頁三件事**：每個適用頁面自動產生三張導讀卡，提示「先抓本頁重點 / 稽查時怎麼回答 / 平常何時做資料」，並依現有錨點跳到時程、稽查或文件地圖。文字只描述閱讀路徑，未新增公司制度或 SOP 事實。
 - **手機底部快捷列**：手機寬度新增固定底部跳轉列，最多顯示 `時程 / 稽查 / 文件 / 證據` 四個入口，降低長頁面滑動成本。
 - **版面保護**：控制包裝層使用 `display:contents`，避免破壞既有 `.grid` / `.panel` 欄位排版；模式隱藏時才改為 `display:none`。
+- **桌面版修正**：使用者截圖發現閱讀模式列被 `.grid` 壓成窄欄直排，已補 `.dept-mode-bar{grid-column:span 12}`，桌面版改為滿版橫向顯示；commit `c561b17` 已 push。
 
 ### 驗收
 - `JS_PARSE_OK` 通過。
 - `node verify_facts_ghpages.mjs`：`1296/1296` 通過，合規掃描通過。
 - 已用 Chrome headless 產出手機寬度截圖至 TEMP；但因此靜態入口未自動切到部門頁，未完成「操作部門頁模式切換」的實機截圖驗收。
+- 桌面版滿版修正後 `JS_PARSE_OK` 通過；永久網址最終讀取驗收因工具 token 狀態被擋，需下輪或使用者以 Ctrl+F5 重新整理確認。
 
-### 待補
-1. 補做桌機與手機實機操作驗收：進任一部門頁，切換五種閱讀模式，確認區塊顯示、手機底部快捷列與錨點跳轉正常。
-2. 本輪已 commit/push；推送後永久網址仍需等 Pages 更新完成再複測本輪標記。
+### 待補 → ✅ 已於 2026-06-12（第107次開工）完成實機驗收
+1. ✅ 桌機與手機實機操作驗收（Launch 預覽 localhost 服務 c561b17 本檔，倉管部門頁）：
+   - 閱讀模式五種切換邏輯**完整性驗證通過**：完整閱讀全顯示（10 區塊），新人快讀=quick、稽查準備=inspection、文件時程=schedule、測驗複習=review 各只顯示含該 token 的 `data-ux-kind` 區塊，非該 token 全隱藏，零誤判。
+   - 本頁三件事 3 卡（先抓本頁重點／稽查時怎麼回答／平常何時做資料），錨點 `#sec-warehouse-audit/schedule` 全部解析到實存元素。
+   - 手機 375px：底部 dock（時程／稽查／文件／證據）`display:grid` 固定 `bottom:10px`、4 連結錨點全有效、**無水平溢出**（scrollWidth 375＝視窗）；實測點「時程」捲動成功貼齊目標。
+   - 桌機 1280px：dock 正確 `display:none`、閱讀模式列 `grid-column:span 12` 滿版 908px（第106次修正生效）、本頁三件事 3 卡並排、無溢出。
+   - 跨頁無副作用：設稽查準備→切智慧查詢頁 `dataset.readMode` 清除、模式列消失；切回倉管自動套回 localStorage 存的 inspection、按鈕高亮正確。
+   - console **無 error**。
+2. ✅ 永久網址線上複測：root 為轉址 stub，真正頁在編碼子路徑 `HTML資料庫/新勝GDP資料庫.html`（757KB, HTTP 200）；本輪標記 `dept-mode-bar=3 / dept-priority-card=5 / dept-mobile-dock=4 / gdpDeptReadMode=1 / grid-column:span 12=4` 全命中，**線上＝本機（同 c561b17）**。
 
 ---
 
