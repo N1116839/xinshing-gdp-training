@@ -781,7 +781,7 @@
     .back-to-top:hover{background:var(--brand-2)}
     .back-to-top:active{transform:scale(.94)}
     .back-to-top .bt-arrow{font-size:15px;line-height:1}
-    @media(max-width:640px){.back-to-top{right:14px;bottom:140px;padding:9px 13px;font-size:12px}.back-to-top .bt-label{display:none}.back-to-top{padding:11px;border-radius:50%}}
+    @media(max-width:640px){.back-to-top{right:14px;bottom:24px;padding:9px 13px;font-size:12px}.back-to-top .bt-label{display:none}.back-to-top{padding:11px;border-radius:50%}body.dept-page .back-to-top{bottom:140px}}
 
     /* ── 部門頁列印讀書單 按鈕 ─────────────────────── */
     .dept-print-btn{margin-left:auto;display:inline-flex;align-items:center;gap:6px;padding:6px 13px;border:1px solid var(--gold);border-radius:999px;background:#fff;color:var(--gold);font:inherit;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap}
@@ -5210,6 +5210,7 @@ function buildDeptStudySheet(s){
   // 學習重點
   const brief=(s.coreBrief||[]).map(x=>`<li><b>${esc(x.title)}</b>：${esc(stripInlineCode(x.body))}</li>`).join("");
   if(brief) parts.push(`<h2>① 本頁重點</h2><ul>${brief}</ul>`);
+  else if(s.lead) parts.push(`<h2>① 本頁重點</h2><p>${esc(stripInlineCode(s.lead))}</p>`);
   // 平常何時做資料（時程）
   const calSrc=sections.find(x=>x.id==="collection-calendar");
   if(calSrc&&calSrc.collectionCalendar){
@@ -6720,6 +6721,7 @@ async function showSection(id){
   }
   current=id;
   let s=sections.find(x=>x.id===id)||sections[0];
+  document.body.classList.toggle("dept-page",!!deptIdMap[s.id]);
   // Merge Firestore deficiency data if available
   const fsItems=deficiencyStore.getItems(id);
   if(fsItems&&fsItems.length>0){
