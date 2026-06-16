@@ -1,6 +1,6 @@
 # 新勝 GDP 專案交接（精簡版）
 
-> 最後更新：2026-06-16（第123次：手機登入分支已由 `signInWithRedirect` 改為 `signInWithPopup`；待使用者 Android 手機實機複測）
+> 最後更新：2026-06-16（第124次：管理面板手機排版、AI 管理助理自然語言入口、帳號權限矩陣改版；待推送後用手機/桌機永久網址實測）
 > 原則：本檔只保留「最新可接狀態、當前待辦、關鍵踩坑」。舊輪次完整流水帳不再放在開工入口；歷史重點已整理進第二大腦專案筆記與踩坑紀錄。
 
 ---
@@ -14,8 +14,27 @@
 | Firebase rules | `Firebase設定/firestore.rules` |
 | 分支 | `codex/gdp-html-training-pages` |
 | 永久網址 | `https://n1116839.github.io/xinshing-gdp-training/` |
-| 最新本輪修正 | 手機 Google 登入不再走 `signInWithRedirect`，改用 `signInWithPopup`，避免 github.io ↔ firebaseapp.com 轉址回來後 session 遺失；保留既有 LINE 跳出外部瀏覽器邏輯 |
-| 本輪驗收 | `JS_PARSE_OK 1`；`node verify_facts_ghpages.mjs` = `1296/1296`；靜態確認 `signInWithRedirect` 已不在登入按鈕路徑；內建 Browser 因企業政策封鎖 `file://` 與 `localhost`，未能做自動瀏覽器實測 |
+| 最新本輪修正 | 管理面板改成手機單欄可讀；待審核帳號改為左側部門/工號樹＋右側角色權限矩陣；AI 管理助理改為自然語言需求入口，並清楚區分帳號職務、教材題庫、網站功能需求的核准後邊界 |
+| 本輪驗收 | `JS_PARSE_OK 1`；`node verify_facts_ghpages.mjs` = `1296/1296`；靜態檢查命中 `admin-permission-shell`、`permission-table`、`admin-assistant-shell`、`data-admin-example`、`建立網站功能需求單`；in-app Browser 因 URL policy 擋住本地預覽，未能提供自動截圖驗收 |
+
+### 第124次本輪修正（管理面板手機版＋AI 助手＋權限矩陣）
+
+使用者指出三個目標：手機管理畫面直式縮在左邊、AI 助手選項太多且核准後是否會真正維護不清楚、管理權限畫面需接近 ERP 權限設定表格。
+
+**已修正 `HTML資料庫/新勝GDP資料庫.html`：**
+- 管理區 CSS 新增 `admin-stack`、`admin-summary-grid`、`admin-assistant-shell`、`admin-permission-shell` 等版型；手機寬度下強制單欄、按鈕滿寬、權限矩陣橫向捲動，避免整個管理畫面縮在左側窄欄。
+- 待審核帳號改為左側依部門分組的員工樹，右側為「角色群組 × 功能」權限矩陣。核准仍使用既有 roles/status 寫入流程，不新增 Firestore 欄位或 rules。
+- AI 管理助理改為自然語言入口，提供停用帳號、職務異動、題庫修正、網站改版四個範例按鈕；進階欄位收進 `<details>`，降低一般管理者理解負擔。
+- 新增自然語言分類：像「倉管介面我想改成橘色」會判斷為網站功能需求，產生功能需求單，不由前台直接改正式站檔案。
+- 畫面文案明確區分核准後邊界：帳號職務可在權限矩陣核准後生效；教材、題庫、KB 先進待審核草稿；HTML/CSS/JS/Firebase rules/GitHub Pages 需求需走 Codex / PR / 預覽 / 測試 / 部署流程。
+
+**本輪驗收：**
+- `JS_PARSE_OK 1`
+- `node verify_facts_ghpages.mjs`：`1296/1296`
+- 靜態檢查：新管理 UI 標記均已命中。
+- in-app Browser 嘗試用本地預覽檢查桌機/手機畫面時被 URL policy 擋下；不可再繞路使用其他瀏覽器面達成同一預覽。推送後需用 GitHub Pages 永久網址做手機/桌機實機檢查。
+
+下次優先：① 推送後用手機/桌機永久網址進管理面板實測版面。② 若使用者要真正做到截圖中的「逐格功能權限」而非角色模板，需新增 `gdpRolePermissions` / `gdpRolePermissionOverrides` 類資料表與 Firestore rules，不能只改前端畫面。③ Android 手機 Google 登入仍需實機複測。④ EmailJS 三值仍待使用者提供。
 
 ### 第123次本輪修正（手機登入 redirect → popup）
 
