@@ -1886,12 +1886,6 @@ function authGateProviderButtons(){
     <button class="gate-provider google" type="button" id="gateGoogleBtn">
       <span class="gate-provider-icon">G</span><span>使用 Google 登入</span>
     </button>
-    <button class="gate-provider disabled" type="button" disabled aria-disabled="true">
-      <span class="gate-provider-icon line">L</span><span>使用 Line 登入</span><span class="gate-soon">即將開放</span>
-    </button>
-    <button class="gate-provider disabled" type="button" disabled aria-disabled="true">
-      <span class="gate-provider-icon ms">O</span><span>使用 Outlook 登入</span><span class="gate-soon">暫不提供</span>
-    </button>
   </div>`;
 }
 function renderAuthGate(){
@@ -1955,9 +1949,10 @@ function bindAuthGate(){
       g.disabled=false;
       const code=err?.code||"";
       if(code==="auth/popup-closed-by-user"||code==="auth/cancelled-popup-request"){ /* 使用者自行關閉 */ }
-      else if(code==="auth/operation-not-allowed") alert("Google 登入尚未在 Firebase 啟用。\n請到 Firebase Console → Authentication → Sign-in method 啟用 Google 供應商。");
-      else if(code==="auth/unauthorized-domain") alert("目前網域未授權登入。\n請到 Firebase Console → Authentication → Settings → Authorized domains 加入本網域。");
-      else { alert("登入失敗，請稍後再試。"); console.warn("Google 登入失敗",err); }
+      else if(code==="auth/operation-not-allowed"||code==="auth/configuration-not-found") alert("Google 登入尚未在 Firebase 啟用。\n請到 Firebase Console → Authentication → Sign-in method 啟用 Google 供應商（免費、不需金鑰）。");
+      else if(code==="auth/unauthorized-domain") alert("目前網域未授權登入。\n請到 Firebase Console → Authentication → Settings → Authorized domains 加入 "+location.hostname+"。");
+      else if(code==="auth/popup-blocked") alert("瀏覽器封鎖了登入彈窗，請允許此網站的彈出視窗後再試一次。");
+      else { alert("登入失敗："+(code||err?.message||"未知錯誤")+"\n請將此訊息回報管理者。"); console.warn("Google 登入失敗",err); }
     }
   });
   const pf=document.getElementById("gateProfileForm");

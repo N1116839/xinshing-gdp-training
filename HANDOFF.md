@@ -1,3 +1,21 @@
+## 2026-06-16 第一百一十六次：登入頁移除 Line／Outlook＋錯誤訊息可診斷 ✅
+
+使用者開工回報：截圖顯示登入跳「登入失敗，請稍後再試」，要求移除 Line／Outlook（需金鑰/付費的一律不做）。
+
+### 本次完成（`HTML資料庫/新勝GDP資料庫.html`）
+1. **picker 只剩 Google**：`authGateProviderButtons()` 刪掉 Line／Outlook 兩顆灰階假按鈕（§115 已裁示不做，本次直接移除 UI）。Line/Outlook 相關 CSS（`.gate-soon`/`.gate-provider.disabled`/`.line`/`.ms`）留著無害。
+2. **「登入失敗」改為可診斷**：`bindAuthGate()` 錯誤分支新增 `auth/configuration-not-found`（併入未啟用 Google 提示）、`auth/popup-blocked`；萬用分支改為顯示實際 `code`/`message`，不再吃掉錯誤碼。
+
+### 驗收（preview port 3333 實機）
+- reload 後無 console error；`#authGate` 內 `.gate-provider` 數量＝1，僅「使用 Google 登入」，`gateGoogleBtn` 存在。
+- **無法自驗**：真正彈窗登入需真人 Google 帳號，由使用者以工號 031 實測。
+
+### 截圖「登入失敗」研判（給下次/使用者）
+- 登入卡正常渲染＝Firebase app＋authMod 已載入，故失敗點在**伺服器端未啟用 Google 供應商**（會回 `auth/configuration-not-found`）。
+- 使用者待辦（免費、免金鑰）：Firebase Console → Authentication → Sign-in method 啟用 Google；Authorized domains 確認含 `n1116839.github.io`。啟用後新錯誤訊息會直接顯示 code，便於精準定位。
+
+---
+
 ## 2026-06-16 第一百一十五次：登入入口重做為進站前 Google 三頁式關卡（Phase 3 動工）✅
 
 使用者裁示：codex 第113次誤把登入做成導覽列裡的「管理專區」section（內容照樣全顯示）。正確需求是**進站前的全屏登入關卡**——像 AI 登入那樣先選帳號（Google/Line/Outlook），第②頁填工號職稱，第③頁才依職稱進平台。使用者用 Google 登入、工號 031、開發者＝文管（§48 doc_superadmin）。
