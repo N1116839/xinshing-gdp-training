@@ -1,6 +1,6 @@
 # 新勝 GDP 專案交接（精簡版）
 
-> 最後更新：2026-06-16（第124次：管理面板手機排版、AI 管理助理自然語言入口、帳號權限矩陣改版；待推送後用手機/桌機永久網址實測）
+> 最後更新：2026-06-16（第124次：管理面板手機排版、AI 管理助理自然語言入口、帳號權限矩陣改版；commit `5adf34a` 已成功推送並用永久網址確認線上是最新版）
 > 原則：本檔只保留「最新可接狀態、當前待辦、關鍵踩坑」。舊輪次完整流水帳不再放在開工入口；歷史重點已整理進第二大腦專案筆記與踩坑紀錄。
 
 ---
@@ -32,9 +32,15 @@
 - `JS_PARSE_OK 1`
 - `node verify_facts_ghpages.mjs`：`1296/1296`
 - 靜態檢查：新管理 UI 標記均已命中。
-- in-app Browser 嘗試用本地預覽檢查桌機/手機畫面時被 URL policy 擋下；不可再繞路使用其他瀏覽器面達成同一預覽。推送後需用 GitHub Pages 永久網址做手機/桌機實機檢查。
+- in-app Browser 嘗試用本地預覽檢查桌機/手機畫面時被 URL policy 擋下；不可再繞路使用其他瀏覽器面達成同一預覽。
 
-下次優先：① 推送後用手機/桌機永久網址進管理面板實測版面。② 若使用者要真正做到截圖中的「逐格功能權限」而非角色模板，需新增 `gdpRolePermissions` / `gdpRolePermissionOverrides` 類資料表與 Firestore rules，不能只改前端畫面。③ Android 手機 Google 登入仍需實機複測。④ EmailJS 三值仍待使用者提供。
+**後續確認（同一交接，補推送）：**
+- 上輪 `git push` 曾被 Codex 用量限制擋下，commit `5adf34a` 當時只進了本機 HEAD 沒上 GitHub。本次開工重新執行 `git push origin codex/gdp-html-training-pages` 成功（`b28bd8b..5adf34a`）。
+- 重跑 `node verify_facts_ghpages.mjs`：仍 `1296/1296` 通過。
+- `curl` 永久網址子路徑確認線上 HTML 已含本輪標記：`admin-permission-shell`×3、`admin-assistant-shell`×3、`建立網站功能需求單`×1。
+- 本機有未追蹤資料夾（第一章品質管理、第三章作業場所與設備、第六章申訴退回疑似偽禁藥及藥品回收、第四章文件），疑為使用者原始資料，未動。
+
+下次優先：① 用手機/桌機永久網址進管理面板實測版面（線上已是最新版，可直接測）。② 若使用者要真正做到截圖中的「逐格功能權限」而非角色模板，需新增 `gdpRolePermissions` / `gdpRolePermissionOverrides` 類資料表與 Firestore rules，不能只改前端畫面。③ Android 手機 Google 登入仍需實機複測。④ EmailJS 三值仍待使用者提供。
 
 ### 第123次本輪修正（手機登入 redirect → popup）
 
