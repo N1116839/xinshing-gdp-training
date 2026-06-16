@@ -1,6 +1,21 @@
 # 新勝 GDP 專案交接（精簡版）
 
-> 最後更新：2026-06-16（第125次續：手機登入又卡「超管帳號初始化失敗(permission-denied)」，已修 ID token 刷新時機並推送 `92d7875`，**但收工前使用者尚未實機複測成功**，下次開工第一件事就是確認這個有沒有真的解決）
+> 最後更新：2026-06-16（第126次：**手機登入 permission-denied 真根因找到並修復、使用者實機登入成功** ✅；另移除管理面板 AI 助手殘留文字、新增「在職員工權限管理」常駐面板。HEAD `d32fe26` 已推送）
+
+### 第126次（登入真根因＝線上 rules 被別專案覆蓋；已修復＋管理面板兩項調整）✅
+
+**🎯 登入 permission-denied 真根因（推翻第119~125次所有假設）**：使用者參考「codex b28bd8b 改 popup」的做法要求修登入。先比對 b28bd8b 與 HEAD，發現登入邏輯只多了上輪猜測的 `await user.getIdToken(true)`（移除回到乾淨 popup）。移除後仍 `permission-denied`，且**桌機也一樣失敗**。加暫時診斷印出 token claims → 證實 `token.email=tom741285@gmail.com、verified=true、provider=google.com` **完全正確**，徹底排除 token/手機/快取。
+
+接著用 **Firebase MCP `firebase_get_security_rules` 抓線上實際生效的 rules**，發現線上是**別的專案（wordcloud 文字雲 App）的 rules**：`match /wordcloud_words` 放行、`match /{document=**} allow read,write:if false` 把所有 GDP 寫入全擋 → 超管 bootstrap 寫 `gdpUsers` 必然 permission-denied。**過去幾輪「rules 部署成功」其實沒真的落到這個專案、或事後被 wordcloud 蓋掉**，所以重部署也沒用。修法：從 `Firebase設定/`（`.firebaserc`/`firebase.json` 都正確指向 `xinshing-gdp-training-20260525`）重新 `npx firebase-tools deploy --only firestore:rules`，**再用 MCP 抓線上 rules 確認已換成 GDP 版本**（逐字相同）。使用者實機登入成功 ✅。暫時診斷碼已移除。
+
+**🧹 移除 AI 助手殘留文字**：section 標題「管理面板與 AI 助手」→「管理面板」；tag/lead/pills 移除「AI 變更草稿／修改前後對照／核准退回草稿」用語；登入資料卡「核准與退回管理草稿」改為帳號審核/權限管理描述。
+
+**🔧 新增「在職員工權限管理」常駐面板**：管理面板加常駐可收合（`<details>`）區塊，列出所有 active/suspended 員工，可隨時改角色或停用/重新啟用，不需等到有新申請（解第125次「權限矩陣只在有待審核帳號時才出現」的設計缺口）。超管在清單中被鎖定不可操作。`userApprovalStore` 新增 `listUsers/setRoles/setStatus`，變更寫 `gdpRoleChangeLogs`。**零 rules 變動**（gdpUsers read/update 對 isAdmin 已放行）。
+- ⚠️ 限制：停用＝設 status 非 active；但若該員工 email 在「管理者 email 名單」內，登入時 `ensureConfiguredAdmin` 會自動把他重新啟用。要真正封鎖「管理者」需先從 email 名單移除再停用；一般員工停用即生效。
+
+**本輪驗收**：`JS_PARSE_OK 1`、`verify_facts 1296/1296`；preview mock 超管渲染管理面板——新面板/超管鎖定/「待審核新帳號」標題/無 AI 殘留文字/activeUserCard 正常員工有停用鈕、超管卡鎖定，全部正確、無 runtime error。線上 rules 已用 MCP 確認為 GDP 版本。
+
+**下次優先**：① 使用者線上實測「在職員工權限管理」面板實際改角色/停用是否正常寫入（localhost 無法測 Firestore 授權）。② EmailJS 三值仍待提供。③ 管理面板「同意書／審核紀錄查詢」頁。
 
 ### 第125次續（手機登入 permission-denied，已下修法但未驗證成功，收工時仍是「無法登入」狀態）
 
@@ -233,7 +248,8 @@
 
 | 優先 | 項目 | 備註 |
 |---|---|---|
-| 🔴 最高 | 手機登入仍卡「超管帳號初始化失敗(permission-denied)」，**第125次下的修法尚未被使用者實機驗證成功** | popup 跳出/帳戶選擇都已正常（早已不是 signInWithRedirect 問題），卡點變成登入完成後 `ensureSuperAdmin()` 寫入 `gdpUsers` 被 rules 拒絕，代碼 `permission-denied`。已比對排除是當輪改動造成的回歸（`ensureSuperAdmin`/rules 跟上次能登入版本逐字節相同）。目前假設＝ID token 剛登入時還沒刷新到含正確 email claim，已加 `await user.getIdToken(true)` 強制刷新（commit `92d7875`）。**下次開工第一件事：請使用者手機無痕模式重試登入，確認是否解決；若還失敗，畫面會顯示真正的 `e.code`，直接照那個代碼查，不要回去猜 popup/redirect 這些已排除的方向。** |
+| ✅ 已解決 | ~~手機登入卡 permission-denied~~（第126次修復，使用者實機登入成功） | 真根因＝線上 Firestore rules 被別專案（wordcloud）的 rules 覆蓋，所有 GDP 寫入被 `allow read,write:if false` 擋。重新從 `Firebase設定/` 部署正確 GDP rules 並用 MCP 抓線上 rules 確認生效後解決。跟 token/手機/快取/popup 全無關。 |
+| 🔴 待測 | 「在職員工權限管理」常駐面板線上實測 | 第126次新增；localhost 無法測 Firestore 授權寫入，需超管線上登入 → 管理面板 → 展開該面板 → 試改角色/停用，確認實際寫入正常。 |
 | 最高 | EmailJS 設定（下次開工帶使用者一步步操作） | 已改走 EmailJS（免 Blaze）。前端 `EMAILJS_CONFIG={publicKey,serviceId,templateId}` 目前空字串＝不寄信（不影響申請）。**下次開工要帶使用者做這幾步並把值填回 `EMAILJS_CONFIG` 後 push：**<br>1. emailjs.com 開免費帳號。<br>2. Email Services 接一個服務（用 Gmail 即可）→ 取得 **Service ID**。<br>3. Email Templates 建一個模板：收件人欄填 `{{to_email}}`、主旨 `{{subject}}`、內文可用 `{{applicant_name}}`/`{{applicant_empid}}`/`{{applicant_department}}`/`{{applicant_title}}`/`{{applicant_email}}`/`{{message}}` → 取得 **Template ID**。<br>4. Account → API Keys/General 取得 **Public Key**。<br>5. Account → Security 把 allowed origin 限 `https://n1116839.github.io`（防盜用額度）。<br>三個值給 Claude 填入 `EMAILJS_CONFIG`。計費按 send() 次數（非收件人數），一次寄全部管理者＝1 封，免費 200/月足夠。收件人＝超管 email∪超管在面板設定的管理者 email。 |
 | 最高 | 線上登入實測 | 已重新部署 Firestore rules；請用 Chrome/無痕重新登入，若仍錯需抓 browser console `permission-denied` 細節與 `gdpUsers/{uid}` 狀態。 |
 | 高 | 權限管理畫面完成度盤點 | 使用者回報「沒有權限管理的畫面」；需先分清是未登入導致看不到，還是管理面板功能尚未補齊，再決定補 UI 或補角色顯示說明。 |
