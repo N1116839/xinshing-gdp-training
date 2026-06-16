@@ -219,6 +219,7 @@
   .admin-card{display:grid;gap:12px;padding:16px;background:#f7fbfb;border:1px solid var(--line);border-top:4px solid var(--brand)}
   .admin-card h4{margin:0;color:var(--brand);font-size:18px}
   .admin-section{grid-column:1/-1;min-width:0}
+  .wide.admin-section{grid-column:1/-1}
   .admin-section>h3{margin-bottom:8px}
   .admin-form{display:grid;gap:10px}
   .admin-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
@@ -2327,66 +2328,6 @@ function bindAuthGate(){
     await authStore.signOut();
   });
 }
-
-const adminDraftStore = {
-  key:"gdp-admin-change-drafts",
-  localList(){
-    return JSON.parse(localStorage.getItem(this.key)||"[]");
-  },
-  localSave(draft){
-    const list=this.localList();
-    list.unshift(draft);
-    localStorage.setItem(this.key,JSON.stringify(list.slice(0,20)));
-  },
-  async list(){
-    if(qaStore.db&&authStore.canAdmin()){
-      try{
-        const {collection,query,orderBy,limit,getDocs}=qaStore.firebase;
-        const snap=await getDocs(query(collection(qaStore.db,"gdpChangeDrafts"),orderBy("createdAt","desc"),limit(10)));
-        return snap.docs.map(d=>({id:d.id,...d.data()}));
-      }catch(e){ console.warn("管理草稿讀取失敗，使用本機草稿",e); }
-    }
-    return this.localList();
-  },
-  async save(draft){
-    const localDraft={...draft,id:`local-${Date.now()}`,createdAt:new Date().toISOString()};
-    this.localSave(localDraft);
-    if(!qaStore.db||!authStore.canAdmin()) return localDraft;
-    const {collection,addDoc,serverTimestamp}=qaStore.firebase;
-    const payload={
-      ...draft,
-      status:"pending",
-      createdBy:authStore.user.uid,
-      createdByName:authStore.displayName(),
-      createdAt:serverTimestamp(),
-      updatedAt:serverTimestamp()
-    };
-    const ref=await addDoc(collection(qaStore.db,"gdpChangeDrafts"),payload);
-    return {id:ref.id,...payload};
-  },
-  async decide(id,status,note){
-    if(!qaStore.db||!authStore.canAdmin()||!id||String(id).startsWith("local-")) return false;
-    const {doc,updateDoc,collection,addDoc,serverTimestamp}=qaStore.firebase;
-    await updateDoc(doc(qaStore.db,"gdpChangeDrafts",id),{
-      status,
-      decisionNote:note||"",
-      decidedBy:authStore.user.uid,
-      decidedByName:authStore.displayName(),
-      decidedAt:serverTimestamp(),
-      updatedAt:serverTimestamp()
-    });
-    await addDoc(collection(qaStore.db,"gdpAuditLogs"),{
-      actorUid:authStore.user.uid,
-      actorName:authStore.displayName(),
-      action:`changeDraft.${status}`,
-      targetId:id,
-      note:note||"",
-      source:"aiAdminAssistant",
-      createdAt:serverTimestamp()
-    });
-    return true;
-  }
-};
 
 // §49.3 帳號審核：管理者核准 pending 申請，設角色＋啟用，並留稽核紀錄。
 // 不需改 rules：gdpUsers update / gdpUserApplications read+update / gdpRoleChangeLogs create 皆已放行 isAdmin()。
@@ -6210,7 +6151,7 @@ function adminConsoleSection(){
       <article class="admin-card">
         <h4>目前登入身分</h4>
         <p class="admin-note">狀態：<strong>${esc(statusText)}</strong></p>
-        <p class="admin-note">登入已改由進站前的 Google 關卡統一處理；此面板供管理者審核帳號、設定角色與管理 AI 維護草稿。</p>
+        <p class="admin-note">登入已改由進站前的 Google 關卡統一處理；此面板供管理者審核帳號、設定角色。</p>
         <div class="admin-actions">
           <button class="admin-btn secondary" id="authLogoutBtn" type="button" ${signed?"":"disabled"}>登出</button>
         </div>
@@ -6243,165 +6184,7 @@ function adminConsoleSection(){
       </form>
       <div id="adminEmailList" class="pending-list"><p class="admin-note">載入中…</p></div>
     </article>`:""}
-    <article class="panel wide admin-section">
-      <h3>AI 管理助理</h3>
-      <div class="admin-workflow" aria-label="AI 管理助理處理流程">
-        <div class="admin-step"><strong>1. 自然語言提出需求</strong><span>管理者直接描述要停用帳號、改角色、修題庫、或提出網站功能需求。</span></div>
-        <div class="admin-step"><strong>2. 產生前後對照</strong><span>系統整理修改前、修改後、影響範圍與需要走的核准流程。</span></div>
-        <div class="admin-step"><strong>3. 核准後依類型生效</strong><span>帳號職務可寫入資料；教材題庫需審核；網站程式改版走 Codex / PR / 部署。</span></div>
-      </div>
-      <div class="admin-disclaimer">
-        <h4>AI 助手核准後的邊界</h4>
-        <ul>
-          <li><strong>帳號與職務：</strong>可由管理者在上方權限矩陣核准後生效，並留下稽核紀錄。</li>
-          <li><strong>教材、題庫、KB：</strong>先成為待審核草稿，需回 SOP／WI／FR 或官方資料核對後才可正式採用。</li>
-          <li><strong>網站顏色、版面、登入、Firebase rules：</strong>會建立功能需求單，交由 Codex / GitHub PR / 預覽 / 測試 / 部署流程上線；不由前台直接改正式站檔案。</li>
-          <li><strong>可追溯：</strong>帳號與職務異動會留下稽核紀錄（誰改、改誰、前後狀態、原因、時間），供日後追溯。</li>
-          <li><strong>不外洩機密：</strong>助理不會顯示金鑰、權杖、他人完整個資或未授權部門資料。</li>
-        </ul>
-      </div>
-      <div class="admin-assistant-shell">
-        <form class="admin-form admin-card" id="adminAssistantForm">
-          <label>用一句話描述維護需求<textarea name="request" placeholder="例如：031 離職，請停用帳號。或：倉管介面我想改成橘色，和其他部門不同。" required></textarea></label>
-          <div class="admin-quick-chips" aria-label="常用需求範例">
-            <button class="admin-chip" type="button" data-admin-example="031 離職，請停用帳號並保留異動紀錄。">停用帳號</button>
-            <button class="admin-chip" type="button" data-admin-example="倉管人員升為倉庫組長，請建立角色異動草稿。">職務異動</button>
-            <button class="admin-chip" type="button" data-admin-example="某一題答案疑似錯誤，請建立題庫修正草稿並要求回 SOP 核對。">題庫修正</button>
-            <button class="admin-chip" type="button" data-admin-example="倉管介面我想改成橘色，和其他部門不同。">網站改版</button>
-          </div>
-          <details class="admin-details">
-            <summary>需要時再填：補充欄位</summary>
-            <div class="admin-form-grid">
-              <label>需求類型<select name="type">
-                <option value="">讓系統判斷</option>
-                <option value="accountRole">帳號與職務</option>
-                <option value="questionBank">題庫與測驗</option>
-                <option value="contentFix">教材或 KB 修正</option>
-                <option value="featureRequest">網站功能需求</option>
-              </select></label>
-              <label>目標對象／項目<input name="target" placeholder="員工編號、姓名、題號或頁面"></label>
-              <label>修改前角色／狀態<input name="beforeRole" placeholder="例如：倉管人員、active"></label>
-              <label>修改後角色／狀態<input name="afterRole" placeholder="例如：倉庫組長、disabled"></label>
-              <label>修改前部門／範圍<input name="beforeDept" placeholder="例如：倉管"></label>
-              <label>修改後部門／範圍<input name="afterDept" placeholder="例如：倉管＋採購到貨驗收"></label>
-            </div>
-          </details>
-          <label>管理者補充理由<input name="reason" placeholder="核准依據、來源文件或異動原因"></label>
-          <div class="admin-actions">
-            <button class="admin-btn" type="submit">整理成維護草稿</button>
-            <button class="admin-btn secondary" type="button" id="adminSaveDraftBtn" disabled>儲存待審核草稿</button>
-          </div>
-          <p class="admin-note">看不懂類型時不用選，直接用自然語言描述即可。</p>
-        </form>
-        <div class="admin-card">
-          <h4>修改前 / 修改後</h4>
-          <div id="adminPreview" class="change-preview">
-            <p class="admin-note">填寫需求後產生對照。</p>
-          </div>
-          <div class="admin-actions">
-            <button class="admin-btn" type="button" id="adminApproveBtn" disabled>核准／排入處理</button>
-            <button class="admin-btn warn" type="button" id="adminRejectBtn" disabled>退回草稿</button>
-          </div>
-        </div>
-      </div>
-    </article>
-    <article class="panel wide admin-section">
-      <h3>近期草稿</h3>
-      <div id="adminDraftList" class="draft-list"><p class="admin-note">載入中…</p></div>
-    </article>
   </div>`;
-}
-function inferAdminRequestType(text){
-  const t=String(text||"");
-  if(/顏色|橘色|版面|介面|畫面|按鈕|登入|Firebase|rules|GitHub|網站|功能|手機|排版|UI|CSS|HTML|JavaScript/i.test(t)) return "featureRequest";
-  if(/題|測驗|考題|答案|解析|題庫|補考|分數/.test(t)) return "questionBank";
-  if(/教材|KB|智慧查詢|SOP|WI|FR|稽查回答|文件|內容|文案/.test(t)) return "contentFix";
-  return "accountRole";
-}
-function inferTargetFromRequest(text){
-  const t=String(text||"");
-  const emp=t.match(/\b\d{2,6}\b/);
-  if(emp) return emp[0];
-  const dept=t.match(/(倉管|倉庫|文管|品保|品管|業務|採購|人事|管理藥師|GDP權責人|GDP 權責人)/);
-  if(dept) return dept[0];
-  const q=t.match(/第?\s*\d+\s*題/);
-  if(q) return q[0].replace(/\s+/g,"");
-  return "";
-}
-function inferChangeDraft(form){
-  const fd=new FormData(form);
-  const request=String(fd.get("request")||"").trim();
-  const type=String(fd.get("type")||"").trim()||inferAdminRequestType(request);
-  const target=String(fd.get("target")||"").trim()||inferTargetFromRequest(request)||"未指定";
-  const beforeRole=String(fd.get("beforeRole")||"").trim()||"未提供";
-  const afterRole=String(fd.get("afterRole")||"").trim()||"待確認";
-  const beforeDept=String(fd.get("beforeDept")||"").trim()||"未提供";
-  const afterDept=String(fd.get("afterDept")||"").trim()||"待確認";
-  const reason=String(fd.get("reason")||"").trim()||"管理者尚未補充";
-  const typeLabel={
-    accountRole:"帳號與職務",
-    questionBank:"題庫與測驗",
-    contentFix:"教材或 KB 修正",
-    featureRequest:"網站功能需求"
-  }[type]||type;
-  const before={target,roleOrStatus:beforeRole,departmentOrScope:beforeDept,state:"正式資料維持現狀"};
-  const afterState={
-    accountRole:"建立帳號／職務異動草稿；帳號申請請用上方矩陣核准後生效",
-    questionBank:"建立題庫待審核草稿，不直接上架",
-    contentFix:"建立教材／KB 待審核草稿，不直接覆蓋正式內容",
-    featureRequest:"建立網站功能需求單，需 Codex／PR／預覽／測試後上線"
-  }[type]||"建立待審核草稿";
-  const after={target,roleOrStatus:afterRole,departmentOrScope:afterDept,state:afterState};
-  const impact=[];
-  if(type==="accountRole"){
-    impact.push("影響登入後可見部門、智慧查詢範圍、測驗範圍與行事曆權限。");
-    impact.push("若是新帳號申請，請在上方權限矩陣核准，核准後會寫入 roles/status 並留下稽核紀錄。");
-  }else if(type==="questionBank"){
-    impact.push("影響題庫草稿、解析與來源欄位；正式啟用前需講師或文管確認。");
-    impact.push("不會直接改變目前考生看到的正式題目。");
-  }else if(type==="contentFix"){
-    impact.push("影響教材、KB 或稽查回答草稿；需回 SOP/WI/FR 或官方來源核對。");
-    impact.push("不會直接覆蓋正式 learner-facing 內容。");
-  }else{
-    impact.push("影響 HTML、JavaScript、Firebase rules 或 GitHub Pages 時，必須走 PR / 預覽 / 測試。");
-    impact.push("例：倉管介面改橘色會先成為功能需求單，不能由前台直接改正式站檔案。");
-  }
-  return {type,typeLabel,request,target,before,after,impact,reason,status:"pending"};
-}
-function changeRows(data){
-  return Object.entries(data).map(([k,v])=>{
-    const label={target:"目標",roleOrStatus:"角色／狀態",departmentOrScope:"部門／範圍",state:"處理狀態"}[k]||k;
-    return `<div class="change-row"><span>${esc(label)}</span><span>${esc(v)}</span></div>`;
-  }).join("");
-}
-function renderChangePreview(draft){
-  return `<div class="change-columns">
-    <div class="change-box"><strong>修改前</strong>${changeRows(draft.before)}</div>
-    <div class="change-box after"><strong>修改後</strong>${changeRows(draft.after)}</div>
-  </div>
-  <div>
-    <h4>影響範圍</h4>
-    <ul class="impact-list">${draft.impact.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
-  </div>
-  <div class="change-box">
-    <strong>${esc(draft.typeLabel)}｜待審核</strong>
-    <p class="admin-note">${esc(draft.request)}</p>
-    <p class="admin-note">理由：${esc(draft.reason)}</p>
-  </div>`;
-}
-async function renderAdminDraftList(){
-  const el=document.getElementById("adminDraftList");
-  if(!el) return;
-  const drafts=await adminDraftStore.list();
-  if(!drafts.length){
-    el.innerHTML=`<p class="admin-note">目前沒有草稿。</p>`;
-    return;
-  }
-  el.innerHTML=drafts.map(d=>`<div class="draft-card" data-draft-id="${esc(d.id||"")}">
-    <strong>${esc(d.typeLabel||d.type||"變更草稿")}｜${esc(d.status||"pending")}</strong>
-    <small>${esc(d.target||"未指定")}｜${esc(d.request||"")}</small>
-    <small>修改後：${esc(d.after?.roleOrStatus||"")}／${esc(d.after?.departmentOrScope||"")}</small>
-  </div>`).join("");
 }
 function groupApplicationsByDept(apps){
   return apps.reduce((acc,app)=>{
@@ -6485,56 +6268,10 @@ async function renderPendingUserList(){
     await renderPendingUserList();
   }));
 }
-let activeAdminDraft=null;
 function bindAdminConsole(){
   const logout=document.getElementById("authLogoutBtn");
-  const form=document.getElementById("adminAssistantForm");
-  const preview=document.getElementById("adminPreview");
-  const saveBtn=document.getElementById("adminSaveDraftBtn");
-  const approveBtn=document.getElementById("adminApproveBtn");
-  const rejectBtn=document.getElementById("adminRejectBtn");
   logout?.addEventListener("click",async()=>authStore.signOut());
-  form?.querySelectorAll("[data-admin-example]").forEach(btn=>btn.addEventListener("click",()=>{
-    if(form.request) form.request.value=btn.dataset.adminExample||"";
-    form.request?.focus();
-  }));
-  form?.addEventListener("submit",e=>{
-    e.preventDefault();
-    activeAdminDraft=inferChangeDraft(form);
-    if(preview) preview.innerHTML=renderChangePreview(activeAdminDraft);
-    if(saveBtn) saveBtn.disabled=false;
-    if(approveBtn) approveBtn.disabled=!authStore.canAdmin();
-    if(rejectBtn) rejectBtn.disabled=!authStore.canAdmin();
-  });
-  saveBtn?.addEventListener("click",async()=>{
-    if(!activeAdminDraft) return;
-    try{
-      const saved=await adminDraftStore.save(activeAdminDraft);
-      activeAdminDraft={...activeAdminDraft,id:saved.id};
-      if(preview) preview.insertAdjacentHTML("beforeend",`<p class="admin-note">已儲存草稿：${esc(saved.id||"本機草稿")}</p>`);
-      if(approveBtn) approveBtn.disabled=!authStore.canAdmin()||!activeAdminDraft.id;
-      if(rejectBtn) rejectBtn.disabled=!authStore.canAdmin()||!activeAdminDraft.id;
-      await renderAdminDraftList();
-    }catch(err){
-      alert("草稿儲存失敗，已保留畫面內容。");
-      console.warn("草稿儲存失敗",err);
-    }
-  });
-  approveBtn?.addEventListener("click",async()=>{
-    if(!activeAdminDraft?.id) return;
-    const ok=await adminDraftStore.decide(activeAdminDraft.id,"approved","管理者核准草稿");
-    alert(ok?"草稿已核准並留下稽核紀錄。網站功能需求仍需交由 Codex / PR / 部署流程處理。":"此草稿尚未寫入資料庫，或目前帳號無核准權限。");
-    await renderAdminDraftList();
-  });
-  rejectBtn?.addEventListener("click",async()=>{
-    if(!activeAdminDraft?.id) return;
-    const reason=prompt("請輸入退回原因：")||"管理者退回草稿";
-    const ok=await adminDraftStore.decide(activeAdminDraft.id,"rejected",reason);
-    alert(ok?"草稿已退回並留下稽核紀錄。":"此草稿尚未寫入資料庫，或目前帳號無退回權限。");
-    await renderAdminDraftList();
-  });
   renderPendingUserList();
-  renderAdminDraftList();
   // 超管：管理者 email 名單（重新載入確保最新，再渲染＋綁定新增表單）。
   const adminEmailForm=document.getElementById("adminEmailForm");
   if(adminEmailForm){

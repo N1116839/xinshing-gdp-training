@@ -85,20 +85,6 @@ service cloud.firestore {
         && request.resource.data.status == 'pending';
       allow update: if isAdmin();
     }
-    match /gdpChangeDrafts/{draftId} {
-      allow read: if isAdmin();
-      allow create: if isAdmin()
-        && request.resource.data.keys().hasOnly(['type','typeLabel','request','target','before','after','impact','reason','status','createdBy','createdByName','createdAt','updatedAt'])
-        && request.resource.data.status == 'pending'
-        && request.resource.data.createdBy == request.auth.uid
-        && request.resource.data.type in ['accountRole','questionBank','contentFix','featureRequest']
-        && request.resource.data.request is string
-        && request.resource.data.request.size() <= 2000;
-      allow update: if isAdmin()
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','decisionNote','decidedBy','decidedByName','decidedAt','updatedAt'])
-        && request.resource.data.status in ['approved','rejected']
-        && request.resource.data.decidedBy == request.auth.uid;
-    }
     match /gdpAuditLogs/{logId} {
       allow read, create: if isAdmin();
       allow update, delete: if false;
