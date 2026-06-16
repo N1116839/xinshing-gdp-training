@@ -1,6 +1,6 @@
 # 新勝 GDP 專案交接（精簡版）
 
-> 最後更新：2026-06-16（第122次：LINE 跳出已修好＋待審核角標＋管理者 email 名單＋EmailJS；**新診斷：手機登入真卡點是 signInWithRedirect 回來 session 遺失，下次改 popup 實機測**）
+> 最後更新：2026-06-16（第123次：手機登入分支已由 `signInWithRedirect` 改為 `signInWithPopup`；待使用者 Android 手機實機複測）
 > 原則：本檔只保留「最新可接狀態、當前待辦、關鍵踩坑」。舊輪次完整流水帳不再放在開工入口；歷史重點已整理進第二大腦專案筆記與踩坑紀錄。
 
 ---
@@ -14,8 +14,27 @@
 | Firebase rules | `Firebase設定/firestore.rules` |
 | 分支 | `codex/gdp-html-training-pages` |
 | 永久網址 | `https://n1116839.github.io/xinshing-gdp-training/` |
-| 最新本輪修正 | LINE 登入改用 `openExternalBrowser=1` 跳出到手機預設瀏覽器；管理面板鈕加待審核數量角標；申請送出寫 `mail` 集合接 Trigger Email 通知管理者 |
-| 本輪驗收 | `JS_PARSE_OK 1`；Launch 預覽函式/角標/外部瀏覽器網址邏輯全通過、無 console error；rules 已 deploy；尚未做 LINE 手機實機複測、email 待使用者裝擴充 |
+| 最新本輪修正 | 手機 Google 登入不再走 `signInWithRedirect`，改用 `signInWithPopup`，避免 github.io ↔ firebaseapp.com 轉址回來後 session 遺失；保留既有 LINE 跳出外部瀏覽器邏輯 |
+| 本輪驗收 | `JS_PARSE_OK 1`；`node verify_facts_ghpages.mjs` = `1296/1296`；靜態確認 `signInWithRedirect` 已不在登入按鈕路徑；內建 Browser 因企業政策封鎖 `file://` 與 `localhost`，未能做自動瀏覽器實測 |
+
+### 第123次本輪修正（手機登入 redirect → popup）
+
+使用者指定優先處理手機登入。依第122次影片診斷，LINE 跳出外部瀏覽器已成功，真卡點是 Android 選完 Google 帳號轉址回 GitHub Pages 後，Firebase `signInWithRedirect` 的 redirect result / session 在跨網域儲存隔離下遺失，畫面又回到「使用 Google 登入」picker。
+
+**已修正 `HTML資料庫/新勝GDP資料庫.html`：**
+- `authStore.signInWithGoogle()` 的手機分支改用 `signInWithPopup()`。
+- 移除手機登入時設定 `GOOGLE_REDIRECT_FLAG` 與呼叫 `signInWithRedirect()` 的路徑。
+- 桌機仍使用 `signInWithPopup()`。
+- 既有 `getRedirectResult()` 與 `GOOGLE_REDIRECT_FLAG` 清理保留，用於相容舊版 redirect 返回或使用者尚在舊流程中的狀態，不再由新的登入按鈕主動觸發。
+- LINE / Android 的 `openExternalBrowser=1` 與 `intent://` 跳出外部瀏覽器邏輯未更動。
+
+**本輪驗收：**
+- `JS_PARSE_OK 1`
+- `node verify_facts_ghpages.mjs`：`1296/1296`
+- 靜態檢查：`signInWithRedirect` 已不在 HTML；`signInWithGoogle()` 手機分支命中 `signInWithPopup`。
+- 內建 Browser 嘗試開 `file://` 與 `http://127.0.0.1:8787` 均被企業網路政策封鎖，因此本輪無法完成自動瀏覽器實測；需推送後由使用者用 Android 手機在 GitHub Pages 永久網址實機複測。
+
+下次優先：① 請使用者用 Android 手機從 LINE 點連結 → 跳出外部瀏覽器 → 點 Google 登入實測。若 popup 被手機瀏覽器封鎖，先允許此網站彈出視窗再重試；若仍失敗，備案改自訂 authDomain / 同網域 auth handler。② EmailJS 三個值仍待使用者提供。
 
 ### 第122次本輪修正（手機登入修好＋審核通知）
 

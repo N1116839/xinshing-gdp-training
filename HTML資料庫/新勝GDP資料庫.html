@@ -1986,12 +1986,12 @@ const authStore = {
     const provider=new this.authMod.GoogleAuthProvider();
     provider.setCustomParameters({prompt:"select_account"});
     if(detectMobileLoginRisk().mobile){
-      sessionStorage.setItem(GOOGLE_REDIRECT_FLAG,"1");
-      this.redirectMode=true;
-      await this.authMod.signInWithRedirect(this.auth,provider);
-      return {mode:"redirect"};
+      // Mobile redirect can lose the Firebase result across github.io <-> firebaseapp.com storage boundaries.
+      await this.authMod.signInWithPopup(this.auth,provider);
+      return {mode:"popup"};
     }
     await this.authMod.signInWithPopup(this.auth,provider);
+    return {mode:"popup"};
   },
   googleAuthErrorMessage(err){
     const code=err?.code||"";
