@@ -1878,9 +1878,6 @@ const authStore = {
         this.redirectMode=false;
         if(user) this.gateError=null;
         if(user){
-          // 剛登入時本機 user 物件已更新，但 ID token（Firestore rules 讀的 email claim）可能還沒刷新；
-          // 強制刷新一次，避免超管/管理者 email 比對在 token 未更新前被 rules 判定不符而 permission-denied。
-          try{ await user.getIdToken(true); }catch(e){ console.warn("ID token 刷新失敗",e); }
           await this.loadProfile();
           await this.loadAccessConfig();
           await this.ensureSuperAdmin();
