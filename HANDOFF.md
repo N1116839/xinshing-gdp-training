@@ -23,9 +23,9 @@
 - 用第二個非超管 Gmail（無痕）可實測：profile→pending→（超管在管理面板核准）→consent→進站。
 
 ### 下次待辦（接續）
-1. page③ 依職稱過濾各部門內容（§44.5 休眠標籤 chokepoint）。
-2. 帳號審核可加：晉升/降職/離職停用/兼任代理（§49.3 完整異動），目前先做新申請核准/退回。
-3. 管理面板可加「同意書紀錄查詢」（讀 `gdpConsentLogs`）方便稽核。
+1. **【第一優先，使用者指定】管理面板加「同意書／審核紀錄查詢」頁**：平台內查 `gdpConsentLogs`（誰、員工編號、同意/不同意、版本、時間）＋`gdpRoleChangeLogs`/`gdpAuditLogs`（核准/退回/角色異動），免進 Firebase Console。讀取限管理者（rules 已 `read: if isAdmin()`，免改 rules）。建議：篩選 decision/日期、可匯出。
+2. page③ 依職稱過濾各部門內容（§44.5 休眠標籤 chokepoint）。
+3. 帳號審核可加：晉升/降職/離職停用/兼任代理（§49.3 完整異動），目前先做新申請核准/退回。
 
 ---
 
