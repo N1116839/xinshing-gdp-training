@@ -1,6 +1,6 @@
 # 新勝 GDP 專案交接（精簡版）
 
-> 最後更新：2026-06-16（第120次，同意書改為員工編號主顯示＋姓名遮罩）
+> 最後更新：2026-06-16（第121次，手機 Google 登入改為 mobile redirect）
 > 原則：本檔只保留「最新可接狀態、當前待辦、關鍵踩坑」。舊輪次完整流水帳不再放在開工入口；歷史重點已整理進第二大腦專案筆記與踩坑紀錄。
 
 ---
@@ -14,8 +14,25 @@
 | Firebase rules | `Firebase設定/firestore.rules` |
 | 分支 | `codex/gdp-html-training-pages` |
 | 永久網址 | `https://n1116839.github.io/xinshing-gdp-training/` |
-| 最新本輪修正 | 進站前同意書改為主顯示員工編號；姓名不再顯示全名，改遮罩格式 |
-| 本輪驗收 | 本機 diff 已確認只動同意書顯示文案與姓名遮罩函式；尚未做 GitHub Pages 實機複測 |
+| 最新本輪修正 | 手機 Google 登入改為 mobile redirect；App 內建瀏覽器保留明確導引提示 |
+| 本輪驗收 | `JS_PARSE_OK 1`；尚未做 GitHub Pages 手機實機複測 |
+
+### 第121次本輪修正
+
+使用者回報：手機依然無法登入。進一步檢查後確認，前一輪只補了「請改用 Chrome / Safari」提示，但登入核心仍是 `signInWithPopup`，這在手機正式瀏覽器也可能失敗。
+
+本輪已修正 `HTML資料庫/新勝GDP資料庫.html`：
+
+- `authStore.signInWithGoogle()` 改為：桌機維持 `signInWithPopup`；手機改走 `signInWithRedirect`。
+- 新增 `GOOGLE_REDIRECT_FLAG` 與 redirect returning 狀態處理；頁面往返 Google 後，會清掉 redirect flag，避免使用者卡在不明狀態。
+- `authStore._init()` 補 `getRedirectResult()`，若手機 redirect 返回失敗，會轉成可讀錯誤訊息，而不是只留在瀏覽器 console。
+- 前一輪加入的手機提示卡保留，但定位改為輔助說明；真正解法是登入策略改為 mobile redirect，不再只靠提示。
+
+下次若手機仍無法登入，優先確認：
+
+- 是否已推送到 GitHub Pages 最新版。
+- 使用者是否真的是從 Chrome / Safari 開啟，而不是 App 內建瀏覽器。
+- 手機返回頁是否出現 Firebase `auth/unauthorized-domain`、`auth/configuration-not-found` 或其他 redirect 錯誤。
 
 ### 第120次本輪修正
 
@@ -114,7 +131,9 @@
 
 | 優先 | 項目 | 備註 |
 |---|---|---|
+| 最高 | 手機登入實測與導引修正 | 使用者手機畫面顯示 `requirements do not comply with Google secure browser policy`，疑似從 App 內建瀏覽器 / WebView 開啟 Google 登入，被 Google 安全瀏覽器政策封鎖；下次開工先確認是否需加偵測與明確提示「請改用 Chrome / Safari 開啟」。 |
 | 最高 | 線上登入實測 | 已重新部署 Firestore rules；請用 Chrome/無痕重新登入，若仍錯需抓 browser console `permission-denied` 細節與 `gdpUsers/{uid}` 狀態。 |
+| 高 | 權限管理畫面完成度盤點 | 使用者回報「沒有權限管理的畫面」；需先分清是未登入導致看不到，還是管理面板功能尚未補齊，再決定補 UI 或補角色顯示說明。 |
 | 高 | 管理面板加「同意書／審核紀錄查詢」頁 | 讀 `gdpConsentLogs`、`gdpRoleChangeLogs`、`gdpAuditLogs`；限管理者。 |
 | 中 | page③ 依職稱過濾各部門內容 | 需用 §44.5 標籤與 §48 權限矩陣，注意靜態站前端遮蔽不是真正資料保護。 |
 | 中 | 帳號審核擴充 | 晉升、降職、離職停用、兼任/代理。 |
