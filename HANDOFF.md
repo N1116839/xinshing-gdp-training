@@ -1,3 +1,34 @@
+## 2026-06-16 第一百一十七次：帳號審核 UI＋AI 助理免責(§49)＋進站前使用同意書關卡(§50) ✅
+
+使用者開工選「帳號審核 UI」，過程追加兩件：① AI 管理助理免責聲明（依昨天 6/15 §49）② 進站前「平台使用同意書」關卡（條列＋同意/不同意，記員工編號供稽核）。全程只動 `HTML資料庫/新勝GDP資料庫.html` 與 `Firebase設定/firestore.rules`，不碰題庫/fact/SOP。
+
+### 本次完成
+1. **帳號審核 UI**（管理面板新增「待審核帳號」面板）：
+   - `userApprovalStore`：讀 `gdpUserApplications`（單欄 `orderBy(createdAt)` 免複合索引、前端過濾 pending）；核准＝`gdpUsers` 設 `roles`(複選,§48 聯集)+`status:active`、`gdpUserApplications` 標 approved、寫 `gdpRoleChangeLogs`（前後狀態稽核）；退回＝`gdpUsers` 設 rejected、寫 `gdpAuditLogs`。
+   - **不需改 rules**：`gdpUsers update`/`gdpUserApplications read+update`/`gdpRoleChangeLogs create` 早已放行 `isAdmin()`。非管理者顯示「需管理者權限」。
+2. **AI 管理助理免責聲明（§49，管理者限定）**：AI 助理區金色 5 條——只產生草稿不自動上線、先審後生效（程式走 PR）、可追溯、回 SOP 核對不得當公司制度、不外洩金鑰/個資。
+3. **進站前「平台使用同意書」關卡（新 §50）**：
+   - 狀態機加 `consent`：`picker→profile→pending→consent→ready`，帳號 active 後、進平台前強制閱讀（**超管也納入**）。
+   - 6 條條列聲明（使用者 4 點＋補「不取代 SOP 全文」「同意即記錄」）。
+   - 同意/不同意都寫 **新集合 `gdpConsentLogs`**（append-only：uid/empId/decision/version/時間）；同意者另在 `gdpUsers` 標 `consentVersion` 才放行；不同意→登出且留痕。`CONSENT_VERSION="2026-06-16"`，bump 即全員重新同意。
+
+### 驗收
+- `JS_PARSE_OK 1`、`verify_facts 1296/1296`、合規通過。
+- Preview 實機（mock）：帳號審核（免責 5 條、待審 2 卡×9 角色、核准收集多選 `[staff,warehouse_lead]`、非管理者提示、缺姓名 fallback、無溢位）；同意書狀態機（一般員工/超管/舊版本皆觸發 consent、已同意→ready、平台全程遮蔽）、同意→記 agree→收關卡進站、不同意→記 disagree→登出、6 條渲染正確；console 無 error。
+- **Firestore rules 已部署**（`npx firebase-tools deploy --only firestore:rules` compiled+released）：新增 `gdpConsentLogs`、`gdpUsers` self-update 放行 `consentVersion`/`consentedAt`。
+- 截圖工具逾時（此環境一向不穩），以 DOM 量測佐證。
+
+### ⚠️ 給使用者
+- 下次以 031 登入 GH Pages，會先看到同意書，按「我已閱讀並同意」後才進站（之後不再出現，除非 bump 版本）。
+- 用第二個非超管 Gmail（無痕）可實測：profile→pending→（超管在管理面板核准）→consent→進站。
+
+### 下次待辦（接續）
+1. page③ 依職稱過濾各部門內容（§44.5 休眠標籤 chokepoint）。
+2. 帳號審核可加：晉升/降職/離職停用/兼任代理（§49.3 完整異動），目前先做新申請核准/退回。
+3. 管理面板可加「同意書紀錄查詢」（讀 `gdpConsentLogs`）方便稽核。
+
+---
+
 ## 2026-06-16 第一百一十六次：登入頁移除 Line／Outlook＋錯誤訊息可診斷 ✅
 
 使用者開工回報：截圖顯示登入跳「登入失敗，請稍後再試」，要求移除 Line／Outlook（需金鑰/付費的一律不做）。

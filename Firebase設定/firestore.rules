@@ -48,7 +48,17 @@ service cloud.firestore {
         || (isSelf(uid) && isSuperAdminEmail());
       allow update: if isAdmin()
         || (isSelf(uid)
-          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name','department','title','updatedAt']));
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name','department','title','consentVersion','consentedAt','updatedAt']));
+    }
+    // 進站前使用同意書稽核（append-only）：本人可建立自己的同意/不同意紀錄，管理者可讀，不可改不可刪。
+    match /gdpConsentLogs/{logId} {
+      allow read: if isAdmin();
+      allow create: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.decision in ['agree','disagree']
+        && request.resource.data.version is string
+        && request.resource.data.empId is string;
+      allow update, delete: if false;
     }
     match /gdpUserApplications/{appId} {
       allow read: if isAdmin();

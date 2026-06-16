@@ -77,6 +77,14 @@
     .gate-info>div{display:flex;justify-content:space-between;gap:12px;font-size:13px;color:var(--ink-soft)}
     .gate-info>div span:last-child{color:var(--ink);font-weight:800;text-align:right}
     .gate-text-btn{justify-self:center;background:none;border:none;color:var(--brand);font:inherit;font-size:13px;font-weight:800;cursor:pointer;text-decoration:underline}
+    /* 進站前使用同意書（條列＋同意/不同意） */
+    .gate-card.gate-consent{width:min(580px,100%)}
+    .gate-terms{margin:2px 0 0;padding-left:20px;display:grid;gap:9px;text-align:left;max-height:46vh;overflow:auto}
+    .gate-terms li{color:var(--ink);font-size:13.5px;line-height:1.7}
+    .gate-terms li strong{color:var(--brand)}
+    .gate-consent-actions{display:grid;gap:8px;margin-top:6px}
+    .gate-consent-actions .gate-provider.agree{border-color:var(--brand);background:#f0fbf5;color:var(--brand)}
+    .gate-consent-actions .gate-provider.agree:hover{background:#e3f6ec}
     .hero{position:relative;display:grid;gap:18px;margin-bottom:22px;min-height:300px;padding:34px;background:rgba(255,255,255,.88);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;isolation:isolate}
     .hero::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(247,251,251,.98) 0%,rgba(247,251,251,.88) 42%,rgba(247,251,251,.28) 76%),var(--hero-image,url("assets/gdp-training-hero.png")) center right/cover no-repeat;z-index:-2}
     .hero::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:7px;background:linear-gradient(90deg,var(--brand),var(--gold));z-index:-1}
@@ -224,11 +232,26 @@
   .draft-card{padding:12px;background:#fff;border:1px solid var(--line);border-left:4px solid var(--gold)}
   .draft-card strong{display:block;color:var(--brand);margin-bottom:4px}
   .draft-card small{display:block;color:var(--ink-soft);line-height:1.5}
+  .pending-list{display:grid;gap:12px}
+  .pending-card{padding:14px;background:#fff;border:1px solid var(--line);border-left:5px solid var(--gold);display:grid;gap:10px}
+  .pending-head{display:grid;gap:3px}
+  .pending-head strong{color:var(--brand);font-size:16px}
+  .pending-head small{color:var(--ink-soft);font-size:12.5px;line-height:1.5}
+  .pending-roles-label{display:block;margin-bottom:6px;color:var(--ink);font-size:12.5px;font-weight:800}
+  .pending-role-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .pending-role{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink-soft);font-weight:600;cursor:pointer}
+  .pending-role input{box-sizing:border-box;width:15px;height:15px;min-height:0;margin:0;flex:0 0 auto}
+  .admin-disclaimer{grid-column:1/-1;padding:14px 16px;background:#fff9ef;border:1px solid #e6c98a;border-left:5px solid var(--gold);border-radius:8px}
+  .admin-disclaimer h4{margin:0 0 8px;color:#8a5a13;font-size:15px}
+  .admin-disclaimer ul{margin:0;padding-left:18px;display:grid;gap:5px}
+  .admin-disclaimer li{color:var(--ink-soft);font-size:12.5px;line-height:1.6}
+  .admin-disclaimer li strong{color:var(--ink)}
   @media(max-width:760px){
     .exam-question-shell{grid-template-columns:1fr}
     .exam-work-head{flex-wrap:wrap}
     .exam-timer{margin-left:0}
     .admin-layout,.change-columns,.admin-form-grid{grid-template-columns:1fr}
+    .pending-role-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   }
     .slide-label{display:inline-grid;place-items:center;width:40px;height:40px;margin-bottom:8px;color:#fff;background:var(--gold);border-radius:50%;font-weight:800}
     .audit-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
@@ -1704,10 +1727,22 @@ const roleLabels = {
   pharmacist:"管理藥師"
 };
 const adminRoleIds = ["gdp_admin","doc_superadmin","rp_admin","qa_admin","sales_lead","warehouse_lead"];
+// 帳號審核時可指定的角色（§48 一人多職取聯集，roles 為 list）。
+const assignableRoleIds = ["staff","leader","pharmacist","qa_admin","warehouse_lead","sales_lead","rp_admin","gdp_admin","doc_superadmin"];
 // §38／§48 超級管理員（文管・開發者）：hardcode email，登入即自動 active＋doc_superadmin（解超管啟動死結）。
 // 若 GDP 站要改用其他 Google 帳號，改這裡並同步 Firebase設定/firestore.rules 的 isSuperAdminEmail()。
 const SUPER_ADMIN_EMAILS = ["tom741285@gmail.com"];
 const KNOWN_DEPARTMENTS = ["文管","品保","業務","採購","倉庫","人事","管理藥師","GDP權責人","其他"];
+// 進站前使用同意書：版本字串更新時，所有人需重新閱讀並重新同意（供稽核留痕）。
+const CONSENT_VERSION = "2026-06-16";
+const CONSENT_TERMS = [
+  "本平台為<strong>新勝醫藥公司內部 GDP 教育訓練平台</strong>，內容涵蓋國際法規（PIC/S GDP）、台灣食藥署公開常見缺失，以及公司接受稽核時應具備的相關知識，僅供在職員工教育訓練使用。",
+  "為保護您的個人資料，<strong>請勿使用身分證字號、生日、電話等可查找到個人身分的資訊</strong>作為任何帳號的密碼或驗證資料。",
+  "本平台屬公司內部資產，<strong>不得將平台網址、內容、截圖或帳號提供、轉發或展示給公司以外之人員</strong>。",
+  "因屬公司內部教育訓練平台，<strong>內容可能與其他公司作法有所不同；一切應以國際法規、台灣食藥署規定及本公司正式文件（SOP／WI／FR）為準</strong>，若有疑問或發現內容與最新文件不一致，應反映給管理者或文管。",
+  "本平台教材為協助學習與稽查應對之整理，<strong>不取代正式 SOP 全文</strong>；實際作業仍須依公司正式核准文件執行，必要時請向文管申請調閱原文。",
+  "點選「我已閱讀並同意」即表示您已閱讀並理解上述各項；系統將記錄您的<strong>員工編號與同意／不同意之結果及時間</strong>以供後續查核。若選擇「不同意」，將無法進入平台，並同樣留下紀錄。"
+];
 const authStore = {
   ready:false,
   user:null,
@@ -1789,15 +1824,20 @@ const authStore = {
       await this.loadProfile();
     }catch(e){ console.warn("超管帳號初始化失敗（請確認 rules 已部署）",e); }
   },
-  // 關卡狀態機：loading→picker→profile→pending→ready（離線/錯誤另計）。
+  // 關卡狀態機：loading→picker→profile→pending→consent→ready（離線/錯誤另計）。
   gateState(){
     if(!this.ready) return "loading";
     if(this.gateError) return "error";
     if(!this.authMod) return "error";
     if(!this.user) return "picker";
-    if(this.isSuperAdminEmail(this.user.email)) return (this.profile?.status==="active") ? "ready" : "loading";
-    if(!this.profile) return "profile";
-    if(this.profile.status!=="active") return "pending";
+    if(this.isSuperAdminEmail(this.user.email)){
+      if(this.profile?.status!=="active") return "loading";
+    }else{
+      if(!this.profile) return "profile";
+      if(this.profile.status!=="active") return "pending";
+    }
+    // 帳號已啟用後，未同意當前版本使用聲明者，先過同意書關卡（留稽核痕）。
+    if(this.profile?.consentVersion !== CONSENT_VERSION) return "consent";
     return "ready";
   },
   canAdmin(){
@@ -1874,6 +1914,29 @@ const authStore = {
     await this.loadProfile();
     this.updateChip();
   },
+  // 進站前同意書：寫稽核 log（agree/disagree 皆記），同意者在 gdpUsers 標記 consentVersion 才放行。
+  async recordConsent(decision){
+    if(!this.user||!qaStore.db) throw new Error("尚未登入或資料庫未連線");
+    const {doc,updateDoc,collection,addDoc,serverTimestamp}=qaStore.firebase;
+    await addDoc(collection(qaStore.db,"gdpConsentLogs"),{
+      uid:this.user.uid,
+      empId:this.profile?.empId||"",
+      name:this.displayName(),
+      email:this.user.email||"",
+      decision,
+      version:CONSENT_VERSION,
+      createdAt:serverTimestamp()
+    });
+    if(decision==="agree"){
+      await updateDoc(doc(qaStore.db,"gdpUsers",this.user.uid),{
+        consentVersion:CONSENT_VERSION,
+        consentedAt:serverTimestamp(),
+        updatedAt:serverTimestamp()
+      });
+      await this.loadProfile();
+      this.updateChip();
+    }
+  },
   async signOut(){
     if(!this.authMod||!this.auth) return;
     await this.authMod.signOut(this.auth);
@@ -1935,6 +1998,17 @@ function renderAuthGate(){
       </div>
       <button class="gate-text-btn" type="button" id="gatePendingLogout">登出</button>
     </div>`;
+  }else if(state==="consent"){
+    body=`<div class="gate-card gate-consent">
+      <div class="gate-brand">平台使用聲明</div>
+      <p class="gate-sub">${esc(authStore.displayName())}（員工編號 ${esc(authStore.profile?.empId||"—")}），請詳閱以下各項，閱讀後選擇同意或不同意。</p>
+      <ol class="gate-terms">${CONSENT_TERMS.map(t=>`<li>${t}</li>`).join("")}</ol>
+      <div class="gate-consent-actions">
+        <button class="gate-provider agree" type="button" id="gateConsentAgree"><span>我已閱讀並同意</span></button>
+        <button class="gate-text-btn" type="button" id="gateConsentDisagree">不同意（將無法進入平台）</button>
+      </div>
+      <p class="gate-note">系統將記錄您的員工編號與同意／不同意之結果及時間，以供後續查核。</p>
+    </div>`;
   }
   gate.innerHTML=body;
   bindAuthGate();
@@ -1976,6 +2050,24 @@ function bindAuthGate(){
   });
   document.getElementById("gateProfileLogout")?.addEventListener("click",()=>authStore.signOut());
   document.getElementById("gatePendingLogout")?.addEventListener("click",()=>authStore.signOut());
+  const agree=document.getElementById("gateConsentAgree");
+  agree?.addEventListener("click",async()=>{
+    agree.disabled=true;
+    try{
+      await authStore.recordConsent("agree");
+      renderAuthGate();
+    }catch(err){
+      agree.disabled=false;
+      alert("同意紀錄寫入失敗，請稍後再試或聯絡管理者。\n"+(err?.code||err?.message||""));
+      console.warn("同意聲明寫入失敗",err);
+    }
+  });
+  document.getElementById("gateConsentDisagree")?.addEventListener("click",async()=>{
+    if(!confirm("不同意將無法進入平台，且會記錄此結果。確定不同意並登出？")) return;
+    try{ await authStore.recordConsent("disagree"); }
+    catch(err){ console.warn("不同意紀錄寫入失敗",err); }
+    await authStore.signOut();
+  });
 }
 
 const adminDraftStore = {
@@ -2033,6 +2125,54 @@ const adminDraftStore = {
       note:note||"",
       source:"aiAdminAssistant",
       createdAt:serverTimestamp()
+    });
+    return true;
+  }
+};
+
+// §49.3 帳號審核：管理者核准 pending 申請，設角色＋啟用，並留稽核紀錄。
+// 不需改 rules：gdpUsers update / gdpUserApplications read+update / gdpRoleChangeLogs create 皆已放行 isAdmin()。
+const userApprovalStore = {
+  // 讀待審核申請（gdpUserApplications read 規則＝isAdmin）；單欄 orderBy 免複合索引，狀態於前端過濾。
+  async listPending(){
+    if(!qaStore.db || !authStore.canAdmin()) return [];
+    try{
+      const {collection,query,orderBy,limit,getDocs}=qaStore.firebase;
+      const snap=await getDocs(query(collection(qaStore.db,"gdpUserApplications"),orderBy("createdAt","desc"),limit(50)));
+      return snap.docs.map(d=>({id:d.id,...d.data()})).filter(a=>(a.status||"pending")==="pending");
+    }catch(e){ console.warn("待審核帳號讀取失敗",e); return []; }
+  },
+  async approve(app, roles){
+    if(!qaStore.db || !authStore.canAdmin() || !app?.uid) return false;
+    const safeRoles=(roles&&roles.length)?roles:["staff"];
+    const {doc,updateDoc,collection,addDoc,serverTimestamp}=qaStore.firebase;
+    // 1. 啟用帳號＋設角色（isAdmin update 無欄位限制）。
+    await updateDoc(doc(qaStore.db,"gdpUsers",app.uid),{ roles:safeRoles, status:"active", updatedAt:serverTimestamp() });
+    // 2. 標記申請已核准。
+    if(app.id) await updateDoc(doc(qaStore.db,"gdpUserApplications",app.id),{
+      status:"approved", decidedBy:authStore.user.uid, decidedByName:authStore.displayName(), decidedAt:serverTimestamp()
+    });
+    // 3. §49.3 角色異動稽核軌跡。
+    await addDoc(collection(qaStore.db,"gdpRoleChangeLogs"),{
+      actorUid:authStore.user.uid, actorName:authStore.displayName(),
+      targetUid:app.uid, targetEmpId:app.empId||"", targetName:app.name||"",
+      before:{roles:["staff"],status:"pending",department:app.department||""},
+      after:{roles:safeRoles,status:"active",department:app.department||""},
+      reason:"帳號審核核准", approvedAt:serverTimestamp(), source:"manualAdminPanel", createdAt:serverTimestamp()
+    });
+    return true;
+  },
+  async reject(app, reason){
+    if(!qaStore.db || !authStore.canAdmin() || !app?.uid) return false;
+    const {doc,updateDoc,collection,addDoc,serverTimestamp}=qaStore.firebase;
+    await updateDoc(doc(qaStore.db,"gdpUsers",app.uid),{ status:"rejected", updatedAt:serverTimestamp() });
+    if(app.id) await updateDoc(doc(qaStore.db,"gdpUserApplications",app.id),{
+      status:"rejected", decisionNote:reason||"", decidedBy:authStore.user.uid, decidedByName:authStore.displayName(), decidedAt:serverTimestamp()
+    });
+    await addDoc(collection(qaStore.db,"gdpAuditLogs"),{
+      actorUid:authStore.user.uid, actorName:authStore.displayName(),
+      action:"userApplication.rejected", targetId:app.uid, note:reason||"",
+      source:"manualAdminPanel", createdAt:serverTimestamp()
     });
     return true;
   }
@@ -5774,10 +5914,25 @@ function adminConsoleSection(){
         <div class="change-row"><span>角色</span><span>${esc((profile?.roles||[]).map(r=>roleLabels[r]||r).join("、")||"未設定")}</span></div>
         <div class="change-row"><span>狀態</span><span>${esc(profile?.status||"未登入")}</span></div>
       </div>
-      <p class="admin-note">${isAdmin?"此帳號可儲存、核准與退回管理草稿。":"此帳號目前只能預覽草稿；核准需管理者權限。"}</p>
+      <p class="admin-note">${isAdmin?"此帳號可審核帳號、儲存、核准與退回管理草稿。":"此帳號目前只能預覽草稿；審核帳號與核准草稿需管理者權限。"}</p>
+    </article>
+    <article class="panel wide">
+      <h3>待審核帳號</h3>
+      <p class="admin-note">員工以 Google 登入並填寫工號後會列在此。核准時可勾選一個或多個角色（§48 一人多職取聯集），核准後帳號立即啟用並可進站；核准與退回都會寫入角色異動／稽核紀錄。</p>
+      <div id="pendingUserList" class="pending-list"><p class="admin-note">載入中…</p></div>
     </article>
     <article class="panel wide">
       <h3>AI 管理助理：變更草稿</h3>
+      <div class="admin-disclaimer">
+        <h4>⚠️ AI 管理助理免責聲明（依規範 §49）</h4>
+        <ul>
+          <li><strong>只產生草稿，不自動上線：</strong>本助理僅協助整理維護需求、產生「修改前／修改後」對照與待審核草稿，<strong>不會</strong>自動修改正式網站、題庫、教材或 KB。</li>
+          <li><strong>一律先審核後生效：</strong>帳號、職務、題庫、教材變更需具權限管理者核准後才生效；涉及 HTML／JavaScript／Firebase rules／登入權限的程式變更，另須走 PR／預覽／測試流程，不從正式站直接寫入。</li>
+          <li><strong>可追溯：</strong>帳號與職務異動會留下稽核紀錄（誰改、改誰、前後狀態、原因、時間），供日後追溯。</li>
+          <li><strong>內容須回源核對：</strong>AI 產生的教材／題庫內容為建議草稿，須回 SOP／WI／FR 或政府公開資料核對後才可採用，不得當作公司既定制度，亦不得把政府公開常見缺失寫成本公司已發生缺失。</li>
+          <li><strong>不外洩機密：</strong>助理不會顯示金鑰、權杖、他人完整個資或未授權部門資料。</li>
+        </ul>
+      </div>
       <div class="admin-layout">
         <form class="admin-form admin-card" id="adminAssistantForm">
           <label>管理需求<textarea name="request" placeholder="例如：031 離職停用帳號；倉管人員升為倉庫組長；某題答案需要修正。" required></textarea></label>
@@ -5888,6 +6043,53 @@ async function renderAdminDraftList(){
     <small>修改後：${esc(d.after?.roleOrStatus||"")}／${esc(d.after?.departmentOrScope||"")}</small>
   </div>`).join("");
 }
+async function renderPendingUserList(){
+  const el=document.getElementById("pendingUserList");
+  if(!el) return;
+  if(!authStore.canAdmin()){ el.innerHTML=`<p class="admin-note">需管理者權限才能審核帳號。</p>`; return; }
+  el.innerHTML=`<p class="admin-note">載入中…</p>`;
+  const apps=await userApprovalStore.listPending();
+  if(!apps.length){ el.innerHTML=`<p class="admin-note">目前沒有待審核帳號。</p>`; return; }
+  el.innerHTML=apps.map((a,i)=>`<div class="pending-card" data-app-idx="${i}">
+    <div class="pending-head">
+      <strong>${esc(a.name||"（未填姓名）")}</strong>
+      <small>工號 ${esc(a.empId||"未填")}｜${esc(a.department||"未填部門")}｜${esc(a.title||"未填職稱")}</small>
+      <small>${esc(a.email||"")}</small>
+    </div>
+    <div>
+      <span class="pending-roles-label">核准角色（可複選）</span>
+      <div class="pending-role-grid">
+        ${assignableRoleIds.map(r=>`<label class="pending-role"><input type="checkbox" value="${r}" ${r==="staff"?"checked":""}>${esc(roleLabels[r]||r)}</label>`).join("")}
+      </div>
+    </div>
+    <div class="admin-actions">
+      <button class="admin-btn" type="button" data-approve="${i}">核准並啟用</button>
+      <button class="admin-btn warn" type="button" data-reject="${i}">退回</button>
+    </div>
+  </div>`).join("");
+  el.querySelectorAll("[data-approve]").forEach(btn=>btn.addEventListener("click",async()=>{
+    const app=apps[+btn.dataset.approve];
+    const card=btn.closest(".pending-card");
+    const roles=[...card.querySelectorAll(".pending-role input:checked")].map(c=>c.value);
+    if(!roles.length){ alert("請至少勾選一個角色。"); return; }
+    btn.disabled=true;
+    try{
+      const ok=await userApprovalStore.approve(app,roles);
+      alert(ok?`已核准 ${app.name||app.email}，帳號啟用為：${roles.map(r=>roleLabels[r]||r).join("、")}`:"核准失敗，請確認管理者權限或稍後再試。");
+    }catch(err){ console.warn("核准失敗",err); alert("核准失敗："+(err?.message||"未知錯誤")); }
+    await renderPendingUserList();
+  }));
+  el.querySelectorAll("[data-reject]").forEach(btn=>btn.addEventListener("click",async()=>{
+    const app=apps[+btn.dataset.reject];
+    const reason=prompt("退回原因（選填）：")||"";
+    btn.disabled=true;
+    try{
+      const ok=await userApprovalStore.reject(app,reason);
+      alert(ok?`已退回 ${app.name||app.email}。`:"退回失敗，請確認管理者權限或稍後再試。");
+    }catch(err){ console.warn("退回失敗",err); alert("退回失敗："+(err?.message||"未知錯誤")); }
+    await renderPendingUserList();
+  }));
+}
 let activeAdminDraft=null;
 function bindAdminConsole(){
   const logout=document.getElementById("authLogoutBtn");
@@ -5932,6 +6134,7 @@ function bindAdminConsole(){
     alert(ok?"草稿已退回並留下稽核紀錄。":"此草稿尚未寫入資料庫，或目前帳號無退回權限。");
     await renderAdminDraftList();
   });
+  renderPendingUserList();
   renderAdminDraftList();
 }
 function renderContent(s){

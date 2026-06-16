@@ -2911,6 +2911,34 @@ AI 管理助理回覆管理者時，不應要求管理者理解 Git、agent、Fi
 
 ---
 
+## 五十、進站前平台使用同意書（consent gate）
+
+> 來源：使用者 2026-06-16 確認。進站前須先閱讀條列式使用聲明，勾選同意或不同意，並記錄員工編號與結果供後續稽核。
+
+### 50.1 定位與流程
+
+- 同意書是登入 gate 的**一個關卡 state**，不是獨立頁面：插在 `gateState()` 的 `picker→profile→pending` 之後、`ready` 之前，命名 `consent`。
+- 觸發條件：帳號已 `active`，但 `profile.consentVersion !== CONSENT_VERSION`。
+- **超級管理員（文管/開發者）也必須同意**，不得豁免（稽核精神）。
+- 同意 → 寫稽核 log ＋ 在 `gdpUsers` 標記 `consentVersion`/`consentedAt` → 放行進站。
+- 不同意 → 寫稽核 log（decision=disagree）→ 登出，不得進站。
+
+### 50.2 條文內容原則
+
+- 以**條列式**呈現，至少涵蓋：① 為公司內部 GDP 教育訓練平台（含國際法規、食藥署常見缺失、稽核知識）② 勿用身分證等私人身分資訊當密碼 ③ 不得提供/轉發/展示給公司以外人員 ④ 內容可能與其他公司不同，一切以國際法規、食藥署及本公司正式文件（SOP/WI/FR）為準，有疑問反映管理者 ⑤ 不取代 SOP 全文 ⑥ 同意即記錄員工編號與結果供查核。
+- 條文為**程式內受信任常數 `CONSENT_TERMS`**（可含 `<strong>`），渲染時不可 `esc`；但帶入的使用者值（姓名、員工編號）仍須 `esc`。
+
+### 50.3 版本與重新同意
+
+- `CONSENT_VERSION="YYYY-MM-DD"` 寫死於 client；條文有實質變更時 bump 版本，所有人下次進站自動重新閱讀並重新同意，無需清資料。
+
+### 50.4 稽核資料與 rules
+
+- **新集合 `gdpConsentLogs`（append-only）**：欄位 `uid`/`empId`/`name`/`email`/`decision`('agree'|'disagree')/`version`/`createdAt`。rules：`read: if isAdmin()`；`create: if signedIn() && data.uid==auth.uid && decision in ['agree','disagree']`；`update,delete: if false`。**不可改寫 `gdpAuditLogs`**（其 create 限 isAdmin，一般員工寫不進去）。
+- 同意回寫 `gdpUsers` 自己的 `consentVersion`/`consentedAt` → `gdpUsers` self-update 白名單須含這兩欄並**重新部署 rules**，否則同意被靜默 deny、員工卡死進不去（§47.3 同型坑）。
+
+---
+
 ## 附錄 C：文件結構說明
 
 | 路徑 | 用途 |
