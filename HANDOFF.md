@@ -1,6 +1,6 @@
 # 新勝 GDP 專案交接（精簡版）
 
-> 最後更新：2026-06-16（第122次，LINE 登入用 openExternalBrowser=1 跳出＋待審核角標＋email 通知接 Trigger Email）
+> 最後更新：2026-06-16（第122次：LINE 跳出已修好＋待審核角標＋管理者 email 名單＋EmailJS；**新診斷：手機登入真卡點是 signInWithRedirect 回來 session 遺失，下次改 popup 實機測**）
 > 原則：本檔只保留「最新可接狀態、當前待辦、關鍵踩坑」。舊輪次完整流水帳不再放在開工入口；歷史重點已整理進第二大腦專案筆記與踩坑紀錄。
 
 ---
@@ -157,8 +157,8 @@
 
 | 優先 | 項目 | 備註 |
 |---|---|---|
-| 最高 | LINE 手機登入實機複測 | 第122次已改用 `openExternalBrowser=1` 跳出 LINE；待使用者在 LINE 內實測：點「跳出 LINE 用瀏覽器開啟並登入」→ 應跳到手機預設瀏覽器 → Google 登入成功。若仍失敗回報是 iOS 或 Android、跳出後的錯誤碼。 |
-| 最高 | 填入 EmailJS 憑證（使用者動作） | 已改走 EmailJS（免 Blaze）。前端 `EMAILJS_CONFIG={publicKey,serviceId,templateId}` 目前空字串＝不寄信（不影響申請）。使用者開免費 EmailJS 帳號後，把三個值給我填入即生效；模板變數：`to_email`(逗號分隔收件人)、`subject`、`applicant_name/empid/department/title/email`、`message`。EmailJS 後台記得限制 allowed origin 為 GitHub Pages 網域。 |
+| 🔴 最高 | 手機登入真因＝signInWithRedirect session 遺失（下次帶使用者實機改＋測） | 第122次影片診斷（Android）：**LINE 跳出已成功**（使用者已進 Chrome、出現 Google 帳戶選擇頁、可選 tom741285）。真卡點在**選完帳號轉址回來後 session 沒建立，又被打回「使用 Google 登入」picker**（影格：帳戶選擇→「登入狀態確認中」→又回 picker）。屬 Firebase `signInWithRedirect` 在手機跨網域（github.io ↔ firebaseapp.com）儲存隔離把 redirect result 弄丟的已知問題；桌機 popup 不受影響。**下次開工：把手機分支從 `signInWithRedirect` 改 `signInWithPopup` 實測；若 popup 被擋，備案＝自訂 auth 網域/同網域 auth handler。一定要帶使用者用其 Android 手機實機驗證，勿盲推。** 影格暫存於 `%TEMP%\gdp_login_frames_暫存`。 |
+| 最高 | EmailJS 設定（下次開工帶使用者一步步操作） | 已改走 EmailJS（免 Blaze）。前端 `EMAILJS_CONFIG={publicKey,serviceId,templateId}` 目前空字串＝不寄信（不影響申請）。**下次開工要帶使用者做這幾步並把值填回 `EMAILJS_CONFIG` 後 push：**<br>1. emailjs.com 開免費帳號。<br>2. Email Services 接一個服務（用 Gmail 即可）→ 取得 **Service ID**。<br>3. Email Templates 建一個模板：收件人欄填 `{{to_email}}`、主旨 `{{subject}}`、內文可用 `{{applicant_name}}`/`{{applicant_empid}}`/`{{applicant_department}}`/`{{applicant_title}}`/`{{applicant_email}}`/`{{message}}` → 取得 **Template ID**。<br>4. Account → API Keys/General 取得 **Public Key**。<br>5. Account → Security 把 allowed origin 限 `https://n1116839.github.io`（防盜用額度）。<br>三個值給 Claude 填入 `EMAILJS_CONFIG`。計費按 send() 次數（非收件人數），一次寄全部管理者＝1 封，免費 200/月足夠。收件人＝超管 email∪超管在面板設定的管理者 email。 |
 | 最高 | 線上登入實測 | 已重新部署 Firestore rules；請用 Chrome/無痕重新登入，若仍錯需抓 browser console `permission-denied` 細節與 `gdpUsers/{uid}` 狀態。 |
 | 高 | 權限管理畫面完成度盤點 | 使用者回報「沒有權限管理的畫面」；需先分清是未登入導致看不到，還是管理面板功能尚未補齊，再決定補 UI 或補角色顯示說明。 |
 | 高 | 管理面板加「同意書／審核紀錄查詢」頁 | 讀 `gdpConsentLogs`、`gdpRoleChangeLogs`、`gdpAuditLogs`；限管理者。 |
