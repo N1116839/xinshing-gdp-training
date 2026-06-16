@@ -51,6 +51,7 @@
     .auth-mini-btn{min-height:34px;padding:6px 12px;border:1px solid var(--brand);border-radius:999px;background:#fff;color:var(--brand);font:inherit;font-size:13px;font-weight:800;cursor:pointer}
     .auth-mini-btn:hover{background:var(--brand);color:#fff}
     .admin-pending-badge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;margin-left:6px;padding:0 5px;border-radius:999px;background:#d92d20;color:#fff;font-size:11px;font-weight:800;line-height:1;vertical-align:middle}
+    .admin-email-row{flex-direction:row;align-items:center;justify-content:space-between;gap:10px}
     .auth-mini-btn:hover .admin-pending-badge{background:#fff;color:#d92d20}
     .auth-mini-btn.secondary{border-color:var(--line);color:var(--ink-soft)}
     .auth-mini-btn.secondary:hover{background:var(--ink-soft);color:#fff;border-color:var(--ink-soft)}
@@ -1739,9 +1740,29 @@ const assignableRoleIds = ["staff","leader","pharmacist","qa_admin","warehouse_l
 // §38／§48 超級管理員（文管・開發者）：hardcode email，登入即自動 active＋doc_superadmin（解超管啟動死結）。
 // 若 GDP 站要改用其他 Google 帳號，改這裡並同步 Firebase設定/firestore.rules 的 isSuperAdminEmail()。
 const SUPER_ADMIN_EMAILS = ["tom741285@gmail.com"];
-// §38.6 帳號申請 email 通知收件人：員工送出申請時寄信給這些管理者／超管。
-// 要新增主管 email 時，這裡與 firestore.rules 的 /mail 收件白名單必須同步（否則 rules 會擋下寄信）。
-const ADMIN_NOTIFY_EMAILS = ["tom741285@gmail.com"];
+// §38.6 管理者 email 名單：超管在管理面板設定（存 gdpConfig/access），登入後載入到 configuredAdminEmails（小寫）。
+// 這份名單同時驅動「管理者權限」與「申請通知 email 收件人」。
+let configuredAdminEmails = [];
+function getNotifyEmails(){
+  const all=[...SUPER_ADMIN_EMAILS, ...configuredAdminEmails].map(e=>(e||"").toLowerCase()).filter(Boolean);
+  return [...new Set(all)];
+}
+// EmailJS（client-side 寄信、免後端/Blaze）。填入超管的 EmailJS 憑證後即生效；三個值留空則不寄信（不影響申請流程）。
+const EMAILJS_CONFIG = { publicKey:"", serviceId:"", templateId:"" };
+// 動態載入 EmailJS SDK（只有在要寄信時才載），回傳 window.emailjs。
+let _emailJsPromise=null;
+function loadEmailJs(){
+  if(window.emailjs) return Promise.resolve(window.emailjs);
+  if(_emailJsPromise) return _emailJsPromise;
+  _emailJsPromise=new Promise(resolve=>{
+    const s=document.createElement("script");
+    s.src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js";
+    s.onload=()=>resolve(window.emailjs||null);
+    s.onerror=()=>{ console.warn("EmailJS SDK 載入失敗"); resolve(null); };
+    document.head.appendChild(s);
+  });
+  return _emailJsPromise;
+}
 const KNOWN_DEPARTMENTS = ["文管","品保","業務","採購","倉庫","人事","管理藥師","GDP權責人","其他"];
 // 進站前使用同意書：版本字串更新時，所有人需重新閱讀並重新同意（供稽核留痕）。
 const CONSENT_VERSION = "2026-06-16";
@@ -1793,7 +1814,9 @@ const authStore = {
         if(user) this.gateError=null;
         if(user){
           await this.loadProfile();
+          await this.loadAccessConfig();
           await this.ensureSuperAdmin();
+          await this.ensureConfiguredAdmin();
         }
         this.ready=true;
         this.updateChip();
@@ -1828,6 +1851,54 @@ const authStore = {
   isSuperAdmin(){
     return this.isSuperAdminEmail(this.user?.email) || (this.profile?.roles||[]).includes("doc_superadmin");
   },
+  // 超管在後台設定的管理者 email（非超管，但取得管理者權限）。
+  isConfiguredAdminEmail(email){
+    const e=(email||"").toLowerCase();
+    return !!e && configuredAdminEmails.includes(e);
+  },
+  // 超管或被設定的管理者 email：gate 把這類帳號當「特權帳號」（需 active，由 bootstrap 自動啟用）。
+  isPrivilegedEmail(){
+    return this.isSuperAdminEmail(this.user?.email) || this.isConfiguredAdminEmail(this.user?.email);
+  },
+  // 載入超管設定的管理者 email 名單（gdpConfig/access）；讀取失敗時退回空名單，不擋登入。
+  async loadAccessConfig(){
+    if(!qaStore.db){ configuredAdminEmails=[]; return; }
+    try{
+      const {doc,getDoc}=qaStore.firebase;
+      const snap=await getDoc(doc(qaStore.db,"gdpConfig","access"));
+      const list=(snap.exists()&&snap.data().adminEmails)||[];
+      configuredAdminEmails=(Array.isArray(list)?list:[]).map(e=>(e||"").toLowerCase()).filter(Boolean);
+    }catch(e){ console.warn("管理者名單讀取失敗（不影響登入）",e); configuredAdminEmails=[]; }
+  },
+  // 被設定的管理者首次登入：自建 active+gdp_admin（rules 放行同一 email）。沿用超管 bootstrap 模式。
+  async ensureConfiguredAdmin(){
+    if(!this.user || !qaStore.db) return;
+    if(this.isSuperAdminEmail(this.user.email)) return; // 超管走 ensureSuperAdmin
+    if(!this.isConfiguredAdminEmail(this.user.email)) return;
+    const ok=this.profile && this.profile.status==="active" && (this.profile.roles||[]).includes("gdp_admin");
+    if(ok) return;
+    try{
+      const {doc,setDoc,serverTimestamp}=qaStore.firebase;
+      const roles=Array.from(new Set([...(this.profile?.roles||[]),"gdp_admin"]));
+      const profile={
+        uid:this.user.uid,
+        email:this.user.email,
+        empId:this.profile?.empId || "",
+        name:this.profile?.name || this.user.displayName || this.user.email,
+        department:this.profile?.department || "",
+        title:this.profile?.title || "管理者",
+        roles,
+        status:"active",
+        updatedAt:serverTimestamp()
+      };
+      if(!this.profile) profile.createdAt=serverTimestamp();
+      await setDoc(doc(qaStore.db,"gdpUsers",this.user.uid),profile,{merge:true});
+      await this.loadProfile();
+    }catch(e){
+      console.warn("管理者帳號初始化失敗（請確認 rules 已部署）",e);
+      this.gateError="管理者帳號初始化失敗，請確認 Firestore rules 已部署，或登出後重新登入。";
+    }
+  },
   // 超管首次登入：rules 也放行同一 email 自建 active+doc_superadmin。
   async ensureSuperAdmin(){
     if(!this.user || !this.isSuperAdminEmail(this.user.email) || !qaStore.db) return;
@@ -1860,9 +1931,9 @@ const authStore = {
     if(this.gateError) return "error";
     if(!this.authMod) return "error";
     if(!this.user) return "picker";
-    if(this.isSuperAdminEmail(this.user.email)){
+    if(this.isPrivilegedEmail()){
       if(this.profile?.status!=="active"){
-        this.gateError=this.gateError||"超管帳號尚未完成啟用，請登出後重新登入，或請管理者確認 Firestore rules。";
+        this.gateError=this.gateError||"帳號尚未完成啟用，請登出後重新登入，或請管理者確認 Firestore rules。";
         return "error";
       }
     }else{
@@ -1875,7 +1946,7 @@ const authStore = {
   },
   canAdmin(){
     const roles=this.profile?.roles||[];
-    return (this.profile?.status==="active" && roles.some(r=>adminRoleIds.includes(r))) || this.isSuperAdmin();
+    return (this.profile?.status==="active" && roles.some(r=>adminRoleIds.includes(r))) || this.isSuperAdmin() || this.isConfiguredAdminEmail(this.user?.email);
   },
   displayName(){
     return this.profile?.name || this.user?.displayName || this.user?.email || "未登入";
@@ -1975,30 +2046,30 @@ const authStore = {
     await this.loadProfile();
     this.updateChip();
   },
-  // 寫入 mail 集合給 Trigger Email 擴充；收件人限 ADMIN_NOTIFY_EMAILS（與 rules 白名單同步）。
+  // 用 EmailJS（client-side）寄申請通知給管理者名單；未填 EMAILJS_CONFIG 則略過、不影響申請。
   async notifyAdminsOfApplication(data){
-    if(!this.user||!qaStore.db) return;
-    if(!ADMIN_NOTIFY_EMAILS.length) return;
-    const {collection,addDoc}=qaStore.firebase;
+    if(!this.user) return;
+    const recipients=getNotifyEmails();
+    if(!recipients.length) return;
+    if(!EMAILJS_CONFIG.publicKey||!EMAILJS_CONFIG.serviceId||!EMAILJS_CONFIG.templateId){
+      console.info("EmailJS 尚未設定，略過申請通知信（申請仍正常）。");
+      return;
+    }
+    const emailjs=await loadEmailJs();
+    if(!emailjs) return;
     const empId=data.empId||"";
     const name=data.name||"";
-    const dept=data.department||"";
-    const title=data.title||"";
-    const email=this.user.email||"";
-    const subject=`【GDP平台】新帳號待審核：${name}（工號 ${empId}）`;
-    const text=`有新員工申請 GDP 教育訓練平台帳號，請登入平台 → 管理面板 → 待審核帳號 進行審核。\n\n姓名：${name}\n工號：${empId}\n部門：${dept}\n職稱：${title}\nEmail：${email}`;
-    const html=`<p>有新員工申請 GDP 教育訓練平台帳號，請登入平台 → <strong>管理面板</strong> → <strong>待審核帳號</strong> 進行審核。</p>`
-      +`<table cellpadding="6" style="border-collapse:collapse">`
-      +`<tr><td><b>姓名</b></td><td>${esc(name)}</td></tr>`
-      +`<tr><td><b>工號</b></td><td>${esc(empId)}</td></tr>`
-      +`<tr><td><b>部門</b></td><td>${esc(dept)}</td></tr>`
-      +`<tr><td><b>職稱</b></td><td>${esc(title)}</td></tr>`
-      +`<tr><td><b>Email</b></td><td>${esc(email)}</td></tr>`
-      +`</table>`;
-    await addDoc(collection(qaStore.db,"mail"),{
-      to:ADMIN_NOTIFY_EMAILS,
-      message:{subject,text,html}
-    });
+    const params={
+      to_email:recipients.join(","),
+      subject:`【GDP平台】新帳號待審核：${name}（工號 ${empId}）`,
+      applicant_name:name,
+      applicant_empid:empId,
+      applicant_department:data.department||"",
+      applicant_title:data.title||"",
+      applicant_email:this.user.email||"",
+      message:`有新員工申請 GDP 教育訓練平台帳號，請登入平台 → 管理面板 → 待審核帳號 進行審核。\n姓名：${name}／工號：${empId}／部門：${data.department||""}／職稱：${data.title||""}／Email：${this.user.email||""}`
+    };
+    await emailjs.send(EMAILJS_CONFIG.serviceId,EMAILJS_CONFIG.templateId,params,{publicKey:EMAILJS_CONFIG.publicKey});
   },
   // 進站前同意書：寫稽核 log（agree/disagree 皆記），同意者在 gdpUsers 標記 consentVersion 才放行。
   async recordConsent(decision){
@@ -2300,6 +2371,42 @@ const userApprovalStore = {
     return true;
   }
 };
+
+// §38.6 管理者 email 名單：超管寫 gdpConfig/access；同時驅動權限與通知收件人。
+const adminEmailStore = {
+  async save(list){
+    if(!qaStore.db || !authStore.isSuperAdmin()) return false;
+    const {doc,setDoc,serverTimestamp}=qaStore.firebase;
+    const clean=[...new Set(list.map(e=>(e||"").trim().toLowerCase()).filter(Boolean))].slice(0,50);
+    await setDoc(doc(qaStore.db,"gdpConfig","access"),{adminEmails:clean,updatedAt:serverTimestamp()},{merge:true});
+    configuredAdminEmails=clean;
+    return true;
+  },
+  async add(email){
+    const e=(email||"").trim().toLowerCase();
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)) throw new Error("email 格式不正確");
+    if(SUPER_ADMIN_EMAILS.map(x=>x.toLowerCase()).includes(e)) throw new Error("此 email 已是超管，不需加入");
+    if(configuredAdminEmails.includes(e)) return true;
+    return this.save([...configuredAdminEmails, e]);
+  },
+  async remove(email){
+    const e=(email||"").trim().toLowerCase();
+    return this.save(configuredAdminEmails.filter(x=>x!==e));
+  }
+};
+function renderAdminEmailList(){
+  const el=document.getElementById("adminEmailList");
+  if(!el) return;
+  const list=configuredAdminEmails;
+  if(!list.length){ el.innerHTML=`<p class="admin-note">尚未設定任何管理者 email。新申請的通知信目前只寄給超管 ${esc(SUPER_ADMIN_EMAILS[0]||"")}。</p>`; return; }
+  el.innerHTML=list.map(e=>`<div class="pending-card admin-email-row"><span>${esc(e)}</span><button class="admin-btn warn" type="button" data-remove-admin="${esc(e)}">移除</button></div>`).join("");
+  el.querySelectorAll("[data-remove-admin]").forEach(btn=>btn.addEventListener("click",async()=>{
+    btn.disabled=true;
+    try{ await adminEmailStore.remove(btn.dataset.removeAdmin); }
+    catch(err){ console.warn("移除管理者失敗",err); alert("移除失敗："+(err?.message||"未知錯誤")); }
+    renderAdminEmailList(); refreshPendingBadge();
+  }));
+}
 
 // §38.2 後台角標：管理者／超管一登入即在「管理面板」鈕顯示待審核帳號數量。
 let pendingBadgeBusy=false;
@@ -6061,6 +6168,15 @@ function adminConsoleSection(){
       <p class="admin-note">員工以 Google 登入並填寫工號後會列在此。核准時可勾選一個或多個角色（§48 一人多職取聯集），核准後帳號立即啟用並可進站；核准與退回都會寫入角色異動／稽核紀錄。</p>
       <div id="pendingUserList" class="pending-list"><p class="admin-note">載入中…</p></div>
     </article>
+    ${authStore.isSuperAdmin()?`<article class="panel wide">
+      <h3>管理者 email 名單（超管專用）</h3>
+      <p class="admin-note">在此設定哪些 email 是管理者。設定後，這些 email 以 Google 登入即自動取得<strong>管理者權限</strong>（可審核帳號、看管理面板），並會成為「新帳號申請通知信」的收件人。只有超管能編輯此名單。超管本身永遠是管理者，不需加入。</p>
+      <form id="adminEmailForm" class="gate-form" style="max-width:420px">
+        <label>新增管理者 email<input type="email" name="adminEmail" placeholder="manager@example.com" maxlength="120"></label>
+        <button class="admin-btn" type="submit">新增</button>
+      </form>
+      <div id="adminEmailList" class="pending-list"><p class="admin-note">載入中…</p></div>
+    </article>`:""}
     <article class="panel wide">
       <h3>AI 管理助理：變更草稿</h3>
       <div class="admin-disclaimer">
@@ -6277,6 +6393,21 @@ function bindAdminConsole(){
   });
   renderPendingUserList();
   renderAdminDraftList();
+  // 超管：管理者 email 名單（重新載入確保最新，再渲染＋綁定新增表單）。
+  const adminEmailForm=document.getElementById("adminEmailForm");
+  if(adminEmailForm){
+    authStore.loadAccessConfig().then(()=>renderAdminEmailList());
+    adminEmailForm.addEventListener("submit",async e=>{
+      e.preventDefault();
+      const input=adminEmailForm.adminEmail;
+      const btn=adminEmailForm.querySelector("button[type=submit]");
+      if(btn) btn.disabled=true;
+      try{ await adminEmailStore.add(input.value); input.value=""; }
+      catch(err){ console.warn("新增管理者失敗",err); alert("新增失敗："+(err?.message||"未知錯誤")); }
+      if(btn) btn.disabled=false;
+      renderAdminEmailList();
+    });
+  }
 }
 function renderContent(s){
   if(s.id==="gdp-kb") return kbSection();

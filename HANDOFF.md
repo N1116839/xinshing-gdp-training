@@ -32,12 +32,15 @@
 - 頁首「管理面板」鈕加 `#adminPendingBadge` 紅色數字；`refreshPendingBadge()` 讀 `userApprovalStore.listPending()`，在 `updateChip()`（管理者登入時）與核准/退回後刷新；0 筆隱藏。
 - 釐清：汪意華那筆申請本來就有成功寫入 Firestore，「沒收到通知」是因系統原本無通知機制，不是 bug。
 
-**email 通知（§38.6，接 Firebase Trigger Email 擴充）：**
-- 新增 `ADMIN_NOTIFY_EMAILS`（目前只有超管 email）；`registerProfile()` 送出申請後呼叫 `notifyAdminsOfApplication()`（best-effort、try/catch 不擋申請），寫一筆 `{to,message}` 到 `mail` 集合。
-- `firestore.rules` 新增 `/mail` 區塊：登入者可 create，`to` 用 `hasOnly(['tom741285@gmail.com'])` 白名單防濫用寄信，read/update/delete 一律 false（擴充走 Admin SDK 略過 rules）。**已 deploy**。
-- ⚠️ **未完成的使用者動作**：要真的寄出 email，使用者須到 Firebase Console 安裝「Trigger Email from Firestore」擴充並設定 SMTP/SendGrid，集合名稱設為 `mail`。未裝前，申請仍正常、只是 `mail` 任務不會寄出。新增主管收件 email 時，`ADMIN_NOTIFY_EMAILS` 與 rules 的 `to` 白名單要同步。
+**管理者 email 名單＋EmailJS 通知（§38.6，使用者裁示：管理者權限、名單只有超管能改、走 EmailJS 免 Blaze）：**
+- Firestore `gdpConfig/access`（`{adminEmails:[...]}`）：超管在管理面板「管理者 email 名單（超管專用）」卡片新增/移除；登入時 `authStore.loadAccessConfig()` 載入到 `configuredAdminEmails`。
+- 這份名單同時驅動：① **權限**——`isConfiguredAdminEmail()` 進 `canAdmin()`＋`gateState()` 的 `isPrivilegedEmail()`；首次登入由 `ensureConfiguredAdmin()` 自建 active+`gdp_admin`（沿用超管 bootstrap 模式）。② **通知收件人**——`getNotifyEmails()`＝超管 email∪configuredAdminEmails。
+- `firestore.rules`：加 `isConfiguredAdminEmail()`（讀 `gdpConfig/access`）進 `isAdmin()`；`gdpUsers` create 加 `||(isSelf&&isConfiguredAdminEmail())` 自建分支；新增 `gdpConfig/{cfg}`（signedIn 可讀、isSuperAdminEmail 可寫）；**移除原 `/mail` 區塊**（改 EmailJS）。**已 deploy**。
+- email 改走 **EmailJS（client-side、免 Blaze）**：`notifyAdminsOfApplication()` 用 `loadEmailJs()` 動態載 SDK→`emailjs.send()` 寄給 `getNotifyEmails()`；`EMAILJS_CONFIG` 三值留空＝略過不寄（不影響申請）。
+- 起因：實測 Trigger Email 擴充需 Blaze，本專案 Spark→改 EmailJS。
+- gate 回歸驗證（preview mock）：超管 ready/consent、員工 ready/profile/pending、configured-admin active→ready+canAdmin/未啟用→error/未同意→consent、一般員工不受影響，全部正確；JS_PARSE_OK 1、無 console error。
 
-下次優先：① 使用者 LINE 手機實機複測登入（點按鈕應跳出 LINE → 預設瀏覽器 → Google 登入成功）；② 使用者裝 Trigger Email 擴充後實測收信。
+下次優先：① 使用者 LINE/Android 手機實機複測登入；② 使用者開 EmailJS 帳號給三個憑證值，我填入 `EMAILJS_CONFIG` 即可寄信；③ 超管在管理面板加管理者 email 實測權限與通知。
 
 ### 第121次本輪修正
 
@@ -155,7 +158,7 @@
 | 優先 | 項目 | 備註 |
 |---|---|---|
 | 最高 | LINE 手機登入實機複測 | 第122次已改用 `openExternalBrowser=1` 跳出 LINE；待使用者在 LINE 內實測：點「跳出 LINE 用瀏覽器開啟並登入」→ 應跳到手機預設瀏覽器 → Google 登入成功。若仍失敗回報是 iOS 或 Android、跳出後的錯誤碼。 |
-| 最高 | email 通知卡在計費方案（待使用者決定） | `mail` 集合前端＋rules 已備妥並 deploy。實測 `ext:install firebase/firestore-send-email` 被擋：**專案是 Spark，Trigger Email 擴充強制要 Blaze（付費）方案**＋需 SMTP 憑證。兩個選項待使用者選：①升 Blaze＋給 Gmail 應用程式密碼/SendGrid 金鑰，我裝擴充；②改用 EmailJS（免 Blaze、適合靜態站），使用者開免費帳號給我 Service/Template ID＋Public Key，我改前端走 EmailJS。寄信一定要使用者提供寄件身分憑證，AI 無法自建。 |
+| 最高 | 填入 EmailJS 憑證（使用者動作） | 已改走 EmailJS（免 Blaze）。前端 `EMAILJS_CONFIG={publicKey,serviceId,templateId}` 目前空字串＝不寄信（不影響申請）。使用者開免費 EmailJS 帳號後，把三個值給我填入即生效；模板變數：`to_email`(逗號分隔收件人)、`subject`、`applicant_name/empid/department/title/email`、`message`。EmailJS 後台記得限制 allowed origin 為 GitHub Pages 網域。 |
 | 最高 | 線上登入實測 | 已重新部署 Firestore rules；請用 Chrome/無痕重新登入，若仍錯需抓 browser console `permission-denied` 細節與 `gdpUsers/{uid}` 狀態。 |
 | 高 | 權限管理畫面完成度盤點 | 使用者回報「沒有權限管理的畫面」；需先分清是未登入導致看不到，還是管理面板功能尚未補齊，再決定補 UI 或補角色顯示說明。 |
 | 高 | 管理面板加「同意書／審核紀錄查詢」頁 | 讀 `gdpConsentLogs`、`gdpRoleChangeLogs`、`gdpAuditLogs`；限管理者。 |

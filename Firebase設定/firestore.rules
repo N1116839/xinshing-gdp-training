@@ -17,8 +17,15 @@ service cloud.firestore {
         && request.auth.token.email != null
         && request.auth.token.email.lower() in ['tom741285@gmail.com'];
     }
+    // §38.6 超管在後台 gdpConfig/access 設定的管理者 email（取得管理者權限）。與 HTML configuredAdminEmails 同源。
+    function isConfiguredAdminEmail() {
+      return signedIn()
+        && request.auth.token.email != null
+        && exists(/databases/$(database)/documents/gdpConfig/access)
+        && request.auth.token.email.lower() in get(/databases/$(database)/documents/gdpConfig/access).data.get('adminEmails', []);
+    }
     function isAdmin() {
-      return isSuperAdminEmail() || (
+      return isSuperAdminEmail() || isConfiguredAdminEmail() || (
         signedIn()
         && exists(userPath(request.auth.uid))
         && get(userPath(request.auth.uid)).data.status == 'active'
@@ -45,10 +52,19 @@ service cloud.firestore {
         && request.resource.data.roles.size() == 1
         && request.resource.data.roles[0] == 'staff'
         && request.resource.data.status == 'pending'
-        || (isSelf(uid) && isSuperAdminEmail());
+        || (isSelf(uid) && isSuperAdminEmail())
+        || (isSelf(uid) && isConfiguredAdminEmail());
       allow update: if isAdmin()
         || (isSelf(uid)
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name','department','title','consentVersion','consentedAt','updatedAt']));
+    }
+    // §38.6 管理者 email 名單：登入者可讀（前端建通知收件人＋判權限），只有超管可寫。
+    match /gdpConfig/{cfg} {
+      allow read: if signedIn();
+      allow write: if isSuperAdminEmail()
+        && request.resource.data.keys().hasOnly(['adminEmails','updatedAt'])
+        && request.resource.data.adminEmails is list
+        && request.resource.data.adminEmails.size() <= 50;
     }
     // 進站前使用同意書稽核（append-only）：本人可建立自己的同意/不同意紀錄，管理者可讀，不可改不可刪。
     match /gdpConsentLogs/{logId} {
@@ -68,17 +84,6 @@ service cloud.firestore {
         && request.resource.data.requestedRoles is list
         && request.resource.data.status == 'pending';
       allow update: if isAdmin();
-    }
-    // §38.6 帳號申請 email 通知：登入者可建立寄信任務給 Firebase Trigger Email 擴充。
-    // 收件人 to 白名單必須與 HTML 的 ADMIN_NOTIFY_EMAILS 一致；hasOnly 確保不能拿來寄給任意 email（防濫用）。
-    // 讀／改／刪一律 false：擴充功能以 Admin SDK 運作，會略過 rules，不需開放給用戶端。
-    match /mail/{mailId} {
-      allow create: if signedIn()
-        && request.resource.data.keys().hasOnly(['to','message'])
-        && request.resource.data.to is list
-        && request.resource.data.to.hasOnly(['tom741285@gmail.com'])
-        && request.resource.data.message is map;
-      allow read, update, delete: if false;
     }
     match /gdpChangeDrafts/{draftId} {
       allow read: if isAdmin();
