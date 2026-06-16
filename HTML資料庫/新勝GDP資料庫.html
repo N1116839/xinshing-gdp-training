@@ -1961,7 +1961,7 @@ const authStore = {
       await this.loadProfile();
     }catch(e){
       console.warn("管理者帳號初始化失敗（請確認 rules 已部署）",e);
-      this.gateError="管理者帳號初始化失敗，請確認 Firestore rules 已部署，或登出後重新登入。";
+      this.gateError=`管理者帳號初始化失敗（${esc(e?.code||e?.message||"未知錯誤")}），請確認 Firestore rules 已部署，或登出後重新登入。`;
     }
   },
   // 超管首次登入：rules 也放行同一 email 自建 active+doc_superadmin。
@@ -1987,7 +1987,7 @@ const authStore = {
       await this.loadProfile();
     }catch(e){
       console.warn("超管帳號初始化失敗（請確認 rules 已部署）",e);
-      this.gateError="超管帳號初始化失敗，請確認 Firestore rules 已部署，或登出後重新登入。";
+      this.gateError=`超管帳號初始化失敗（${esc(e?.code||e?.message||"未知錯誤")}），請確認 Firestore rules 已部署，或登出後重新登入。`;
     }
   },
   // 關卡狀態機：loading→picker→profile→pending→consent→ready（離線/錯誤另計）。
