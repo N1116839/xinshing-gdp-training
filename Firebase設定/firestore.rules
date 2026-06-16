@@ -69,6 +69,17 @@ service cloud.firestore {
         && request.resource.data.status == 'pending';
       allow update: if isAdmin();
     }
+    // §38.6 帳號申請 email 通知：登入者可建立寄信任務給 Firebase Trigger Email 擴充。
+    // 收件人 to 白名單必須與 HTML 的 ADMIN_NOTIFY_EMAILS 一致；hasOnly 確保不能拿來寄給任意 email（防濫用）。
+    // 讀／改／刪一律 false：擴充功能以 Admin SDK 運作，會略過 rules，不需開放給用戶端。
+    match /mail/{mailId} {
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['to','message'])
+        && request.resource.data.to is list
+        && request.resource.data.to.hasOnly(['tom741285@gmail.com'])
+        && request.resource.data.message is map;
+      allow read, update, delete: if false;
+    }
     match /gdpChangeDrafts/{draftId} {
       allow read: if isAdmin();
       allow create: if isAdmin()

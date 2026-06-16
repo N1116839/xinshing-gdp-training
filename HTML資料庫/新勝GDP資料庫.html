@@ -1739,6 +1739,9 @@ const assignableRoleIds = ["staff","leader","pharmacist","qa_admin","warehouse_l
 // §38／§48 超級管理員（文管・開發者）：hardcode email，登入即自動 active＋doc_superadmin（解超管啟動死結）。
 // 若 GDP 站要改用其他 Google 帳號，改這裡並同步 Firebase設定/firestore.rules 的 isSuperAdminEmail()。
 const SUPER_ADMIN_EMAILS = ["tom741285@gmail.com"];
+// §38.6 帳號申請 email 通知收件人：員工送出申請時寄信給這些管理者／超管。
+// 要新增主管 email 時，這裡與 firestore.rules 的 /mail 收件白名單必須同步（否則 rules 會擋下寄信）。
+const ADMIN_NOTIFY_EMAILS = ["tom741285@gmail.com"];
 const KNOWN_DEPARTMENTS = ["文管","品保","業務","採購","倉庫","人事","管理藥師","GDP權責人","其他"];
 // 進站前使用同意書：版本字串更新時，所有人需重新閱讀並重新同意（供稽核留痕）。
 const CONSENT_VERSION = "2026-06-16";
@@ -1967,8 +1970,35 @@ const authStore = {
       status:"pending",
       createdAt:serverTimestamp()
     });
+    // §38.6 通知管理者／超管：寫一筆 mail 任務，由 Firebase Trigger Email 擴充寄出（未裝擴充則不寄，不影響申請）。
+    await this.notifyAdminsOfApplication(data).catch(e=>console.warn("申請通知信寄送失敗（不影響申請）",e));
     await this.loadProfile();
     this.updateChip();
+  },
+  // 寫入 mail 集合給 Trigger Email 擴充；收件人限 ADMIN_NOTIFY_EMAILS（與 rules 白名單同步）。
+  async notifyAdminsOfApplication(data){
+    if(!this.user||!qaStore.db) return;
+    if(!ADMIN_NOTIFY_EMAILS.length) return;
+    const {collection,addDoc}=qaStore.firebase;
+    const empId=data.empId||"";
+    const name=data.name||"";
+    const dept=data.department||"";
+    const title=data.title||"";
+    const email=this.user.email||"";
+    const subject=`【GDP平台】新帳號待審核：${name}（工號 ${empId}）`;
+    const text=`有新員工申請 GDP 教育訓練平台帳號，請登入平台 → 管理面板 → 待審核帳號 進行審核。\n\n姓名：${name}\n工號：${empId}\n部門：${dept}\n職稱：${title}\nEmail：${email}`;
+    const html=`<p>有新員工申請 GDP 教育訓練平台帳號，請登入平台 → <strong>管理面板</strong> → <strong>待審核帳號</strong> 進行審核。</p>`
+      +`<table cellpadding="6" style="border-collapse:collapse">`
+      +`<tr><td><b>姓名</b></td><td>${esc(name)}</td></tr>`
+      +`<tr><td><b>工號</b></td><td>${esc(empId)}</td></tr>`
+      +`<tr><td><b>部門</b></td><td>${esc(dept)}</td></tr>`
+      +`<tr><td><b>職稱</b></td><td>${esc(title)}</td></tr>`
+      +`<tr><td><b>Email</b></td><td>${esc(email)}</td></tr>`
+      +`</table>`;
+    await addDoc(collection(qaStore.db,"mail"),{
+      to:ADMIN_NOTIFY_EMAILS,
+      message:{subject,text,html}
+    });
   },
   // 進站前同意書：寫稽核 log（agree/disagree 皆記），同意者在 gdpUsers 標記 consentVersion 才放行。
   async recordConsent(decision){

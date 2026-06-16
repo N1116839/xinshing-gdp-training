@@ -1,6 +1,6 @@
 # 新勝 GDP 專案交接（精簡版）
 
-> 最後更新：2026-06-16（第121次，手機 Google 登入改為 mobile redirect）
+> 最後更新：2026-06-16（第122次，LINE 登入用 openExternalBrowser=1 跳出＋待審核角標＋email 通知接 Trigger Email）
 > 原則：本檔只保留「最新可接狀態、當前待辦、關鍵踩坑」。舊輪次完整流水帳不再放在開工入口；歷史重點已整理進第二大腦專案筆記與踩坑紀錄。
 
 ---
@@ -14,8 +14,28 @@
 | Firebase rules | `Firebase設定/firestore.rules` |
 | 分支 | `codex/gdp-html-training-pages` |
 | 永久網址 | `https://n1116839.github.io/xinshing-gdp-training/` |
-| 最新本輪修正 | 手機 Google 登入改為 mobile redirect；App 內建瀏覽器保留明確導引提示 |
-| 本輪驗收 | `JS_PARSE_OK 1`；尚未做 GitHub Pages 手機實機複測 |
+| 最新本輪修正 | LINE 登入改用 `openExternalBrowser=1` 跳出到手機預設瀏覽器；管理面板鈕加待審核數量角標；申請送出寫 `mail` 集合接 Trigger Email 通知管理者 |
+| 本輪驗收 | `JS_PARSE_OK 1`；Launch 預覽函式/角標/外部瀏覽器網址邏輯全通過、無 console error；rules 已 deploy；尚未做 LINE 手機實機複測、email 待使用者裝擴充 |
+
+### 第122次本輪修正（手機登入修好＋審核通知）
+
+使用者回報手機（從 LINE 點進）仍無法登入，並要求做「申請通知」。決策：登入交由本對話接手（方案 A，保留 Google），通知做「後台角標＋email」。
+
+**手機登入真因與修法（`HTML資料庫/新勝GDP資料庫.html`）：**
+- 真因：iOS LINE 使用者點「改用外部瀏覽器」時跑 `window.open(_blank)`，在 LINE 內只會再開一個 LINE 內分頁、跳不出去，Google 永遠擋。
+- 修法：LINE（iOS/Android）改用官方參數 `openExternalBrowser=1`——`buildExternalBrowserUrl()` 對 `isLine` 加此 query，`openInExternalBrowser()` 直接 `location.href` 過去，LINE 會用手機預設瀏覽器重開本頁，跳出後現有 Google 登入即可完成。
+- `detectMobileLoginRisk()` 新增 `isLine`；picker 在 LINE 內按鈕文字改「跳出 LINE 用瀏覽器開啟並登入」＋白話說明。非 LINE 的 Android WebView 維持 `intent://`。
+
+**待審核角標（§38.2 後台角標）：**
+- 頁首「管理面板」鈕加 `#adminPendingBadge` 紅色數字；`refreshPendingBadge()` 讀 `userApprovalStore.listPending()`，在 `updateChip()`（管理者登入時）與核准/退回後刷新；0 筆隱藏。
+- 釐清：汪意華那筆申請本來就有成功寫入 Firestore，「沒收到通知」是因系統原本無通知機制，不是 bug。
+
+**email 通知（§38.6，接 Firebase Trigger Email 擴充）：**
+- 新增 `ADMIN_NOTIFY_EMAILS`（目前只有超管 email）；`registerProfile()` 送出申請後呼叫 `notifyAdminsOfApplication()`（best-effort、try/catch 不擋申請），寫一筆 `{to,message}` 到 `mail` 集合。
+- `firestore.rules` 新增 `/mail` 區塊：登入者可 create，`to` 用 `hasOnly(['tom741285@gmail.com'])` 白名單防濫用寄信，read/update/delete 一律 false（擴充走 Admin SDK 略過 rules）。**已 deploy**。
+- ⚠️ **未完成的使用者動作**：要真的寄出 email，使用者須到 Firebase Console 安裝「Trigger Email from Firestore」擴充並設定 SMTP/SendGrid，集合名稱設為 `mail`。未裝前，申請仍正常、只是 `mail` 任務不會寄出。新增主管收件 email 時，`ADMIN_NOTIFY_EMAILS` 與 rules 的 `to` 白名單要同步。
+
+下次優先：① 使用者 LINE 手機實機複測登入（點按鈕應跳出 LINE → 預設瀏覽器 → Google 登入成功）；② 使用者裝 Trigger Email 擴充後實測收信。
 
 ### 第121次本輪修正
 
@@ -132,7 +152,8 @@
 
 | 優先 | 項目 | 備註 |
 |---|---|---|
-| 最高 | 手機登入實測與導引修正 | 使用者手機畫面顯示 `requirements do not comply with Google secure browser policy`，疑似從 App 內建瀏覽器 / WebView 開啟 Google 登入，被 Google 安全瀏覽器政策封鎖；下次開工先確認是否需加偵測與明確提示「請改用 Chrome / Safari 開啟」。 |
+| 最高 | LINE 手機登入實機複測 | 第122次已改用 `openExternalBrowser=1` 跳出 LINE；待使用者在 LINE 內實測：點「跳出 LINE 用瀏覽器開啟並登入」→ 應跳到手機預設瀏覽器 → Google 登入成功。若仍失敗回報是 iOS 或 Android、跳出後的錯誤碼。 |
+| 最高 | 安裝 Trigger Email 擴充（使用者動作） | email 通知前端＋rules 已備妥並 deploy；使用者須到 Firebase Console 安裝「Trigger Email from Firestore」擴充、集合設 `mail`、設定 SMTP/SendGrid，才會真的寄信。 |
 | 最高 | 線上登入實測 | 已重新部署 Firestore rules；請用 Chrome/無痕重新登入，若仍錯需抓 browser console `permission-denied` 細節與 `gdpUsers/{uid}` 狀態。 |
 | 高 | 權限管理畫面完成度盤點 | 使用者回報「沒有權限管理的畫面」；需先分清是未登入導致看不到，還是管理面板功能尚未補齊，再決定補 UI 或補角色顯示說明。 |
 | 高 | 管理面板加「同意書／審核紀錄查詢」頁 | 讀 `gdpConsentLogs`、`gdpRoleChangeLogs`、`gdpAuditLogs`；限管理者。 |
