@@ -44,6 +44,12 @@
     .status{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;color:var(--ink-soft);background:#fff;border:1px solid var(--line);border-radius:999px;font-size:13px}
     .dot{width:9px;height:9px;border-radius:999px;background:var(--warn)}
     .dot.connected{background:var(--ok)}
+    .top-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:8px}
+    .auth-chip{display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:7px 12px;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:999px;font-size:13px;font-weight:700}
+    .auth-chip.pending{color:#8a4d13;background:#fff8ef;border-color:#ead6b6}
+    .auth-chip.admin{color:#0b5f4d;background:#f0fbf5;border-color:#b9ddd3}
+    .auth-mini-btn{min-height:34px;padding:6px 12px;border:1px solid var(--brand);border-radius:999px;background:#fff;color:var(--brand);font:inherit;font-size:13px;font-weight:800;cursor:pointer}
+    .auth-mini-btn:hover{background:var(--brand);color:#fff}
     .hero{position:relative;display:grid;gap:18px;margin-bottom:22px;min-height:300px;padding:34px;background:rgba(255,255,255,.88);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;isolation:isolate}
     .hero::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(247,251,251,.98) 0%,rgba(247,251,251,.88) 42%,rgba(247,251,251,.28) 76%),var(--hero-image,url("assets/gdp-training-hero.png")) center right/cover no-repeat;z-index:-2}
     .hero::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:7px;background:linear-gradient(90deg,var(--brand),var(--gold));z-index:-1}
@@ -164,10 +170,38 @@
   .exam-start-actions select{max-width:100%;min-height:38px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:#fff;font:inherit;color:var(--ink)}
   .exam-key-hint{margin-top:10px;font-size:12px;line-height:1.9;color:var(--ink-soft);background:#f3fbf7;border:1px dashed #b9ddd3;border-radius:6px;padding:7px 10px}
   .exam-key-hint kbd{display:inline-block;min-width:16px;padding:1px 5px;margin:0 1px;font:inherit;font-size:11px;font-weight:800;color:var(--brand);background:#fff;border:1px solid #b9ddd3;border-bottom-width:2px;border-radius:4px;text-align:center}
+  .admin-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,.9fr);gap:16px;align-items:start}
+  .admin-card{display:grid;gap:12px;padding:16px;background:#f7fbfb;border:1px solid var(--line);border-top:4px solid var(--brand)}
+  .admin-card h4{margin:0;color:var(--brand);font-size:18px}
+  .admin-form{display:grid;gap:10px}
+  .admin-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .admin-form label{display:grid;gap:5px;color:var(--ink);font-size:13px;font-weight:800}
+  .admin-form input,.admin-form select,.admin-form textarea{width:100%;min-height:38px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink);font:inherit}
+  .admin-form textarea{min-height:100px;resize:vertical;line-height:1.6}
+  .admin-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .admin-btn{min-height:38px;padding:8px 14px;border:1px solid var(--brand);border-radius:7px;background:var(--brand);color:#fff;font:inherit;font-weight:800;cursor:pointer}
+  .admin-btn.secondary{background:#fff;color:var(--brand)}
+  .admin-btn.warn{background:#fff7f0;color:#8a4d13;border-color:#e0b477}
+  .admin-btn:disabled{opacity:.45;cursor:not-allowed}
+  .admin-note{margin:0;color:var(--ink-soft);font-size:13px;line-height:1.65}
+  .change-preview{display:grid;gap:12px}
+  .change-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .change-box{padding:14px;background:#fff;border:1px solid var(--line);border-left:5px solid #cde0dd;min-width:0}
+  .change-box.after{border-left-color:var(--brand)}
+  .change-box strong{display:block;margin-bottom:8px;color:var(--brand)}
+  .change-row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid #edf3f2;color:var(--ink-soft);font-size:13px}
+  .change-row span:last-child{color:var(--ink);font-weight:800;text-align:right}
+  .impact-list{display:grid;gap:7px;margin:0;padding:0;list-style:none}
+  .impact-list li{padding:8px 10px;background:#fff;border:1px solid var(--line);border-radius:6px;color:var(--ink-soft);font-size:13px;line-height:1.55}
+  .draft-list{display:grid;gap:8px}
+  .draft-card{padding:12px;background:#fff;border:1px solid var(--line);border-left:4px solid var(--gold)}
+  .draft-card strong{display:block;color:var(--brand);margin-bottom:4px}
+  .draft-card small{display:block;color:var(--ink-soft);line-height:1.5}
   @media(max-width:760px){
     .exam-question-shell{grid-template-columns:1fr}
     .exam-work-head{flex-wrap:wrap}
     .exam-timer{margin-left:0}
+    .admin-layout,.change-columns,.admin-form-grid{grid-template-columns:1fr}
   }
     .slide-label{display:inline-grid;place-items:center;width:40px;height:40px;margin-bottom:8px;color:#fff;background:var(--gold);border-radius:50%;font-weight:800}
     .audit-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
@@ -833,7 +867,11 @@
         <h2 id="pageTitle">品質手冊</h2>
         <p class="eyebrow" id="pageTag">核心制度</p>
       </div>
-      <div class="status"><span id="dbDot" class="dot"></span><span id="dbStatus">Q&A 連線中</span></div>
+      <div class="top-actions">
+        <div class="auth-chip pending" id="authChip">未登入</div>
+        <button class="auth-mini-btn" id="authJumpBtn" type="button">管理登入</button>
+        <div class="status"><span id="dbDot" class="dot"></span><span id="dbStatus">Q&A 連線中</span></div>
+      </div>
     </div>
     <section class="hero">
       <p class="lead" id="pageLead"></p>
@@ -1341,6 +1379,18 @@ const sections = [
     focus:[],
     standards:{picsgdp:[],taiwan:[],company:[],docs:[]},
     qa:false
+  },
+  {
+    id:"admin-console",
+    departments:["*"],allowedRoles:["admin"],
+    group:"管理專區",
+    title:"管理登入與 AI 助手",
+    tag:"登入・角色・變更審核",
+    lead:"管理者在此登入後，可建立帳號與職務異動、教材修正、題庫調整或網站功能需求的待審核草稿。每一筆草稿都會整理修改前、修改後、影響範圍與核准狀態，管理者可核准或退回，不直接覆蓋正式教材與題庫。",
+    pills:["登入狀態","帳號申請","AI 變更草稿","修改前後對照","核准紀錄"],
+    focus:[],
+    standards:{picsgdp:[],taiwan:[],company:[],docs:[]},
+    qa:false
   }
 ];
 
@@ -1610,6 +1660,197 @@ const qaStore = {
     if(found){ found.replies = [...(found.replies||[]),rep]; }
     localStorage.setItem(this.key(id),JSON.stringify(items));
     analyticsStore.log("reply",{sectionId:id,targetId:itemId,targetLabel:rep.answer});
+  }
+};
+
+const roleLabels = {
+  staff:"一般員工",
+  leader:"組長／主管",
+  gdp_admin:"GDP 管理者",
+  doc_superadmin:"文管超級管理員",
+  rp_admin:"GDP 權責人",
+  qa_admin:"品保管理者",
+  sales_lead:"業務組長",
+  warehouse_lead:"倉庫組長",
+  pharmacist:"管理藥師"
+};
+const adminRoleIds = ["gdp_admin","doc_superadmin","rp_admin","qa_admin","sales_lead","warehouse_lead"];
+const authStore = {
+  ready:false,
+  user:null,
+  profile:null,
+  initPromise:null,
+  init(){
+    if(this.initPromise) return this.initPromise;
+    this.initPromise=this._init();
+    return this.initPromise;
+  },
+  async _init(){
+    await qaStore.init();
+    if(!qaStore.app) { this.updateChip(); return false; }
+    try{
+      const authMod=await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js");
+      this.authMod=authMod;
+      this.auth=authMod.getAuth(qaStore.app);
+      authMod.onAuthStateChanged(this.auth,async user=>{
+        this.user=user;
+        this.profile=null;
+        if(user) await this.loadProfile();
+        this.ready=true;
+        this.updateChip();
+        if(current==="admin-console") await showSection("admin-console");
+      });
+      return true;
+    }catch(e){
+      console.warn("登入模組初始化失敗",e);
+      this.updateChip("登入模組暫時無法使用");
+      return false;
+    }
+  },
+  async loadProfile(){
+    if(!this.user||!qaStore.db) return null;
+    try{
+      const {doc,getDoc}=qaStore.firebase;
+      const snap=await getDoc(doc(qaStore.db,"gdpUsers",this.user.uid));
+      this.profile=snap.exists()?snap.data():null;
+      return this.profile;
+    }catch(e){
+      console.warn("使用者資料讀取失敗",e);
+      return null;
+    }
+  },
+  canAdmin(){
+    const roles=this.profile?.roles||[];
+    return this.profile?.status==="active" && roles.some(r=>adminRoleIds.includes(r));
+  },
+  displayName(){
+    return this.profile?.name || this.user?.displayName || this.user?.email || "未登入";
+  },
+  roleText(){
+    const roles=this.profile?.roles||[];
+    if(!this.user) return "未登入";
+    if(!this.profile) return "尚未建立使用者資料";
+    if(this.profile.status!=="active") return "帳號待審核";
+    return roles.map(r=>roleLabels[r]||r).join("、") || "未設定角色";
+  },
+  updateChip(message){
+    const chip=document.getElementById("authChip");
+    if(!chip) return;
+    chip.classList.remove("admin","pending");
+    if(message){
+      chip.textContent=message;
+      chip.classList.add("pending");
+      return;
+    }
+    if(!this.user){
+      chip.textContent="未登入";
+      chip.classList.add("pending");
+      return;
+    }
+    chip.textContent=`${this.displayName()}｜${this.roleText()}`;
+    chip.classList.add(this.canAdmin()?"admin":"pending");
+  },
+  async signIn(email,password){
+    const {signInWithEmailAndPassword}=this.authMod;
+    await signInWithEmailAndPassword(this.auth,email,password);
+  },
+  async register(data){
+    const {createUserWithEmailAndPassword}=this.authMod;
+    const cred=await createUserWithEmailAndPassword(this.auth,data.email,data.password);
+    const uid=cred.user.uid;
+    if(qaStore.db){
+      const {doc,setDoc,collection,addDoc,serverTimestamp}=qaStore.firebase;
+      const profile={
+        uid,
+        email:data.email,
+        empId:data.empId,
+        name:data.name,
+        department:data.department,
+        title:data.title,
+        roles:["staff"],
+        status:"pending",
+        createdAt:serverTimestamp(),
+        updatedAt:serverTimestamp()
+      };
+      await setDoc(doc(qaStore.db,"gdpUsers",uid),profile,{merge:true});
+      await addDoc(collection(qaStore.db,"gdpUserApplications"),{
+        uid,
+        email:data.email,
+        empId:data.empId,
+        name:data.name,
+        department:data.department,
+        title:data.title,
+        requestedRoles:["staff"],
+        status:"pending",
+        createdAt:serverTimestamp()
+      });
+    }
+    await this.loadProfile();
+    this.updateChip();
+  },
+  async signOut(){
+    if(!this.authMod||!this.auth) return;
+    await this.authMod.signOut(this.auth);
+  }
+};
+
+const adminDraftStore = {
+  key:"gdp-admin-change-drafts",
+  localList(){
+    return JSON.parse(localStorage.getItem(this.key)||"[]");
+  },
+  localSave(draft){
+    const list=this.localList();
+    list.unshift(draft);
+    localStorage.setItem(this.key,JSON.stringify(list.slice(0,20)));
+  },
+  async list(){
+    if(qaStore.db&&authStore.canAdmin()){
+      try{
+        const {collection,query,orderBy,limit,getDocs}=qaStore.firebase;
+        const snap=await getDocs(query(collection(qaStore.db,"gdpChangeDrafts"),orderBy("createdAt","desc"),limit(10)));
+        return snap.docs.map(d=>({id:d.id,...d.data()}));
+      }catch(e){ console.warn("管理草稿讀取失敗，使用本機草稿",e); }
+    }
+    return this.localList();
+  },
+  async save(draft){
+    const localDraft={...draft,id:`local-${Date.now()}`,createdAt:new Date().toISOString()};
+    this.localSave(localDraft);
+    if(!qaStore.db||!authStore.canAdmin()) return localDraft;
+    const {collection,addDoc,serverTimestamp}=qaStore.firebase;
+    const payload={
+      ...draft,
+      status:"pending",
+      createdBy:authStore.user.uid,
+      createdByName:authStore.displayName(),
+      createdAt:serverTimestamp(),
+      updatedAt:serverTimestamp()
+    };
+    const ref=await addDoc(collection(qaStore.db,"gdpChangeDrafts"),payload);
+    return {id:ref.id,...payload};
+  },
+  async decide(id,status,note){
+    if(!qaStore.db||!authStore.canAdmin()||!id||String(id).startsWith("local-")) return false;
+    const {doc,updateDoc,collection,addDoc,serverTimestamp}=qaStore.firebase;
+    await updateDoc(doc(qaStore.db,"gdpChangeDrafts",id),{
+      status,
+      decisionNote:note||"",
+      decidedBy:authStore.user.uid,
+      decidedByName:authStore.displayName(),
+      decidedAt:serverTimestamp(),
+      updatedAt:serverTimestamp()
+    });
+    await addDoc(collection(qaStore.db,"gdpAuditLogs"),{
+      actorUid:authStore.user.uid,
+      actorName:authStore.displayName(),
+      action:`changeDraft.${status}`,
+      targetId:id,
+      note:note||"",
+      source:"aiAdminAssistant",
+      createdAt:serverTimestamp()
+    });
+    return true;
   }
 };
 
@@ -5324,8 +5565,246 @@ function deptMobileDock(s){
   if(!visible.length) return "";
   return `<div class="dept-mobile-dock" aria-label="手機快速跳轉">${visible.map(x=>`<a href="#${esc(x.id)}">${esc(x.label)}</a>`).join("")}</div>`;
 }
+function adminConsoleSection(){
+  const signed=!!authStore.user;
+  const profile=authStore.profile;
+  const isAdmin=authStore.canAdmin();
+  const statusText=signed ? authStore.roleText() : "尚未登入";
+  return `<div class="admin-layout">
+    <article class="admin-card">
+      <h4>登入與帳號申請</h4>
+      <p class="admin-note">目前狀態：<strong>${esc(statusText)}</strong></p>
+      <form class="admin-form" id="authLoginForm">
+        <div class="admin-form-grid">
+          <label>Email<input name="email" type="email" autocomplete="email" required></label>
+          <label>密碼<input name="password" type="password" autocomplete="current-password" required></label>
+        </div>
+        <div class="admin-actions">
+          <button class="admin-btn" type="submit">登入</button>
+          <button class="admin-btn secondary" id="authLogoutBtn" type="button" ${signed?"":"disabled"}>登出</button>
+        </div>
+      </form>
+      <form class="admin-form" id="authRegisterForm">
+        <h4>新帳號申請</h4>
+        <div class="admin-form-grid">
+          <label>姓名<input name="name" required></label>
+          <label>員工編號<input name="empId" required></label>
+          <label>部門<input name="department" required></label>
+          <label>職稱<input name="title" required></label>
+          <label>Email<input name="email" type="email" autocomplete="email" required></label>
+          <label>密碼<input name="password" type="password" autocomplete="new-password" minlength="6" required></label>
+        </div>
+        <div class="admin-actions">
+          <button class="admin-btn secondary" type="submit">送出申請</button>
+          <span class="admin-note">申請後狀態為待審核，需管理者核准角色。</span>
+        </div>
+      </form>
+    </article>
+    <article class="admin-card">
+      <h4>目前登入資料</h4>
+      <div class="change-box">
+        <div class="change-row"><span>Email</span><span>${esc(authStore.user?.email||"未登入")}</span></div>
+        <div class="change-row"><span>姓名</span><span>${esc(profile?.name||"未建立")}</span></div>
+        <div class="change-row"><span>員工編號</span><span>${esc(profile?.empId||"未建立")}</span></div>
+        <div class="change-row"><span>部門</span><span>${esc(profile?.department||"未建立")}</span></div>
+        <div class="change-row"><span>職稱</span><span>${esc(profile?.title||"未建立")}</span></div>
+        <div class="change-row"><span>角色</span><span>${esc((profile?.roles||[]).map(r=>roleLabels[r]||r).join("、")||"未設定")}</span></div>
+        <div class="change-row"><span>狀態</span><span>${esc(profile?.status||"未登入")}</span></div>
+      </div>
+      <p class="admin-note">${isAdmin?"此帳號可儲存、核准與退回管理草稿。":"此帳號目前只能預覽草稿；核准需管理者權限。"}</p>
+    </article>
+    <article class="panel wide">
+      <h3>AI 管理助理：變更草稿</h3>
+      <div class="admin-layout">
+        <form class="admin-form admin-card" id="adminAssistantForm">
+          <label>管理需求<textarea name="request" placeholder="例如：031 離職停用帳號；倉管人員升為倉庫組長；某題答案需要修正。" required></textarea></label>
+          <div class="admin-form-grid">
+            <label>需求類型<select name="type">
+              <option value="accountRole">帳號與職務</option>
+              <option value="questionBank">題庫與測驗</option>
+              <option value="contentFix">教材或 KB 修正</option>
+              <option value="featureRequest">網站功能需求</option>
+            </select></label>
+            <label>目標對象／項目<input name="target" placeholder="員工編號、姓名、題號或頁面"></label>
+            <label>修改前角色／狀態<input name="beforeRole" placeholder="例如：倉管人員、active"></label>
+            <label>修改後角色／狀態<input name="afterRole" placeholder="例如：倉庫組長、disabled"></label>
+            <label>修改前部門／範圍<input name="beforeDept" placeholder="例如：倉管"></label>
+            <label>修改後部門／範圍<input name="afterDept" placeholder="例如：倉管＋採購到貨驗收"></label>
+          </div>
+          <label>管理者補充理由<input name="reason" placeholder="核准依據、來源文件或異動原因"></label>
+          <div class="admin-actions">
+            <button class="admin-btn" type="submit">產生前後對照</button>
+            <button class="admin-btn secondary" type="button" id="adminSaveDraftBtn" disabled>儲存待審核草稿</button>
+          </div>
+          <p class="admin-note">教材、題庫、KB 與程式需求只建立草稿或需求單，不會直接覆蓋正式資料。</p>
+        </form>
+        <div class="admin-card">
+          <h4>修改前 / 修改後</h4>
+          <div id="adminPreview" class="change-preview">
+            <p class="admin-note">填寫需求後產生對照。</p>
+          </div>
+          <div class="admin-actions">
+            <button class="admin-btn" type="button" id="adminApproveBtn" disabled>核准草稿</button>
+            <button class="admin-btn warn" type="button" id="adminRejectBtn" disabled>退回草稿</button>
+          </div>
+        </div>
+      </div>
+    </article>
+    <article class="panel wide">
+      <h3>近期草稿</h3>
+      <div id="adminDraftList" class="draft-list"><p class="admin-note">載入中…</p></div>
+    </article>
+  </div>`;
+}
+function inferChangeDraft(form){
+  const fd=new FormData(form);
+  const type=String(fd.get("type")||"accountRole");
+  const request=String(fd.get("request")||"").trim();
+  const target=String(fd.get("target")||"").trim()||"未指定";
+  const beforeRole=String(fd.get("beforeRole")||"").trim()||"未提供";
+  const afterRole=String(fd.get("afterRole")||"").trim()||"待確認";
+  const beforeDept=String(fd.get("beforeDept")||"").trim()||"未提供";
+  const afterDept=String(fd.get("afterDept")||"").trim()||"待確認";
+  const reason=String(fd.get("reason")||"").trim()||"管理者尚未補充";
+  const typeLabel={
+    accountRole:"帳號與職務",
+    questionBank:"題庫與測驗",
+    contentFix:"教材或 KB 修正",
+    featureRequest:"網站功能需求"
+  }[type]||type;
+  const before={target,roleOrStatus:beforeRole,departmentOrScope:beforeDept,state:"正式資料維持現狀"};
+  const after={target,roleOrStatus:afterRole,departmentOrScope:afterDept,state:type==="featureRequest"?"建立功能需求單，不直接上線":"建立待審核草稿"};
+  const impact=[];
+  if(type==="accountRole"){
+    impact.push("影響登入後可見部門、智慧查詢範圍、測驗範圍與行事曆權限。");
+    impact.push("核准後需留下帳號或職務異動稽核紀錄。");
+  }else if(type==="questionBank"){
+    impact.push("影響題庫草稿、解析與來源欄位；正式啟用前需講師或文管確認。");
+    impact.push("不會直接改變目前考生看到的正式題目。");
+  }else if(type==="contentFix"){
+    impact.push("影響教材、KB 或稽查回答草稿；需回 SOP/WI/FR 或官方來源核對。");
+    impact.push("不會直接覆蓋正式 learner-facing 內容。");
+  }else{
+    impact.push("影響 HTML、JavaScript、Firebase rules 或 GitHub Pages 時，必須走 PR / 預覽 / 測試。");
+    impact.push("AI 助手只建立需求草稿，不直接修改正式站。");
+  }
+  return {type,typeLabel,request,target,before,after,impact,reason,status:"pending"};
+}
+function changeRows(data){
+  return Object.entries(data).map(([k,v])=>{
+    const label={target:"目標",roleOrStatus:"角色／狀態",departmentOrScope:"部門／範圍",state:"處理狀態"}[k]||k;
+    return `<div class="change-row"><span>${esc(label)}</span><span>${esc(v)}</span></div>`;
+  }).join("");
+}
+function renderChangePreview(draft){
+  return `<div class="change-columns">
+    <div class="change-box"><strong>修改前</strong>${changeRows(draft.before)}</div>
+    <div class="change-box after"><strong>修改後</strong>${changeRows(draft.after)}</div>
+  </div>
+  <div>
+    <h4>影響範圍</h4>
+    <ul class="impact-list">${draft.impact.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+  </div>
+  <div class="change-box">
+    <strong>${esc(draft.typeLabel)}｜待審核</strong>
+    <p class="admin-note">${esc(draft.request)}</p>
+    <p class="admin-note">理由：${esc(draft.reason)}</p>
+  </div>`;
+}
+async function renderAdminDraftList(){
+  const el=document.getElementById("adminDraftList");
+  if(!el) return;
+  const drafts=await adminDraftStore.list();
+  if(!drafts.length){
+    el.innerHTML=`<p class="admin-note">目前沒有草稿。</p>`;
+    return;
+  }
+  el.innerHTML=drafts.map(d=>`<div class="draft-card" data-draft-id="${esc(d.id||"")}">
+    <strong>${esc(d.typeLabel||d.type||"變更草稿")}｜${esc(d.status||"pending")}</strong>
+    <small>${esc(d.target||"未指定")}｜${esc(d.request||"")}</small>
+    <small>修改後：${esc(d.after?.roleOrStatus||"")}／${esc(d.after?.departmentOrScope||"")}</small>
+  </div>`).join("");
+}
+let activeAdminDraft=null;
+function bindAdminConsole(){
+  const login=document.getElementById("authLoginForm");
+  const register=document.getElementById("authRegisterForm");
+  const logout=document.getElementById("authLogoutBtn");
+  const form=document.getElementById("adminAssistantForm");
+  const preview=document.getElementById("adminPreview");
+  const saveBtn=document.getElementById("adminSaveDraftBtn");
+  const approveBtn=document.getElementById("adminApproveBtn");
+  const rejectBtn=document.getElementById("adminRejectBtn");
+  login?.addEventListener("submit",async e=>{
+    e.preventDefault();
+    try{
+      await authStore.signIn(login.email.value.trim(),login.password.value);
+      login.reset();
+    }catch(err){
+      alert("登入失敗，請確認 email 與密碼。");
+      console.warn("登入失敗",err);
+    }
+  });
+  register?.addEventListener("submit",async e=>{
+    e.preventDefault();
+    const data={
+      name:register.name.value.trim(),
+      empId:register.empId.value.trim(),
+      department:register.department.value.trim(),
+      title:register.title.value.trim(),
+      email:register.email.value.trim(),
+      password:register.password.value
+    };
+    try{
+      await authStore.register(data);
+      register.reset();
+      alert("帳號申請已送出，請等待管理者審核。");
+    }catch(err){
+      alert("申請失敗，請確認 email 是否已註冊或密碼是否符合規則。");
+      console.warn("帳號申請失敗",err);
+    }
+  });
+  logout?.addEventListener("click",async()=>authStore.signOut());
+  form?.addEventListener("submit",e=>{
+    e.preventDefault();
+    activeAdminDraft=inferChangeDraft(form);
+    if(preview) preview.innerHTML=renderChangePreview(activeAdminDraft);
+    if(saveBtn) saveBtn.disabled=false;
+    if(approveBtn) approveBtn.disabled=!authStore.canAdmin();
+    if(rejectBtn) rejectBtn.disabled=!authStore.canAdmin();
+  });
+  saveBtn?.addEventListener("click",async()=>{
+    if(!activeAdminDraft) return;
+    try{
+      const saved=await adminDraftStore.save(activeAdminDraft);
+      activeAdminDraft={...activeAdminDraft,id:saved.id};
+      if(preview) preview.insertAdjacentHTML("beforeend",`<p class="admin-note">已儲存草稿：${esc(saved.id||"本機草稿")}</p>`);
+      if(approveBtn) approveBtn.disabled=!authStore.canAdmin()||!activeAdminDraft.id;
+      if(rejectBtn) rejectBtn.disabled=!authStore.canAdmin()||!activeAdminDraft.id;
+      await renderAdminDraftList();
+    }catch(err){
+      alert("草稿儲存失敗，已保留畫面內容。");
+      console.warn("草稿儲存失敗",err);
+    }
+  });
+  approveBtn?.addEventListener("click",async()=>{
+    if(!activeAdminDraft?.id) return;
+    const ok=await adminDraftStore.decide(activeAdminDraft.id,"approved","管理者核准草稿");
+    alert(ok?"草稿已核准並留下稽核紀錄。":"此草稿尚未寫入資料庫，或目前帳號無核准權限。");
+    await renderAdminDraftList();
+  });
+  rejectBtn?.addEventListener("click",async()=>{
+    if(!activeAdminDraft?.id) return;
+    const reason=prompt("請輸入退回原因：")||"管理者退回草稿";
+    const ok=await adminDraftStore.decide(activeAdminDraft.id,"rejected",reason);
+    alert(ok?"草稿已退回並留下稽核紀錄。":"此草稿尚未寫入資料庫，或目前帳號無退回權限。");
+    await renderAdminDraftList();
+  });
+  renderAdminDraftList();
+}
 function renderContent(s){
   if(s.id==="gdp-kb") return kbSection();
+  if(s.id==="admin-console") return adminConsoleSection();
   if(s.examTemplate) return examTemplateSection(s);
   return [
     deptModeBar(s),
@@ -6689,7 +7168,7 @@ function renderNav(){
   const pickerPanel=document.getElementById("mobilePickerPanel");
   nav.innerHTML="";
   pickerPanel.innerHTML="";
-  const navGroups=["GDP核心","新人部門","年度行事曆","GDP 知識庫","測試專區"];
+  const navGroups=["GDP核心","新人部門","年度行事曆","GDP 知識庫","測試專區","管理專區"];
   navGroups.forEach(group=>{
     const groupSections=sections.filter(s=>s.group===group);
     if(!groupSections.length) return;
@@ -6805,6 +7284,7 @@ async function showSection(id){
   bindQaForm(id);
   bindEvidenceMap();
   bindKbForm();
+  bindAdminConsole();
   updateDeptToc(s);
   if(id==="gdp-kb") renderUsageStats();
   await renderQa(id);
@@ -6838,8 +7318,10 @@ function fmtDate(v){
   if(renderSharedExamPacket()) return;
   renderNav();
   await qaStore.init();
+  await authStore.init();
   await deficiencyStore.init();
   await analyticsStore.ensureQuarterReview();
+  document.getElementById("authJumpBtn")?.addEventListener("click",()=>showSection("admin-console"));
   // mobile TOC button handlers
   const fab=document.getElementById("deptTocFab");
   const popup=document.getElementById("deptTocPopup");

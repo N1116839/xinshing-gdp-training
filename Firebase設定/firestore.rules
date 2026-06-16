@@ -1,6 +1,76 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+    function userPath(uid) {
+      return /databases/$(database)/documents/gdpUsers/$(uid);
+    }
+    function isSelf(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+    function isAdmin() {
+      return signedIn()
+        && exists(userPath(request.auth.uid))
+        && get(userPath(request.auth.uid)).data.status == 'active'
+        && get(userPath(request.auth.uid)).data.roles is list
+        && get(userPath(request.auth.uid)).data.roles.hasAny(['gdp_admin','doc_superadmin','rp_admin','qa_admin','sales_lead','warehouse_lead']);
+    }
+    match /gdpUsers/{uid} {
+      allow read: if isSelf(uid) || isAdmin();
+      allow create: if isSelf(uid)
+        && request.resource.data.keys().hasOnly(['uid','email','empId','name','department','title','roles','status','createdAt','updatedAt'])
+        && request.resource.data.uid == uid
+        && request.resource.data.email is string
+        && request.resource.data.email.size() <= 120
+        && request.resource.data.empId is string
+        && request.resource.data.empId.size() <= 30
+        && request.resource.data.name is string
+        && request.resource.data.name.size() <= 50
+        && request.resource.data.department is string
+        && request.resource.data.department.size() <= 50
+        && request.resource.data.title is string
+        && request.resource.data.title.size() <= 50
+        && request.resource.data.roles is list
+        && request.resource.data.roles.size() == 1
+        && request.resource.data.roles[0] == 'staff'
+        && request.resource.data.status == 'pending';
+      allow update: if isAdmin()
+        || (isSelf(uid)
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name','department','title','updatedAt']));
+    }
+    match /gdpUserApplications/{appId} {
+      allow read: if isAdmin();
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['uid','email','empId','name','department','title','requestedRoles','status','createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.requestedRoles is list
+        && request.resource.data.status == 'pending';
+      allow update: if isAdmin();
+    }
+    match /gdpChangeDrafts/{draftId} {
+      allow read: if isAdmin();
+      allow create: if isAdmin()
+        && request.resource.data.keys().hasOnly(['type','typeLabel','request','target','before','after','impact','reason','status','createdBy','createdByName','createdAt','updatedAt'])
+        && request.resource.data.status == 'pending'
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.type in ['accountRole','questionBank','contentFix','featureRequest']
+        && request.resource.data.request is string
+        && request.resource.data.request.size() <= 2000;
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','decisionNote','decidedBy','decidedByName','decidedAt','updatedAt'])
+        && request.resource.data.status in ['approved','rejected']
+        && request.resource.data.decidedBy == request.auth.uid;
+    }
+    match /gdpAuditLogs/{logId} {
+      allow read, create: if isAdmin();
+      allow update, delete: if false;
+    }
+    match /gdpRoleChangeLogs/{logId} {
+      allow read, create: if isAdmin();
+      allow update, delete: if false;
+    }
     match /gdpTrainingQa/{sectionId}/items/{itemId} {
       allow read: if true;
       allow create: if request.resource.data.keys().hasAll(['name','question','sectionId','createdAt']) && request.resource.data.name is string && request.resource.data.name.size() <= 50 && request.resource.data.question is string && request.resource.data.question.size() <= 1000;

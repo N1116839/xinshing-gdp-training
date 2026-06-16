@@ -1,3 +1,43 @@
+## 2026-06-16 第一百一十三次：登入骨架＋AI 管理助理草稿審核介面（未部署 rules）🔄
+
+使用者要求依 6/15 與前一日討論方案開始建立登入與 AI 助手，並明確要求 AI 助手要能讓管理者看到「修改前 / 修改後」分別會變成怎樣，方便核准或不核准變更。
+
+### 本次完成
+1. **主 HTML 新增登入與管理入口**（`HTML資料庫/新勝GDP資料庫.html`）：
+   - 頁首新增登入狀態 chip 與「管理登入」按鈕。
+   - 左側導覽新增「管理專區」→「管理登入與 AI 助手」。
+   - 新增 Firebase Auth 骨架：登入、登出、新帳號申請、讀取 `gdpUsers/{uid}` profile。
+   - 新帳號申請預設建立 `roles:["staff"]`、`status:"pending"`，並同步建立 `gdpUserApplications` 申請紀錄（待 rules 部署後才可線上寫入）。
+2. **新增 AI 管理助理第一版草稿審核介面**：
+   - 支援四類需求：帳號與職務、題庫與測驗、教材或 KB 修正、網站功能需求。
+   - 可輸入管理需求、目標對象、修改前角色/狀態、修改後角色/狀態、修改前部門/範圍、修改後部門/範圍、管理者理由。
+   - 產生「修改前 / 修改後」對照卡、影響範圍、待審核摘要。
+   - 非管理者可本機預覽與本機暫存草稿；只有管理者可寫入 `gdpChangeDrafts` 並核准/退回。
+   - 核准/退回只更新草稿狀態並寫 `gdpAuditLogs`，**不直接覆蓋正式教材、題庫、KB 或程式碼**。
+3. **Firestore rules 草案已補**（`Firebase設定/firestore.rules`）：
+   - 新增 `gdpUsers`、`gdpUserApplications`、`gdpChangeDrafts`、`gdpAuditLogs`、`gdpRoleChangeLogs`。
+   - `isAdmin()` 以 `gdpUsers/{uid}` 中 active 管理角色判斷。
+   - 自己只能建立 pending 使用者資料；管理者才能讀取/更新管理資料與審核草稿。
+
+### 驗收
+- `JS_PARSE_OK` 通過。
+- 新功能標記掃描通過：`admin-console`、`authStore`、`adminDraftStore`、`AI 管理助理：變更草稿`、`修改前 / 修改後`、`gdpChangeDrafts` 全命中。
+- `node verify_facts_ghpages.mjs`：`1296/1296` 通過，未破壞智慧查詢 facts。
+
+### 未完成 / 需使用者核准
+1. **Firestore rules 尚未部署**：嘗試部署被安全審查擋下，原因是會改線上 Firestore 存取權限；需使用者明確授權「部署 Firestore rules」後再執行。
+2. **第一個超管帳號尚未建立**：正式可用前需在 Firebase Auth 建立/指定第一個 `doc_superadmin` 或 `gdp_admin`，並在 `gdpUsers/{uid}` 設 `status:"active"`、對應 roles。
+3. **全站權限過濾尚未接上**：本輪只做登入骨架與管理助手草稿層；未改導覽、智慧查詢、快速查詢、題庫或行事曆的資料層過濾，避免未確認權限表就影響現有學員頁。
+4. **瀏覽器實機操作驗收未完成**：Browser/Node REPL 與 Playwright 皆受本機環境限制，localhost serve 也未成功回應；本輪僅完成語法、標記與 facts 驗收。下輪需用可用瀏覽器或 GitHub Pages 部署後實機檢查管理專區。
+
+### 下次建議
+1. 使用者若同意，明確說「部署 Firestore rules」，再執行 rules 部署。
+2. 建立第一個超管：確認 email、uid、角色（建議 `doc_superadmin`），再寫入 `gdpUsers/{uid}`。
+3. 用正式網址測試：登入、帳號申請、管理者產生草稿、核准、退回、稽核紀錄。
+4. 再進入全站權限 chokepoint：`resolveVisibility()` / `canSee()` / `canDo()`，逐步接導覽與查詢過濾。
+
+---
+
 ## 2026-06-15 第一百一十二次：AI 管理助理維護模式定版（規範 §49）✅
 
 使用者確認採用「平台內 AI 管理助理」作為後續非工程人員維護入口：公司其他人不會使用 agent、GitHub、Firebase 或程式更新流程，因此管理者需要像政府 AI 智慧機器人 / GDP 智慧查詢一樣，用自然語言提出帳號、職務、題庫、教材或網站功能維護需求。
