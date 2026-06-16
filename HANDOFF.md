@@ -1,6 +1,37 @@
 # 新勝 GDP 專案交接（精簡版）
 
-> 最後更新：2026-06-16（第124次：管理面板手機排版、AI 管理助理自然語言入口、帳號權限矩陣改版；commit `5adf34a` 已成功推送並用永久網址確認線上是最新版）
+> 最後更新：2026-06-16（第125次續：手機登入又卡「超管帳號初始化失敗(permission-denied)」，已修 ID token 刷新時機並推送 `92d7875`，**但收工前使用者尚未實機複測成功**，下次開工第一件事就是確認這個有沒有真的解決）
+
+### 第125次續（手機登入 permission-denied，已下修法但未驗證成功，收工時仍是「無法登入」狀態）
+
+使用者在今天移除 AI 管理助理＋修手機版面之後，回報手機又無法登入，畫面顯示「超管帳號初始化失敗，請確認 Firestore rules 已部署，或登出後重新登入。」
+
+**先排除回歸**：用 `git diff b28bd8b HEAD -- 兩個檔` 逐字比對，確認 `ensureSuperAdmin` 函式與 `gdpUsers`/`isAdmin` rules 跟上次能登入的版本**完全相同（byte-identical）**，今天唯一動到的 rules 差異是刪掉不相關的 `gdpChangeDrafts`。確認不是今天改動造成回歸。
+
+**問出真正錯誤代碼**：原本畫面文字是寫死的，不管實際錯誤都顯示同一句。先把 `e.code`/`e.message` 顯示進錯誤訊息（commit `de0df08`），請使用者重試，拿到真正代碼是 **`permission-denied`**——確認是真的權限被拒，不是網路/快取問題（使用者已用無痕模式排除快取）。
+
+**目前的假設與已下的修法（commit `92d7875`，尚未驗證生效）**：`isSuperAdminEmail()` rules 比對的是**請求 ID token 裡的 email claim**，跟瀏覽器本機 `user.email` 是兩份不同資料。手機剛用 `signInWithPopup` 登入完成瞬間，本機 `user` 物件已更新，但送往 Firestore 的 ID token 可能還沒刷新到含正確 email claim 的版本，導致 rules 判定不符 → `permission-denied`。手機比桌機更容易踩到這個時間差。已在 `onAuthStateChanged` 偵測到登入後，加 `await user.getIdToken(true)` 強制刷新 token，確保後續 `loadProfile`/`ensureSuperAdmin`/`ensureConfiguredAdmin` 的 Firestore 請求都帶最新 claim。
+
+**⚠️ 收工時這個修法還沒被使用者實機驗證**，使用者本輪選擇先收工、尚未回報重試結果。**下次開工第一件事：請使用者用手機（無痕模式）重新整理永久網址、重新登入一次，確認是否解決。如果還失敗，這次錯誤訊息裡會帶真正的 `e.code`，直接看那個代碼縮小範圍，不要再重複猜測 popup/redirect/rules 部署這些已經排除過的方向。**
+
+### 第125次本輪修正（取消 AI 管理助理＋修手機版管理面板版面）
+
+使用者實機測試後回報兩個問題：① 手機版管理面板仍擠在左邊、沒有滿版 ② 質疑「AI 管理助理」核准後是否真的會自動改網站、誰來維護的問題。討論後使用者決定：AI agent 自動改網站這個想法**目前不可行就先取消整個入口**，不要留一半做不到的功能困惑管理者；其餘想法（即時查資料、權限矩陣常駐畫面）留待之後評估，今天不做。
+
+**已修正 `HTML資料庫/新勝GDP資料庫.html`：**
+- 用 preview_eval 量出手機版 bug 根因：`.admin-section{grid-column:1/-1}`（CSS 第221行附近）想讓管理區塊在巢狀 `.admin-layout` grid 裡滿版，但同特異度（單 class）、程式碼順序更晚的 `.wide{grid-column:span 12}`（在 `@media max-width:960px` 區塊內）蓋掉了它，造成隱性展開成12欄、大部分0寬，視覺上整塊被擠到最左邊一小條。修法：加 `.wide.admin-section{grid-column:1/-1}` 用雙 class 特異度蓋過去。已用 preview_eval 量測 `gridTemplateColumns` 確認修好（347px 單欄、子區塊 `gridColumn:1/-1` 滿版347px）。
+- 完全移除「AI 管理助理」整個 UI 區塊（自然語言輸入框、前後對照預覽、核准/退回按鈕、處理流程說明、邊界聲明）與「近期草稿」區塊。
+- 移除相關死代碼：`adminDraftStore`、`inferAdminRequestType`、`inferTargetFromRequest`、`inferChangeDraft`、`changeRows`、`renderChangePreview`、`renderAdminDraftList`，以及 `bindAdminConsole` 裡對應的表單/按鈕綁定與 `activeAdminDraft` 變數。
+- `Firebase設定/firestore.rules` 移除 `gdpChangeDrafts` collection 規則，**已 `npx firebase-tools deploy --only firestore:rules` 部署成功**。
+- 「帳號與權限設定」（待審核員工樹＋角色×功能權限矩陣）保留不變；釐清矩陣**目前只在有待審核帳號時顯示**（綁在 `permissionMatrixForApp`），公司全員都已審核完畢時不會出現，這是設計缺口非 bug——下輪若要做「ERP 風格、隨時可開的在職員工權限管理」需另外加一個常駐區塊（讀 active 員工清單，非僅 pending）。
+
+**本輪驗收：**
+- `JS_PARSE_OK 1`
+- `node verify_facts_ghpages.mjs`：`1296/1296`
+- grep 確認 `adminDraftStore`、`adminAssistantForm`、`gdpChangeDrafts` 等字串已從 HTML/rules 完全清除，無殘留死代碼
+- preview_eval 模擬 admin 登入直接渲染 `adminConsoleSection()+bindAdminConsole()` 無報錯，DOM 確認無「AI 管理助理」文字、權限矩陣表格正常出現、`.admin-section` 數量符合預期（1：帳號與權限設定；超管才會多一個管理者email名單）
+
+下次優先：① 若使用者要做「在職員工權限管理」常駐畫面，需新增讀取 active 員工清單的函式（目前只有 listPending）。② Android 手機 Google 登入仍需實機複測。③ EmailJS 三值仍待使用者提供。
 > 原則：本檔只保留「最新可接狀態、當前待辦、關鍵踩坑」。舊輪次完整流水帳不再放在開工入口；歷史重點已整理進第二大腦專案筆記與踩坑紀錄。
 
 ---
@@ -177,10 +208,11 @@
 - `firestore.rules` 已包含：
   - `gdpUsers`
   - `gdpUserApplications`
-  - `gdpChangeDrafts`
   - `gdpAuditLogs`
   - `gdpRoleChangeLogs`
   - `gdpConsentLogs`
+  - `gdpConfig`（管理者 email 名單）
+  - （`gdpChangeDrafts` 已於第125次隨 AI 管理助理功能一併移除並 deploy）
 - 修改 store 寫入欄位或 docId 時，必須同步改 rules 並部署；只 commit rules 不等於線上生效。
 
 ### KB / 智慧查詢
@@ -201,7 +233,7 @@
 
 | 優先 | 項目 | 備註 |
 |---|---|---|
-| 🔴 最高 | 手機登入真因＝signInWithRedirect session 遺失（下次帶使用者實機改＋測） | 第122次影片診斷（Android）：**LINE 跳出已成功**（使用者已進 Chrome、出現 Google 帳戶選擇頁、可選 tom741285）。真卡點在**選完帳號轉址回來後 session 沒建立，又被打回「使用 Google 登入」picker**（影格：帳戶選擇→「登入狀態確認中」→又回 picker）。屬 Firebase `signInWithRedirect` 在手機跨網域（github.io ↔ firebaseapp.com）儲存隔離把 redirect result 弄丟的已知問題；桌機 popup 不受影響。**下次開工：把手機分支從 `signInWithRedirect` 改 `signInWithPopup` 實測；若 popup 被擋，備案＝自訂 auth 網域/同網域 auth handler。一定要帶使用者用其 Android 手機實機驗證，勿盲推。** 影格暫存於 `%TEMP%\gdp_login_frames_暫存`。 |
+| 🔴 最高 | 手機登入仍卡「超管帳號初始化失敗(permission-denied)」，**第125次下的修法尚未被使用者實機驗證成功** | popup 跳出/帳戶選擇都已正常（早已不是 signInWithRedirect 問題），卡點變成登入完成後 `ensureSuperAdmin()` 寫入 `gdpUsers` 被 rules 拒絕，代碼 `permission-denied`。已比對排除是當輪改動造成的回歸（`ensureSuperAdmin`/rules 跟上次能登入版本逐字節相同）。目前假設＝ID token 剛登入時還沒刷新到含正確 email claim，已加 `await user.getIdToken(true)` 強制刷新（commit `92d7875`）。**下次開工第一件事：請使用者手機無痕模式重試登入，確認是否解決；若還失敗，畫面會顯示真正的 `e.code`，直接照那個代碼查，不要回去猜 popup/redirect 這些已排除的方向。** |
 | 最高 | EmailJS 設定（下次開工帶使用者一步步操作） | 已改走 EmailJS（免 Blaze）。前端 `EMAILJS_CONFIG={publicKey,serviceId,templateId}` 目前空字串＝不寄信（不影響申請）。**下次開工要帶使用者做這幾步並把值填回 `EMAILJS_CONFIG` 後 push：**<br>1. emailjs.com 開免費帳號。<br>2. Email Services 接一個服務（用 Gmail 即可）→ 取得 **Service ID**。<br>3. Email Templates 建一個模板：收件人欄填 `{{to_email}}`、主旨 `{{subject}}`、內文可用 `{{applicant_name}}`/`{{applicant_empid}}`/`{{applicant_department}}`/`{{applicant_title}}`/`{{applicant_email}}`/`{{message}}` → 取得 **Template ID**。<br>4. Account → API Keys/General 取得 **Public Key**。<br>5. Account → Security 把 allowed origin 限 `https://n1116839.github.io`（防盜用額度）。<br>三個值給 Claude 填入 `EMAILJS_CONFIG`。計費按 send() 次數（非收件人數），一次寄全部管理者＝1 封，免費 200/月足夠。收件人＝超管 email∪超管在面板設定的管理者 email。 |
 | 最高 | 線上登入實測 | 已重新部署 Firestore rules；請用 Chrome/無痕重新登入，若仍錯需抓 browser console `permission-denied` 細節與 `gdpUsers/{uid}` 狀態。 |
 | 高 | 權限管理畫面完成度盤點 | 使用者回報「沒有權限管理的畫面」；需先分清是未登入導致看不到，還是管理面板功能尚未補齊，再決定補 UI 或補角色顯示說明。 |
