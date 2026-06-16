@@ -14,6 +14,19 @@
 - 登入卡正常渲染＝Firebase app＋authMod 已載入，故失敗點在**伺服器端未啟用 Google 供應商**（會回 `auth/configuration-not-found`）。
 - 使用者待辦（免費、免金鑰）：Firebase Console → Authentication → Sign-in method 啟用 Google；Authorized domains 確認含 `n1116839.github.io`。啟用後新錯誤訊息會直接顯示 code，便於精準定位。
 
+### ✅ 實機結果（使用者本人操作，已成功登入進站）
+1. **快取陷阱**：使用者「永久連結」會用 IE 開（吃舊快取，一直看到 Line/Outlook＋舊錯誤），改用 **Chrome 貼網址**才載到新版。→ 教訓：驗收一律請使用者用 Chrome／無痕，IE/快取會誤導。
+2. **三段式錯誤訊息照順序引導成功**：
+   - 先跳「Google 登入尚未在 Firebase 啟用」→ 使用者到 Authentication 點「開始使用」→ 登入方式→Google→啟用→存（Spark 免費方案，$0）。
+   - 再跳「目前網域未授權」→ 使用者到 設定→授權網域→新增 `n1116839.github.io`（類型 Custom）。
+   - 重新整理→Google 彈窗選帳號→**超管 `tom741285@gmail.com` 自動 active＋文管，秒進站**。新版可診斷錯誤訊息功不可沒。
+3. **第②頁（profile 填工號）使用者看不到＝正常**：超管 bootstrap 自動跳過 profile/pending 直接 ready（gateState §1798）。本機 preview 模擬非超管 user 強制 `state=profile`，四欄（員工編號/姓名/部門9項/職稱）渲染正常。
+
+### 下次待辦（更新）
+1. **帳號審核 UI（升為第一優先）**：使用者想完整測「一般員工申請→超管核准→進站」。目前一般帳號註冊後停在 pending，**管理面板尚無「待審核清單→核准設角色」介面**，超管無法放行。需在 `adminConsoleSection` 補：讀 `gdpUserApplications`/`gdpUsers` pending 清單→核准（設 roles＋status:active）＋寫 `gdpAuditLogs`。
+2. 真實測第②/③頁：使用者用第二個非超管 Gmail（無痕）登入即可走 profile→pending。
+3. （原）page③ 依職稱過濾各部門內容。
+
 ---
 
 ## 2026-06-16 第一百一十五次：登入入口重做為進站前 Google 三頁式關卡（Phase 3 動工）✅
