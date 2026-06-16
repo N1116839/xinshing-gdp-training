@@ -1,6 +1,6 @@
 # 新勝 GDP 專案交接（精簡版）
 
-> 最後更新：2026-06-16（第118次，登入卡住修復＋開工資料精簡）
+> 最後更新：2026-06-16（第119次，線上 rules 重新部署修復超管初始化）
 > 原則：本檔只保留「最新可接狀態、當前待辦、關鍵踩坑」。舊輪次完整流水帳不再放在開工入口；歷史重點已整理進第二大腦專案筆記與踩坑紀錄。
 
 ---
@@ -14,8 +14,21 @@
 | Firebase rules | `Firebase設定/firestore.rules` |
 | 分支 | `codex/gdp-html-training-pages` |
 | 永久網址 | `https://n1116839.github.io/xinshing-gdp-training/` |
-| 最新本輪修正 | 登入 gate 不再永遠卡在「登入狀態確認中」 |
-| 本輪驗收 | `JS_PARSE_OK 1`、`verify_facts_ghpages.mjs 1296/1296` |
+| 最新本輪修正 | 使用者回報仍無法登入，畫面顯示「超管帳號初始化失敗」；已重新部署 Firestore rules |
+| 本輪驗收 | Firebase rules `compiled successfully` 並 `released rules` 到 `xinshing-gdp-training-20260525`；GitHub Pages HTML 已含登入錯誤出口與同意書修正 |
+
+### 第119次本輪處理
+
+使用者回報：永久網址仍無法登入，畫面不再卡「登入狀態確認中」，而是顯示「超管帳號初始化失敗，請確認 Firestore rules 已部署，或登出後重新登入。」
+
+本輪判斷與處理：
+
+- 永久網址實測 HTML 已包含第118次修正：`超管帳號初始化失敗`、`gdpConsentLogs`、`roles:["doc_superadmin"]`、`CONSENT_VERSION = "2026-06-16"` 皆命中，排除線上 HTML 舊版問題。
+- 本機 `Firebase設定/firestore.rules` 已有超管 email 放行、`gdpUsers` 超管自建 active profile 分支，以及 `gdpConsentLogs` append-only 規則。
+- 重新執行 `npx firebase-tools deploy --only firestore:rules`，目標專案 `xinshing-gdp-training-20260525`，部署結果：rules 編譯成功並 release 到 Cloud Firestore。
+- 本輪未修改 HTML / rules 檔案內容；Git 工作樹無已追蹤檔差異，沒有未推送 commit。
+
+下次若使用者仍看到同一錯誤，優先請使用者按畫面「登出後重新登入」，或用 Chrome 無痕重新登入 `tom741285@gmail.com`。若仍失敗，再查 Firebase Console Authentication 使用者 email、Firestore `gdpUsers/{uid}` 是否已有舊 pending profile，以及 browser console 的 permission-denied 詳細錯誤。
 
 ### 第118次本輪修正
 
@@ -88,7 +101,7 @@
 
 | 優先 | 項目 | 備註 |
 |---|---|---|
-| 最高 | 線上登入實測 | 推送後用 Chrome/無痕開永久網址，確認不再卡 loading；若仍錯，畫面應顯示可診斷錯誤與登出。 |
+| 最高 | 線上登入實測 | 已重新部署 Firestore rules；請用 Chrome/無痕重新登入，若仍錯需抓 browser console `permission-denied` 細節與 `gdpUsers/{uid}` 狀態。 |
 | 高 | 管理面板加「同意書／審核紀錄查詢」頁 | 讀 `gdpConsentLogs`、`gdpRoleChangeLogs`、`gdpAuditLogs`；限管理者。 |
 | 中 | page③ 依職稱過濾各部門內容 | 需用 §44.5 標籤與 §48 權限矩陣，注意靜態站前端遮蔽不是真正資料保護。 |
 | 中 | 帳號審核擴充 | 晉升、降職、離職停用、兼任/代理。 |
