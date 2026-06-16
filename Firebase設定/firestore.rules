@@ -10,12 +10,21 @@ service cloud.firestore {
     function isSelf(uid) {
       return signedIn() && request.auth.uid == uid;
     }
-    function isAdmin() {
+    // §38／§48 超級管理員（文管・開發者）：hardcode email，解超管啟動死結。
+    // 與 HTML 的 SUPER_ADMIN_EMAILS 必須一致。
+    function isSuperAdminEmail() {
       return signedIn()
+        && request.auth.token.email != null
+        && request.auth.token.email.lower() in ['tom741285@gmail.com'];
+    }
+    function isAdmin() {
+      return isSuperAdminEmail() || (
+        signedIn()
         && exists(userPath(request.auth.uid))
         && get(userPath(request.auth.uid)).data.status == 'active'
         && get(userPath(request.auth.uid)).data.roles is list
-        && get(userPath(request.auth.uid)).data.roles.hasAny(['gdp_admin','doc_superadmin','rp_admin','qa_admin','sales_lead','warehouse_lead']);
+        && get(userPath(request.auth.uid)).data.roles.hasAny(['gdp_admin','doc_superadmin','rp_admin','qa_admin','sales_lead','warehouse_lead'])
+      );
     }
     match /gdpUsers/{uid} {
       allow read: if isSelf(uid) || isAdmin();
@@ -35,7 +44,8 @@ service cloud.firestore {
         && request.resource.data.roles is list
         && request.resource.data.roles.size() == 1
         && request.resource.data.roles[0] == 'staff'
-        && request.resource.data.status == 'pending';
+        && request.resource.data.status == 'pending'
+        || (isSelf(uid) && isSuperAdminEmail());
       allow update: if isAdmin()
         || (isSelf(uid)
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name','department','title','updatedAt']));

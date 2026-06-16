@@ -1,3 +1,39 @@
+## 2026-06-16 第一百一十五次：登入入口重做為進站前 Google 三頁式關卡（Phase 3 動工）✅
+
+使用者裁示：codex 第113次誤把登入做成導覽列裡的「管理專區」section（內容照樣全顯示）。正確需求是**進站前的全屏登入關卡**——像 AI 登入那樣先選帳號（Google/Line/Outlook），第②頁填工號職稱，第③頁才依職稱進平台。使用者用 Google 登入、工號 031、開發者＝文管（§48 doc_superadmin）。
+
+### 使用者拍板（AskUserQuestion）
+- **登入方式只做 Google**：Outlook 需 Azure 金鑰、Line 無法免費（需付費 Identity Platform）→ 兩者都不做，picker 顯示「即將開放／暫不提供」灰階。
+- **管理專區改為登入後、僅管理員/超管可見的面板**（移出導覽列）。
+
+### 本次完成（`HTML資料庫/新勝GDP資料庫.html`）
+1. **全屏關卡 `#authGate`（覆蓋層架構，不改寫既有 showSection／平台渲染，改壞可移除覆蓋層復原）**：`gateState()` 狀態機 loading→picker→profile→pending→ready（離線/錯誤另計）。
+   - **① picker**：Google 可用（`signInWithPopup`＋`GoogleAuthProvider`，`prompt:select_account`），Line/Outlook 灰階。
+   - **② profile**：Google 登入但無 `gdpUsers` 檔 → 填工號/姓名(自動帶入 displayName)/部門(9 項下拉)/職稱 → 寫 `gdpUsers`(staff/pending)＋`gdpUserApplications`。
+   - **③ pending**：待審核頁；active 才 `ready` 收起關卡進站。
+2. **超管 bootstrap（解死結）**：`SUPER_ADMIN_EMAILS=["tom741285@gmail.com"]` hardcode；`ensureSuperAdmin()` 一登入自動建/升為 `active`＋`doc_superadmin`(工號預設 031)，免等審核。對應 `firestore.rules` 加 `isSuperAdminEmail()`、`isAdmin()` 納入超管、`gdpUsers` create 放行超管自建 active，**已 `npx firebase-tools deploy --only firestore:rules` 部署成功**(compiled+released)。
+3. **管理專區搬移**：`navGroups` 移除「管理專區」；頁首改 `管理面板`(canAdmin 才顯示)＋`登出`鈕；`adminConsoleSection` 移除舊 email/密碼登入＋申請表單，改「目前登入身分＋登出」，保留帳號審核脈絡＋AI 變更草稿；section 標題改「管理面板與 AI 助手」。
+
+### 驗收
+- `JS_PARSE_OK`、`verify_facts 1296/1296`、合規掃描通過。
+- Launch 預覽實機：picker 渲染正確(Google 可用/Line/Outlook 灰階)、無 console error、平台被完整遮蓋、導覽列已無管理專區。
+- 狀態機 mock 驗證：profile(表單4欄＋姓名帶入＋部門9項)、pending(申請人訊息＋登出)、超管 email 大小寫不敏感→ready 收起關卡、canAdmin/isSuperAdmin true、管理面板鈕顯示、admin-console 無舊登入框且保留 AI 草稿。
+- **無法自驗**：真正的 Google 彈窗登入需真人 Google 帳號互動，由使用者以 031 帳號實測。
+
+### ⚠️ 使用者需在 Firebase Console 做（否則 Google 登入會失敗）
+1. Authentication → Sign-in method → **啟用 Google** 供應商。
+2. Authentication → Settings → Authorized domains → 確認含 `n1116839.github.io`（GH Pages 網域）。
+
+### 安全邊界（已向使用者明示）
+- GitHub Pages 純靜態站，關卡用 JS 遮蓋＝**體驗關卡非真正權限牆**（KB 內容仍在 HTML 原始碼，View Source 可讀；§43「不可只靠前端隱藏」）。真正鎖死要把資料搬 Firestore 用 rules 保護，屬更大工程。
+
+### 下次待辦（接續）
+1. **page ③「依職稱過濾各部門內容」**：用 §44.5 休眠 `departments`/`allowedRoles` 標籤做 chokepoint 過濾（超管/管理員看全部、員工看共用＋所屬部門）。本次刻意不混入核心關卡，降低誤藏風險。
+2. **帳號審核 UI**：管理面板補「待審核帳號清單→核准設角色」（目前只有超管自動 active，一般員工 pending 後需此 UI 才能放行）。
+3. 使用者啟用 Google 供應商後，以 031 實機登入驗證三頁流程。
+
+---
+
 ## 2026-06-16 第一百一十四次：桌面版管理專區跑版實機修正 ✅
 
 使用者開工要求「用桌面版檢查版型是否有跑掉」。本輪按開工規則讀取最新交接、GDP 規範、視覺報告、測驗規範與第二大腦後，用 Chrome headless 以桌面寬度 `1365×900` 實際渲染 GitHub Pages 與本機 HTML。

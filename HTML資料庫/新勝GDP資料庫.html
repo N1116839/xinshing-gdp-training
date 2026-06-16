@@ -50,6 +50,33 @@
     .auth-chip.admin{color:#0b5f4d;background:#f0fbf5;border-color:#b9ddd3}
     .auth-mini-btn{min-height:34px;padding:6px 12px;border:1px solid var(--brand);border-radius:999px;background:#fff;color:var(--brand);font:inherit;font-size:13px;font-weight:800;cursor:pointer}
     .auth-mini-btn:hover{background:var(--brand);color:#fff}
+    .auth-mini-btn.secondary{border-color:var(--line);color:var(--ink-soft)}
+    .auth-mini-btn.secondary:hover{background:var(--ink-soft);color:#fff;border-color:var(--ink-soft)}
+    /* 進站前登入關卡（三頁式：選帳號→填資料→審核） */
+    .auth-gate{position:fixed;inset:0;z-index:4000;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(160deg,#0b5f4d,#0a4a52);overflow:auto}
+    .auth-gate[hidden]{display:none}
+    .gate-card{width:min(420px,100%);background:#fff;border-radius:16px;padding:28px 24px;box-shadow:0 24px 60px rgba(0,0,0,.28);display:grid;gap:14px}
+    .gate-brand{font-size:20px;font-weight:900;color:var(--brand);text-align:center;line-height:1.4}
+    .gate-sub{margin:0;text-align:center;color:var(--ink);font-size:14px;line-height:1.6}
+    .gate-status{margin:0;text-align:center;color:var(--ink-soft)}
+    .gate-note{margin:0;text-align:center;color:var(--ink-soft);font-size:12px;line-height:1.6}
+    .gate-providers{display:grid;gap:10px;margin-top:4px}
+    .gate-provider{display:flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);font:inherit;font-size:15px;font-weight:800;cursor:pointer}
+    .gate-provider:hover:not(:disabled){border-color:var(--brand);background:#f0fbf5}
+    .gate-provider.google{border-color:#dadce0}
+    .gate-provider.disabled{opacity:.5;cursor:not-allowed;background:#f6f7f7}
+    .gate-provider-icon{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;background:#eef3f2;color:var(--brand);font-weight:900;font-size:14px}
+    .gate-provider.google .gate-provider-icon{background:#fff;color:#4285f4;border:1px solid #dadce0}
+    .gate-provider-icon.line{background:#06c755;color:#fff}
+    .gate-provider-icon.ms{background:#0078d4;color:#fff}
+    .gate-soon{margin-left:auto;font-size:11px;font-weight:800;color:var(--ink-soft);background:#eef0f0;border-radius:999px;padding:2px 8px}
+    .gate-form{display:grid;gap:10px}
+    .gate-form label{display:grid;gap:4px;font-size:13px;font-weight:700;color:var(--ink-soft)}
+    .gate-form input,.gate-form select{min-height:40px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font:inherit;box-sizing:border-box;width:100%}
+    .gate-info{display:grid;gap:6px;background:#f7fbfb;border:1px solid var(--line);border-radius:10px;padding:12px}
+    .gate-info>div{display:flex;justify-content:space-between;gap:12px;font-size:13px;color:var(--ink-soft)}
+    .gate-info>div span:last-child{color:var(--ink);font-weight:800;text-align:right}
+    .gate-text-btn{justify-self:center;background:none;border:none;color:var(--brand);font:inherit;font-size:13px;font-weight:800;cursor:pointer;text-decoration:underline}
     .hero{position:relative;display:grid;gap:18px;margin-bottom:22px;min-height:300px;padding:34px;background:rgba(255,255,255,.88);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;isolation:isolate}
     .hero::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(247,251,251,.98) 0%,rgba(247,251,251,.88) 42%,rgba(247,251,251,.28) 76%),var(--hero-image,url("assets/gdp-training-hero.png")) center right/cover no-repeat;z-index:-2}
     .hero::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:7px;background:linear-gradient(90deg,var(--brand),var(--gold));z-index:-1}
@@ -869,7 +896,8 @@
       </div>
       <div class="top-actions">
         <div class="auth-chip pending" id="authChip">未登入</div>
-        <button class="auth-mini-btn" id="authJumpBtn" type="button">管理登入</button>
+        <button class="auth-mini-btn" id="authAdminBtn" type="button" hidden>管理面板</button>
+        <button class="auth-mini-btn secondary" id="authLogoutBtn2" type="button" hidden>登出</button>
         <div class="status"><span id="dbDot" class="dot"></span><span id="dbStatus">Q&A 連線中</span></div>
       </div>
     </div>
@@ -885,6 +913,7 @@
 </div>
 <button class="back-to-top" id="backToTop" type="button" aria-label="回到最上面"><span class="bt-arrow">↑</span><span class="bt-label">回到最上面</span></button>
 <div id="studySheetPrint" aria-hidden="true"></div>
+<div id="authGate" class="auth-gate" aria-label="登入"></div>
 <script>
 window.GDP_FIREBASE_CONFIG = {
   apiKey: "AIzaSyBX6Z31XPRIMEzQuIpHL-6ptgV40rum8gI",
@@ -1384,10 +1413,10 @@ const sections = [
     id:"admin-console",
     departments:["*"],allowedRoles:["admin"],
     group:"管理專區",
-    title:"管理登入與 AI 助手",
-    tag:"登入・角色・變更審核",
-    lead:"管理者在此登入後，可建立帳號與職務異動、教材修正、題庫調整或網站功能需求的待審核草稿。每一筆草稿都會整理修改前、修改後、影響範圍與核准狀態，管理者可核准或退回，不直接覆蓋正式教材與題庫。",
-    pills:["登入狀態","帳號申請","AI 變更草稿","修改前後對照","核准紀錄"],
+    title:"管理面板與 AI 助手",
+    tag:"角色・帳號審核・變更審核",
+    lead:"登入後（管理者／超管）在此可建立帳號與職務異動、教材修正、題庫調整或網站功能需求的待審核草稿。每一筆草稿都會整理修改前、修改後、影響範圍與核准狀態，管理者可核准或退回，不直接覆蓋正式教材與題庫。",
+    pills:["登入身分","帳號審核","AI 變更草稿","修改前後對照","核准紀錄"],
     focus:[],
     standards:{picsgdp:[],taiwan:[],company:[],docs:[]},
     qa:false
@@ -1675,6 +1704,10 @@ const roleLabels = {
   pharmacist:"管理藥師"
 };
 const adminRoleIds = ["gdp_admin","doc_superadmin","rp_admin","qa_admin","sales_lead","warehouse_lead"];
+// §38／§48 超級管理員（文管・開發者）：hardcode email，登入即自動 active＋doc_superadmin（解超管啟動死結）。
+// 若 GDP 站要改用其他 Google 帳號，改這裡並同步 Firebase設定/firestore.rules 的 isSuperAdminEmail()。
+const SUPER_ADMIN_EMAILS = ["tom741285@gmail.com"];
+const KNOWN_DEPARTMENTS = ["文管","品保","業務","採購","倉庫","人事","管理藥師","GDP權責人","其他"];
 const authStore = {
   ready:false,
   user:null,
@@ -1685,9 +1718,10 @@ const authStore = {
     this.initPromise=this._init();
     return this.initPromise;
   },
+  gateError:null,
   async _init(){
     await qaStore.init();
-    if(!qaStore.app) { this.updateChip(); return false; }
+    if(!qaStore.app) { this.ready=true; this.gateError="目前無法連線登入服務，請稍後重新整理。"; this.updateChip("登入服務未連線"); renderAuthGate(); return false; }
     try{
       const authMod=await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js");
       this.authMod=authMod;
@@ -1695,15 +1729,22 @@ const authStore = {
       authMod.onAuthStateChanged(this.auth,async user=>{
         this.user=user;
         this.profile=null;
-        if(user) await this.loadProfile();
+        if(user){
+          await this.loadProfile();
+          await this.ensureSuperAdmin();
+        }
         this.ready=true;
         this.updateChip();
-        if(current==="admin-console") await showSection("admin-console");
+        renderAuthGate();
+        if(this.gateState()==="ready" && current==="admin-console") await showSection("admin-console");
       });
       return true;
     }catch(e){
       console.warn("登入模組初始化失敗",e);
+      this.ready=true;
+      this.gateError="登入模組暫時無法使用，請重新整理或稍後再試。";
       this.updateChip("登入模組暫時無法使用");
+      renderAuthGate();
       return false;
     }
   },
@@ -1719,9 +1760,49 @@ const authStore = {
       return null;
     }
   },
+  isSuperAdminEmail(email){
+    return !!email && SUPER_ADMIN_EMAILS.map(e=>e.toLowerCase()).includes(email.toLowerCase());
+  },
+  isSuperAdmin(){
+    return this.isSuperAdminEmail(this.user?.email) || (this.profile?.roles||[]).includes("doc_superadmin");
+  },
+  // 超管首次登入：rules 也放行同一 email 自建 active+doc_superadmin。
+  async ensureSuperAdmin(){
+    if(!this.user || !this.isSuperAdminEmail(this.user.email) || !qaStore.db) return;
+    const ok=this.profile && this.profile.status==="active" && (this.profile.roles||[]).includes("doc_superadmin");
+    if(ok) return;
+    try{
+      const {doc,setDoc,serverTimestamp}=qaStore.firebase;
+      const profile={
+        uid:this.user.uid,
+        email:this.user.email,
+        empId:this.profile?.empId || "031",
+        name:this.profile?.name || this.user.displayName || "文管",
+        department:this.profile?.department || "文管",
+        title:this.profile?.title || "文管（開發者）",
+        roles:["doc_superadmin"],
+        status:"active",
+        updatedAt:serverTimestamp()
+      };
+      if(!this.profile) profile.createdAt=serverTimestamp();
+      await setDoc(doc(qaStore.db,"gdpUsers",this.user.uid),profile,{merge:true});
+      await this.loadProfile();
+    }catch(e){ console.warn("超管帳號初始化失敗（請確認 rules 已部署）",e); }
+  },
+  // 關卡狀態機：loading→picker→profile→pending→ready（離線/錯誤另計）。
+  gateState(){
+    if(!this.ready) return "loading";
+    if(this.gateError) return "error";
+    if(!this.authMod) return "error";
+    if(!this.user) return "picker";
+    if(this.isSuperAdminEmail(this.user.email)) return (this.profile?.status==="active") ? "ready" : "loading";
+    if(!this.profile) return "profile";
+    if(this.profile.status!=="active") return "pending";
+    return "ready";
+  },
   canAdmin(){
     const roles=this.profile?.roles||[];
-    return this.profile?.status==="active" && roles.some(r=>adminRoleIds.includes(r));
+    return (this.profile?.status==="active" && roles.some(r=>adminRoleIds.includes(r))) || this.isSuperAdmin();
   },
   displayName(){
     return this.profile?.name || this.user?.displayName || this.user?.email || "未登入";
@@ -1735,6 +1816,11 @@ const authStore = {
   },
   updateChip(message){
     const chip=document.getElementById("authChip");
+    const adminBtn=document.getElementById("authAdminBtn");
+    const logoutBtn=document.getElementById("authLogoutBtn2");
+    const signedReady=!!this.user && this.gateState()==="ready";
+    if(adminBtn) adminBtn.hidden=!(signedReady && this.canAdmin());
+    if(logoutBtn) logoutBtn.hidden=!this.user;
     if(!chip) return;
     chip.classList.remove("admin","pending");
     if(message){
@@ -1750,41 +1836,41 @@ const authStore = {
     chip.textContent=`${this.displayName()}｜${this.roleText()}`;
     chip.classList.add(this.canAdmin()?"admin":"pending");
   },
-  async signIn(email,password){
-    const {signInWithEmailAndPassword}=this.authMod;
-    await signInWithEmailAndPassword(this.auth,email,password);
+  async signInWithGoogle(){
+    if(!this.authMod||!this.auth) throw new Error("auth unavailable");
+    const provider=new this.authMod.GoogleAuthProvider();
+    provider.setCustomParameters({prompt:"select_account"});
+    await this.authMod.signInWithPopup(this.auth,provider);
   },
-  async register(data){
-    const {createUserWithEmailAndPassword}=this.authMod;
-    const cred=await createUserWithEmailAndPassword(this.auth,data.email,data.password);
-    const uid=cred.user.uid;
-    if(qaStore.db){
-      const {doc,setDoc,collection,addDoc,serverTimestamp}=qaStore.firebase;
-      const profile={
-        uid,
-        email:data.email,
-        empId:data.empId,
-        name:data.name,
-        department:data.department,
-        title:data.title,
-        roles:["staff"],
-        status:"pending",
-        createdAt:serverTimestamp(),
-        updatedAt:serverTimestamp()
-      };
-      await setDoc(doc(qaStore.db,"gdpUsers",uid),profile,{merge:true});
-      await addDoc(collection(qaStore.db,"gdpUserApplications"),{
-        uid,
-        email:data.email,
-        empId:data.empId,
-        name:data.name,
-        department:data.department,
-        title:data.title,
-        requestedRoles:["staff"],
-        status:"pending",
-        createdAt:serverTimestamp()
-      });
-    }
+  // Google 登入後，員工填工號/職稱建立 gdpUsers（staff/pending）＋送審申請。
+  async registerProfile(data){
+    if(!this.user||!qaStore.db) throw new Error("尚未登入或資料庫未連線");
+    const uid=this.user.uid;
+    const {doc,setDoc,collection,addDoc,serverTimestamp}=qaStore.firebase;
+    const profile={
+      uid,
+      email:this.user.email,
+      empId:data.empId,
+      name:data.name,
+      department:data.department,
+      title:data.title,
+      roles:["staff"],
+      status:"pending",
+      createdAt:serverTimestamp(),
+      updatedAt:serverTimestamp()
+    };
+    await setDoc(doc(qaStore.db,"gdpUsers",uid),profile,{merge:true});
+    await addDoc(collection(qaStore.db,"gdpUserApplications"),{
+      uid,
+      email:this.user.email,
+      empId:data.empId,
+      name:data.name,
+      department:data.department,
+      title:data.title,
+      requestedRoles:["staff"],
+      status:"pending",
+      createdAt:serverTimestamp()
+    });
     await this.loadProfile();
     this.updateChip();
   },
@@ -1793,6 +1879,109 @@ const authStore = {
     await this.authMod.signOut(this.auth);
   }
 };
+
+// ── 進站前登入關卡（三頁式）─────────────────────────────
+function authGateProviderButtons(){
+  return `<div class="gate-providers">
+    <button class="gate-provider google" type="button" id="gateGoogleBtn">
+      <span class="gate-provider-icon">G</span><span>使用 Google 登入</span>
+    </button>
+    <button class="gate-provider disabled" type="button" disabled aria-disabled="true">
+      <span class="gate-provider-icon line">L</span><span>使用 Line 登入</span><span class="gate-soon">即將開放</span>
+    </button>
+    <button class="gate-provider disabled" type="button" disabled aria-disabled="true">
+      <span class="gate-provider-icon ms">O</span><span>使用 Outlook 登入</span><span class="gate-soon">暫不提供</span>
+    </button>
+  </div>`;
+}
+function renderAuthGate(){
+  const gate=document.getElementById("authGate");
+  if(!gate) return;
+  const state=authStore.gateState();
+  document.body.classList.toggle("auth-open", state!=="ready");
+  if(state==="ready"){ gate.hidden=true; gate.innerHTML=""; return; }
+  gate.hidden=false;
+  let body="";
+  if(state==="loading"){
+    body=`<div class="gate-card"><div class="gate-brand">新勝醫藥 GDP 教育訓練平台</div><p class="gate-status">登入狀態確認中…</p></div>`;
+  }else if(state==="error"){
+    body=`<div class="gate-card"><div class="gate-brand">新勝醫藥 GDP 教育訓練平台</div>
+      <p class="gate-status">${esc(authStore.gateError||"目前無法連線登入服務，請稍後重新整理。")}</p>
+      <button class="gate-provider" type="button" onclick="location.reload()"><span>重新整理</span></button></div>`;
+  }else if(state==="picker"){
+    body=`<div class="gate-card">
+      <div class="gate-brand">新勝醫藥 GDP 教育訓練平台</div>
+      <p class="gate-sub">進入教育訓練平台前，請先選擇登入方式</p>
+      ${authGateProviderButtons()}
+      <p class="gate-note">登入僅用於辨識員工身分、依職務顯示內容，不會公開您的個人資料。</p>
+    </div>`;
+  }else if(state==="profile"){
+    const name=authStore.user?.displayName||"";
+    body=`<div class="gate-card">
+      <div class="gate-brand">完善基本資料</div>
+      <p class="gate-sub">已用 ${esc(authStore.user?.email||"")} 登入，請填寫員工資料以進入平台</p>
+      <form id="gateProfileForm" class="gate-form">
+        <label>員工編號<input name="empId" required maxlength="30" placeholder="例如：031"></label>
+        <label>姓名<input name="name" required maxlength="50" value="${esc(name)}"></label>
+        <label>部門<select name="department" required>${KNOWN_DEPARTMENTS.map(d=>`<option value="${esc(d)}">${esc(d)}</option>`).join("")}</select></label>
+        <label>職稱<input name="title" required maxlength="50" placeholder="例如：倉管人員"></label>
+        <button class="gate-provider google" type="submit"><span>送出並進入</span></button>
+      </form>
+      <button class="gate-text-btn" type="button" id="gateProfileLogout">改用其他帳號登入</button>
+    </div>`;
+  }else if(state==="pending"){
+    body=`<div class="gate-card">
+      <div class="gate-brand">帳號審核中</div>
+      <p class="gate-sub">${esc(authStore.displayName())}，您的帳號已送出申請，需管理者核准角色後才能進入平台。</p>
+      <div class="gate-info">
+        <div><span>Email</span><span>${esc(authStore.user?.email||"")}</span></div>
+        <div><span>工號</span><span>${esc(authStore.profile?.empId||"")}</span></div>
+        <div><span>部門</span><span>${esc(authStore.profile?.department||"")}</span></div>
+        <div><span>狀態</span><span>待審核</span></div>
+      </div>
+      <button class="gate-text-btn" type="button" id="gatePendingLogout">登出</button>
+    </div>`;
+  }
+  gate.innerHTML=body;
+  bindAuthGate();
+}
+function bindAuthGate(){
+  const g=document.getElementById("gateGoogleBtn");
+  g?.addEventListener("click",async()=>{
+    g.disabled=true;
+    try{
+      await authStore.signInWithGoogle();
+    }catch(err){
+      g.disabled=false;
+      const code=err?.code||"";
+      if(code==="auth/popup-closed-by-user"||code==="auth/cancelled-popup-request"){ /* 使用者自行關閉 */ }
+      else if(code==="auth/operation-not-allowed") alert("Google 登入尚未在 Firebase 啟用。\n請到 Firebase Console → Authentication → Sign-in method 啟用 Google 供應商。");
+      else if(code==="auth/unauthorized-domain") alert("目前網域未授權登入。\n請到 Firebase Console → Authentication → Settings → Authorized domains 加入本網域。");
+      else { alert("登入失敗，請稍後再試。"); console.warn("Google 登入失敗",err); }
+    }
+  });
+  const pf=document.getElementById("gateProfileForm");
+  pf?.addEventListener("submit",async e=>{
+    e.preventDefault();
+    const btn=pf.querySelector("button[type=submit]");
+    if(btn) btn.disabled=true;
+    try{
+      await authStore.registerProfile({
+        empId:pf.empId.value.trim(),
+        name:pf.name.value.trim(),
+        department:pf.department.value,
+        title:pf.title.value.trim()
+      });
+      renderAuthGate();
+    }catch(err){
+      if(btn) btn.disabled=false;
+      alert("資料送出失敗，請確認欄位後再試。");
+      console.warn("建立使用者資料失敗",err);
+    }
+  });
+  document.getElementById("gateProfileLogout")?.addEventListener("click",()=>authStore.signOut());
+  document.getElementById("gatePendingLogout")?.addEventListener("click",()=>authStore.signOut());
+}
 
 const adminDraftStore = {
   key:"gdp-admin-change-drafts",
@@ -5572,33 +5761,12 @@ function adminConsoleSection(){
   const statusText=signed ? authStore.roleText() : "尚未登入";
   return `<div class="admin-layout">
     <article class="admin-card">
-      <h4>登入與帳號申請</h4>
-      <p class="admin-note">目前狀態：<strong>${esc(statusText)}</strong></p>
-      <form class="admin-form" id="authLoginForm">
-        <div class="admin-form-grid">
-          <label>Email<input name="email" type="email" autocomplete="email" required></label>
-          <label>密碼<input name="password" type="password" autocomplete="current-password" required></label>
-        </div>
-        <div class="admin-actions">
-          <button class="admin-btn" type="submit">登入</button>
-          <button class="admin-btn secondary" id="authLogoutBtn" type="button" ${signed?"":"disabled"}>登出</button>
-        </div>
-      </form>
-      <form class="admin-form" id="authRegisterForm">
-        <h4>新帳號申請</h4>
-        <div class="admin-form-grid">
-          <label>姓名<input name="name" required></label>
-          <label>員工編號<input name="empId" required></label>
-          <label>部門<input name="department" required></label>
-          <label>職稱<input name="title" required></label>
-          <label>Email<input name="email" type="email" autocomplete="email" required></label>
-          <label>密碼<input name="password" type="password" autocomplete="new-password" minlength="6" required></label>
-        </div>
-        <div class="admin-actions">
-          <button class="admin-btn secondary" type="submit">送出申請</button>
-          <span class="admin-note">申請後狀態為待審核，需管理者核准角色。</span>
-        </div>
-      </form>
+      <h4>目前登入身分</h4>
+      <p class="admin-note">狀態：<strong>${esc(statusText)}</strong></p>
+      <p class="admin-note">登入已改由進站前的關卡（Google）統一處理；此面板僅供管理者審核帳號與管理變更草稿。</p>
+      <div class="admin-actions">
+        <button class="admin-btn secondary" id="authLogoutBtn" type="button" ${signed?"":"disabled"}>登出</button>
+      </div>
     </article>
     <article class="admin-card">
       <h4>目前登入資料</h4>
@@ -5727,43 +5895,12 @@ async function renderAdminDraftList(){
 }
 let activeAdminDraft=null;
 function bindAdminConsole(){
-  const login=document.getElementById("authLoginForm");
-  const register=document.getElementById("authRegisterForm");
   const logout=document.getElementById("authLogoutBtn");
   const form=document.getElementById("adminAssistantForm");
   const preview=document.getElementById("adminPreview");
   const saveBtn=document.getElementById("adminSaveDraftBtn");
   const approveBtn=document.getElementById("adminApproveBtn");
   const rejectBtn=document.getElementById("adminRejectBtn");
-  login?.addEventListener("submit",async e=>{
-    e.preventDefault();
-    try{
-      await authStore.signIn(login.email.value.trim(),login.password.value);
-      login.reset();
-    }catch(err){
-      alert("登入失敗，請確認 email 與密碼。");
-      console.warn("登入失敗",err);
-    }
-  });
-  register?.addEventListener("submit",async e=>{
-    e.preventDefault();
-    const data={
-      name:register.name.value.trim(),
-      empId:register.empId.value.trim(),
-      department:register.department.value.trim(),
-      title:register.title.value.trim(),
-      email:register.email.value.trim(),
-      password:register.password.value
-    };
-    try{
-      await authStore.register(data);
-      register.reset();
-      alert("帳號申請已送出，請等待管理者審核。");
-    }catch(err){
-      alert("申請失敗，請確認 email 是否已註冊或密碼是否符合規則。");
-      console.warn("帳號申請失敗",err);
-    }
-  });
   logout?.addEventListener("click",async()=>authStore.signOut());
   form?.addEventListener("submit",e=>{
     e.preventDefault();
@@ -7168,7 +7305,7 @@ function renderNav(){
   const pickerPanel=document.getElementById("mobilePickerPanel");
   nav.innerHTML="";
   pickerPanel.innerHTML="";
-  const navGroups=["GDP核心","新人部門","年度行事曆","GDP 知識庫","測試專區","管理專區"];
+  const navGroups=["GDP核心","新人部門","年度行事曆","GDP 知識庫","測試專區"];
   navGroups.forEach(group=>{
     const groupSections=sections.filter(s=>s.group===group);
     if(!groupSections.length) return;
@@ -7317,11 +7454,13 @@ function fmtDate(v){
 (async function init(){
   if(renderSharedExamPacket()) return;
   renderNav();
+  renderAuthGate();
   await qaStore.init();
   await authStore.init();
   await deficiencyStore.init();
   await analyticsStore.ensureQuarterReview();
-  document.getElementById("authJumpBtn")?.addEventListener("click",()=>showSection("admin-console"));
+  document.getElementById("authAdminBtn")?.addEventListener("click",()=>showSection("admin-console"));
+  document.getElementById("authLogoutBtn2")?.addEventListener("click",()=>authStore.signOut());
   // mobile TOC button handlers
   const fab=document.getElementById("deptTocFab");
   const popup=document.getElementById("deptTocPopup");
