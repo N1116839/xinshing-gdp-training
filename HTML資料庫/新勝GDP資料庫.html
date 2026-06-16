@@ -2008,9 +2008,10 @@ function renderAuthGate(){
       <button class="gate-text-btn" type="button" id="gatePendingLogout">登出</button>
     </div>`;
   }else if(state==="consent"){
+    const maskedName=maskName(authStore.displayName());
     body=`<div class="gate-card gate-consent">
       <div class="gate-brand">平台使用聲明</div>
-      <p class="gate-sub">${esc(authStore.displayName())}（員工編號 ${esc(authStore.profile?.empId||"—")}），請詳閱以下各項，閱讀後選擇同意或不同意。</p>
+      <p class="gate-sub">員工編號 ${esc(authStore.profile?.empId||"—")}${maskedName?`（${esc(maskedName)}）`:""}，請詳閱以下各項，閱讀後選擇同意或不同意。</p>
       <ol class="gate-terms">${CONSENT_TERMS.map(t=>`<li>${t}</li>`).join("")}</ol>
       <div class="gate-consent-actions">
         <button class="gate-provider agree" type="button" id="gateConsentAgree"><span>我已閱讀並同意</span></button>
@@ -7654,6 +7655,13 @@ function fmtDate(v){
   if(!v) return "剛剛";
   if(v.toDate) return v.toDate().toLocaleString("zh-TW");
   const d=new Date(v);return isNaN(d)?"剛剛":d.toLocaleString("zh-TW");
+}
+function maskName(name){
+  const text=String(name||"").trim();
+  if(!text) return "";
+  if(text.length===1) return text;
+  if(text.length===2) return text.charAt(0)+"O";
+  return text.charAt(0)+"O"+text.charAt(text.length-1);
 }
 
 /* ═══════════════════════════════════════════════
