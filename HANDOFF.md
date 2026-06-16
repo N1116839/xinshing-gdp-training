@@ -23,8 +23,10 @@
 
 **手機登入真因與修法（`HTML資料庫/新勝GDP資料庫.html`）：**
 - 真因：iOS LINE 使用者點「改用外部瀏覽器」時跑 `window.open(_blank)`，在 LINE 內只會再開一個 LINE 內分頁、跳不出去，Google 永遠擋。
-- 修法：LINE（iOS/Android）改用官方參數 `openExternalBrowser=1`——`buildExternalBrowserUrl()` 對 `isLine` 加此 query，`openInExternalBrowser()` 直接 `location.href` 過去，LINE 會用手機預設瀏覽器重開本頁，跳出後現有 Google 登入即可完成。
-- `detectMobileLoginRisk()` 新增 `isLine`；picker 在 LINE 內按鈕文字改「跳出 LINE 用瀏覽器開啟並登入」＋白話說明。非 LINE 的 Android WebView 維持 `intent://`。
+- 修法（iOS）：iOS LINE 用官方參數 `openExternalBrowser=1`，`location.href` 過去 → LINE 用 Safari 重開本頁。
+- 修法（Android，第二輪修正）：使用者回報 Android 仍失敗。原因 ① openExternalBrowser=1 在 Android LINE 頁內導頁不一定攔截跳出 ② 舊 `intent://` 帶了頁面 hash → 變成 `intent://...#xxx#Intent;...` 雙 # 壞網址、又硬指定 `com.android.chrome`。改為：Android 一律走乾淨 `intent://host/path?[openExternalBrowser=1]#Intent;scheme=https;action=android.intent.action.VIEW;end`（用 origin+pathname+search 去掉頁面 hash、不強制 Chrome 用系統預設瀏覽器）。
+- **保證退路**：LINE picker 加「複製本頁網址」鈕＋手動提示（LINE 右上「⋯」→用其他瀏覽器開啟，或複製貼到 Chrome），自動跳出失敗也能登入。
+- `detectMobileLoginRisk()` 新增 `isLine`；picker 在 LINE 內按鈕文字「跳出 LINE 用瀏覽器開啟並登入」、不顯示 Google 鈕。
 
 **待審核角標（§38.2 後台角標）：**
 - 頁首「管理面板」鈕加 `#adminPendingBadge` 紅色數字；`refreshPendingBadge()` 讀 `userApprovalStore.listPending()`，在 `updateChip()`（管理者登入時）與核准/退回後刷新；0 筆隱藏。
@@ -153,7 +155,7 @@
 | 優先 | 項目 | 備註 |
 |---|---|---|
 | 最高 | LINE 手機登入實機複測 | 第122次已改用 `openExternalBrowser=1` 跳出 LINE；待使用者在 LINE 內實測：點「跳出 LINE 用瀏覽器開啟並登入」→ 應跳到手機預設瀏覽器 → Google 登入成功。若仍失敗回報是 iOS 或 Android、跳出後的錯誤碼。 |
-| 最高 | 安裝 Trigger Email 擴充（使用者動作） | email 通知前端＋rules 已備妥並 deploy；使用者須到 Firebase Console 安裝「Trigger Email from Firestore」擴充、集合設 `mail`、設定 SMTP/SendGrid，才會真的寄信。 |
+| 最高 | email 通知卡在計費方案（待使用者決定） | `mail` 集合前端＋rules 已備妥並 deploy。實測 `ext:install firebase/firestore-send-email` 被擋：**專案是 Spark，Trigger Email 擴充強制要 Blaze（付費）方案**＋需 SMTP 憑證。兩個選項待使用者選：①升 Blaze＋給 Gmail 應用程式密碼/SendGrid 金鑰，我裝擴充；②改用 EmailJS（免 Blaze、適合靜態站），使用者開免費帳號給我 Service/Template ID＋Public Key，我改前端走 EmailJS。寄信一定要使用者提供寄件身分憑證，AI 無法自建。 |
 | 最高 | 線上登入實測 | 已重新部署 Firestore rules；請用 Chrome/無痕重新登入，若仍錯需抓 browser console `permission-denied` 細節與 `gdpUsers/{uid}` 狀態。 |
 | 高 | 權限管理畫面完成度盤點 | 使用者回報「沒有權限管理的畫面」；需先分清是未登入導致看不到，還是管理面板功能尚未補齊，再決定補 UI 或補角色顯示說明。 |
 | 高 | 管理面板加「同意書／審核紀錄查詢」頁 | 讀 `gdpConsentLogs`、`gdpRoleChangeLogs`、`gdpAuditLogs`；限管理者。 |

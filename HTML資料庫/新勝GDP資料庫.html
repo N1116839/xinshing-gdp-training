@@ -2033,12 +2033,16 @@ const authStore = {
 function authGateProviderButtons(){
   const info=detectMobileLoginRisk();
   if(info.risky){
-    const label=info.isLine?"跳出 LINE 用瀏覽器開啟並登入":(info.android?"先用 Chrome 開啟":"先改用外部瀏覽器");
+    const label=info.isLine?"跳出 LINE 用瀏覽器開啟並登入":(info.android?"用預設瀏覽器開啟":"先改用外部瀏覽器");
+    const manualHint=info.isLine
+      ? `若沒有自動跳出：點 ${info.appName} 右上角「⋯」→「用其他／預設瀏覽器開啟」，或按下方複製網址、貼到 ${info.browserHint} 開啟。`
+      : `若沒有自動跳出：請手動複製下方網址，貼到 ${info.browserHint} 開啟。`;
     return `<div class="gate-providers">
       <button class="gate-provider google" type="button" id="gateExternalBrowserBtn">
         <span class="gate-provider-icon">↗</span><span>${label}</span>
       </button>
-      <p class="gate-note">${esc(info.appName||"App 內建瀏覽器")}內無法完成 Google 登入。點上方按鈕會用手機${esc(info.browserHint)}重新開啟本頁，再登入即可。</p>
+      <button class="auth-mini-btn secondary" type="button" id="gateCopyUrlBtn" style="width:100%">複製本頁網址</button>
+      <p class="gate-note">${esc(info.appName||"App 內建瀏覽器")}內無法完成 Google 登入。${esc(manualHint)}</p>
     </div>`;
   }
   return `<div class="gate-providers">
@@ -2123,6 +2127,12 @@ function bindAuthGate(){
       status.textContent=`目前是從 ${info.appName||"App 內建瀏覽器"} 開啟，請先切到 ${info.browserHint} 後再登入。`;
     }
     openInExternalBrowser();
+  });
+  const copyUrlBtn=document.getElementById("gateCopyUrlBtn");
+  copyUrlBtn?.addEventListener("click",async()=>{
+    const ok=await copyCurrentPageUrl();
+    copyUrlBtn.textContent=ok?"已複製，貼到瀏覽器開啟":"複製失敗，請長按網址手動複製";
+    setTimeout(()=>{ copyUrlBtn.textContent="複製本頁網址"; },2600);
   });
   const g=document.getElementById("gateGoogleBtn");
   g?.addEventListener("click",async()=>{
@@ -7812,7 +7822,15 @@ function detectMobileLoginRisk(){
 function buildExternalBrowserUrl(){
   const clean=location.origin+location.pathname+location.search+location.hash;
   const info=detectMobileLoginRisk();
-  // LINE 內建瀏覽器（iOS/Android 皆適用）：openExternalBrowser=1 會讓 LINE 用手機預設瀏覽器開啟。
+  // Android：用 intent:// 開「系統預設瀏覽器」逃出 WebView/LINE。
+  // 不強制 com.android.chrome（預設瀏覽器不是 Chrome 也能開）；用 origin+pathname+search（去掉頁面 hash，避免 intent 變成雙 # 壞網址）。
+  if(info.android){
+    const base=new URL(location.origin+location.pathname+location.search);
+    if(info.isLine) base.searchParams.set("openExternalBrowser","1");
+    const hostPathQuery=base.toString().replace(/^https?:\/\//,"");
+    return `intent://${hostPathQuery}#Intent;scheme=https;action=android.intent.action.VIEW;end`;
+  }
+  // iOS LINE：openExternalBrowser=1 會讓 LINE 用 Safari 開啟（iOS 上可靠）。
   if(info.isLine){
     try{
       const u=new URL(location.href);
@@ -7822,23 +7840,19 @@ function buildExternalBrowserUrl(){
       return clean+(clean.includes("?")?"&":"?")+"openExternalBrowser=1";
     }
   }
-  if(info.android){
-    const withoutScheme=clean.replace(/^https?:\/\//,"");
-    return `intent://${withoutScheme}#Intent;scheme=https;package=com.android.chrome;end`;
-  }
   return clean;
 }
 function openInExternalBrowser(){
   const info=detectMobileLoginRisk();
   const clean=location.origin+location.pathname+location.search+location.hash;
-  // LINE：導到帶 openExternalBrowser=1 的網址，LINE 會自動跳到手機預設瀏覽器（最可靠）。
-  if(info.isLine){
+  // Android：intent:// 交給系統開預設瀏覽器（逃出 LINE/WebView）。
+  if(info.android){
     location.href=buildExternalBrowserUrl();
     return;
   }
-  if(info.android){
+  // iOS LINE：導到帶 openExternalBrowser=1 的網址，LINE 會自動跳到 Safari。
+  if(info.isLine){
     location.href=buildExternalBrowserUrl();
-    setTimeout(()=>{ location.href=clean; },900);
     return;
   }
   window.open(clean,"_blank","noopener");
