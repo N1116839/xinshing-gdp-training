@@ -24,17 +24,21 @@
 - 新功能標記掃描通過：`admin-console`、`authStore`、`adminDraftStore`、`AI 管理助理：變更草稿`、`修改前 / 修改後`、`gdpChangeDrafts` 全命中。
 - `node verify_facts_ghpages.mjs`：`1296/1296` 通過，未破壞智慧查詢 facts。
 
-### 未完成 / 需使用者核准
-1. **Firestore rules 尚未部署**：嘗試部署被安全審查擋下，原因是會改線上 Firestore 存取權限；需使用者明確授權「部署 Firestore rules」後再執行。
-2. **第一個超管帳號尚未建立**：正式可用前需在 Firebase Auth 建立/指定第一個 `doc_superadmin` 或 `gdp_admin`，並在 `gdpUsers/{uid}` 設 `status:"active"`、對應 roles。
-3. **全站權限過濾尚未接上**：本輪只做登入骨架與管理助手草稿層；未改導覽、智慧查詢、快速查詢、題庫或行事曆的資料層過濾，避免未確認權限表就影響現有學員頁。
-4. **瀏覽器實機操作驗收未完成**：Browser/Node REPL 與 Playwright 皆受本機環境限制，localhost serve 也未成功回應；本輪僅完成語法、標記與 facts 驗收。下輪需用可用瀏覽器或 GitHub Pages 部署後實機檢查管理專區。
+### 部署補記（2026-06-16）
+- 使用者明確指示「部屬」（部署），已執行：
+  - `npx -y firebase-tools deploy --only firestore:rules --project xinshing-gdp-training-20260525`
+  - Firestore rules compiled successfully
+  - released rules to cloud.firestore
+
+### 未完成 / 需使用者確認
+1. **第一個超管帳號尚未建立**：正式可用前需在 Firebase Auth 建立/指定第一個 `doc_superadmin` 或 `gdp_admin`，並在 `gdpUsers/{uid}` 設 `status:"active"`、對應 roles。
+2. **全站權限過濾尚未接上**：本輪只做登入骨架與管理助手草稿層；未改導覽、智慧查詢、快速查詢、題庫或行事曆的資料層過濾，避免未確認權限表就影響現有學員頁。
+3. **瀏覽器實機操作驗收未完成**：Browser/Node REPL 與 Playwright 皆受本機環境限制，localhost serve 也未成功回應；本輪僅完成語法、標記與 facts 驗收。下輪需用可用瀏覽器或 GitHub Pages 部署後實機檢查管理專區。
 
 ### 下次建議
-1. 使用者若同意，明確說「部署 Firestore rules」，再執行 rules 部署。
-2. 建立第一個超管：確認 email、uid、角色（建議 `doc_superadmin`），再寫入 `gdpUsers/{uid}`。
-3. 用正式網址測試：登入、帳號申請、管理者產生草稿、核准、退回、稽核紀錄。
-4. 再進入全站權限 chokepoint：`resolveVisibility()` / `canSee()` / `canDo()`，逐步接導覽與查詢過濾。
+1. 建立第一個超管：確認 email、uid、角色（建議 `doc_superadmin`），再寫入 `gdpUsers/{uid}`。
+2. 用正式網址測試：登入、帳號申請、管理者產生草稿、核准、退回、稽核紀錄。
+3. 再進入全站權限 chokepoint：`resolveVisibility()` / `canSee()` / `canDo()`，逐步接導覽與查詢過濾。
 
 ---
 
