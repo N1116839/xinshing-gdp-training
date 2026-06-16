@@ -1764,6 +1764,7 @@ const authStore = {
       authMod.onAuthStateChanged(this.auth,async user=>{
         this.user=user;
         this.profile=null;
+        this.gateError=null;
         if(user){
           await this.loadProfile();
           await this.ensureSuperAdmin();
@@ -1822,7 +1823,10 @@ const authStore = {
       if(!this.profile) profile.createdAt=serverTimestamp();
       await setDoc(doc(qaStore.db,"gdpUsers",this.user.uid),profile,{merge:true});
       await this.loadProfile();
-    }catch(e){ console.warn("超管帳號初始化失敗（請確認 rules 已部署）",e); }
+    }catch(e){
+      console.warn("超管帳號初始化失敗（請確認 rules 已部署）",e);
+      this.gateError="超管帳號初始化失敗，請確認 Firestore rules 已部署，或登出後重新登入。";
+    }
   },
   // 關卡狀態機：loading→picker→profile→pending→consent→ready（離線/錯誤另計）。
   gateState(){
@@ -1831,7 +1835,10 @@ const authStore = {
     if(!this.authMod) return "error";
     if(!this.user) return "picker";
     if(this.isSuperAdminEmail(this.user.email)){
-      if(this.profile?.status!=="active") return "loading";
+      if(this.profile?.status!=="active"){
+        this.gateError=this.gateError||"超管帳號尚未完成啟用，請登出後重新登入，或請管理者確認 Firestore rules。";
+        return "error";
+      }
     }else{
       if(!this.profile) return "profile";
       if(this.profile.status!=="active") return "pending";
@@ -1964,7 +1971,9 @@ function renderAuthGate(){
   }else if(state==="error"){
     body=`<div class="gate-card"><div class="gate-brand">新勝醫藥 GDP 教育訓練平台</div>
       <p class="gate-status">${esc(authStore.gateError||"目前無法連線登入服務，請稍後重新整理。")}</p>
-      <button class="gate-provider" type="button" onclick="location.reload()"><span>重新整理</span></button></div>`;
+      <button class="gate-provider" type="button" onclick="location.reload()"><span>重新整理</span></button>
+      ${authStore.user?`<button class="gate-text-btn" type="button" id="gateErrorLogout">登出後重新登入</button>`:""}
+    </div>`;
   }else if(state==="picker"){
     body=`<div class="gate-card">
       <div class="gate-brand">新勝醫藥 GDP 教育訓練平台</div>
@@ -2050,6 +2059,7 @@ function bindAuthGate(){
   });
   document.getElementById("gateProfileLogout")?.addEventListener("click",()=>authStore.signOut());
   document.getElementById("gatePendingLogout")?.addEventListener("click",()=>authStore.signOut());
+  document.getElementById("gateErrorLogout")?.addEventListener("click",()=>authStore.signOut());
   const agree=document.getElementById("gateConsentAgree");
   agree?.addEventListener("click",async()=>{
     agree.disabled=true;
