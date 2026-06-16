@@ -1998,6 +1998,14 @@ const authStore = {
 
 // ── 進站前登入關卡（三頁式）─────────────────────────────
 function authGateProviderButtons(){
+  const info=detectMobileLoginRisk();
+  if(info.risky){
+    return `<div class="gate-providers">
+      <button class="gate-provider google" type="button" id="gateExternalBrowserBtn">
+        <span class="gate-provider-icon">↗</span><span>${info.android?"先用 Chrome 開啟":"先改用外部瀏覽器"}</span>
+      </button>
+    </div>`;
+  }
   return `<div class="gate-providers">
     <button class="gate-provider google" type="button" id="gateGoogleBtn">
       <span class="gate-provider-icon">G</span><span>使用 Google 登入</span>
@@ -2070,6 +2078,17 @@ function renderAuthGate(){
   bindAuthGate();
 }
 function bindAuthGate(){
+  const externalBtn=document.getElementById("gateExternalBrowserBtn");
+  externalBtn?.addEventListener("click",()=>{
+    mobileLoginGuideForced=true;
+    ensureMobileLoginGuide();
+    const status=document.querySelector(".gate-card .gate-status");
+    if(status){
+      const info=detectMobileLoginRisk();
+      status.textContent=`目前是從 ${info.appName||"App 內建瀏覽器"} 開啟，請先切到 ${info.browserHint} 後再登入。`;
+    }
+    openInExternalBrowser();
+  });
   const g=document.getElementById("gateGoogleBtn");
   g?.addEventListener("click",async()=>{
     g.disabled=true;
@@ -7719,22 +7738,52 @@ function detectMobileLoginRisk(){
   const mobile=/Android|iPhone|iPad|iPod/i.test(ua);
   const inApp=/Line|FBAN|FBAV|Instagram|Messenger|MicroMessenger|WebView|; wv\)|\bwv\b|GSA/i.test(ua);
   const ios=/iPhone|iPad|iPod/i.test(ua);
+  const android=/Android/i.test(ua);
+  let appName="";
+  if(/Line/i.test(ua)) appName="LINE";
+  else if(/FBAN|FBAV|Messenger/i.test(ua)) appName="Facebook / Messenger";
+  else if(/Instagram/i.test(ua)) appName="Instagram";
+  else if(/MicroMessenger/i.test(ua)) appName="微信";
+  else if(inApp) appName="App 內建瀏覽器";
   return {
     mobile,
     risky:mobile&&inApp,
-    browserHint:ios?"Safari":"Chrome"
+    browserHint:ios?"Safari":"Chrome",
+    ios,
+    android,
+    appName
   };
+}
+function buildExternalBrowserUrl(){
+  const clean=location.origin+location.pathname+location.search+location.hash;
+  const info=detectMobileLoginRisk();
+  if(info.android){
+    const withoutScheme=clean.replace(/^https?:\/\//,"");
+    return `intent://${withoutScheme}#Intent;scheme=https;package=com.android.chrome;end`;
+  }
+  return clean;
+}
+function openInExternalBrowser(){
+  const info=detectMobileLoginRisk();
+  const clean=location.origin+location.pathname+location.search+location.hash;
+  if(info.android){
+    location.href=buildExternalBrowserUrl();
+    setTimeout(()=>{ location.href=clean; },900);
+    return;
+  }
+  window.open(clean,"_blank","noopener");
 }
 function mobileLoginGuideHtml(force){
   const info=detectMobileLoginRisk();
   const title=force?"目前這個手機瀏覽器可能會被 Google 擋下登入":"手機登入提醒";
   const body=force
-    ? `這個頁面看起來是從 App 內建瀏覽器或 WebView 開啟。Google 可能顯示 secure browser policy 錯誤，請改用手機 ${info.browserHint} 重新開啟本頁後再登入。`
+    ? `這個頁面目前是從 ${info.appName||"App 內建瀏覽器"} 開啟。Google 會直接封鎖這類登入，請改用手機 ${info.browserHint} 重新開啟本頁後再登入。`
     : `如果你是從 LINE、Gmail、Facebook 或其他 App 內直接打開本頁，Google 登入可能被安全政策封鎖。建議先用手機 ${info.browserHint} 直接開啟，再點「使用 Google 登入」。`;
   return `<div class="gate-alert" data-mobile-login-guide>
     <strong>${esc(title)}</strong>
     <p>${esc(body)}</p>
     <div class="gate-alert-actions">
+      <button type="button" class="auth-mini-btn" data-open-external-browser>${info.android?"改用 Chrome 開啟":"先改用外部瀏覽器"}</button>
       <button type="button" class="auth-mini-btn secondary" data-copy-login-url>複製本頁網址</button>
       <button type="button" class="auth-mini-btn secondary" data-refresh-login>重新整理</button>
     </div>
@@ -7774,8 +7823,10 @@ function ensureMobileLoginGuide(){
     anchor?.insertAdjacentHTML("beforebegin",mobileLoginGuideHtml(mobileLoginGuideForced));
   }
   const alert=card.querySelector("[data-mobile-login-guide]");
+  const openBtn=alert?.querySelector("[data-open-external-browser]");
   const copyBtn=alert?.querySelector("[data-copy-login-url]");
   const refreshBtn=alert?.querySelector("[data-refresh-login]");
+  if(openBtn) openBtn.onclick=()=>openInExternalBrowser();
   if(copyBtn) copyBtn.onclick=async()=>{
     const ok=await copyCurrentPageUrl();
     const status=card.querySelector(".gate-status");

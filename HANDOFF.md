@@ -27,6 +27,7 @@
 - 新增 `GOOGLE_REDIRECT_FLAG` 與 redirect returning 狀態處理；頁面往返 Google 後，會清掉 redirect flag，避免使用者卡在不明狀態。
 - `authStore._init()` 補 `getRedirectResult()`，若手機 redirect 返回失敗，會轉成可讀錯誤訊息，而不是只留在瀏覽器 console。
 - 前一輪加入的手機提示卡保留，但定位改為輔助說明；真正解法是登入策略改為 mobile redirect，不再只靠提示。
+- 若偵測為 `LINE` 等 App 內建瀏覽器，登入頁不再直接提供 Google 登入，而是先導向「改用外部瀏覽器開啟」，避免員工在 LINE 內反覆撞上 Google secure browser policy。
 
 下次若手機仍無法登入，優先確認：
 
