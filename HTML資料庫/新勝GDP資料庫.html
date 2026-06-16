@@ -50,6 +50,8 @@
     .auth-chip.admin{color:#0b5f4d;background:#f0fbf5;border-color:#b9ddd3}
     .auth-mini-btn{min-height:34px;padding:6px 12px;border:1px solid var(--brand);border-radius:999px;background:#fff;color:var(--brand);font:inherit;font-size:13px;font-weight:800;cursor:pointer}
     .auth-mini-btn:hover{background:var(--brand);color:#fff}
+    .admin-pending-badge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;margin-left:6px;padding:0 5px;border-radius:999px;background:#d92d20;color:#fff;font-size:11px;font-weight:800;line-height:1;vertical-align:middle}
+    .auth-mini-btn:hover .admin-pending-badge{background:#fff;color:#d92d20}
     .auth-mini-btn.secondary{border-color:var(--line);color:var(--ink-soft)}
     .auth-mini-btn.secondary:hover{background:var(--ink-soft);color:#fff;border-color:var(--ink-soft)}
     /* 進站前登入關卡（三頁式：選帳號→填資料→審核） */
@@ -924,7 +926,7 @@
       </div>
       <div class="top-actions">
         <div class="auth-chip pending" id="authChip">未登入</div>
-        <button class="auth-mini-btn" id="authAdminBtn" type="button" hidden>管理面板</button>
+        <button class="auth-mini-btn" id="authAdminBtn" type="button" hidden>管理面板<span class="admin-pending-badge" id="adminPendingBadge" hidden></span></button>
         <button class="auth-mini-btn secondary" id="authLogoutBtn2" type="button" hidden>登出</button>
         <div class="status"><span id="dbDot" class="dot"></span><span id="dbStatus">Q&A 連線中</span></div>
       </div>
@@ -1889,6 +1891,7 @@ const authStore = {
     const signedReady=!!this.user && this.gateState()==="ready";
     if(adminBtn) adminBtn.hidden=!(signedReady && this.canAdmin());
     if(logoutBtn) logoutBtn.hidden=!this.user;
+    if(signedReady && this.canAdmin()) refreshPendingBadge();
     if(!chip) return;
     chip.classList.remove("admin","pending");
     if(message){
@@ -2000,10 +2003,12 @@ const authStore = {
 function authGateProviderButtons(){
   const info=detectMobileLoginRisk();
   if(info.risky){
+    const label=info.isLine?"跳出 LINE 用瀏覽器開啟並登入":(info.android?"先用 Chrome 開啟":"先改用外部瀏覽器");
     return `<div class="gate-providers">
       <button class="gate-provider google" type="button" id="gateExternalBrowserBtn">
-        <span class="gate-provider-icon">↗</span><span>${info.android?"先用 Chrome 開啟":"先改用外部瀏覽器"}</span>
+        <span class="gate-provider-icon">↗</span><span>${label}</span>
       </button>
+      <p class="gate-note">${esc(info.appName||"App 內建瀏覽器")}內無法完成 Google 登入。點上方按鈕會用手機${esc(info.browserHint)}重新開啟本頁，再登入即可。</p>
     </div>`;
   }
   return `<div class="gate-providers">
@@ -2255,6 +2260,23 @@ const userApprovalStore = {
     return true;
   }
 };
+
+// §38.2 後台角標：管理者／超管一登入即在「管理面板」鈕顯示待審核帳號數量。
+let pendingBadgeBusy=false;
+async function refreshPendingBadge(){
+  const badge=document.getElementById("adminPendingBadge");
+  if(!badge) return;
+  if(!authStore.canAdmin()){ badge.hidden=true; badge.textContent=""; return; }
+  if(pendingBadgeBusy) return;
+  pendingBadgeBusy=true;
+  try{
+    const apps=await userApprovalStore.listPending();
+    const n=apps.length;
+    if(n>0){ badge.textContent=n>99?"99+":String(n); badge.hidden=false; }
+    else{ badge.hidden=true; badge.textContent=""; }
+  }catch(e){ /* 角標讀取失敗不擋登入畫面 */ }
+  finally{ pendingBadgeBusy=false; }
+}
 
 /* ═══════════════════════════════════════════════
    DEFICIENCY STORE（§43 官方缺失 Firestore 同步）
@@ -6127,6 +6149,7 @@ async function renderPendingUserList(){
   if(!authStore.canAdmin()){ el.innerHTML=`<p class="admin-note">需管理者權限才能審核帳號。</p>`; return; }
   el.innerHTML=`<p class="admin-note">載入中…</p>`;
   const apps=await userApprovalStore.listPending();
+  refreshPendingBadge();
   if(!apps.length){ el.innerHTML=`<p class="admin-note">目前沒有待審核帳號。</p>`; return; }
   el.innerHTML=apps.map((a,i)=>`<div class="pending-card" data-app-idx="${i}">
     <div class="pending-head">
@@ -7739,8 +7762,9 @@ function detectMobileLoginRisk(){
   const inApp=/Line|FBAN|FBAV|Instagram|Messenger|MicroMessenger|WebView|; wv\)|\bwv\b|GSA/i.test(ua);
   const ios=/iPhone|iPad|iPod/i.test(ua);
   const android=/Android/i.test(ua);
+  const isLine=/Line/i.test(ua);
   let appName="";
-  if(/Line/i.test(ua)) appName="LINE";
+  if(isLine) appName="LINE";
   else if(/FBAN|FBAV|Messenger/i.test(ua)) appName="Facebook / Messenger";
   else if(/Instagram/i.test(ua)) appName="Instagram";
   else if(/MicroMessenger/i.test(ua)) appName="微信";
@@ -7751,12 +7775,23 @@ function detectMobileLoginRisk(){
     browserHint:ios?"Safari":"Chrome",
     ios,
     android,
+    isLine,
     appName
   };
 }
 function buildExternalBrowserUrl(){
   const clean=location.origin+location.pathname+location.search+location.hash;
   const info=detectMobileLoginRisk();
+  // LINE 內建瀏覽器（iOS/Android 皆適用）：openExternalBrowser=1 會讓 LINE 用手機預設瀏覽器開啟。
+  if(info.isLine){
+    try{
+      const u=new URL(location.href);
+      u.searchParams.set("openExternalBrowser","1");
+      return u.toString();
+    }catch(e){
+      return clean+(clean.includes("?")?"&":"?")+"openExternalBrowser=1";
+    }
+  }
   if(info.android){
     const withoutScheme=clean.replace(/^https?:\/\//,"");
     return `intent://${withoutScheme}#Intent;scheme=https;package=com.android.chrome;end`;
@@ -7766,6 +7801,11 @@ function buildExternalBrowserUrl(){
 function openInExternalBrowser(){
   const info=detectMobileLoginRisk();
   const clean=location.origin+location.pathname+location.search+location.hash;
+  // LINE：導到帶 openExternalBrowser=1 的網址，LINE 會自動跳到手機預設瀏覽器（最可靠）。
+  if(info.isLine){
+    location.href=buildExternalBrowserUrl();
+    return;
+  }
   if(info.android){
     location.href=buildExternalBrowserUrl();
     setTimeout(()=>{ location.href=clean; },900);
