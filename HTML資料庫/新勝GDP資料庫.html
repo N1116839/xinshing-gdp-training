@@ -170,13 +170,13 @@
   .exam-start-actions select{max-width:100%;min-height:38px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:#fff;font:inherit;color:var(--ink)}
   .exam-key-hint{margin-top:10px;font-size:12px;line-height:1.9;color:var(--ink-soft);background:#f3fbf7;border:1px dashed #b9ddd3;border-radius:6px;padding:7px 10px}
   .exam-key-hint kbd{display:inline-block;min-width:16px;padding:1px 5px;margin:0 1px;font:inherit;font-size:11px;font-weight:800;color:var(--brand);background:#fff;border:1px solid #b9ddd3;border-bottom-width:2px;border-radius:4px;text-align:center}
-  .admin-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,.9fr);gap:16px;align-items:start}
+  .admin-layout{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,.9fr);gap:16px;align-items:start;width:100%}
   .admin-card{display:grid;gap:12px;padding:16px;background:#f7fbfb;border:1px solid var(--line);border-top:4px solid var(--brand)}
   .admin-card h4{margin:0;color:var(--brand);font-size:18px}
   .admin-form{display:grid;gap:10px}
   .admin-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
   .admin-form label{display:grid;gap:5px;color:var(--ink);font-size:13px;font-weight:800}
-  .admin-form input,.admin-form select,.admin-form textarea{width:100%;min-height:38px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink);font:inherit}
+  .admin-form input,.admin-form select,.admin-form textarea{box-sizing:border-box;width:100%;min-height:38px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink);font:inherit}
   .admin-form textarea{min-height:100px;resize:vertical;line-height:1.6}
   .admin-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
   .admin-btn{min-height:38px;padding:8px 14px;border:1px solid var(--brand);border-radius:7px;background:var(--brand);color:#fff;font:inherit;font-weight:800;cursor:pointer}

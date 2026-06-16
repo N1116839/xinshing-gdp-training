@@ -1,3 +1,27 @@
+## 2026-06-16 第一百一十四次：桌面版管理專區跑版實機修正 ✅
+
+使用者開工要求「用桌面版檢查版型是否有跑掉」。本輪按開工規則讀取最新交接、GDP 規範、視覺報告、測驗規範與第二大腦後，用 Chrome headless 以桌面寬度 `1365×900` 實際渲染 GitHub Pages 與本機 HTML。
+
+### 發現與修正
+- **發現管理專區桌面版跑版**：`admin-layout` 直接放在全站 12 欄 `.grid` 內，未宣告跨欄，被外層 grid 當成單一窄欄 item；登入、申請與 AI 管理助理表單被壓成 22–35px 寬的直條，桌面無法正常填寫。
+- **修正**（`HTML資料庫/新勝GDP資料庫.html`）：
+  - `.admin-layout` 加 `grid-column:1/-1` 與 `width:100%`，在外層 `.grid` 內跨滿整列。
+  - `.admin-form input/select/textarea` 加 `box-sizing:border-box`，避免欄位 padding 撐出容器。
+
+### 驗收
+- 修正前截圖：`admin_middle_桌面版檢查_暫存.png` 顯示表單被壓成窄直條。
+- 修正後本機桌面截圖：`admin_after_桌面版檢查_暫存.png`，登入與目前登入資料恢復正常兩欄。
+- 桌面量測：
+  - 管理專區：`overflow=0`、`clipped=0`、欄位最小寬度由 22–35px 回復至 126px 以上。
+  - 測試專區：`overflow=0`、`clipped=0`。
+- `node verify_facts_ghpages.mjs`：`1296/1296` 通過，未破壞智慧查詢 facts。
+
+### 下次注意
+- 凡在 `#content.grid` 內直接回傳自訂整頁 layout（例如 `.admin-layout`），必須宣告 `grid-column:1/-1` 或包進 `.panel.wide`，否則桌面版會被全站 12 欄 grid 壓成窄欄。
+- 本輪只修 CSS，不碰登入邏輯、Firestore rules、題庫、KB 或權限過濾。
+
+---
+
 ## 2026-06-16 第一百一十三次：登入骨架＋AI 管理助理草稿審核介面（未部署 rules）🔄
 
 使用者要求依 6/15 與前一日討論方案開始建立登入與 AI 助手，並明確要求 AI 助手要能讓管理者看到「修改前 / 修改後」分別會變成怎樣，方便核准或不核准變更。
