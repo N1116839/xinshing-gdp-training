@@ -3659,7 +3659,7 @@ const kbStore = {
 
     // ── 教育訓練 ──
     docs.push({id:"fact-training-pass-score",sourceType:"fact",
-    departments: ["personnel"],
+    departments: ["*"],
     allowedRoles: ["staff","leader"],topic:"教育訓練合格標準",
       international:"PIC/S GDP 要求參與 GDP 活動所有人員應在開始作業前達到所界定能力，並持續評估有效性。",
       taiwan:"台灣 GDP 要求人員訓練需有合格標準與有效性評估，並留存紀錄以供稽查。",
@@ -3667,7 +3667,7 @@ const kbStore = {
       sop_ref:["DP24-01","WI10-01"],
       keywords:["教育訓練合格標準","訓練合格","合格標準","訓練幾分及格","70分","訓練評鑑","70分及格","職前訓練合格","職前幾分合格","訓練多少分過關","訓練評鑑標準","定期評估","實務評鑑","補訓","再評鑑","表現良好","訓練要幾分","訓練合格標準幾分","教育訓練合格標準幾分","訓練及格分數"]});
     docs.push({id:"fact-training-frequency",sourceType:"fact",
-    departments: ["personnel"],
+    departments: ["*"],
     allowedRoles: ["staff","leader"],topic:"教育訓練頻率",
       international:"PIC/S GDP 要求人員應定期接受 GDP 相關訓練，確保知識與技能維持最新。",
       taiwan:"台灣 GDP 要求依職務需求規劃定期訓練，新進人員需完成職前訓練。",
@@ -4044,7 +4044,7 @@ const kbStore = {
 
     // ── 第二章：教育訓練（補充）──
     docs.push({id:"fact-training-preservice",sourceType:"fact",
-    departments: ["personnel"],
+    departments: ["*"],
     allowedRoles: ["staff","leader"],topic:"職前訓練資格評量",
       international:"PIC/S GDP 要求人員在開始執行 GDP 作業前應評鑑是否具有適當能力及經驗。",
       taiwan:"台灣 GDP 要求新進人員完成職前訓練並評鑑合格，方可派任執行 GDP 相關作業。",
@@ -4423,7 +4423,7 @@ const kbStore = {
 
     // 第一章：品質政策目標
     docs.push({id:"fact-quality-objectives",sourceType:"fact",
-    departments: ["warehouse"],
+    departments: ["*"],
     allowedRoles: ["staff","leader"],topic:"品質政策目標與量化指標",
       international:"PIC/S GDP 要求管理階層制定品質政策與可衡量的品質目標，定期審查達成狀況。",
       taiwan:"西藥優良運銷準則要求批發商建立品質政策與品質目標，目標需量化且定期檢討。",
@@ -4431,7 +4431,7 @@ const kbStore = {
       sop_ref:["DM10-01","DP14-01","FR14-01"],
       keywords:["品質政策","品質目標","量化目標","偽藥識別訓練","緊急應變","12小時","訂單逾期率","1%","打單錯誤","溫度控制≤25°C","管理階層檢討","品質目標達成","DM10-01","品質政策目標","哪些目標","目標有哪些","品質目標評量","績效指標","量化指標"]});
     docs.push({id:"fact-quality-pdca",sourceType:"fact",
-    departments: ["warehouse"],
+    departments: ["*"],
     allowedRoles: ["staff","leader"],topic:"PDCA品質管理循環",
       international:"PIC/S GDP 要求品質管理系統依 PDCA 循環持續改善，確保各項作業有效執行。",
       taiwan:"台灣 GDP 要求品質系統依 PDCA 循環管理，涵蓋採購、儲存、供應、偏差處理等活動。",
@@ -4640,6 +4640,9 @@ const kbStore = {
       if(/盤點/.test(compact)&&!/盤點|fr5503|dp5501/.test(hay)) score=0;
       else if(/庫存|存貨/.test(compact)&&!/盤點|庫存|存貨|fr5503|dp5501/.test(hay)) score=0;
       else if(/正航/.test(compact)&&!/正航|fr5701|dp3501/.test(hay)) score=0;
+      // 分數類查詢（合格分數/幾分及格/合格標準）只該命中真的談分數的 fact；
+      // 「合格」誤命中「合格設備/合格廠商」等與分數無關的 fact 要排除（解確效 4Q 誤判為合格分數答案）。
+      if(/合格分數|幾分合格|合格幾分|幾分及格|及格分數|多少分合格|合格標準|考幾分|及格幾分/.test(compact)&&!/分|及格/.test(hay)) score=0;
       if(shortQuery&&!strongHit&&score<6) score=0;
       return {doc,score,strongHit};
     }).filter(x=>x.score>0).sort((a,b)=>b.score-a.score);
@@ -4647,12 +4650,13 @@ const kbStore = {
     // 回「非該部門」提示，而不是掉到同範圍內的弱匹配錯答案
     // （解 032 倉管問人事/採購卻顯示無關卡片、或合格分數顯示錯誤答案）。
     if(!ctx.all){
-      const top=scored[0];
-      if(top&&top.strongHit&&top.doc.sourceType==="fact"&&!canSeeKbDoc(top.doc,ctx)){
-        const topVisible=scored.find(x=>canSeeKbDoc(x.doc,ctx));
-        if(!topVisible||topVisible.score<top.score*0.6){
-          const depts=itemDepartments(top.doc).filter(d=>d!=="*");
-          return [{outOfScope:true,topic:top.doc.topic,depts}];
+      // 比較「最佳 fact」與「最佳可見 fact」；非 fact 的導覽/索引卡不算可見答案，避免它蓋掉跨部門提示
+      const topFact=scored.find(x=>x.doc.sourceType==="fact"&&x.strongHit);
+      if(topFact&&!canSeeKbDoc(topFact.doc,ctx)){
+        const visFact=scored.find(x=>x.doc.sourceType==="fact"&&canSeeKbDoc(x.doc,ctx));
+        if(!visFact||visFact.score<topFact.score*0.6){
+          const depts=itemDepartments(topFact.doc).filter(d=>d!=="*");
+          return [{outOfScope:true,topic:topFact.doc.topic,depts}];
         }
       }
     }
