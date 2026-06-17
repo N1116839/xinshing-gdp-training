@@ -1767,18 +1767,43 @@ const qaStore = {
 
 const roleLabels = {
   staff:"一般員工",
-  leader:"組長／主管",
-  gdp_admin:"GDP 管理者",
+  leader:"組長／主管（非平台管理者）",
+  role_rp:"GDP權責人（總經理）",
+  role_qa:"品保",
+  role_sales_lead:"業務組長（經理）",
+  role_sales:"業務",
+  role_purchase:"採購",
+  role_sales_assistant:"業助",
+  role_warehouse_lead:"倉庫組長",
+  role_warehouse_staff:"倉管",
+  role_accounting_hr:"會計／人事",
+  role_doc:"文管",
+  pharmacist:"管理藥師",
+  gdp_admin:"平台管理者（可審核帳號）",
   doc_superadmin:"文管超級管理員",
-  rp_admin:"GDP 權責人",
-  qa_admin:"品保管理者",
-  sales_lead:"業務組長",
-  warehouse_lead:"倉庫組長",
-  pharmacist:"管理藥師"
+  // Legacy role ids retained for old Firestore profiles only; new approvals do not assign these.
+  rp_admin:"[舊] GDP權責人管理者",
+  qa_admin:"[舊] 品保管理者",
+  sales_lead:"[舊] 業務組長",
+  warehouse_lead:"[舊] 倉庫組長"
 };
-const adminRoleIds = ["gdp_admin","doc_superadmin","rp_admin","qa_admin","sales_lead","warehouse_lead"];
+const legacyRoleMap = {
+  rp_admin:["role_rp","gdp_admin"],
+  qa_admin:["role_qa","gdp_admin"],
+  sales_lead:["role_sales_lead","role_purchase","gdp_admin"],
+  warehouse_lead:["role_warehouse_lead","gdp_admin"]
+};
+function normalizeRoleIds(roles){
+  const out=[];
+  (roles||[]).forEach(role=>{
+    (legacyRoleMap[role]||[role]).forEach(r=>{ if(r && !out.includes(r)) out.push(r); });
+  });
+  return out.length ? out : ["staff"];
+}
+const adminRoleIds = ["gdp_admin","doc_superadmin"];
 // 帳號審核時可指定的角色（§48 一人多職取聯集，roles 為 list）。
-const assignableRoleIds = ["staff","leader","pharmacist","qa_admin","warehouse_lead","sales_lead","rp_admin","gdp_admin","doc_superadmin"];
+// 職務/部門角色與「平台管理者」分離：同職稱新人不會自動取得審核帳號權限。
+const assignableRoleIds = ["staff","leader","role_rp","role_qa","role_sales_lead","role_sales","role_purchase","role_sales_assistant","role_warehouse_lead","role_warehouse_staff","role_accounting_hr","pharmacist","role_doc","gdp_admin"];
 // §38／§48 超級管理員（文管・開發者）：hardcode email，登入即自動 active＋doc_superadmin（解超管啟動死結）。
 // 若 GDP 站要改用其他 Google 帳號，改這裡並同步 Firebase設定/firestore.rules 的 isSuperAdminEmail()。
 const SUPER_ADMIN_EMAILS = ["tom741285@gmail.com"];
@@ -1805,7 +1830,7 @@ function loadEmailJs(){
   });
   return _emailJsPromise;
 }
-const KNOWN_DEPARTMENTS = ["文管","品保","業務","採購","倉庫","人事","管理藥師","GDP權責人","其他"];
+const KNOWN_DEPARTMENTS = ["GDP權責人","品保","業務","採購","業助","倉庫組長","倉管","會計/人事","管理藥師","文管","其他"];
 const permissionColumns = [
   {key:"enter",label:"進站"},
   {key:"learn",label:"學習"},
@@ -1818,16 +1843,56 @@ const permissionColumns = [
 const rolePermissionTemplates = {
   staff:["enter","learn","exam"],
   leader:["enter","learn","exam","calendar","review"],
+  role_rp:["enter","learn","exam","calendar","review"],
+  role_qa:["enter","learn","exam","calendar","review"],
+  role_sales_lead:["enter","learn","exam","calendar","review"],
+  role_sales:["enter","learn","exam"],
+  role_purchase:["enter","learn","exam","calendar"],
+  role_sales_assistant:["enter","learn","exam","calendar"],
+  role_warehouse_lead:["enter","learn","exam","calendar","review"],
+  role_warehouse_staff:["enter","learn","exam","calendar"],
+  role_accounting_hr:["enter","learn","exam","calendar"],
+  role_doc:["enter","learn","exam","calendar","review"],
   pharmacist:["enter","learn","exam","calendar","review"],
-  qa_admin:["enter","learn","exam","calendar","review","admin"],
-  warehouse_lead:["enter","learn","exam","calendar","review"],
-  sales_lead:["enter","learn","exam","calendar","review"],
-  rp_admin:["enter","learn","exam","calendar","review","admin"],
   gdp_admin:["enter","learn","exam","calendar","review","admin","all"],
   doc_superadmin:["enter","learn","exam","calendar","review","admin","all"]
 };
 function roleTemplateHas(role,key){
   return (rolePermissionTemplates[role]||[]).includes(key);
+}
+function normalizeDeptLabel(dept,title=""){
+  const text=`${dept||""} ${title||""}`;
+  if(/GDP|權責|總經理/.test(text)) return "GDP權責人";
+  if(/品保|品管|品質/.test(text)) return "品保";
+  if(/業助/.test(text)) return "業助";
+  if(/採購/.test(text)) return "採購";
+  if(/業務/.test(text)) return "業務";
+  if(/倉庫組長|倉管組長/.test(text)) return "倉庫組長";
+  if(/倉管|倉庫/.test(text)) return "倉管";
+  if(/會計|人事/.test(text)) return "會計/人事";
+  if(/管理藥師|藥師/.test(text)) return "管理藥師";
+  if(/文管/.test(text)) return "文管";
+  return "其他";
+}
+function defaultRoleIdsForPerson(person={}){
+  const title=person.title||"";
+  const dept=person.department||"";
+  const text=`${dept} ${title}`;
+  const roles=[];
+  (person.requestedRoles||[]).forEach(r=>{ normalizeRoleIds([r]).forEach(x=>{ if(!roles.includes(x)) roles.push(x); }); });
+  if(/GDP|權責|總經理/.test(text)) roles.push("role_rp");
+  if(/品保|品管|品質/.test(text)) roles.push("role_qa");
+  if(/業務組長|業務.*經理|經理.*業務/.test(text)) roles.push("role_sales_lead","role_purchase");
+  else if(/業務/.test(text)) roles.push("role_sales");
+  if(/採購/.test(text)) roles.push("role_purchase");
+  if(/業助/.test(text)) roles.push("role_sales_assistant");
+  if(/倉庫組長|倉管組長/.test(text)) roles.push("role_warehouse_lead");
+  else if(/倉管|倉庫/.test(text)) roles.push("role_warehouse_staff");
+  if(/會計|人事/.test(text)) roles.push("role_accounting_hr");
+  if(/管理藥師|藥師/.test(text)) roles.push("pharmacist");
+  if(/文管/.test(text)) roles.push("role_doc");
+  if(!roles.length) roles.push("staff");
+  return [...new Set(roles)].filter(r=>assignableRoleIds.includes(r));
 }
 // 進站前使用同意書：版本字串更新時，所有人需重新閱讀並重新同意（供稽核留痕）。
 const CONSENT_VERSION = "2026-06-16";
@@ -1914,7 +1979,7 @@ const authStore = {
     return !!email && SUPER_ADMIN_EMAILS.map(e=>e.toLowerCase()).includes(email.toLowerCase());
   },
   isSuperAdmin(){
-    return this.isSuperAdminEmail(this.user?.email) || (this.profile?.roles||[]).includes("doc_superadmin");
+    return this.isSuperAdminEmail(this.user?.email) || normalizeRoleIds(this.profile?.roles||[]).includes("doc_superadmin");
   },
   // 超管在後台設定的管理者 email（非超管，但取得管理者權限）。
   isConfiguredAdminEmail(email){
@@ -1940,11 +2005,11 @@ const authStore = {
     if(!this.user || !qaStore.db) return;
     if(this.isSuperAdminEmail(this.user.email)) return; // 超管走 ensureSuperAdmin
     if(!this.isConfiguredAdminEmail(this.user.email)) return;
-    const ok=this.profile && this.profile.status==="active" && (this.profile.roles||[]).includes("gdp_admin");
+    const ok=this.profile && this.profile.status==="active" && normalizeRoleIds(this.profile.roles||[]).includes("gdp_admin");
     if(ok) return;
     try{
       const {doc,setDoc,serverTimestamp}=qaStore.firebase;
-      const roles=Array.from(new Set([...(this.profile?.roles||[]),"gdp_admin"]));
+      const roles=normalizeRoleIds([...(this.profile?.roles||[]),"gdp_admin"]);
       const profile={
         uid:this.user.uid,
         email:this.user.email,
@@ -1967,7 +2032,7 @@ const authStore = {
   // 超管首次登入：rules 也放行同一 email 自建 active+doc_superadmin。
   async ensureSuperAdmin(){
     if(!this.user || !this.isSuperAdminEmail(this.user.email) || !qaStore.db) return;
-    const ok=this.profile && this.profile.status==="active" && (this.profile.roles||[]).includes("doc_superadmin");
+    const ok=this.profile && this.profile.status==="active" && normalizeRoleIds(this.profile.roles||[]).includes("doc_superadmin");
     if(ok) return;
     try{
       const {doc,setDoc,serverTimestamp}=qaStore.firebase;
@@ -2010,14 +2075,14 @@ const authStore = {
     return "ready";
   },
   canAdmin(){
-    const roles=this.profile?.roles||[];
+    const roles=normalizeRoleIds(this.profile?.roles||[]);
     return (this.profile?.status==="active" && roles.some(r=>adminRoleIds.includes(r))) || this.isSuperAdmin() || this.isConfiguredAdminEmail(this.user?.email);
   },
   displayName(){
     return this.profile?.name || this.user?.displayName || this.user?.email || "未登入";
   },
   roleText(){
-    const roles=this.profile?.roles||[];
+    const roles=normalizeRoleIds(this.profile?.roles||[]);
     if(!this.user) return "未登入";
     if(!this.profile) return "尚未建立使用者資料";
     if(this.profile.status!=="active") return "帳號待審核";
@@ -2343,7 +2408,7 @@ const userApprovalStore = {
   },
   async approve(app, roles){
     if(!qaStore.db || !authStore.canAdmin() || !app?.uid) return false;
-    const safeRoles=(roles&&roles.length)?roles:["staff"];
+    const safeRoles=normalizeRoleIds((roles&&roles.length)?roles:defaultRoleIdsForPerson(app));
     const {doc,updateDoc,collection,addDoc,serverTimestamp}=qaStore.firebase;
     // 1. 啟用帳號＋設角色（isAdmin update 無欄位限制）。
     await updateDoc(doc(qaStore.db,"gdpUsers",app.uid),{ roles:safeRoles, status:"active", updatedAt:serverTimestamp() });
@@ -2388,7 +2453,7 @@ const userApprovalStore = {
   async setRoles(user, roles){
     if(!qaStore.db || !authStore.canAdmin() || !user?.uid) return false;
     if(authStore.isSuperAdminEmail(user.email)) throw new Error("超級管理員不可在此調整");
-    const safeRoles=(roles&&roles.length)?roles:["staff"];
+    const safeRoles=normalizeRoleIds((roles&&roles.length)?roles:["staff"]);
     const {doc,updateDoc,collection,addDoc,serverTimestamp}=qaStore.firebase;
     await updateDoc(doc(qaStore.db,"gdpUsers",user.uid),{ roles:safeRoles, updatedAt:serverTimestamp() });
     await addDoc(collection(qaStore.db,"gdpRoleChangeLogs"),{
@@ -6191,7 +6256,7 @@ function adminConsoleSection(){
       <article class="admin-card">
         <h4>目前登入身分</h4>
         <p class="admin-note">狀態：<strong>${esc(statusText)}</strong></p>
-        <p class="admin-note">登入已改由進站前的 Google 關卡統一處理；此面板供管理者審核帳號、設定角色。</p>
+        <p class="admin-note">登入已改由進站前的 Google 關卡統一處理；此面板供管理者審核帳號、設定職務角色與平台管理權限。</p>
         <div class="admin-actions">
           <button class="admin-btn secondary" id="authLogoutBtn" type="button" ${signed?"":"disabled"}>登出</button>
         </div>
@@ -6204,20 +6269,20 @@ function adminConsoleSection(){
           <div class="change-row"><span>員工編號</span><span>${esc(profile?.empId||"未建立")}</span></div>
           <div class="change-row"><span>部門</span><span>${esc(profile?.department||"未建立")}</span></div>
           <div class="change-row"><span>職稱</span><span>${esc(profile?.title||"未建立")}</span></div>
-          <div class="change-row"><span>角色</span><span>${esc((profile?.roles||[]).map(r=>roleLabels[r]||r).join("、")||"未設定")}</span></div>
+          <div class="change-row"><span>角色</span><span>${esc(normalizeRoleIds(profile?.roles||[]).map(r=>roleLabels[r]||r).join("、")||"未設定")}</span></div>
           <div class="change-row"><span>狀態</span><span>${esc(profile?.status||"未登入")}</span></div>
         </div>
-        <p class="admin-note">${isAdmin?"此帳號可審核新帳號、設定角色權限、停用或重新啟用在職員工。":"此帳號尚無管理者權限；審核帳號與權限管理需管理者或超管。"}</p>
+        <p class="admin-note">${isAdmin?"此帳號可審核新帳號、設定職務角色、授予平台管理者權限、停用或重新啟用在職員工。":"此帳號尚無平台管理者權限；審核帳號與權限管理需平台管理者或超管。"}</p>
       </article>
     </section>
     <article class="panel wide admin-section">
       <h3>待審核新帳號</h3>
-      <p class="admin-note">左側依部門顯示待審核員工；右側用「角色 × 功能」矩陣核准權限。核准後會寫入帳號角色並啟用帳號，角色可複選，一人多職取聯集。</p>
+      <p class="admin-note">左側固定依部門顯示待審核員工；例如 032 申請倉管會出現在倉管下方，新的採購會出現在採購下方。右側先核准職務角色，再視需要另勾「平台管理者」。同職稱新人不會自動取得審核帳號權限。</p>
       <div id="pendingUserList" class="pending-list"><p class="admin-note">載入中…</p></div>
     </article>
     <article class="panel wide admin-section">
       <h3>在職員工權限管理</h3>
-      <p class="admin-note">常駐區：列出所有已啟用／已停用的員工，可隨時調整角色或停用／重新啟用帳號，不需等到有新申請。停用後該員工立即無法進入平台。所有變更都寫入角色異動紀錄。（超級管理員不在此列。）</p>
+      <p class="admin-note">常駐區：左側固定部門樹列出已啟用／已停用員工，右側可隨時調整職務角色、授予或移除平台管理者權限，也可停用／重新啟用帳號。所有變更都寫入角色異動紀錄。（超級管理員不在此列。）</p>
       <details class="admin-details" id="activeUserDetails">
         <summary>展開／收合在職員工清單</summary>
         <div id="activeUserList" class="admin-permission-list" style="margin-top:12px"><p class="admin-note">展開後載入…</p></div>
@@ -6234,33 +6299,37 @@ function adminConsoleSection(){
     </article>`:""}
   </div>`;
 }
-function groupApplicationsByDept(apps){
-  return apps.reduce((acc,app)=>{
-    const dept=app.department||"未填部門";
-    if(!acc[dept]) acc[dept]=[];
-    acc[dept].push(app);
-    return acc;
-  },{});
+function groupPeopleByDept(records){
+  const grouped=Object.fromEntries(KNOWN_DEPARTMENTS.map(dept=>[dept,[]]));
+  records.forEach(item=>{
+    const dept=normalizeDeptLabel(item.department,item.title);
+    if(!grouped[dept]) grouped[dept]=[];
+    grouped[dept].push(item);
+  });
+  Object.values(grouped).forEach(list=>list.sort((a,b)=>(a.empId||"").localeCompare(b.empId||"","zh-Hant")));
+  return grouped;
 }
-function pendingUserTree(apps){
-  const grouped=groupApplicationsByDept(apps);
-  return `<aside class="admin-user-tree" aria-label="待審核員工樹">
+function personDeptTree(records,label,emptyText){
+  const grouped=groupPeopleByDept(records);
+  return `<aside class="admin-user-tree" aria-label="${esc(label)}">
     ${Object.entries(grouped).map(([dept,list])=>`<div class="admin-tree-group">
       <div class="admin-tree-title">${esc(dept)}</div>
-      ${list.map(app=>`<div class="admin-tree-user">
+      ${list.length?list.map(app=>`<div class="admin-tree-user">
         <strong>${esc(app.empId||"未填工號")}</strong>
         <small>${esc(app.name||"未填姓名")}｜${esc(app.title||"未填職稱")}</small>
-      </div>`).join("")}
+      </div>`).join(""):`<div class="admin-tree-user"><small>${esc(emptyText)}</small></div>`}
     </div>`).join("")}
   </aside>`;
 }
-function permissionMatrixRows(){
+function permissionMatrixRows(selectedRoles=[]){
+  const selected=normalizeRoleIds(selectedRoles);
   return assignableRoleIds.map(role=>`<tr>
-    <td><label class="permission-role-toggle"><input type="checkbox" value="${role}" ${role==="staff"?"checked":""}>${esc(roleLabels[role]||role)}</label></td>
+    <td><label class="permission-role-toggle"><input type="checkbox" value="${role}" ${selected.includes(role)?"checked":""}>${esc(roleLabels[role]||role)}</label></td>
     ${permissionColumns.map(col=>`<td><span class="permission-mark ${roleTemplateHas(role,col.key)?"":"off"}">${roleTemplateHas(role,col.key)?"✓":"—"}</span></td>`).join("")}
   </tr>`).join("");
 }
 function permissionMatrixForApp(app,index){
+  const suggestedRoles=defaultRoleIdsForPerson(app);
   return `<section class="permission-card" data-app-idx="${index}">
     <div class="permission-card-head">
       <div>
@@ -6272,13 +6341,13 @@ function permissionMatrixForApp(app,index){
         <button class="admin-btn warn" type="button" data-reject="${index}">退回</button>
       </div>
     </div>
-    <div class="permission-table-wrap" role="region" aria-label="${esc(app.name||app.empId||"待審核帳號")} 權限矩陣">
+    <div class="permission-table-wrap" role="region" aria-label="${esc(app.name||app.empId||"待審核帳號")} 職務與平台權限">
       <table class="permission-table">
-        <thead><tr><th>角色群組</th>${permissionColumns.map(col=>`<th>${esc(col.label)}</th>`).join("")}</tr></thead>
-        <tbody>${permissionMatrixRows()}</tbody>
+        <thead><tr><th>職務／平台權限</th>${permissionColumns.map(col=>`<th>${esc(col.label)}</th>`).join("")}</tr></thead>
+        <tbody>${permissionMatrixRows(suggestedRoles)}</tbody>
       </table>
     </div>
-    <p class="permission-help">目前核准儲存的是角色群組；細部功能勾選採角色模板顯示。後續若要做到逐格微調，需新增 Firestore 權限矩陣資料表與 rules 後再啟用。</p>
+    <p class="permission-help">已依部門／職稱預先勾選建議職務；「平台管理者」需人工勾選，勾選後才可審核帳號與進入管理面板。細部逐格微調仍需日後新增 Firestore 權限矩陣資料表與 rules。</p>
   </section>`;
 }
 async function renderPendingUserList(){
@@ -6290,7 +6359,7 @@ async function renderPendingUserList(){
   refreshPendingBadge();
   if(!apps.length){ el.innerHTML=`<p class="admin-note">目前沒有待審核帳號。</p>`; return; }
   el.innerHTML=`<div class="admin-permission-shell">
-    ${pendingUserTree(apps)}
+    ${personDeptTree(apps,"待審核員工部門樹","目前無待審核")}
     <div class="admin-permission-list">${apps.map((a,i)=>permissionMatrixForApp(a,i)).join("")}</div>
   </div>`;
   el.querySelectorAll("[data-approve]").forEach(btn=>btn.addEventListener("click",async()=>{
@@ -6301,7 +6370,7 @@ async function renderPendingUserList(){
     btn.disabled=true;
     try{
       const ok=await userApprovalStore.approve(app,roles);
-      alert(ok?`已核准 ${app.name||app.email}，帳號啟用為：${roles.map(r=>roleLabels[r]||r).join("、")}`:"核准失敗，請確認管理者權限或稍後再試。");
+      alert(ok?`已核准 ${app.name||app.email}，帳號啟用為：${normalizeRoleIds(roles).map(r=>roleLabels[r]||r).join("、")}`:"核准失敗，請確認管理者權限或稍後再試。");
     }catch(err){ console.warn("核准失敗",err); alert("核准失敗："+(err?.message||"未知錯誤")); }
     await renderPendingUserList();
   }));
@@ -6336,14 +6405,14 @@ function activeUserCard(u,index){
     </div>
     ${isSuper?"":`<div class="permission-table-wrap" role="region" aria-label="${esc(u.name||u.empId||"員工")} 權限矩陣">
       <table class="permission-table">
-        <thead><tr><th>角色群組</th>${permissionColumns.map(col=>`<th>${esc(col.label)}</th>`).join("")}</tr></thead>
+        <thead><tr><th>職務／平台權限</th>${permissionColumns.map(col=>`<th>${esc(col.label)}</th>`).join("")}</tr></thead>
         <tbody>${assignableRoleIds.map(role=>`<tr>
-          <td><label class="permission-role-toggle"><input type="checkbox" value="${role}" ${(u.roles||[]).includes(role)?"checked":""}>${esc(roleLabels[role]||role)}</label></td>
+          <td><label class="permission-role-toggle"><input type="checkbox" value="${role}" ${normalizeRoleIds(u.roles||[]).includes(role)?"checked":""}>${esc(roleLabels[role]||role)}</label></td>
           ${permissionColumns.map(col=>`<td><span class="permission-mark ${roleTemplateHas(role,col.key)?"":"off"}">${roleTemplateHas(role,col.key)?"✓":"—"}</span></td>`).join("")}
         </tr>`).join("")}</tbody>
       </table>
     </div>
-    <p class="permission-help">勾選角色後按「儲存角色」即更新該員工權限（一人多職取聯集）；按「停用帳號」會立即擋住該員工進站，可再「重新啟用」。</p>`}
+    <p class="permission-help">職務角色代表工作範圍；「平台管理者」代表可審核帳號與進入管理面板。兩者分開勾選，以支援未來同職稱但不同管理責任的人事異動。</p>`}
   </section>`;
 }
 async function renderActiveUserList(){
@@ -6355,7 +6424,10 @@ async function renderActiveUserList(){
     .filter(u=>u.status==="active"||u.status==="suspended")
     .sort((a,b)=>(a.department||"").localeCompare(b.department||"","zh-Hant")||(a.empId||"").localeCompare(b.empId||""));
   if(!users.length){ el.innerHTML=`<p class="admin-note">目前沒有在職帳號。</p>`; return; }
-  el.innerHTML=users.map((u,i)=>activeUserCard(u,i)).join("");
+  el.innerHTML=`<div class="admin-permission-shell">
+    ${personDeptTree(users,"在職員工部門樹","目前無員工")}
+    <div class="admin-permission-list">${users.map((u,i)=>activeUserCard(u,i)).join("")}</div>
+  </div>`;
   el.querySelectorAll("[data-save-roles]").forEach(btn=>btn.addEventListener("click",async()=>{
     const u=users[+btn.dataset.saveRoles];
     const card=btn.closest(".permission-card");
@@ -6364,7 +6436,7 @@ async function renderActiveUserList(){
     btn.disabled=true;
     try{
       const ok=await userApprovalStore.setRoles(u,roles);
-      alert(ok?`已更新 ${u.name||u.empId} 的角色為：${roles.map(r=>roleLabels[r]||r).join("、")}`:"更新失敗，請確認管理者權限或稍後再試。");
+      alert(ok?`已更新 ${u.name||u.empId} 的角色為：${normalizeRoleIds(roles).map(r=>roleLabels[r]||r).join("、")}`:"更新失敗，請確認管理者權限或稍後再試。");
     }catch(err){ console.warn("角色更新失敗",err); alert("更新失敗："+(err?.message||"未知錯誤")); }
     renderActiveUserList();
   }));

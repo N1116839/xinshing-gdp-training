@@ -30,6 +30,8 @@ service cloud.firestore {
         && exists(userPath(request.auth.uid))
         && get(userPath(request.auth.uid)).data.status == 'active'
         && get(userPath(request.auth.uid)).data.roles is list
+        // 2026-06-17: new approvals use gdp_admin/doc_superadmin only.
+        // Legacy role ids remain temporarily so existing admins do not lose access before profiles are normalized.
         && get(userPath(request.auth.uid)).data.roles.hasAny(['gdp_admin','doc_superadmin','rp_admin','qa_admin','sales_lead','warehouse_lead'])
       );
     }
