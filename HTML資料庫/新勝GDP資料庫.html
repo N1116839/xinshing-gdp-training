@@ -1850,7 +1850,7 @@ const rolePermissionTemplates = {
   role_purchase:["enter","learn","exam","calendar"],
   role_sales_assistant:["enter","learn","exam","calendar"],
   role_warehouse_lead:["enter","learn","exam","calendar","review"],
-  role_warehouse_staff:["enter","learn","exam","calendar"],
+  role_warehouse_staff:["enter","learn","exam"],
   role_accounting_hr:["enter","learn","exam","calendar"],
   role_doc:["enter","learn","exam","calendar","review"],
   pharmacist:["enter","learn","exam","calendar","review"],
@@ -1893,6 +1893,86 @@ function defaultRoleIdsForPerson(person={}){
   if(/文管/.test(text)) roles.push("role_doc");
   if(!roles.length) roles.push("staff");
   return [...new Set(roles)].filter(r=>assignableRoleIds.includes(r));
+}
+function suggestedRoleIdsForActivePerson(person={}){
+  const roles=normalizeRoleIds(person.roles||[]);
+  if(roles.length===1 && roles[0]==="staff"){
+    const inferred=defaultRoleIdsForPerson(person).filter(r=>r!=="staff");
+    if(inferred.length) return inferred;
+  }
+  return roles;
+}
+const roleDepartmentMap = {
+  role_rp:["rp"],
+  role_qa:["qa"],
+  role_sales_lead:["sales","purchase"],
+  role_sales:["sales"],
+  role_purchase:["purchase"],
+  role_sales_assistant:["sales","purchase"],
+  role_warehouse_lead:["warehouse"],
+  role_warehouse_staff:["warehouse"],
+  role_accounting_hr:["personnel"],
+  pharmacist:["pharmacist"],
+  role_doc:["doc"]
+};
+const deptLabelToId = {
+  "GDP權責人":"rp",
+  "品保":"qa",
+  "業務":"sales",
+  "採購":"purchase",
+  "業助":"sales",
+  "倉庫組長":"warehouse",
+  "倉管":"warehouse",
+  "會計/人事":"personnel",
+  "管理藥師":"pharmacist",
+  "文管":"doc"
+};
+function uniqueList(list){ return [...new Set((list||[]).filter(Boolean))]; }
+function visibilityContext(){
+  const profile=authStore?.profile||null;
+  const roles=suggestedRoleIdsForActivePerson(profile||{});
+  const isAdmin=authStore?.canAdmin?.() || roles.includes("doc_superadmin");
+  if(!authStore?.user || !profile || profile.status!=="active"){
+    return {all:true,depts:["*"],roles:["staff"],signedIn:false,isAdmin:false};
+  }
+  if(isAdmin || roles.includes("gdp_admin") || roles.includes("doc_superadmin")){
+    return {all:true,depts:["*"],roles,signedIn:true,isAdmin:true};
+  }
+  const roleDepts=roles.flatMap(r=>roleDepartmentMap[r]||[]);
+  const inferredDept=deptLabelToId[normalizeDeptLabel(profile.department,profile.title)]||"";
+  const depts=uniqueList([...roleDepts,inferredDept]);
+  return {all:false,depts,roles,signedIn:true,isAdmin:false};
+}
+function itemDepartments(item){
+  const depts=item?.departments;
+  return Array.isArray(depts) ? depts : ["*"];
+}
+function canSeeItem(item,ctx=visibilityContext()){
+  if(ctx.all) return true;
+  const depts=itemDepartments(item);
+  if(depts.includes("*")) return true;
+  return depts.some(d=>ctx.depts.includes(d));
+}
+function canSeeKbDoc(doc,ctx=visibilityContext()){
+  if(ctx.all) return true;
+  // Firestore 舊資料若尚未補 departments，登入後不給一般員工直接命中，避免跨部門外洩。
+  if(!Array.isArray(doc?.departments)) return false;
+  return canSeeItem(doc,ctx);
+}
+function canShowSection(s,ctx=visibilityContext()){
+  if(ctx.all) return true;
+  if(!s) return false;
+  if(["manual","smf","gdp-kb","exam"].includes(s.id)) return true;
+  if(s.id==="departments") return false;
+  if(s.id==="admin-console") return false;
+  if(["collection-calendar","equipment-calendar"].includes(s.id)) return false;
+  return canSeeItem(s,ctx);
+}
+function visibleSections(ctx=visibilityContext()){
+  return sections.filter(s=>canShowSection(s,ctx));
+}
+function firstVisibleSectionId(ctx=visibilityContext()){
+  return visibleSections(ctx)[0]?.id || "manual";
 }
 // 進站前使用同意書：版本字串更新時，所有人需重新閱讀並重新同意（供稽核留痕）。
 const CONSENT_VERSION = "2026-06-16";
@@ -1950,8 +2030,12 @@ const authStore = {
         }
         this.ready=true;
         this.updateChip();
+        renderNav();
         renderAuthGate();
-        if(this.gateState()==="ready" && current==="admin-console") await showSection("admin-console");
+        if(this.gateState()==="ready"){
+          if(!canShowSection(sections.find(x=>x.id===current))) current=firstVisibleSectionId();
+          await showSection(current);
+        }
       });
       return true;
     }catch(e){
@@ -2086,7 +2170,7 @@ const authStore = {
     if(!this.user) return "未登入";
     if(!this.profile) return "尚未建立使用者資料";
     if(this.profile.status!=="active") return "帳號待審核";
-    return roles.map(r=>roleLabels[r]||r).join("、") || "未設定角色";
+    return suggestedRoleIdsForActivePerson(this.profile||{}).map(r=>roleLabels[r]||r).join("、") || "未設定角色";
   },
   updateChip(message){
     const chip=document.getElementById("authChip");
@@ -4471,7 +4555,8 @@ const kbStore = {
     return this.cache;
   },
   async search(query){
-    const docs=await this.load();
+    const ctx=visibilityContext();
+    const docs=(await this.load()).filter(doc=>canSeeKbDoc(doc,ctx));
     const terms=this.queryTerms(query);
     const compact=this.normalize(query);
     const shortQuery=compact.length>0&&compact.length<=2;
@@ -5496,15 +5581,17 @@ function kbResultsHtml(results,query){
 }
 function kbSection(){
   const quickQuestions=["品質系統應包含哪些項目","變更管制怎麼申請","偏差要怎麼處理","溫度測繪夏季冬季是哪幾個月","溫度超標怎麼處理","供應商怎麼評鑑","退回品如何處理","委外作業多久評估一次","運輸溫度如何管控","內部稽核多久一次","倉庫多久盤點一次","教育訓練合格標準"];
-  // §44.5／§48.7 快速查詢部門標籤（休眠：目前無 chokepoint 讀取，登入後依角色過濾按鈕用）。依各題 SOP 部門歸屬；data-q 字串不動（守 §26.3.1 固定驗收題）。
+  // §44.5／§48.7 快速查詢部門標籤：登入後依角色過濾按鈕。依各題 SOP 部門歸屬；data-q 字串不動（守 §26.3.1 固定驗收題）。
   const quickQuestionDepts={"品質系統應包含哪些項目":["qa"],"變更管制怎麼申請":["qa","doc"],"偏差要怎麼處理":["qa"],"溫度測繪夏季冬季是哪幾個月":["warehouse"],"溫度超標怎麼處理":["warehouse"],"供應商怎麼評鑑":["purchase"],"退回品如何處理":["sales","warehouse"],"委外作業多久評估一次":["purchase"],"運輸溫度如何管控":["warehouse"],"內部稽核多久一次":["qa"],"倉庫多久盤點一次":["warehouse"],"教育訓練合格標準":["personnel"]};
+  const ctx=visibilityContext();
+  const canShowQuick=q=>ctx.all || (quickQuestionDepts[q]||["*"]).some(d=>d==="*"||ctx.depts.includes(d));
   const quickGroups=[
     {label:"品質與管理",items:["品質系統應包含哪些項目","變更管制怎麼申請","偏差要怎麼處理","內部稽核多久一次"]},
     {label:"溫度與倉儲",items:["溫度測繪夏季冬季是哪幾個月","溫度超標怎麼處理","運輸溫度如何管控","倉庫多久盤點一次"]},
     {label:"廠商與作業",items:["供應商怎麼評鑑","退回品如何處理","委外作業多久評估一次","教育訓練合格標準"]}
-  ];
+  ].map(g=>({...g,items:g.items.filter(canShowQuick)})).filter(g=>g.items.length);
   const grouped=new Set(quickGroups.flatMap(g=>g.items));
-  const leftover=quickQuestions.filter(q=>!grouped.has(q));
+  const leftover=quickQuestions.filter(q=>!grouped.has(q)&&canShowQuick(q));
   if(leftover.length) quickGroups.push({label:"其他",items:leftover});
   const qBtn=q=>`<button type="button" class="kb-quick" data-q="${esc(q)}">${esc(q)}？</button>`;
   const quickBtns=quickGroups.map(g=>`<div class="kb-quick-group"><span class="kb-quick-label">${esc(g.label)}</span><div class="kb-quick-btns">${g.items.map(qBtn).join("")}</div></div>`).join("");
@@ -6269,7 +6356,7 @@ function adminConsoleSection(){
           <div class="change-row"><span>員工編號</span><span>${esc(profile?.empId||"未建立")}</span></div>
           <div class="change-row"><span>部門</span><span>${esc(profile?.department||"未建立")}</span></div>
           <div class="change-row"><span>職稱</span><span>${esc(profile?.title||"未建立")}</span></div>
-          <div class="change-row"><span>角色</span><span>${esc(normalizeRoleIds(profile?.roles||[]).map(r=>roleLabels[r]||r).join("、")||"未設定")}</span></div>
+          <div class="change-row"><span>角色</span><span>${esc(suggestedRoleIdsForActivePerson(profile||{}).map(r=>roleLabels[r]||r).join("、")||"未設定")}</span></div>
           <div class="change-row"><span>狀態</span><span>${esc(profile?.status||"未登入")}</span></div>
         </div>
         <p class="admin-note">${isAdmin?"此帳號可審核新帳號、設定職務角色、授予平台管理者權限、停用或重新啟用在職員工。":"此帳號尚無平台管理者權限；審核帳號與權限管理需平台管理者或超管。"}</p>
@@ -6388,6 +6475,7 @@ async function renderPendingUserList(){
 function activeUserCard(u,index){
   const isSuper=authStore.isSuperAdminEmail(u.email);
   const suspended=u.status==="suspended";
+  const selectedRoles=suggestedRoleIdsForActivePerson(u);
   const statusBadge=suspended
     ? '<small>目前狀態：<span style="color:#b3261e;font-weight:800">已停用</span></small>'
     : '<small>目前狀態：<span style="color:#1a7f5a;font-weight:800">啟用中</span></small>';
@@ -6407,7 +6495,7 @@ function activeUserCard(u,index){
       <table class="permission-table">
         <thead><tr><th>職務／平台權限</th>${permissionColumns.map(col=>`<th>${esc(col.label)}</th>`).join("")}</tr></thead>
         <tbody>${assignableRoleIds.map(role=>`<tr>
-          <td><label class="permission-role-toggle"><input type="checkbox" value="${role}" ${normalizeRoleIds(u.roles||[]).includes(role)?"checked":""}>${esc(roleLabels[role]||role)}</label></td>
+          <td><label class="permission-role-toggle"><input type="checkbox" value="${role}" ${selectedRoles.includes(role)?"checked":""}>${esc(roleLabels[role]||role)}</label></td>
           ${permissionColumns.map(col=>`<td><span class="permission-mark ${roleTemplateHas(role,col.key)?"":"off"}">${roleTemplateHas(role,col.key)?"✓":"—"}</span></td>`).join("")}
         </tr>`).join("")}</tbody>
       </table>
@@ -7841,11 +7929,13 @@ function renderNav(){
   const picker=document.getElementById("mobilePicker");
   const pickerToggle=document.getElementById("mobilePickerToggle");
   const pickerPanel=document.getElementById("mobilePickerPanel");
+  if(!nav||!picker||!pickerToggle||!pickerPanel) return;
+  const ctx=visibilityContext();
   nav.innerHTML="";
   pickerPanel.innerHTML="";
   const navGroups=["GDP核心","新人部門","年度行事曆","GDP 知識庫","測試專區"];
   navGroups.forEach(group=>{
-    const groupSections=sections.filter(s=>s.group===group);
+    const groupSections=sections.filter(s=>s.group===group&&canShowSection(s,ctx));
     if(!groupSections.length) return;
     /* group header */
     const hdr=document.createElement("div");
@@ -7878,17 +7968,23 @@ function renderNav(){
       pickerPanel.appendChild(pickerBtn);
     });
   });
-  pickerToggle.addEventListener("click",()=>{
-    const open=!picker.classList.contains("open");
-    picker.classList.toggle("open",open);
-    pickerToggle.setAttribute("aria-expanded",String(open));
-  });
-  document.addEventListener("click",e=>{
-    if(!picker.contains(e.target)){
-      picker.classList.remove("open");
-      pickerToggle.setAttribute("aria-expanded","false");
-    }
-  });
+  if(!pickerToggle.dataset.bound){
+    pickerToggle.dataset.bound="1";
+    pickerToggle.addEventListener("click",()=>{
+      const open=!picker.classList.contains("open");
+      picker.classList.toggle("open",open);
+      pickerToggle.setAttribute("aria-expanded",String(open));
+    });
+  }
+  if(!document.body.dataset.mobilePickerBound){
+    document.body.dataset.mobilePickerBound="1";
+    document.addEventListener("click",e=>{
+      if(!picker.contains(e.target)){
+        picker.classList.remove("open");
+        pickerToggle.setAttribute("aria-expanded","false");
+      }
+    });
+  }
 }
 
 /* ═══════════════════════════════════════════════
@@ -7907,8 +8003,13 @@ async function showSection(id){
     }
     return;
   }
+  let s=sections.find(x=>x.id===id)||sections.find(x=>x.id===firstVisibleSectionId())||sections[0];
+  if(!canShowSection(s)){
+    const fallbackId=firstVisibleSectionId();
+    s=sections.find(x=>x.id===fallbackId)||sections[0];
+    id=s.id;
+  }
   current=id;
-  let s=sections.find(x=>x.id===id)||sections[0];
   document.body.classList.toggle("dept-page",!!deptIdMap[s.id]);
   // Merge Firestore deficiency data if available
   const fsItems=deficiencyStore.getItems(id);
