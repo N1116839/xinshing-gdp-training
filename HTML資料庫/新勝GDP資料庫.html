@@ -1927,6 +1927,17 @@ const deptLabelToId = {
   "管理藥師":"pharmacist",
   "文管":"doc"
 };
+// dept id → 中文名稱（智慧查詢「非該部門」提示用）
+const deptIdLabel = {
+  rp:"GDP權責",
+  qa:"品保",
+  sales:"業務",
+  purchase:"採購",
+  warehouse:"倉管",
+  personnel:"會計/人事",
+  pharmacist:"管理藥師",
+  doc:"文管"
+};
 function uniqueList(list){ return [...new Set((list||[]).filter(Boolean))]; }
 function visibilityContext(){
   const profile=authStore?.profile||null;
@@ -4556,7 +4567,8 @@ const kbStore = {
   },
   async search(query){
     const ctx=visibilityContext();
-    const docs=(await this.load()).filter(doc=>canSeeKbDoc(doc,ctx));
+    // 先對全 KB 算分；可見性過濾延後到評分後做，才能分辨「最佳答案落在其他部門」與「真的查無資料」。
+    const docs=await this.load();
     const terms=this.queryTerms(query);
     const compact=this.normalize(query);
     const shortQuery=compact.length>0&&compact.length<=2;
@@ -4631,9 +4643,23 @@ const kbStore = {
       if(shortQuery&&!strongHit&&score<6) score=0;
       return {doc,score,strongHit};
     }).filter(x=>x.score>0).sort((a,b)=>b.score-a.score);
-    const maxScore=scored[0]?.score||0;
+    // §44.5／§48.7 權限：非全可見者，若最佳答案是其他部門的 fact（強匹配），
+    // 回「非該部門」提示，而不是掉到同範圍內的弱匹配錯答案
+    // （解 032 倉管問人事/採購卻顯示無關卡片、或合格分數顯示錯誤答案）。
+    if(!ctx.all){
+      const top=scored[0];
+      if(top&&top.strongHit&&top.doc.sourceType==="fact"&&!canSeeKbDoc(top.doc,ctx)){
+        const topVisible=scored.find(x=>canSeeKbDoc(x.doc,ctx));
+        if(!topVisible||topVisible.score<top.score*0.6){
+          const depts=itemDepartments(top.doc).filter(d=>d!=="*");
+          return [{outOfScope:true,topic:top.doc.topic,depts}];
+        }
+      }
+    }
+    const visibleScored=scored.filter(x=>canSeeKbDoc(x.doc,ctx));
+    const maxScore=visibleScored[0]?.score||0;
     const seen=new Set();
-    return scored.filter(x=>{
+    return visibleScored.filter(x=>{
       const key=x.doc.topic||x.doc.id;
       if(seen.has(key)) return false;
       seen.add(key);
@@ -5565,6 +5591,12 @@ function isTrainingAnswer(doc){
   return !/(此筆來自|此筆代表|詳見本頁|回原始檔|文件編號：|檔案路徑：|協助新人知道)/.test(text);
 }
 function kbResultsHtml(results,query){
+  // 權限：最佳答案落在其他部門 → 顯示「非該部門」提示，不洩漏內容也不給錯答案
+  if(results[0]&&results[0].outOfScope){
+    const labels=(results[0].depts||[]).map(d=>deptIdLabel[d]||d).filter(Boolean);
+    const who=labels.length?`「${labels.join("、")}」`:"其他部門";
+    return `<div class="kb-no-result">這個問題屬於${esc(who)}的權責範圍，不在您目前可查詢的部門範圍內。<br>若工作上確實需要此資訊，請洽該部門同仁或管理者，或改用具該部門權限的帳號查詢。</div>`;
+  }
   // 有 fact → 只顯示 fact，不顯示查詢校正
   const facts=results.filter(r=>r.sourceType==="fact");
   if(facts.length){
@@ -7427,7 +7459,8 @@ function bindKbForm(){
     box.scrollTop=box.scrollHeight;
     try{
       const results=await kbStore.search(q);
-      await analyticsStore.log("kb_search",{sectionId:"gdp-kb",question:q,status:results.length?"found":"not_found"});
+      const blocked=results[0]&&results[0].outOfScope;
+      await analyticsStore.log("kb_search",{sectionId:"gdp-kb",question:q,status:blocked?"out_of_department":(results.length?"found":"not_found")});
       loading.remove();
       if(results.length){
         const el=document.createElement("div");
