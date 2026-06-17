@@ -1815,7 +1815,7 @@ function getNotifyEmails(){
   return [...new Set(all)];
 }
 // EmailJS（client-side 寄信、免後端/Blaze）。填入超管的 EmailJS 憑證後即生效；三個值留空則不寄信（不影響申請流程）。
-const EMAILJS_CONFIG = { publicKey:"", serviceId:"", templateId:"" };
+const EMAILJS_CONFIG = { publicKey:"kflw9_lWXjPPtStjF", serviceId:"service_xyhyvcq", templateId:"template_bk3op8r" };
 // 動態載入 EmailJS SDK（只有在要寄信時才載），回傳 window.emailjs。
 let _emailJsPromise=null;
 function loadEmailJs(){
