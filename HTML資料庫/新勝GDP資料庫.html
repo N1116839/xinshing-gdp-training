@@ -286,6 +286,14 @@
   .permission-mark{display:inline-grid;place-items:center;width:18px;height:18px;border:1px solid #98c6bd;background:#eef8f5;color:var(--brand);font-size:12px;font-weight:900}
   .permission-mark.off{background:#f8faf9;border-color:#dde8e7;color:#c5d4d1}
   .permission-help{margin:0;color:var(--ink-soft);font-size:12.5px;line-height:1.6}
+  .auditlog-tabbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px}
+  .auditlog-tab{border:1px solid #b9ddd3;background:#fff;color:var(--brand);padding:7px 12px;font:inherit;font-size:12.5px;font-weight:800;cursor:pointer}
+  .auditlog-tab:hover{background:#f0fbf5}
+  .auditlog-tab.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .auditlog-tag{display:inline-block;padding:2px 9px;font-size:12px;font-weight:900;border:1px solid #98c6bd;background:#eef8f5;color:var(--brand)}
+  .auditlog-tag.warn{background:#fdecea;border-color:#e6a8a0;color:#b3261e}
+  .auditlog-table td{text-align:left}
+  .auditlog-table td small{color:var(--ink-soft);line-height:1.45}
   .admin-disclaimer{grid-column:1/-1;padding:14px 16px;background:#fff9ef;border:1px solid #e6c98a;border-left:5px solid var(--gold);border-radius:8px}
   .admin-disclaimer h4{margin:0 0 8px;color:#8a5a13;font-size:15px}
   .admin-disclaimer ul{margin:0;padding-left:18px;display:grid;gap:5px}
@@ -2575,6 +2583,23 @@ const userApprovalStore = {
     });
     return true;
   }
+};
+
+// §49.5 稽核紀錄查詢：管理者唯讀檢視同意書／角色異動／其他稽核 log。
+// 三集合 read 規則皆 isAdmin()（firestore.rules 已放行），免改 rules、純讀。
+// createdAt 單欄 orderBy（自動索引，免複合索引）；錯誤回 null 以區分「讀取失敗」與「無紀錄」。
+const auditLogStore = {
+  async _list(coll, n=100){
+    if(!qaStore.db || !authStore.canAdmin()) return [];
+    try{
+      const {collection,query,orderBy,limit,getDocs}=qaStore.firebase;
+      const snap=await getDocs(query(collection(qaStore.db,coll),orderBy("createdAt","desc"),limit(n)));
+      return snap.docs.map(d=>({id:d.id,...d.data()}));
+    }catch(e){ console.warn(coll+" 讀取失敗",e); return null; }
+  },
+  consentLogs(){ return this._list("gdpConsentLogs"); },
+  roleChangeLogs(){ return this._list("gdpRoleChangeLogs"); },
+  auditLogs(){ return this._list("gdpAuditLogs"); }
 };
 
 // §38.6 管理者 email 名單：超管寫 gdpConfig/access；同時驅動權限與通知收件人。
@@ -6411,6 +6436,14 @@ function adminConsoleSection(){
         <div id="activeUserList" class="admin-permission-list" style="margin-top:12px"><p class="admin-note">展開後載入…</p></div>
       </details>
     </article>
+    <article class="panel wide admin-section">
+      <h3>同意書／審核紀錄查詢</h3>
+      <p class="admin-note">唯讀查詢稽核軌跡：進站前『平台使用聲明』的同意／不同意、帳號核准與角色異動、退回等其他管理動作。所有紀錄只新增、不可修改或刪除，供 GDP 稽查時佐證「誰、何時、做了什麼」。</p>
+      <details class="admin-details" id="auditLogDetails">
+        <summary>展開／收合稽核紀錄查詢</summary>
+        <div id="auditLogPanel" style="margin-top:12px"><p class="admin-note">展開後載入…</p></div>
+      </details>
+    </article>
     ${authStore.isSuperAdmin()?`<article class="panel wide admin-section">
       <h3>管理者 email 名單（超管專用）</h3>
       <p class="admin-note">在此設定哪些 email 是管理者。設定後，這些 email 以 Google 登入即自動取得<strong>管理者權限</strong>（可審核帳號、看管理面板），並會成為「新帳號申請通知信」的收件人。只有超管能編輯此名單。超管本身永遠是管理者，不需加入。</p>
@@ -6576,6 +6609,71 @@ async function renderActiveUserList(){
     renderActiveUserList();
   }));
 }
+// §49.5 稽核紀錄查詢：三種 log 用分頁切換，唯讀表格呈現。
+const AUDIT_LOG_TABS=[
+  {key:"consent",label:"同意書紀錄",hint:"進站前『平台使用聲明』的同意／不同意紀錄；版本字串改版時全員需重新同意。"},
+  {key:"role",label:"角色異動紀錄",hint:"帳號核准、在職角色調整、停用／重新啟用的前後對照與操作者。"},
+  {key:"audit",label:"其他稽核紀錄",hint:"退回申請等其他管理動作。"}
+];
+function auditRolesText(roles){
+  if(!Array.isArray(roles)||!roles.length) return "—";
+  return roles.map(r=>roleLabels[r]||r).join("、");
+}
+function auditLogConsentRow(r){
+  const agree=r.decision==="agree";
+  return `<tr>
+    <td>${esc(fmtDate(r.createdAt))}</td>
+    <td>${esc(r.empId||"—")}</td>
+    <td>${esc(r.name||"—")}</td>
+    <td><span class="auditlog-tag ${agree?"":"warn"}">${agree?"同意":"不同意"}</span></td>
+    <td>${esc(r.version||"—")}</td>
+    <td>${esc(r.email||"—")}</td>
+  </tr>`;
+}
+function auditLogRoleRow(r){
+  const b=r.before||{}, a=r.after||{};
+  return `<tr>
+    <td>${esc(fmtDate(r.createdAt||r.approvedAt))}</td>
+    <td>${esc(r.targetEmpId||"—")}<br><small>${esc(r.targetName||"")}</small></td>
+    <td>${esc(r.reason||"—")}</td>
+    <td><small>角色：${esc(auditRolesText(b.roles))}<br>狀態：${esc(b.status||"—")}</small></td>
+    <td><small>角色：${esc(auditRolesText(a.roles))}<br>狀態：${esc(a.status||"—")}</small></td>
+    <td>${esc(r.actorName||r.actorUid||"—")}</td>
+  </tr>`;
+}
+function auditLogAuditRow(r){
+  return `<tr>
+    <td>${esc(fmtDate(r.createdAt))}</td>
+    <td>${esc(r.action||"—")}</td>
+    <td>${esc(r.targetId||"—")}</td>
+    <td>${esc(r.note||"—")}</td>
+    <td>${esc(r.actorName||r.actorUid||"—")}</td>
+  </tr>`;
+}
+let auditLogActiveTab="consent";
+async function renderAuditLogPanel(tab){
+  auditLogActiveTab=tab||auditLogActiveTab;
+  const el=document.getElementById("auditLogPanel");
+  if(!el) return;
+  if(!authStore.canAdmin()){ el.innerHTML=`<p class="admin-note">需管理者權限才能查詢稽核紀錄。</p>`; return; }
+  const meta=AUDIT_LOG_TABS.find(t=>t.key===auditLogActiveTab)||AUDIT_LOG_TABS[0];
+  const bar=AUDIT_LOG_TABS.map(t=>`<button type="button" class="auditlog-tab${t.key===auditLogActiveTab?" active":""}" data-audit-tab="${t.key}">${esc(t.label)}</button>`).join("");
+  el.innerHTML=`<div class="auditlog-tabbar">${bar}</div><p class="admin-note">${esc(meta.hint)}</p><div id="auditLogBody"><p class="admin-note">載入中…</p></div>`;
+  el.querySelectorAll("[data-audit-tab]").forEach(btn=>btn.addEventListener("click",()=>renderAuditLogPanel(btn.dataset.auditTab)));
+  const body=el.querySelector("#auditLogBody");
+  let rows, head, render;
+  if(auditLogActiveTab==="role"){
+    rows=await auditLogStore.roleChangeLogs(); head=["時間","對象","原因","異動前","異動後","操作者"]; render=auditLogRoleRow;
+  }else if(auditLogActiveTab==="audit"){
+    rows=await auditLogStore.auditLogs(); head=["時間","動作","對象","備註","操作者"]; render=auditLogAuditRow;
+  }else{
+    rows=await auditLogStore.consentLogs(); head=["時間","工號","姓名","決定","版本","Email"]; render=auditLogConsentRow;
+  }
+  if(!body) return;
+  if(rows===null){ body.innerHTML=`<p class="admin-note">讀取失敗，請確認管理者權限或稍後再試。</p>`; return; }
+  if(!rows.length){ body.innerHTML=`<p class="admin-note">目前沒有紀錄。</p>`; return; }
+  body.innerHTML=`<div class="permission-table-wrap"><table class="permission-table auditlog-table"><thead><tr>${head.map(h=>`<th>${esc(h)}</th>`).join("")}</tr></thead><tbody>${rows.map(render).join("")}</tbody></table></div><p class="admin-note">顯示最近 ${rows.length} 筆。</p>`;
+}
 function bindAdminConsole(){
   const logout=document.getElementById("authLogoutBtn");
   logout?.addEventListener("click",async()=>authStore.signOut());
@@ -6584,6 +6682,11 @@ function bindAdminConsole(){
   const activeDetails=document.getElementById("activeUserDetails");
   if(activeDetails){
     activeDetails.addEventListener("toggle",()=>{ if(activeDetails.open) renderActiveUserList(); });
+  }
+  // §49.5 同意書／審核紀錄查詢：常駐可收合區，展開時載入最新稽核紀錄。
+  const auditDetails=document.getElementById("auditLogDetails");
+  if(auditDetails){
+    auditDetails.addEventListener("toggle",()=>{ if(auditDetails.open) renderAuditLogPanel(auditLogActiveTab); });
   }
   // 超管：管理者 email 名單（重新載入確保最新，再渲染＋綁定新增表單）。
   const adminEmailForm=document.getElementById("adminEmailForm");
