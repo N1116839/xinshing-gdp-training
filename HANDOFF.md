@@ -1,6 +1,9 @@
 # 新勝 GDP 專案交接（精簡版）
 
-> 最新補記：2026-06-22（第132次：**管理面板新增「同意書／審核紀錄查詢」頁 ✅＋確認在職員工權限面板線上實測通過**）。
+> 最新補記：2026-06-22（第133次：**帳號審核擴充——晉升／降職／兼任／離職停用／復職／簡易代理 ✅**）。
+> 第133次（待 commit/push）：使用者指定做「帳號審核擴充」。先盤點：既有「在職員工權限管理」面板其實已能改角色（＝晉升/降職）、多勾角色（＝兼任）、停用，缺的是**稽核不記錄「為什麼/哪種異動」**、**沒區分離職 vs 暫時停用**、**沒有代理**。AskUserQuestion 定範圍：①加「異動類型＋原因」結構化稽核 ②獨立「離職」狀態＋已離職分頁可復職 ③簡易代理（指派角色＋註記、手動取消，不做自動到期）。全部**純前端、零 rules 變動**（`gdpUsers update`／`gdpRoleChangeLogs create` 對 isAdmin 已放行，加欄位 OK）。改 `HTML資料庫/新勝GDP資料庫.html`：新增 `roleChangeTypeLabel`／`ROLE_SAVE_CHANGE_TYPES`／`STATUS_LABEL`+`statusLabel()`；`userApprovalStore.setRoles/setStatus` 改收 `{changeType,reason}`（deputy_assign/deputy_end 順帶寫/清 `deputyActive`+`deputyNote`）；`approve` log 補 `changeType:"approve"`；`activeUserCard` 加異動類型下拉＋原因輸入＋暫時停用／標記離職／復職鈕＋「🔁 代理中」標籤；新增 `resignedUserCard`；`renderActiveUserList` 拆「在職(active+suspended)」與「已離職(resigned)」可收合分頁＋四種按鈕 handler；稽核「角色異動」分頁加「異動類型」欄＋前後狀態中文。驗收：`JS_PARSE_OK 1`、`verify_facts 1296/1296`、preview mock（5 樣本含超管/代理/離職）卡片數/超管鎖定/3 異動下拉/暫停×2 復職×1 離職×3/代理標籤/已離職分頁＋復職鈕全正確、點擊互動傳出 `{changeType,reason}` 正確、稽核分頁異動類型欄＋狀態中文＋舊紀錄相容、console 無 error。**下次待辦**：page③依職稱過濾各部門內容｜測驗正式題庫｜（可選）面板刪除帳號功能｜（可選）代理自動到期（Phase 3）。
+
+> 第132次補記：2026-06-22（第132次：**管理面板新增「同意書／審核紀錄查詢」頁 ✅＋確認在職員工權限面板線上實測通過**）。
 > 第132次（commit `2758fd8`，永久網址已驗收上線）：① 使用者用截圖確認第126次新增的「在職員工權限管理」常駐面板線上正常（部門樹、超管鎖定、職務×平台權限矩陣、儲存/停用鈕齊全）→ **🔴「待測」項目結案**。② 依使用者指定開始做「同意書／審核紀錄查詢」頁：在 `HTML資料庫/新勝GDP資料庫.html` 管理面板「在職員工權限管理」下方新增常駐可收合區塊，**純前端唯讀、零 rules 變動**（`gdpConsentLogs`/`gdpRoleChangeLogs`/`gdpAuditLogs` 三 collection 的 `read` 規則本來就 `isAdmin()`，已核對 firestore.rules 第72/90/94 行）。新增 `auditLogStore`（`consentLogs/roleChangeLogs/auditLogs`，各 `createdAt` 單欄 orderBy desc limit 100、免複合索引、錯誤回 null 區分「失敗」與「無紀錄」）；UI 三分頁切換（同意書紀錄＝時間/工號/姓名/決定[同意綠·不同意紅]/版本/Email；角色異動＝時間/對象/原因/異動前後[角色中文標籤+狀態]/操作者；其他稽核＝時間/動作/對象/備註/操作者）；用獨立 `.auditlog-*` class 避開既有部門頁 `.audit-*`；`bindAdminConsole` 加 `auditLogDetails` toggle 展開時載入。驗收：`JS_PARSE_OK 1`、`verify_facts 1296/1296`、preview 模擬管理者＋樣本資料三分頁/表頭/標色/前後角色標籤/空清單/讀取失敗訊息全正確、console 無 error。③ **測試帳號 `n1116839@ntub.edu.tw`**：使用者要求刪除。本 session 無 Firebase admin 工具、且 `gdpUsers` rules 無 `allow delete`（前端無法刪）→ 建議使用者自行在 Firebase Console 刪 `gdpUsers` doc＋Authentication 使用者（方式 A）；若日後要面板常態刪帳號需另加 `allow delete:if isAdmin()`＋刪除鈕（方式 C，未做）。**下次待辦**：page③依職稱過濾各部門內容｜帳號審核擴充（晉升/降職/離職/兼任）｜測驗正式題庫｜（可選）面板刪除帳號功能。）
 
 > 第131次補記：2026-06-17（第131次：**EmailJS 帳號申請通知信設定完成並實測成功 ✅**。帶使用者一步步在 emailjs.com 完成：①Gmail 服務（Service ID `service_xyhyvcq`，已連 `tom741285@gmail.com`、測試信收到）②信件範本（Template ID `template_bk3op8r`；主旨 `{{subject}}`、收件人 `{{to_email}}`、回覆 `{{applicant_email}}`、內文用 `{{applicant_name/empid/department/title/email}}`+`{{message}}`，對應 `notifyAdminsOfApplication` 送出的變數）③Public Key `kflw9_lWXjPPtStjF`。三值填入 `HTML資料庫/新勝GDP資料庫.html` 的 `EMAILJS_CONFIG`（約 1818 行）。驗收 `JS_PARSE_OK 1`、`verify_facts 1296/1296`、永久網址子路徑確認三值已上線；**使用者無痕模式申請帳號→超管信箱實收通知信**，端到端成功。收件人＝`getNotifyEmails()`＝超管 email ∪ 管理者 email 名單。commit `475f38e`。**另澄清使用者疑問「停用員工後怎麼重新開啟」**：非 bug，功能已存在——被停用者仍留在「在職員工權限管理」清單（`renderActiveUserList` filter 含 `status==="suspended"`，約 6548 行），顯示紅字「已停用」，按鈕由「停用帳號」變綠色「重新啟用」，按下即恢復；唯一例外是 email 在管理者名單者登入會被 `ensureConfiguredAdmin` 自動重啟用，需先移除其管理者 email。待辦：建議使用者在 EmailJS 後台「帳號/安全」把 Allowed Origins 設為 `https://n1116839.github.io` 防盜用額度（可選）。**另依使用者要求建立私人懶人包 repo `N1116839/xinshing-gdp-admin-guides`（PRIVATE），收錄本次 EmailJS 完整設定步驟＋停用/重新啟用＋管理者 email 名單操作，供日後維護查閱；後續管理操作懶人包都放這個 repo，不塞進公開的主專案。**）
@@ -297,7 +300,8 @@
 | ✅ 第132次完成 | ~~管理面板加「同意書／審核紀錄查詢」頁~~ | 讀 `gdpConsentLogs`、`gdpRoleChangeLogs`、`gdpAuditLogs`；限管理者；純前端唯讀免改 rules。 |
 | 中 | （可選）面板「刪除帳號」功能 | 需加 `gdpUsers` rules `allow delete:if isAdmin()`＋刪除鈕＋部署；目前刪測試帳號走 Firebase Console。 |
 | 中 | page③ 依職稱過濾各部門內容 | 需用 §44.5 標籤與 §48 權限矩陣，注意靜態站前端遮蔽不是真正資料保護。 |
-| 中 | 帳號審核擴充 | 晉升、降職、離職停用、兼任/代理。 |
+| ✅ 第133次完成 | ~~帳號審核擴充~~ | 晉升／降職／兼任／離職停用／復職／簡易代理＋異動類型＋原因結構化稽核。純前端零 rules 變動，待永久網址複測。 |
+| 中（可選） | 代理自動到期 | 簡易代理目前手動取消；若要起訖日＋登入時自動失效屬 Phase 3，需更多設計。 |
 | 中 | 測驗正式題庫 | 需逐題來源、解析、審核者、審核日期；不可 AI 自行上架。 |
 
 ---

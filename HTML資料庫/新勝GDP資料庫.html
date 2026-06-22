@@ -286,6 +286,10 @@
   .permission-mark{display:inline-grid;place-items:center;width:18px;height:18px;border:1px solid #98c6bd;background:#eef8f5;color:var(--brand);font-size:12px;font-weight:900}
   .permission-mark.off{background:#f8faf9;border-color:#dde8e7;color:#c5d4d1}
   .permission-help{margin:0;color:var(--ink-soft);font-size:12.5px;line-height:1.6}
+  .admin-change-controls{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+  .admin-change-field{display:grid;gap:4px;font-size:12px;font-weight:800;color:var(--ink-soft);flex:1 1 180px}
+  .admin-change-field select,.admin-change-field input{font:inherit;font-size:13px;padding:7px 9px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink);min-height:38px}
+  .deputy-badge{display:inline-block;margin-top:4px;padding:2px 9px;font-size:12px;font-weight:800;background:#fff4e0;border:1px solid #e6c98a;color:#8a5a13;border-radius:6px}
   .auditlog-tabbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px}
   .auditlog-tab{border:1px solid #b9ddd3;background:#fff;color:var(--brand);padding:7px 12px;font:inherit;font-size:12.5px;font-weight:800;cursor:pointer}
   .auditlog-tab:hover{background:#f0fbf5}
@@ -1812,6 +1816,18 @@ const adminRoleIds = ["gdp_admin","doc_superadmin"];
 // 帳號審核時可指定的角色（§48 一人多職取聯集，roles 為 list）。
 // 職務/部門角色與「平台管理者」分離：同職稱新人不會自動取得審核帳號權限。
 const assignableRoleIds = ["staff","leader","role_rp","role_qa","role_sales_lead","role_sales","role_purchase","role_sales_assistant","role_warehouse_lead","role_warehouse_staff","role_accounting_hr","pharmacist","role_doc","gdp_admin"];
+// §49.3 帳號審核擴充：角色異動類型（稽核紀錄「為什麼做了什麼人事異動」）。
+const roleChangeTypeLabel = {
+  approve:"帳號審核核准", adjust:"其他調整",
+  promote:"晉升", demote:"降職", concurrent:"兼任／調職",
+  deputy_assign:"代理指派", deputy_end:"取消代理",
+  suspend:"暫時停用", resign:"離職停用", reinstate:"復職"
+};
+// 在職員工「儲存角色」時可選的異動類型（停用／離職／復職由狀態按鈕隱含，不放在此下拉）。
+const ROLE_SAVE_CHANGE_TYPES = ["promote","demote","concurrent","deputy_assign","deputy_end","adjust"];
+// 帳號狀態中文（稽核紀錄前後狀態顯示；舊紀錄的原始字串也能對應）。
+const STATUS_LABEL = { active:"啟用中", suspended:"暫時停用", resigned:"已離職", pending:"待審核", rejected:"已退回" };
+function statusLabel(s){ return STATUS_LABEL[s] || s || "—"; }
 // §38／§48 超級管理員（文管・開發者）：hardcode email，登入即自動 active＋doc_superadmin（解超管啟動死結）。
 // 若 GDP 站要改用其他 Google 帳號，改這裡並同步 Firebase設定/firestore.rules 的 isSuperAdminEmail()。
 const SUPER_ADMIN_EMAILS = ["tom741285@gmail.com"];
@@ -2523,6 +2539,7 @@ const userApprovalStore = {
     await addDoc(collection(qaStore.db,"gdpRoleChangeLogs"),{
       actorUid:authStore.user.uid, actorName:authStore.displayName(),
       targetUid:app.uid, targetEmpId:app.empId||"", targetName:app.name||"",
+      changeType:"approve",
       before:{roles:["staff"],status:"pending",department:app.department||""},
       after:{roles:safeRoles,status:"active",department:app.department||""},
       reason:"帳號審核核准", approvedAt:serverTimestamp(), source:"manualAdminPanel", createdAt:serverTimestamp()
@@ -2553,33 +2570,47 @@ const userApprovalStore = {
     }catch(e){ console.warn("在職員工清單讀取失敗",e); return []; }
   },
   // 調整在職員工角色（isAdmin update 無欄位限制）＋寫角色異動稽核。
-  async setRoles(user, roles){
+  // opts：{changeType, reason}。changeType=deputy_assign/deputy_end 時順帶寫／清 deputy 註記。
+  async setRoles(user, roles, opts={}){
     if(!qaStore.db || !authStore.canAdmin() || !user?.uid) return false;
     if(authStore.isSuperAdminEmail(user.email)) throw new Error("超級管理員不可在此調整");
     const safeRoles=normalizeRoleIds((roles&&roles.length)?roles:["staff"]);
+    const changeType=opts.changeType||"adjust";
+    const reason=(opts.reason||"").trim();
     const {doc,updateDoc,collection,addDoc,serverTimestamp}=qaStore.firebase;
-    await updateDoc(doc(qaStore.db,"gdpUsers",user.uid),{ roles:safeRoles, updatedAt:serverTimestamp() });
+    const patch={ roles:safeRoles, updatedAt:serverTimestamp() };
+    // 簡易代理：指派＝記下被代理職務的註記；取消＝清除（角色本身由管理者勾選增減，存取權即時生效）。
+    if(changeType==="deputy_assign"){ patch.deputyActive=true; patch.deputyNote=reason||"（未填代理說明）"; }
+    else if(changeType==="deputy_end"){ patch.deputyActive=false; patch.deputyNote=""; }
+    await updateDoc(doc(qaStore.db,"gdpUsers",user.uid),patch);
     await addDoc(collection(qaStore.db,"gdpRoleChangeLogs"),{
       actorUid:authStore.user.uid, actorName:authStore.displayName(),
       targetUid:user.uid, targetEmpId:user.empId||"", targetName:user.name||"",
+      changeType,
       before:{roles:user.roles||[],status:user.status||""},
       after:{roles:safeRoles,status:user.status||""},
-      reason:"在職員工角色調整", approvedAt:serverTimestamp(), source:"manualAdminPanel", createdAt:serverTimestamp()
+      reason: reason || roleChangeTypeLabel[changeType] || "在職員工角色調整",
+      approvedAt:serverTimestamp(), source:"manualAdminPanel", createdAt:serverTimestamp()
     });
     return true;
   },
-  // 停用／重新啟用在職員工（status!=='active' 在 gateState 會被擋在進站前）。
-  async setStatus(user, status){
+  // 變更在職員工狀態：active（復職）／suspended（暫時停用）／resigned（離職）。
+  // status!=='active' 在 gateState 會被擋在進站前。opts：{changeType, reason}。
+  async setStatus(user, status, opts={}){
     if(!qaStore.db || !authStore.canAdmin() || !user?.uid) return false;
     if(authStore.isSuperAdminEmail(user.email)) throw new Error("超級管理員不可在此停用");
+    const changeType=opts.changeType || (status==="active"?"reinstate":status==="resigned"?"resign":"suspend");
+    const reason=(opts.reason||"").trim();
     const {doc,updateDoc,collection,addDoc,serverTimestamp}=qaStore.firebase;
     await updateDoc(doc(qaStore.db,"gdpUsers",user.uid),{ status, updatedAt:serverTimestamp() });
     await addDoc(collection(qaStore.db,"gdpRoleChangeLogs"),{
       actorUid:authStore.user.uid, actorName:authStore.displayName(),
       targetUid:user.uid, targetEmpId:user.empId||"", targetName:user.name||"",
+      changeType,
       before:{roles:user.roles||[],status:user.status||""},
       after:{roles:user.roles||[],status},
-      reason: status==="active"?"重新啟用帳號":"停用帳號", approvedAt:serverTimestamp(), source:"manualAdminPanel", createdAt:serverTimestamp()
+      reason: reason || roleChangeTypeLabel[changeType] || "狀態調整",
+      approvedAt:serverTimestamp(), source:"manualAdminPanel", createdAt:serverTimestamp()
     });
     return true;
   }
@@ -6430,7 +6461,7 @@ function adminConsoleSection(){
     </article>
     <article class="panel wide admin-section">
       <h3>在職員工權限管理</h3>
-      <p class="admin-note">常駐區：左側固定部門樹列出已啟用／已停用員工，右側可隨時調整職務角色、授予或移除平台管理者權限，也可停用／重新啟用帳號。所有變更都寫入角色異動紀錄。（超級管理員不在此列。）</p>
+      <p class="admin-note">常駐區：左側固定部門樹列出在職員工，右側可隨時調整職務角色（晉升／降職／兼任）、指派職務代理、授予或移除平台管理者權限，也可暫時停用、標記離職或復職。每次變更都可選異動類型並填原因，全部寫入角色異動稽核紀錄。離職員工會移到下方「已離職員工」區、保留可查。（超級管理員不在此列。）</p>
       <details class="admin-details" id="activeUserDetails">
         <summary>展開／收合在職員工清單</summary>
         <div id="activeUserList" class="admin-permission-list" style="margin-top:12px"><p class="admin-note">展開後載入…</p></div>
@@ -6546,18 +6577,22 @@ function activeUserCard(u,index){
   const suspended=u.status==="suspended";
   const selectedRoles=suggestedRoleIdsForActivePerson(u);
   const statusBadge=suspended
-    ? '<small>目前狀態：<span style="color:#b3261e;font-weight:800">已停用</span></small>'
+    ? '<small>目前狀態：<span style="color:#b3261e;font-weight:800">暫時停用</span></small>'
     : '<small>目前狀態：<span style="color:#1a7f5a;font-weight:800">啟用中</span></small>';
+  const deputyBadge=u.deputyActive?`<span class="deputy-badge">🔁 代理中：${esc(u.deputyNote||"未填說明")}</span>`:"";
+  const changeTypeOptions=ROLE_SAVE_CHANGE_TYPES.map(k=>`<option value="${k}">${esc(roleChangeTypeLabel[k])}</option>`).join("");
   return `<section class="permission-card" data-user-idx="${index}">
     <div class="permission-card-head">
       <div>
         <strong>${esc(u.empId||"未填工號")}｜${esc(u.name||"（未填姓名）")}</strong>
         <small>${esc(u.department||"未填部門")}｜${esc(u.title||"未填職稱")}｜${esc(u.email||"")}</small>
         ${statusBadge}
+        ${deputyBadge}
       </div>
       <div class="admin-actions">
         ${isSuper?'<span class="admin-note">超級管理員，不可在此調整</span>':`<button class="admin-btn" type="button" data-save-roles="${index}">儲存角色</button>
-        <button class="admin-btn ${suspended?"":"warn"}" type="button" data-toggle-status="${index}">${suspended?"重新啟用":"停用帳號"}</button>`}
+        ${suspended?`<button class="admin-btn" type="button" data-reinstate="${index}">復職（重新啟用）</button>`:`<button class="admin-btn warn" type="button" data-suspend="${index}">暫時停用</button>`}
+        <button class="admin-btn warn" type="button" data-resign="${index}">標記離職</button>`}
       </div>
     </div>
     ${isSuper?"":`<div class="permission-table-wrap" role="region" aria-label="${esc(u.name||u.empId||"員工")} 權限矩陣">
@@ -6569,50 +6604,109 @@ function activeUserCard(u,index){
         </tr>`).join("")}</tbody>
       </table>
     </div>
-    <p class="permission-help">職務角色代表工作範圍；「平台管理者」代表可審核帳號與進入管理面板。兩者分開勾選，以支援未來同職稱但不同管理責任的人事異動。</p>`}
+    <div class="admin-change-controls">
+      <label class="admin-change-field">異動類型（儲存角色用）
+        <select class="audit-change-type">${changeTypeOptions}</select>
+      </label>
+      <label class="admin-change-field">原因／備註
+        <input type="text" class="audit-change-reason" maxlength="120" placeholder="例：晉升倉庫組長／代理王XX 6/1-6/30／離職">
+      </label>
+    </div>
+    <p class="permission-help">職務角色代表工作範圍；「平台管理者」代表可審核帳號與進入管理面板。調整角色或停用／離職前可先選異動類型並填原因，會寫入角色異動稽核紀錄。代理＝勾上被代理職務角色、異動類型選「代理指派」並在原因填代理對象與期間；代理結束選「取消代理」並取消勾選。</p>`}
   </section>`;
 }
+function resignedUserCard(u,index){
+  return `<section class="permission-card" data-resigned-idx="${index}">
+    <div class="permission-card-head">
+      <div>
+        <strong>${esc(u.empId||"未填工號")}｜${esc(u.name||"（未填姓名）")}</strong>
+        <small>${esc(u.department||"未填部門")}｜${esc(u.title||"未填職稱")}｜${esc(u.email||"")}</small>
+        <small>目前狀態：<span style="color:#8a5a13;font-weight:800">已離職</span></small>
+      </div>
+      <div class="admin-actions">
+        <input type="text" class="audit-change-reason" maxlength="120" placeholder="復職原因（選填）" style="min-width:160px;padding:7px 9px;border:1px solid var(--line);border-radius:6px">
+        <button class="admin-btn" type="button" data-resigned-reinstate="${index}">復職</button>
+      </div>
+    </div>
+  </section>`;
+}
+function cardReason(btn){ return btn.closest(".permission-card")?.querySelector(".audit-change-reason")?.value.trim()||""; }
 async function renderActiveUserList(){
   const el=document.getElementById("activeUserList");
   if(!el) return;
   if(!authStore.canAdmin()){ el.innerHTML=`<p class="admin-note">需管理者權限才能管理在職員工。</p>`; return; }
   el.innerHTML=`<p class="admin-note">載入中…</p>`;
-  const users=(await userApprovalStore.listUsers())
-    .filter(u=>u.status==="active"||u.status==="suspended")
-    .sort((a,b)=>(a.department||"").localeCompare(b.department||"","zh-Hant")||(a.empId||"").localeCompare(b.empId||""));
-  if(!users.length){ el.innerHTML=`<p class="admin-note">目前沒有在職帳號。</p>`; return; }
-  el.innerHTML=`<div class="admin-permission-shell">
+  const byDeptEmp=(a,b)=>(a.department||"").localeCompare(b.department||"","zh-Hant")||(a.empId||"").localeCompare(b.empId||"");
+  const all=await userApprovalStore.listUsers();
+  const users=all.filter(u=>u.status==="active"||u.status==="suspended").sort(byDeptEmp);
+  const resigned=all.filter(u=>u.status==="resigned").sort(byDeptEmp);
+  if(!users.length && !resigned.length){ el.innerHTML=`<p class="admin-note">目前沒有在職帳號。</p>`; return; }
+  const resignedBlock=resigned.length?`<details class="admin-details" id="resignedUserDetails" style="margin-top:14px">
+    <summary>已離職員工（${resigned.length}）— 保留紀錄可查，必要時可復職</summary>
+    <div class="admin-permission-list" style="margin-top:10px">${resigned.map((u,i)=>resignedUserCard(u,i)).join("")}</div>
+  </details>`:"";
+  el.innerHTML=`${users.length?`<div class="admin-permission-shell">
     ${personDeptTree(users,"在職員工部門樹","目前無員工")}
     <div class="admin-permission-list">${users.map((u,i)=>activeUserCard(u,i)).join("")}</div>
-  </div>`;
+  </div>`:`<p class="admin-note">目前沒有啟用／暫停中的在職帳號。</p>`}${resignedBlock}`;
   el.querySelectorAll("[data-save-roles]").forEach(btn=>btn.addEventListener("click",async()=>{
     const u=users[+btn.dataset.saveRoles];
     const card=btn.closest(".permission-card");
     const roles=[...card.querySelectorAll(".permission-role-toggle input:checked")].map(c=>c.value);
-    if(!roles.length){ alert("請至少勾選一個角色；若要停止此員工權限，請按「停用帳號」。"); return; }
+    const changeType=card.querySelector(".audit-change-type")?.value||"adjust";
+    const reason=card.querySelector(".audit-change-reason")?.value.trim()||"";
+    if(!roles.length){ alert("請至少勾選一個角色；若要停止此員工權限，請按「暫時停用」或「標記離職」。"); return; }
     btn.disabled=true;
     try{
-      const ok=await userApprovalStore.setRoles(u,roles);
-      alert(ok?`已更新 ${u.name||u.empId} 的角色為：${normalizeRoleIds(roles).map(r=>roleLabels[r]||r).join("、")}`:"更新失敗，請確認管理者權限或稍後再試。");
+      const ok=await userApprovalStore.setRoles(u,roles,{changeType,reason});
+      alert(ok?`已更新 ${u.name||u.empId}（${roleChangeTypeLabel[changeType]||"調整"}）：${normalizeRoleIds(roles).map(r=>roleLabels[r]||r).join("、")}`:"更新失敗，請確認管理者權限或稍後再試。");
     }catch(err){ console.warn("角色更新失敗",err); alert("更新失敗："+(err?.message||"未知錯誤")); }
     renderActiveUserList();
   }));
-  el.querySelectorAll("[data-toggle-status]").forEach(btn=>btn.addEventListener("click",async()=>{
-    const u=users[+btn.dataset.toggleStatus];
-    const toSuspend=u.status!=="suspended";
-    if(toSuspend && !confirm(`確定停用 ${u.name||u.empId} 的帳號？停用後該員工將立即無法進入平台，直到你重新啟用。`)) return;
+  el.querySelectorAll("[data-suspend]").forEach(btn=>btn.addEventListener("click",async()=>{
+    const u=users[+btn.dataset.suspend];
+    if(!confirm(`確定「暫時停用」${u.name||u.empId}？停用後該員工無法進入平台，直到你按「復職」。`)) return;
     btn.disabled=true;
     try{
-      const ok=await userApprovalStore.setStatus(u,toSuspend?"suspended":"active");
-      alert(ok?(toSuspend?`已停用 ${u.name||u.empId}。`:`已重新啟用 ${u.name||u.empId}。`):"操作失敗，請確認管理者權限或稍後再試。");
-    }catch(err){ console.warn("停用/啟用失敗",err); alert("操作失敗："+(err?.message||"未知錯誤")); }
+      const ok=await userApprovalStore.setStatus(u,"suspended",{changeType:"suspend",reason:cardReason(btn)});
+      alert(ok?`已暫時停用 ${u.name||u.empId}。`:"操作失敗，請確認管理者權限或稍後再試。");
+    }catch(err){ console.warn("停用失敗",err); alert("操作失敗："+(err?.message||"未知錯誤")); }
+    renderActiveUserList();
+  }));
+  el.querySelectorAll("[data-resign]").forEach(btn=>btn.addEventListener("click",async()=>{
+    const u=users[+btn.dataset.resign];
+    if(!confirm(`確定將 ${u.name||u.empId} 標記為「離職」？離職後會移到「已離職員工」區、無法進入平台，但紀錄保留可查、必要時可復職。`)) return;
+    btn.disabled=true;
+    try{
+      const ok=await userApprovalStore.setStatus(u,"resigned",{changeType:"resign",reason:cardReason(btn)});
+      alert(ok?`已將 ${u.name||u.empId} 標記為離職。`:"操作失敗，請確認管理者權限或稍後再試。");
+    }catch(err){ console.warn("離職標記失敗",err); alert("操作失敗："+(err?.message||"未知錯誤")); }
+    renderActiveUserList();
+  }));
+  el.querySelectorAll("[data-reinstate]").forEach(btn=>btn.addEventListener("click",async()=>{
+    const u=users[+btn.dataset.reinstate];
+    btn.disabled=true;
+    try{
+      const ok=await userApprovalStore.setStatus(u,"active",{changeType:"reinstate",reason:cardReason(btn)});
+      alert(ok?`已重新啟用 ${u.name||u.empId}。`:"操作失敗，請確認管理者權限或稍後再試。");
+    }catch(err){ console.warn("復職失敗",err); alert("操作失敗："+(err?.message||"未知錯誤")); }
+    renderActiveUserList();
+  }));
+  el.querySelectorAll("[data-resigned-reinstate]").forEach(btn=>btn.addEventListener("click",async()=>{
+    const u=resigned[+btn.dataset.resignedReinstate];
+    if(!confirm(`確定讓已離職的 ${u.name||u.empId} 復職？復職後帳號重新啟用、可再次進入平台。`)) return;
+    btn.disabled=true;
+    try{
+      const ok=await userApprovalStore.setStatus(u,"active",{changeType:"reinstate",reason:cardReason(btn)||"離職後復職"});
+      alert(ok?`已讓 ${u.name||u.empId} 復職。`:"操作失敗，請確認管理者權限或稍後再試。");
+    }catch(err){ console.warn("復職失敗",err); alert("操作失敗："+(err?.message||"未知錯誤")); }
     renderActiveUserList();
   }));
 }
 // §49.5 稽核紀錄查詢：三種 log 用分頁切換，唯讀表格呈現。
 const AUDIT_LOG_TABS=[
   {key:"consent",label:"同意書紀錄",hint:"進站前『平台使用聲明』的同意／不同意紀錄；版本字串改版時全員需重新同意。"},
-  {key:"role",label:"角色異動紀錄",hint:"帳號核准、在職角色調整、停用／重新啟用的前後對照與操作者。"},
+  {key:"role",label:"角色異動紀錄",hint:"帳號核准、晉升／降職／兼任調職、代理指派、暫時停用、離職、復職等異動的類型、原因與前後對照、操作者。"},
   {key:"audit",label:"其他稽核紀錄",hint:"退回申請等其他管理動作。"}
 ];
 function auditRolesText(roles){
@@ -6632,12 +6726,14 @@ function auditLogConsentRow(r){
 }
 function auditLogRoleRow(r){
   const b=r.before||{}, a=r.after||{};
+  const ctLabel=r.changeType?(roleChangeTypeLabel[r.changeType]||r.changeType):"—";
   return `<tr>
     <td>${esc(fmtDate(r.createdAt||r.approvedAt))}</td>
     <td>${esc(r.targetEmpId||"—")}<br><small>${esc(r.targetName||"")}</small></td>
+    <td><span class="auditlog-tag">${esc(ctLabel)}</span></td>
     <td>${esc(r.reason||"—")}</td>
-    <td><small>角色：${esc(auditRolesText(b.roles))}<br>狀態：${esc(b.status||"—")}</small></td>
-    <td><small>角色：${esc(auditRolesText(a.roles))}<br>狀態：${esc(a.status||"—")}</small></td>
+    <td><small>角色：${esc(auditRolesText(b.roles))}<br>狀態：${esc(statusLabel(b.status))}</small></td>
+    <td><small>角色：${esc(auditRolesText(a.roles))}<br>狀態：${esc(statusLabel(a.status))}</small></td>
     <td>${esc(r.actorName||r.actorUid||"—")}</td>
   </tr>`;
 }
@@ -6663,7 +6759,7 @@ async function renderAuditLogPanel(tab){
   const body=el.querySelector("#auditLogBody");
   let rows, head, render;
   if(auditLogActiveTab==="role"){
-    rows=await auditLogStore.roleChangeLogs(); head=["時間","對象","原因","異動前","異動後","操作者"]; render=auditLogRoleRow;
+    rows=await auditLogStore.roleChangeLogs(); head=["時間","對象","異動類型","原因","異動前","異動後","操作者"]; render=auditLogRoleRow;
   }else if(auditLogActiveTab==="audit"){
     rows=await auditLogStore.auditLogs(); head=["時間","動作","對象","備註","操作者"]; render=auditLogAuditRow;
   }else{
