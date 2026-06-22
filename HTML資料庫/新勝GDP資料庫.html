@@ -2009,6 +2009,10 @@ function visibleSections(ctx=visibilityContext()){
 function firstVisibleSectionId(ctx=visibilityContext()){
   return visibleSections(ctx)[0]?.id || "manual";
 }
+// 版本踢人機制：本頁建置版本號。線上 app-version.json 的 build 大於此值時，代表這份頁面已過期，
+// versionGuard 會強制重新整理，把跑舊版（含登入系統之前的舊快取分頁）的瀏覽器趕回最新版＝強制登入。
+// 部署新版時，務必同時把這個數字與站台根目錄 app-version.json 的 build 一起 +1。
+const APP_BUILD = 20260622;
 // 進站前使用同意書：版本字串更新時，所有人需重新閱讀並重新同意（供稽核留痕）。
 const CONSENT_VERSION = "2026-06-16";
 const GOOGLE_REDIRECT_FLAG = "gdpGoogleRedirect";
@@ -8476,10 +8480,55 @@ function setupMobileLoginGuide(){
 }
 
 /* ═══════════════════════════════════════════════
+   版本踢人機制（version kill-switch）
+   靜態站零 rules：比對站台根目錄 app-version.json 的 build。
+   線上版本較新＝本分頁已過期 → 全屏提示後強制重新整理（破快取）。
+   不論是否登入都會檢查，故卡在登入畫面或登入系統之前的舊分頁也會被趕走。
+═══════════════════════════════════════════════ */
+const versionGuard = {
+  // app-version.json 放在站台根目錄；本頁在 /HTML資料庫/ 子路徑，故相對路徑為上一層。
+  url: new URL("../app-version.json", location.href).href,
+  evicting: false,
+  showOverlay(){
+    if(document.getElementById("versionGuardOverlay")) return;
+    const o=document.createElement("div");
+    o.id="versionGuardOverlay";
+    o.setAttribute("style","position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#0b5f4d,#0a4a52);color:#fff;font-family:'Microsoft JhengHei','Noto Sans TC',system-ui,sans-serif;text-align:center;padding:24px");
+    o.innerHTML='<div><div style="font-size:20px;font-weight:700;margin-bottom:8px">網站已更新</div><div style="opacity:.85">正在載入最新版本，請稍候…</div></div>';
+    document.body.appendChild(o);
+  },
+  evict(latest){
+    if(this.evicting) return;
+    this.evicting=true;
+    this.showOverlay();
+    // 加上 ?v=最新版本 變更網址 → 強制瀏覽器重抓 HTML（繞過快取），保留原本的 #section。
+    const u=new URL(location.href);
+    u.searchParams.set("v", String(latest));
+    setTimeout(()=>location.replace(u.href), 400);
+  },
+  async check(){
+    if(this.evicting) return;
+    try{
+      const res=await fetch(this.url+"?t="+Date.now(), {cache:"no-store"});
+      if(!res.ok) return;                       // 找不到檔案（如本機 file://）→ 略過
+      const data=await res.json();
+      const latest=Number(data&&data.build)||0;
+      if(latest>APP_BUILD) this.evict(latest);
+    }catch(e){ /* 離線 / 本機預覽 / 解析失敗：靜默略過，不影響使用 */ }
+  },
+  start(){
+    this.check();                                                   // 載入即檢查
+    document.addEventListener("visibilitychange",()=>{ if(!document.hidden) this.check(); }); // 切回分頁再檢查
+    setInterval(()=>this.check(), 5*60*1000);                       // 長開分頁每 5 分鐘檢查一次
+  }
+};
+
+/* ═══════════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════════ */
 (async function init(){
   if(renderSharedExamPacket()) return;
+  versionGuard.start();
   renderNav();
   renderAuthGate();
   setupMobileLoginGuide();
