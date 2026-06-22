@@ -1,6 +1,9 @@
 # 新勝 GDP 專案交接（精簡版）
 
-> 最新補記：2026-06-22（第133次：**帳號審核擴充——晉升／降職／兼任／離職停用／復職／簡易代理 ✅**）。
+> 最新補記：2026-06-22（第134次：**版本踢人機制（version kill-switch）✅ 已上線**，commit `23e02e3`，永久網址已驗收）。
+> 第134次：使用者回報「同事在登入系統加上去之前開的網頁，至今仍能操作、不需 Google 登入，後台也查不到申請紀錄」。盤點程式碼確認：①目前線上版本其實已強制登入（`#authGate` z-index:4000 覆蓋層，gateState!=="ready" 就擋）②網站無 Service Worker、無任何快取控制 → 該同事跑的是「登入 gate 加上去之前的舊快取分頁/長開分頁」，舊版沒 gate、沒寫 `gdpUserApplications`，故能用又查無紀錄。誠實告知使用者鐵則：**無法從伺服器端把正在跑舊程式碼的瀏覽器踢出去**（舊碼沒有踢人機制可被推動），那一份舊分頁唯一解是它自己硬重新整理一次；且靜態站登入＝體驗關卡非權限牆。AskUserQuestion 後使用者選「加版本踢人機制」。**原想用 gdpConfig 欄位，但 `firestore.rules` 第67行 gdpConfig write 鎖死 `hasOnly(['adminEmails','updatedAt'])`，放版本號要改 rules（最高風險區）→ 改用更乾淨的靜態檔做法**：新增站台根目錄 `app-version.json`（`{build:20260622}`），HTML 加 `APP_BUILD=20260622` 常數＋`versionGuard` 物件（破快取 `fetch('../app-version.json?t=...',{cache:'no-store'})` 比對 build，線上較新→全屏「網站已更新」遮罩→`location.replace(?v=最新)` 強制重抓並保留 `#section`；載入時＋visibilitychange＋每5分鐘各檢查一次；不論是否登入都檢查；抓不到/壞 JSON 靜默略過）；`init()` 加一行 `versionGuard.start()`。**零 rules、零 Firestore 變動**。驗收：`JS_PARSE_OK 1`、`verify_facts 1296/1296`、合規通過；preview 實測版本相同不踢、較新跳遮罩→導 `?v=20260623#manual`→重整、壞 JSON 靜默略過、無 console error；使用者親自在 Edge Console `versionGuard.evict(APP_BUILD+1)` 看到遮罩＋重整；永久網址 `app-version.json` 回 **HTTP 200**＋線上 HTML 含 `APP_BUILD`/`versionGuard`。**日後一鍵踢全員＝把 `app-version.json` 的 build 與 HTML 的 `APP_BUILD` 一起 +1 再 push（或上 GitHub 網頁改 json 數字）。** ⚠️ 首次部署無法回頭推動「現在已開著無 killswitch 舊版」的分頁，該同事仍須手動硬重新整理一次吃到新版，之後才自動納管。**下次待辦**：page③依職稱過濾各部門內容｜測驗正式題庫｜（可選）面板刪除帳號功能｜（可選）代理自動到期(Phase 3)。
+>
+> 第133次補記：2026-06-22（第133次：**帳號審核擴充——晉升／降職／兼任／離職停用／復職／簡易代理 ✅**）。
 > 第133次（待 commit/push）：使用者指定做「帳號審核擴充」。先盤點：既有「在職員工權限管理」面板其實已能改角色（＝晉升/降職）、多勾角色（＝兼任）、停用，缺的是**稽核不記錄「為什麼/哪種異動」**、**沒區分離職 vs 暫時停用**、**沒有代理**。AskUserQuestion 定範圍：①加「異動類型＋原因」結構化稽核 ②獨立「離職」狀態＋已離職分頁可復職 ③簡易代理（指派角色＋註記、手動取消，不做自動到期）。全部**純前端、零 rules 變動**（`gdpUsers update`／`gdpRoleChangeLogs create` 對 isAdmin 已放行，加欄位 OK）。改 `HTML資料庫/新勝GDP資料庫.html`：新增 `roleChangeTypeLabel`／`ROLE_SAVE_CHANGE_TYPES`／`STATUS_LABEL`+`statusLabel()`；`userApprovalStore.setRoles/setStatus` 改收 `{changeType,reason}`（deputy_assign/deputy_end 順帶寫/清 `deputyActive`+`deputyNote`）；`approve` log 補 `changeType:"approve"`；`activeUserCard` 加異動類型下拉＋原因輸入＋暫時停用／標記離職／復職鈕＋「🔁 代理中」標籤；新增 `resignedUserCard`；`renderActiveUserList` 拆「在職(active+suspended)」與「已離職(resigned)」可收合分頁＋四種按鈕 handler；稽核「角色異動」分頁加「異動類型」欄＋前後狀態中文。驗收：`JS_PARSE_OK 1`、`verify_facts 1296/1296`、preview mock（5 樣本含超管/代理/離職）卡片數/超管鎖定/3 異動下拉/暫停×2 復職×1 離職×3/代理標籤/已離職分頁＋復職鈕全正確、點擊互動傳出 `{changeType,reason}` 正確、稽核分頁異動類型欄＋狀態中文＋舊紀錄相容、console 無 error。**下次待辦**：page③依職稱過濾各部門內容｜測驗正式題庫｜（可選）面板刪除帳號功能｜（可選）代理自動到期（Phase 3）。
 
 > 第132次補記：2026-06-22（第132次：**管理面板新增「同意書／審核紀錄查詢」頁 ✅＋確認在職員工權限面板線上實測通過**）。
@@ -103,8 +106,9 @@
 | Firebase rules | `Firebase設定/firestore.rules` |
 | 分支 | `codex/gdp-html-training-pages` |
 | 永久網址 | `https://n1116839.github.io/xinshing-gdp-training/` |
-| 最新本輪修正 | 管理面板改成手機單欄可讀；待審核帳號改為左側部門/工號樹＋右側角色權限矩陣；AI 管理助理改為自然語言需求入口，並清楚區分帳號職務、教材題庫、網站功能需求的核准後邊界 |
-| 本輪驗收 | `JS_PARSE_OK 1`；`node verify_facts_ghpages.mjs` = `1296/1296`；靜態檢查命中 `admin-permission-shell`、`permission-table`、`admin-assistant-shell`、`data-admin-example`、`建立網站功能需求單`；in-app Browser 因 URL policy 擋住本地預覽，未能提供自動截圖驗收 |
+| 版本踢人 | 站台根目錄 `app-version.json`（`build`）＋HTML `APP_BUILD` 常數＋`versionGuard`。要強制全員重新整理（＝重新登入）＝兩處 build 一起 +1 再 push |
+| 最新本輪修正（第134次） | 版本踢人機制（version kill-switch）上線：舊版/長開分頁會被自動偵測過期→強制重抓最新版→撞登入。零 rules、零 Firestore 變動。commit `23e02e3` |
+| 本輪驗收 | `JS_PARSE_OK 1`；`node verify_facts_ghpages.mjs` = `1296/1296`；合規通過；preview 兩路徑實測＋使用者親測遮罩重整；永久網址 `app-version.json` HTTP 200、HTML 含 `APP_BUILD`/`versionGuard` |
 
 ### 第124次本輪修正（管理面板手機版＋AI 助手＋權限矩陣）
 
