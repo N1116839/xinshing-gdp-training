@@ -1,6 +1,8 @@
 # 新勝 GDP 專案交接（精簡版）
 
-> 最新補記：2026-06-23（第135次：**①管理面板新增「✏️ 編輯基本資料」（改工號／姓名／部門／職稱）②測驗區兼任／代理改可複選多職 ✅**，並用版本踢人 build `20260622→20260623` push 讓已登入者自動更新）。
+> 最新補記：2026-06-23（第136次：**①題庫補「無代碼來源」：作答後「受測考題回顧」＋列印「答題紀錄」每題上方顯示來源，零題庫資料變動 ✅ ②確認 page③ 依部門過濾早已完成（第128次），實機驗證 6 職稱全正確、無需改碼 ✅**，版本踢人 build `20260623→20260624`）。
+> 第136次（commit 待補）：使用者指定做「page③依職稱過濾」＋「題庫補來源」。**page③ 盤點結論：部門層級過濾其實第128次已完成**——`canShowSection`/`canSeeItem` 依 `departments` 過濾，nav/picker/showSection/智慧查詢全套用；實機模擬倉管/文管/人事/品保/管理藥師/業務組長 6 職稱，各只看到自己部門頁＋共同的品質手冊/SMF/測驗/智慧查詢，業務組長正確看到業務＋採購（多部門聯集）。**休眠的只剩 `allowedRoles`（職稱維）**：`canSeeItem` 沒比對 allowedRoles，但整頁層級它只區分 leader(行事曆)/admin(面板)＝已 hardcode 擋掉，接上去畫面零變化；要做「同部門頁內依職稱再分區塊」需先有「哪塊限哪職稱」的業務標記（規範§45.1 不可 AI 推測）→ **使用者裁示：task 1 就是部門過濾，已達成，不做職稱內區分**。**題庫補來源**：盤點發現每題早有 `source`/`sourceSection`/`sourceQuote`（還有不需要的 reviewedBy/reviewDate），但**前台未顯示**且 sourceSection 含 SOP 代碼。使用者要的格式＝「根據SOP第四章 文件保存規定，品質紀錄保存幾年：至少五年」「根據國際法規，倉庫15-25度」＝**只露第幾章/國際法規，不露文件編號**。作法：新增全域 `examSourceLabel(src)`（PIC/S→「依據國際法規（PIC/S GDP 公開查核重點）」、TFDA/食藥署→「依據食藥署 113 年度公開常見缺失」抓年份、SOP 代碼→`sourceToChapter` 轉「根據 SOP 第X章 章名」、規範→「依據公司內訓規範」），接到 `printPacketHtml` 受測考題回顧（`.exam-src-tag` 金綠膠囊）與 `examPrintDocumentHtml` 答題紀錄（`.exam-print-source` 灰字）；CSS 三處（print @media + examPacketCss + 螢幕版）。**零題庫 284 筆資料變動**（來源即時推導）。章名沿用程式現有正式章名（使用者選定）。驗收：`JS_PARSE_OK 1`、`verify_facts 1296/1296`、preview 實測 examSourceLabel 全域生效輸出無代碼＋`.exam-src-tag` computed style 正確＋console 無 error（截圖工具逾時＝環境問題，改 DOM computed style 佐證）。**下次待辦**：測驗正式題庫其餘職務逐題回 SOP 核對｜（可選）面板刪除帳號｜（可選）代理自動到期(Phase 3)。
+> 第135次補記：2026-06-23（第135次：**①管理面板新增「✏️ 編輯基本資料」（改工號／姓名／部門／職稱）②測驗區兼任／代理改可複選多職 ✅**，並用版本踢人 build `20260622→20260623` push 讓已登入者自動更新）。
 > 第135次：使用者回報「有同事員工編號打錯了」。盤點：empId 只在申請表單填一次（HTML 約 2407 行）就固定，管理面板只顯示不能改，員工本人 rules 只能改 name/department/title（firestore.rules 第61行）。**作法 B（使用者選超管＋管理者都能改）**：`userApprovalStore.updateProfileFields(user,fields,opts)`（只寫有變動的 empId/name/department/title，工號不可清空，寫 `gdpRoleChangeLogs` changeType=`profile_edit`）＋ `roleChangeTypeLabel.profile_edit="基本資料修改"` ＋ `activeUserCard` 加可收合「✏️ 編輯基本資料」框（預帶現值、含超管自己的卡片也有）＋ `renderActiveUserList` 綁 `data-save-profile` handler ＋ `.profile-edit-grid` CSS。**零 rules 變動**（gdpUsers update 本就 `if isAdmin()` 無欄位限制）。**第二件**：使用者要測驗區兼任／代理可多選（例：主職文管＋代理倉管＋代理業助）。盤點發現抽題 `composeTemplate(keys)` 早就吃多 key 取聯集，卡點只在 UI 是**單選下拉**。把 `<select data-exam-acting-select>` 換成 **7 職務 checkbox 群組（可複選）**；`selectedKeys()` 改收集所有勾選；`applyRole()` 改成隱藏並取消勾選「與主職相同」那項；hidden `acting` 欄位仍由 actingField 帶多值（如「業務、倉管」）；加 `.exam-acting-*` CSS。業助併在業務試卷（代理業助＝勾業務）。驗收：`JS_PARSE_OK 1`、`verify_facts 1296/1296`、preview 實測（編輯框預帶018/超管卡也有；主職文管＋勾倉管+業務→受測15卡涵蓋三職、主職項自動隱藏、hidden=「業務、倉管」）、console 無 error。push 同時把 `app-version.json` build 與 HTML `APP_BUILD` 一起改 20260623＝強制已登入者自動重抓新版。**⚠️ 待使用者線上做的資料修正**：把 Willy Cheng（t37201@gmail.com）員編 018→019、部門/職稱 採購·打雜→業務·兼任採購（用新「編輯基本資料」框，超管登入即可；屬 Firestore 帳號資料，非 HTML，agent 端無法代寫）。**下次待辦**：page③依職稱過濾各部門內容｜測驗正式題庫｜（可選）面板刪除帳號｜（可選）代理自動到期(Phase 3)。
 
 > 第134次：**版本踢人機制（version kill-switch）✅ 已上線**，commit `23e02e3`，永久網址已驗收。
@@ -109,9 +111,9 @@
 | Firebase rules | `Firebase設定/firestore.rules` |
 | 分支 | `codex/gdp-html-training-pages` |
 | 永久網址 | `https://n1116839.github.io/xinshing-gdp-training/` |
-| 版本踢人 | 站台根目錄 `app-version.json`（`build`）＋HTML `APP_BUILD` 常數＋`versionGuard`。要強制全員重新整理（＝重新登入）＝兩處 build 一起 +1 再 push。**目前 build＝`20260623`** |
-| 最新本輪修正（第135次） | ①管理面板「✏️ 編輯基本資料」可改工號/姓名/部門/職稱（超管＋管理者，附 profile_edit 稽核，零 rules）②測驗區兼任/代理改可複選多職（聯集抽題）。已用版本 20260623 push 強制已登入者自動更新 |
-| 本輪驗收 | `JS_PARSE_OK 1`；`node verify_facts_ghpages.mjs` = `1296/1296`；合規通過；preview 兩路徑實測＋使用者親測遮罩重整；永久網址 `app-version.json` HTTP 200、HTML 含 `APP_BUILD`/`versionGuard` |
+| 版本踢人 | 站台根目錄 `app-version.json`（`build`）＋HTML `APP_BUILD` 常數＋`versionGuard`。要強制全員重新整理（＝重新登入）＝兩處 build 一起 +1 再 push。**目前 build＝`20260624`** |
+| 最新本輪修正（第136次） | ①題庫補「無代碼來源」：作答後「受測考題回顧」＋列印「答題紀錄」每題上方顯示來源（根據 SOP 第X章／依據國際法規／依據食藥署 113 年常見缺失），新增 `examSourceLabel`，**零題庫資料變動** ②確認 page③ 依部門過濾第128次已完成，實機驗證 6 職稱全正確、無需改碼。已用版本 20260624 push |
+| 本輪驗收 | `JS_PARSE_OK 1`；`node verify_facts_ghpages.mjs` = `1296/1296`；preview 實測 examSourceLabel 全域生效輸出無代碼＋`.exam-src-tag` computed style 正確＋6 職稱部門過濾正確＋console 無 error |
 
 ### 第124次本輪修正（管理面板手機版＋AI 助手＋權限矩陣）
 

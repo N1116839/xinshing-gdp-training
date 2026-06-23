@@ -45,17 +45,23 @@ outputs/
 簡報資料/
 
 # Internal SOP source folders stay local unless explicitly approved for publishing.
-第一章品質手冊/
-第二章人事/
-第三章作業場所及設備/
-第四章文件管理/
-第五章作業/
-第六章申訴、退回、疑似偽、禁藥及藥品回收/
-第七章委外作業/
-第八章自我審查/
+# NOTE: 章節資料夾名稱會隨使用者更名而變動（第136次曾因舊名對不上被 git add -A 誤推進公開 repo，已 force-push 移除）。
+# 改用「第N章*」前綴萬用比對，並用下方 *.docx/*.xlsx 全域防線雙保險。
+第一章*/
+第二章*/
+第三章*/
+第四章*/
+第五章*/
+第六章*/
+第七章*/
+第八章*/
 
-# Original office deliverables stay local by default.
+# Internal SOP source documents stay local by default (this repo tracks no office files).
+*.docx
+*.xlsx
 *.pptx
+*.doc
+*.xls
 
 # Office temporary files
 ~$*

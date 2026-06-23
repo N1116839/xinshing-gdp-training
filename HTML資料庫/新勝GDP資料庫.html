@@ -188,6 +188,7 @@
   .exam-check input{width:16px;height:16px;margin-top:2px}
   .exam-check span{font-size:13px;line-height:1.55;color:var(--ink-soft)}
   .exam-print-preview{display:grid;gap:8px;padding:14px;background:#fffaf0;border:1px solid #ead6b6}
+  .exam-src-tag{display:inline-block;font-size:12px;font-weight:700;color:var(--brand);background:#eef6f4;border:1px solid #cfe6e0;border-radius:6px;padding:1px 8px;margin-bottom:2px}
   .exam-print-row{display:grid;grid-template-columns:1fr 110px 90px 110px;gap:8px;font-size:13px;color:var(--ink)}
   .exam-print-row.head{font-weight:800;color:#fff;background:var(--brand);padding:8px}
   .exam-print-row:not(.head){padding:8px;border-bottom:1px solid #ead6b6}
@@ -645,6 +646,7 @@
       .exam-paper-meta span{border-bottom:1px solid #000;padding:0 2mm 1mm}
       .exam-question-print{break-inside:avoid;page-break-inside:avoid;margin:0 0 4mm}
       .exam-question-print h3{margin:0 0 2mm;color:#000;font-size:11pt;line-height:1.5}
+      .exam-print-source{margin:0 0 1.5mm;font-size:9.5pt;color:#333}
       .exam-print-options{display:grid;grid-template-columns:1fr 1fr;gap:1.5mm 5mm}
       .exam-print-option{font-size:10.5pt;line-height:1.45}
       .exam-print-answer{margin-top:1.5mm;font-size:10.5pt}
@@ -2020,7 +2022,7 @@ function firstVisibleSectionId(ctx=visibilityContext()){
 // 版本踢人機制：本頁建置版本號。線上 app-version.json 的 build 大於此值時，代表這份頁面已過期，
 // versionGuard 會強制重新整理，把跑舊版（含登入系統之前的舊快取分頁）的瀏覽器趕回最新版＝強制登入。
 // 部署新版時，務必同時把這個數字與站台根目錄 app-version.json 的 build 一起 +1。
-const APP_BUILD = 20260623;
+const APP_BUILD = 20260624;
 // 進站前使用同意書：版本字串更新時，所有人需重新閱讀並重新同意（供稽核留痕）。
 const CONSENT_VERSION = "2026-06-16";
 const GOOGLE_REDIRECT_FLAG = "gdpGoogleRedirect";
@@ -7084,6 +7086,7 @@ body{margin:0;padding:0;background:#fff;color:#000;font-family:"Microsoft JhengH
 .exam-paper-meta span{border-bottom:1px solid #000;padding:0 2mm 1mm}
 .exam-question-print{break-inside:avoid;page-break-inside:avoid;margin:0 0 4mm}
 .exam-question-print h3{margin:0 0 2mm;color:#000;font-size:11pt;line-height:1.5}
+.exam-print-source{margin:0 0 1.5mm;font-size:9.5pt;color:#333}
 .exam-print-options{display:grid;grid-template-columns:1fr 1fr;gap:1.5mm 5mm}
 .exam-print-option{font-size:10.5pt;line-height:1.45}
 .exam-print-answer{margin-top:1.5mm;font-size:10.5pt}
@@ -7538,8 +7541,10 @@ function bindExamTemplate(){
         const mark=selected===idx?"●":"○";
         return `<div class="exam-print-option">${mark} ${String.fromCharCode(65+idx)}. ${esc(opt.text)}</div>`;
       }).join("");
+      const srcLabel=examSourceLabel(q.source);
       return `<section class="exam-question-print">
         <h3>${i+1}. ${esc(q.text)}</h3>
+        ${srcLabel?`<div class="exam-print-source">${esc(srcLabel)}</div>`:""}
         <div class="exam-print-options">${optionHtml}</div>
         <div class="exam-print-answer">作答：<strong>${esc(selectedLabel)}</strong> 正解：${esc(correctLabel)}　<span class="exam-print-result">${selected===q.correctIndex?"答對":"答錯"}</span></div>
       </section>`;
@@ -7601,7 +7606,8 @@ function bindExamTemplate(){
       const selected=session.answers[i];
       const chosen=selected==null?"未作答":q.options[selected]?.text||"";
       const correctText=q.options[q.correctIndex]?.text||"";
-      return `<li>${esc(q.text)}<br><span class="note">作答：${esc(chosen)}｜正解：${esc(correctText)}</span></li>`;
+      const srcLabel=examSourceLabel(q.source);
+      return `<li>${srcLabel?`<span class="exam-src-tag">${esc(srcLabel)}</span><br>`:""}${esc(q.text)}<br><span class="note">作答：${esc(chosen)}｜正解：${esc(correctText)}</span></li>`;
     }).join("");
     return `
       <div class="exam-print-preview">
@@ -8405,6 +8411,19 @@ function sourceToChapter(src){
   const nums=["","第一章","第二章","第三章","第四章","第五章","第六章","第七章","第八章"];
   const names=["","品質管理系統","組織人員衛生","場所與設備","文件管制","供應鏈管理","退回品與回收","委外作業","內部稽核"];
   return nums[n]?(nums[n]+" "+names[n]):"";
+}
+// 測驗題回顧用「無代碼來源」：依規範鐵則前台不得露 SOP 文件編號（DP/FR/DM/WI），
+// 只顯示「第幾章＋章節主題」或「國際法規／食藥署年度常見缺失」。
+function examSourceLabel(src){
+  const s=String(src||"");
+  if(/PIC\/S/i.test(s)) return "依據國際法規（PIC/S GDP 公開查核重點）";
+  if(/TFDA|食藥署|政府|公開缺失|公開查核|官方來源/.test(s)){
+    const y=s.match(/(\d{2,3})\s*年/);
+    return y?`依據食藥署 ${y[1]} 年度公開常見缺失`:"依據食藥署公開常見缺失";
+  }
+  if(/規範/.test(s)) return "依據公司內訓規範";
+  const ch=sourceToChapter(s);
+  return ch?`根據 SOP ${ch}`:"";
 }
 function esc(v){
   return String(v||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
