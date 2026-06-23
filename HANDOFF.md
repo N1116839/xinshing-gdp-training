@@ -1,6 +1,9 @@
 # 新勝 GDP 專案交接（精簡版）
 
-> 最新補記：2026-06-22（第134次：**版本踢人機制（version kill-switch）✅ 已上線**，commit `23e02e3`，永久網址已驗收）。
+> 最新補記：2026-06-23（第135次：**①管理面板新增「✏️ 編輯基本資料」（改工號／姓名／部門／職稱）②測驗區兼任／代理改可複選多職 ✅**，並用版本踢人 build `20260622→20260623` push 讓已登入者自動更新）。
+> 第135次：使用者回報「有同事員工編號打錯了」。盤點：empId 只在申請表單填一次（HTML 約 2407 行）就固定，管理面板只顯示不能改，員工本人 rules 只能改 name/department/title（firestore.rules 第61行）。**作法 B（使用者選超管＋管理者都能改）**：`userApprovalStore.updateProfileFields(user,fields,opts)`（只寫有變動的 empId/name/department/title，工號不可清空，寫 `gdpRoleChangeLogs` changeType=`profile_edit`）＋ `roleChangeTypeLabel.profile_edit="基本資料修改"` ＋ `activeUserCard` 加可收合「✏️ 編輯基本資料」框（預帶現值、含超管自己的卡片也有）＋ `renderActiveUserList` 綁 `data-save-profile` handler ＋ `.profile-edit-grid` CSS。**零 rules 變動**（gdpUsers update 本就 `if isAdmin()` 無欄位限制）。**第二件**：使用者要測驗區兼任／代理可多選（例：主職文管＋代理倉管＋代理業助）。盤點發現抽題 `composeTemplate(keys)` 早就吃多 key 取聯集，卡點只在 UI 是**單選下拉**。把 `<select data-exam-acting-select>` 換成 **7 職務 checkbox 群組（可複選）**；`selectedKeys()` 改收集所有勾選；`applyRole()` 改成隱藏並取消勾選「與主職相同」那項；hidden `acting` 欄位仍由 actingField 帶多值（如「業務、倉管」）；加 `.exam-acting-*` CSS。業助併在業務試卷（代理業助＝勾業務）。驗收：`JS_PARSE_OK 1`、`verify_facts 1296/1296`、preview 實測（編輯框預帶018/超管卡也有；主職文管＋勾倉管+業務→受測15卡涵蓋三職、主職項自動隱藏、hidden=「業務、倉管」）、console 無 error。push 同時把 `app-version.json` build 與 HTML `APP_BUILD` 一起改 20260623＝強制已登入者自動重抓新版。**⚠️ 待使用者線上做的資料修正**：把 Willy Cheng（t37201@gmail.com）員編 018→019、部門/職稱 採購·打雜→業務·兼任採購（用新「編輯基本資料」框，超管登入即可；屬 Firestore 帳號資料，非 HTML，agent 端無法代寫）。**下次待辦**：page③依職稱過濾各部門內容｜測驗正式題庫｜（可選）面板刪除帳號｜（可選）代理自動到期(Phase 3)。
+
+> 第134次：**版本踢人機制（version kill-switch）✅ 已上線**，commit `23e02e3`，永久網址已驗收。
 > 第134次：使用者回報「同事在登入系統加上去之前開的網頁，至今仍能操作、不需 Google 登入，後台也查不到申請紀錄」。盤點程式碼確認：①目前線上版本其實已強制登入（`#authGate` z-index:4000 覆蓋層，gateState!=="ready" 就擋）②網站無 Service Worker、無任何快取控制 → 該同事跑的是「登入 gate 加上去之前的舊快取分頁/長開分頁」，舊版沒 gate、沒寫 `gdpUserApplications`，故能用又查無紀錄。誠實告知使用者鐵則：**無法從伺服器端把正在跑舊程式碼的瀏覽器踢出去**（舊碼沒有踢人機制可被推動），那一份舊分頁唯一解是它自己硬重新整理一次；且靜態站登入＝體驗關卡非權限牆。AskUserQuestion 後使用者選「加版本踢人機制」。**原想用 gdpConfig 欄位，但 `firestore.rules` 第67行 gdpConfig write 鎖死 `hasOnly(['adminEmails','updatedAt'])`，放版本號要改 rules（最高風險區）→ 改用更乾淨的靜態檔做法**：新增站台根目錄 `app-version.json`（`{build:20260622}`），HTML 加 `APP_BUILD=20260622` 常數＋`versionGuard` 物件（破快取 `fetch('../app-version.json?t=...',{cache:'no-store'})` 比對 build，線上較新→全屏「網站已更新」遮罩→`location.replace(?v=最新)` 強制重抓並保留 `#section`；載入時＋visibilitychange＋每5分鐘各檢查一次；不論是否登入都檢查；抓不到/壞 JSON 靜默略過）；`init()` 加一行 `versionGuard.start()`。**零 rules、零 Firestore 變動**。驗收：`JS_PARSE_OK 1`、`verify_facts 1296/1296`、合規通過；preview 實測版本相同不踢、較新跳遮罩→導 `?v=20260623#manual`→重整、壞 JSON 靜默略過、無 console error；使用者親自在 Edge Console `versionGuard.evict(APP_BUILD+1)` 看到遮罩＋重整；永久網址 `app-version.json` 回 **HTTP 200**＋線上 HTML 含 `APP_BUILD`/`versionGuard`。**日後一鍵踢全員＝把 `app-version.json` 的 build 與 HTML 的 `APP_BUILD` 一起 +1 再 push（或上 GitHub 網頁改 json 數字）。** ⚠️ 首次部署無法回頭推動「現在已開著無 killswitch 舊版」的分頁，該同事仍須手動硬重新整理一次吃到新版，之後才自動納管。**下次待辦**：page③依職稱過濾各部門內容｜測驗正式題庫｜（可選）面板刪除帳號功能｜（可選）代理自動到期(Phase 3)。
 >
 > 第133次補記：2026-06-22（第133次：**帳號審核擴充——晉升／降職／兼任／離職停用／復職／簡易代理 ✅**）。
@@ -106,8 +109,8 @@
 | Firebase rules | `Firebase設定/firestore.rules` |
 | 分支 | `codex/gdp-html-training-pages` |
 | 永久網址 | `https://n1116839.github.io/xinshing-gdp-training/` |
-| 版本踢人 | 站台根目錄 `app-version.json`（`build`）＋HTML `APP_BUILD` 常數＋`versionGuard`。要強制全員重新整理（＝重新登入）＝兩處 build 一起 +1 再 push |
-| 最新本輪修正（第134次） | 版本踢人機制（version kill-switch）上線：舊版/長開分頁會被自動偵測過期→強制重抓最新版→撞登入。零 rules、零 Firestore 變動。commit `23e02e3` |
+| 版本踢人 | 站台根目錄 `app-version.json`（`build`）＋HTML `APP_BUILD` 常數＋`versionGuard`。要強制全員重新整理（＝重新登入）＝兩處 build 一起 +1 再 push。**目前 build＝`20260623`** |
+| 最新本輪修正（第135次） | ①管理面板「✏️ 編輯基本資料」可改工號/姓名/部門/職稱（超管＋管理者，附 profile_edit 稽核，零 rules）②測驗區兼任/代理改可複選多職（聯集抽題）。已用版本 20260623 push 強制已登入者自動更新 |
 | 本輪驗收 | `JS_PARSE_OK 1`；`node verify_facts_ghpages.mjs` = `1296/1296`；合規通過；preview 兩路徑實測＋使用者親測遮罩重整；永久網址 `app-version.json` HTTP 200、HTML 含 `APP_BUILD`/`versionGuard` |
 
 ### 第124次本輪修正（管理面板手機版＋AI 助手＋權限矩陣）
