@@ -174,6 +174,11 @@
   .exam-form-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
   .exam-form-grid label{display:grid;gap:5px;color:var(--ink);font-size:13px;font-weight:700}
   .exam-form-grid input,.exam-form-grid select{width:100%;min-height:38px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:#fff;font:inherit;color:var(--ink)}
+  .exam-acting-title{font-size:13px;font-weight:700;color:var(--ink);margin:0 0 6px}
+  .exam-acting-checks{display:flex;flex-wrap:wrap;gap:8px}
+  .exam-acting-chk{display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border:1px solid var(--line);border-radius:6px;background:#fff;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer}
+  .exam-acting-chk input{width:16px;height:16px;min-height:0;margin:0;accent-color:var(--brand)}
+  .exam-acting-chk:has(input:checked){border-color:var(--brand);background:#eef6f3;color:var(--brand);font-weight:800}
   .exam-flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
   .exam-step{padding:12px;background:#fff;border:1px solid var(--line);border-left:4px solid var(--gold)}
   .exam-step strong{display:block;color:var(--brand);margin-bottom:6px}
@@ -289,6 +294,8 @@
   .admin-change-controls{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
   .admin-change-field{display:grid;gap:4px;font-size:12px;font-weight:800;color:var(--ink-soft);flex:1 1 180px}
   .admin-change-field select,.admin-change-field input{font:inherit;font-size:13px;padding:7px 9px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink);min-height:38px}
+  .profile-edit-box{margin-top:8px}
+  .profile-edit-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:10px}
   .deputy-badge{display:inline-block;margin-top:4px;padding:2px 9px;font-size:12px;font-weight:800;background:#fff4e0;border:1px solid #e6c98a;color:#8a5a13;border-radius:6px}
   .auditlog-tabbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px}
   .auditlog-tab{border:1px solid #b9ddd3;background:#fff;color:var(--brand);padding:7px 12px;font:inherit;font-size:12.5px;font-weight:800;cursor:pointer}
@@ -1821,7 +1828,8 @@ const roleChangeTypeLabel = {
   approve:"帳號審核核准", adjust:"其他調整",
   promote:"晉升", demote:"降職", concurrent:"兼任／調職",
   deputy_assign:"代理指派", deputy_end:"取消代理",
-  suspend:"暫時停用", resign:"離職停用", reinstate:"復職"
+  suspend:"暫時停用", resign:"離職停用", reinstate:"復職",
+  profile_edit:"基本資料修改"
 };
 // 在職員工「儲存角色」時可選的異動類型（停用／離職／復職由狀態按鈕隱含，不放在此下拉）。
 const ROLE_SAVE_CHANGE_TYPES = ["promote","demote","concurrent","deputy_assign","deputy_end","adjust"];
@@ -2614,6 +2622,37 @@ const userApprovalStore = {
       before:{roles:user.roles||[],status:user.status||""},
       after:{roles:user.roles||[],status},
       reason: reason || roleChangeTypeLabel[changeType] || "狀態調整",
+      approvedAt:serverTimestamp(), source:"manualAdminPanel", createdAt:serverTimestamp()
+    });
+    return true;
+  },
+  // 修正在職員工基本資料（工號／姓名／部門／職稱）。例如同事申請時把員工編號打錯。
+  // isAdmin update 無欄位限制（firestore.rules gdpUsers update: if isAdmin()），免改 rules。
+  // 只寫有實際變動的欄位，並寫一筆 profile_edit 角色異動稽核（before/after 記前後基本資料）。
+  async updateProfileFields(user, fields={}, opts={}){
+    if(!qaStore.db || !authStore.canAdmin() || !user?.uid) return false;
+    const EDITABLE=["empId","name","department","title"];
+    const LIMIT={empId:30,name:50,department:50,title:50};
+    const patch={}; const before={}; const after={};
+    EDITABLE.forEach(k=>{
+      if(!(k in fields)) return;
+      const val=(fields[k]||"").trim().slice(0,LIMIT[k]);
+      const cur=user[k]||"";
+      if(val!==cur){ patch[k]=val; before[k]=cur; after[k]=val; }
+    });
+    if(!Object.keys(patch).length) return false; // 沒有任何變動
+    if("empId" in patch && !patch.empId) throw new Error("員工編號不可清空");
+    const reason=(opts.reason||"").trim();
+    const {doc,updateDoc,collection,addDoc,serverTimestamp}=qaStore.firebase;
+    patch.updatedAt=serverTimestamp();
+    await updateDoc(doc(qaStore.db,"gdpUsers",user.uid),patch);
+    await addDoc(collection(qaStore.db,"gdpRoleChangeLogs"),{
+      actorUid:authStore.user.uid, actorName:authStore.displayName(),
+      targetUid:user.uid, targetEmpId:after.empId||user.empId||"", targetName:after.name||user.name||"",
+      changeType:"profile_edit",
+      before:{roles:user.roles||[],status:user.status||"",...before},
+      after:{roles:user.roles||[],status:user.status||"",...after},
+      reason: reason || ("修正基本資料："+Object.keys(after).join("、")),
       approvedAt:serverTimestamp(), source:"manualAdminPanel", createdAt:serverTimestamp()
     });
     return true;
@@ -6265,8 +6304,9 @@ function examTemplateSection(s){
             <label data-exam-date-label="onboard">報到日期<input name="onboardDate" type="text" inputmode="numeric" placeholder="114/06/04" required></label>
             <label>學歷<input name="education" type="text" placeholder="可留空"></label>
           </div>
-          <div class="exam-form-grid" style="margin-top:10px">
-            <label>兼任 / 代理職務<select name="actingKey" data-exam-acting-select><option value="">無兼任 / 代理</option>${Object.entries(examDeptNames).map(([k,n])=>`<option value="${esc(k)}">${esc(n)}</option>`).join("")}</select></label>
+          <div style="margin-top:10px">
+            <div class="exam-acting-title">兼任 / 代理職務（可複選，例如主職文管＋代理倉管＋代理業助）</div>
+            <div class="exam-acting-checks" data-exam-acting-select>${Object.entries(examDeptNames).map(([k,n])=>`<label class="exam-acting-chk"><input type="checkbox" value="${esc(k)}">${esc(n)}</label>`).join("")}</div>
           </div>
           <div class="exam-dept-hint" style="margin-top:6px">受測範圍（依職責與兼任自動帶出）</div>
           <div class="exam-source-grid" data-exam-source-grid>${docCards}</div>
@@ -6599,6 +6639,28 @@ function activeUserCard(u,index){
         <button class="admin-btn warn" type="button" data-resign="${index}">標記離職</button>`}
       </div>
     </div>
+    <details class="admin-details profile-edit-box">
+      <summary>✏️ 編輯基本資料（工號／姓名／部門／職稱）</summary>
+      <div class="profile-edit-grid">
+        <label class="admin-change-field">員工編號
+          <input type="text" class="pe-empId" maxlength="30" value="${esc(u.empId||"")}" placeholder="例如：018">
+        </label>
+        <label class="admin-change-field">姓名
+          <input type="text" class="pe-name" maxlength="50" value="${esc(u.name||"")}" placeholder="姓名">
+        </label>
+        <label class="admin-change-field">部門
+          <input type="text" class="pe-department" maxlength="50" value="${esc(u.department||"")}" placeholder="部門">
+        </label>
+        <label class="admin-change-field">職稱
+          <input type="text" class="pe-title" maxlength="50" value="${esc(u.title||"")}" placeholder="職稱">
+        </label>
+        <label class="admin-change-field">修改原因（選填）
+          <input type="text" class="pe-reason" maxlength="120" placeholder="例：申請時工號打錯，018 應為 018">
+        </label>
+      </div>
+      <button class="admin-btn" type="button" data-save-profile="${index}">儲存基本資料</button>
+      <p class="permission-help">修正後會寫入「角色異動」稽核紀錄（異動類型＝基本資料修改，含前後值）。員工本人下次重新整理即看到新工號。</p>
+    </details>
     ${isSuper?"":`<div class="permission-table-wrap" role="region" aria-label="${esc(u.name||u.empId||"員工")} 權限矩陣">
       <table class="permission-table">
         <thead><tr><th>職務／平台權限</th>${permissionColumns.map(col=>`<th>${esc(col.label)}</th>`).join("")}</tr></thead>
@@ -6665,6 +6727,24 @@ async function renderActiveUserList(){
       const ok=await userApprovalStore.setRoles(u,roles,{changeType,reason});
       alert(ok?`已更新 ${u.name||u.empId}（${roleChangeTypeLabel[changeType]||"調整"}）：${normalizeRoleIds(roles).map(r=>roleLabels[r]||r).join("、")}`:"更新失敗，請確認管理者權限或稍後再試。");
     }catch(err){ console.warn("角色更新失敗",err); alert("更新失敗："+(err?.message||"未知錯誤")); }
+    renderActiveUserList();
+  }));
+  el.querySelectorAll("[data-save-profile]").forEach(btn=>btn.addEventListener("click",async()=>{
+    const u=users[+btn.dataset.saveProfile];
+    const card=btn.closest(".permission-card");
+    const fields={
+      empId:card.querySelector(".pe-empId")?.value||"",
+      name:card.querySelector(".pe-name")?.value||"",
+      department:card.querySelector(".pe-department")?.value||"",
+      title:card.querySelector(".pe-title")?.value||""
+    };
+    const reason=card.querySelector(".pe-reason")?.value.trim()||"";
+    if(!fields.empId.trim()){ alert("員工編號不可空白。"); return; }
+    btn.disabled=true;
+    try{
+      const ok=await userApprovalStore.updateProfileFields(u,fields,{reason});
+      alert(ok?`已更新 ${fields.name||fields.empId} 的基本資料。`:"沒有任何變動，或更新失敗，請確認管理者權限。");
+    }catch(err){ console.warn("基本資料更新失敗",err); alert("更新失敗："+(err?.message||"未知錯誤")); }
     renderActiveUserList();
   }));
   el.querySelectorAll("[data-suspend]").forEach(btn=>btn.addEventListener("click",async()=>{
@@ -7148,19 +7228,27 @@ function bindExamTemplate(){
     const commonItems=base.printItems.filter(isCommon);
     return {role:keys.map(deptDisplayName).join("、"),commonDocs:base.commonDocs,roleDocs,printItems:[...commonItems,...roleItems],draftQuestions};
   }
+  function actingCheckedKeys(){
+    if(!actingSelect) return [];
+    return [...actingSelect.querySelectorAll('input[type="checkbox"]:checked')].map(c=>c.value);
+  }
   function selectedKeys(){
     const primary=roleSelect?.value||"doc";
     const keys=[primary];
-    const acting=actingSelect?.value||"";
-    if(acting&&acting!==primary) keys.push(acting);
+    // 可複選多個兼任／代理職務（例如主職文管＋代理倉管＋代理業助），抽題範圍取聯集。
+    actingCheckedKeys().forEach(k=>{ if(k&&k!==primary&&!keys.includes(k)) keys.push(k); });
     return keys;
   }
   function applyRole(){
     const primary=roleSelect?.value||"doc";
     if(actingSelect){
-      const current=actingSelect.value;
-      actingSelect.innerHTML=`<option value="">無兼任 / 代理</option>${Object.entries(examDeptNames).filter(([k])=>k!==primary).map(([k,n])=>`<option value="${esc(k)}">${esc(n)}</option>`).join("")}`;
-      actingSelect.value=current!==primary&&examDeptNames[current]?current:"";
+      // 主職那一項不能同時當自己的代理：隱藏並取消勾選，其餘維持使用者已勾選狀態。
+      actingSelect.querySelectorAll(".exam-acting-chk").forEach(lab=>{
+        const cb=lab.querySelector('input[type="checkbox"]'); if(!cb) return;
+        const isPrimary=cb.value===primary;
+        lab.style.display=isPrimary?"none":"";
+        if(isPrimary) cb.checked=false;
+      });
     }
     const keys=selectedKeys();
     tpl=composeTemplate(keys);
