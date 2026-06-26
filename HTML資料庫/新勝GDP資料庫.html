@@ -638,6 +638,11 @@
       .exam-fr-table th{font-weight:700;text-align:center}
       .exam-fr-table td{height:13mm}
       .exam-fr-notes{margin-top:4mm;font-size:10pt;line-height:1.6}
+      .exam-fr-sign{position:absolute;left:12mm;right:12mm;bottom:22mm;display:grid;grid-template-columns:1fr 1fr;gap:4mm 14mm}
+      .exam-fr-sign .sign-caption{grid-column:1/-1;font-size:9.5pt;color:#444;margin-bottom:1mm}
+      .exam-fr-sign .sign-cell{display:flex;align-items:flex-end;gap:3mm;font-size:10.5pt}
+      .exam-fr-sign .sign-tag{font-weight:700;white-space:nowrap}
+      .exam-fr-sign .sign-line{flex:1;border-bottom:1px solid #000;height:11mm}
       .exam-doc-number{position:absolute;bottom:10mm;right:12mm;font-size:10pt}
       .exam-paper-head{display:grid;grid-template-columns:1fr auto;gap:8mm;align-items:start;margin-bottom:6mm}
       .exam-paper-head h1{margin:0;text-align:left;font-size:16pt;line-height:1.4}
@@ -2022,7 +2027,7 @@ function firstVisibleSectionId(ctx=visibilityContext()){
 // 版本踢人機制：本頁建置版本號。線上 app-version.json 的 build 大於此值時，代表這份頁面已過期，
 // versionGuard 會強制重新整理，把跑舊版（含登入系統之前的舊快取分頁）的瀏覽器趕回最新版＝強制登入。
 // 部署新版時，務必同時把這個數字與站台根目錄 app-version.json 的 build 一起 +1。
-const APP_BUILD = 20260624;
+const APP_BUILD = 20260625;
 // 進站前使用同意書：版本字串更新時，所有人需重新閱讀並重新同意（供稽核留痕）。
 const CONSENT_VERSION = "2026-06-16";
 const GOOGLE_REDIRECT_FLAG = "gdpGoogleRedirect";
@@ -7078,6 +7083,11 @@ body{margin:0;padding:0;background:#fff;color:#000;font-family:"Microsoft JhengH
 .exam-fr-table th{font-weight:700;text-align:center}
 .exam-fr-table td{height:13mm}
 .exam-fr-notes{margin-top:4mm;font-size:10pt;line-height:1.6}
+.exam-fr-sign{position:absolute;left:12mm;right:12mm;bottom:22mm;display:grid;grid-template-columns:1fr 1fr;gap:4mm 14mm}
+.exam-fr-sign .sign-caption{grid-column:1/-1;font-size:9.5pt;color:#444;margin-bottom:1mm}
+.exam-fr-sign .sign-cell{display:flex;align-items:flex-end;gap:3mm;font-size:10.5pt}
+.exam-fr-sign .sign-tag{font-weight:700;white-space:nowrap}
+.exam-fr-sign .sign-line{flex:1;border-bottom:1px solid #000;height:11mm}
 .exam-doc-number{position:absolute;bottom:10mm;right:12mm;font-size:10pt}
 .exam-paper-head{display:grid;grid-template-columns:1fr auto;gap:8mm;align-items:start;margin-bottom:6mm}
 .exam-paper-head h1{margin:0;text-align:left;font-size:16pt;line-height:1.4}
@@ -7141,6 +7151,11 @@ function sharedExamPrintDoc(d){
         </table>
         <div class="exam-fr-notes">
           備註：1. 本表由人事單位保存。2. 訓練後經訓練講師評鑑受訓成效，由人事簽核。3. 評核方式：${esc(d.method)}；${d.timedOut?"本次為逾時自動交卷。":"本次為測驗完成後列印。"}
+        </div>
+        <div class="exam-fr-sign">
+          <div class="sign-caption">本人確認以上教育訓練測驗確由本人親自完成：</div>
+          <div class="sign-cell"><span class="sign-tag">考試人簽名</span><span class="sign-line"></span></div>
+          <div class="sign-cell"><span class="sign-tag">授課講師簽名</span><span class="sign-line"></span></div>
         </div>
         <div class="exam-doc-number">FR24-03</div>
       </section>
@@ -7575,6 +7590,11 @@ function bindExamTemplate(){
         </table>
         <div class="exam-fr-notes">
           備註：1. 本表由人事單位保存。2. 訓練後經訓練講師評鑑受訓成效，由人事簽核。3. 評核方式：${esc(p.method||"")}；${timedOut?"本次為逾時自動交卷。":"本次為測驗完成後列印。"}
+        </div>
+        <div class="exam-fr-sign">
+          <div class="sign-caption">本人確認以上教育訓練測驗確由本人親自完成：</div>
+          <div class="sign-cell"><span class="sign-tag">考試人簽名</span><span class="sign-line"></span></div>
+          <div class="sign-cell"><span class="sign-tag">授課講師簽名</span><span class="sign-line"></span></div>
         </div>
         <div class="exam-doc-number">FR24-03</div>
       </section>
