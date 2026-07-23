@@ -1,5 +1,8 @@
 # 新勝 GDP 專案交接（精簡版）
 
+> 最新補記：2026-07-23（FR24-03 A4 列印定位修正 ✅，commit `9445ef8` 已推送）。
+> 使用者截圖顯示 FR24-03 列印時，簽名欄與備註重疊，文件編號也未落在 A4 右下角。已只修改 `HTML資料庫/新勝GDP資料庫.html` 與版本檔：兩條 FR24-03 模板（本機列印／分享列印）均加上 `.exam-fr-page` 固定 `height/min-height:297mm`；`FR24-03` 維持 `right:12mm; bottom:10mm`，因此以實體 A4 右下角為定位基準；簽名區 `bottom:22mm→16mm` 下移避開備註。`APP_BUILD`、`app-version.json` 同步 `20260628→20260723`，讓已開頁面自動更新。驗收：`node verify_facts_ghpages.mjs` = `1306/1306`；GitHub Pages HTTP 200 且已命中新版 build／A4／簽名定位規則。Playwright 無法在此電腦啟動（headless browser 缺失／Chrome spawn EPERM），故未取得本機自動截圖；結構與線上部署內容均已核對。工作樹已乾淨。
+
 > 最新補記：2026-06-26（第141次：**修正第140次前台違規：關鍵人員變更查詢結果不得顯示 SOP/WI 程序書代碼 ✅**，build 踢人 `20260627→20260628`）。
 > 第141次：使用者截圖指出「關鍵人員變更（離職換人）的管理與申報」智慧查詢結果違反規範：`執行方式` 直接顯示 `DP12-04 / DP24-01 / WI22-01 / WI22-02`。判斷：使用者指出正確，前台學員短答不得說「依 DPxx/WIxx」，應以員工能回答稽查的流程語氣呈現；表單代碼（如 FR12-05、FR12-01、FR22-01）仍保留，因為屬「要填哪張表」的實務作業資訊。已修 `HTML資料庫/新勝GDP資料庫.html`：① `fact-keyperson-change.xinshing` 移除 DP/WI 程序書代碼，改為「走人事變更管制、填 FR12-05、完成資格審查與教育訓練、更新任命書/指派名單/職務說明書/代理人名冊/簽名樣張/系統權限、必要時通報主管機關」②人事頁稽核問答的 `text/evidenceToPrepare/answerDirection` 同步移除 DP/WI 程序書代碼 ③`APP_BUILD` 與 `app-version.json` 踢到 `20260628`。驗收：抽 script 語法 `JS_PARSE_OK 1`；`node verify_facts_ghpages.mjs` = `1306/1306`、自動 keyword `838/838`、合規掃描通過；精準掃描 `fact-keyperson-change.xinshing` 得 `HAS_DP_WI_IN_XINSHING=False`、`HAS_FORMS=True`。下次注意：回 SOP 原文核對不等於可把 SOP/WI 代碼搬到前台回答；來源代碼留在 `sop_ref/sourceSection`，學員短答用白話流程。
 > 最新補記：2026-06-26（第140次：**Codex 複檢 Claude 第139次 DP12-04 人事變更管制同步，補齊原文細節並收工 ✅**，build 維持 `20260627`）。
