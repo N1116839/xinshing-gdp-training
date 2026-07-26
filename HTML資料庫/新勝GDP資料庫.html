@@ -625,21 +625,21 @@
     .ev-check-fill{height:6px;background:var(--brand);width:0%;transition:width .2s}
     @media(max-width:680px){.evidence-map{grid-template-columns:1fr}.evidence-node.center{min-height:50px;flex-direction:row;gap:10px;padding:12px}.metric-strip{grid-template-columns:repeat(2,1fr)}.metric{border-bottom:1px solid #ead6b6}.doc-map-status,.ev-check-list,.exam-scope-grid,.exam-source-grid,.exam-build-grid,.exam-form-grid,.exam-flow,.exam-stage-tabs,.exam-question-shell,.exam-start-card{grid-template-columns:1fr}.exam-print-row{grid-template-columns:1fr}.exam-print-row.head{display:none}.exam-work-head{position:static;align-items:flex-start;flex-direction:column}.exam-timer{margin-left:0}.exam-hero{padding:18px;min-height:220px}}
     @media print{
-      @page{size:A4 portrait;margin:16mm 15mm 16mm}
+      @page{size:A4 portrait;margin:0}
       body{margin:0!important;background:#fff;color:#000}
       body *{visibility:hidden!important}
       body.exam-printing > *:not(.exam-print-doc){display:none!important}
       .exam-print-doc,.exam-print-doc *{visibility:visible!important}
       body.exam-printing > .exam-print-doc{display:block!important;position:static!important;inset:auto!important;width:auto!important;margin:0!important;padding:0;background:#fff;color:#000;font-family:"Microsoft JhengHei","Noto Sans TC",serif;font-size:11pt;line-height:1.35}
-      .exam-print-page{position:relative;box-sizing:border-box;padding:0;break-after:auto;page-break-after:auto}
+      .exam-print-page{position:relative;box-sizing:border-box;min-height:297mm;padding:16mm 15mm 10mm;break-after:auto;page-break-after:auto;box-decoration-break:clone;-webkit-box-decoration-break:clone}
       .exam-print-page + .exam-print-page{break-before:page;page-break-before:always}
-      .exam-fr-page{height:auto;min-height:265mm}
+      .exam-fr-page{height:auto;min-height:297mm}
       .exam-print-title{text-align:center;font-size:18pt;font-weight:800;letter-spacing:.08em;margin:0 0 10mm}
       .exam-fr-table,.exam-paper-table{width:100%;border-collapse:collapse;table-layout:fixed}
-      .exam-fr-table th,.exam-fr-table td,.exam-paper-table th,.exam-paper-table td{border:1px solid #000;padding:3px 4px;vertical-align:top;word-break:break-word}
+      .exam-fr-table th,.exam-fr-table td,.exam-paper-table th,.exam-paper-table td{border:1px solid #000;padding:2px 3px;vertical-align:top;word-break:break-word}
       .exam-fr-table th{font-weight:700;text-align:center}
-      .exam-fr-table td{height:10.5mm}
-      .exam-fr-notes{margin-top:4mm;font-size:10pt;line-height:1.6}
+      .exam-fr-table td{height:9mm;font-size:9.5pt}
+      .exam-fr-notes{margin-top:3mm;font-size:9pt;line-height:1.45}
       .exam-fr-sign{position:relative;margin-top:5mm;display:grid;grid-template-columns:1fr 1fr;gap:4mm 14mm;break-inside:avoid;page-break-inside:avoid}
       .exam-fr-sign .sign-caption{grid-column:1/-1;font-size:9.5pt;color:#444;margin-bottom:1mm}
       .exam-fr-sign .sign-cell{display:flex;align-items:flex-end;gap:3mm;font-size:10.5pt}
@@ -2030,7 +2030,7 @@ function firstVisibleSectionId(ctx=visibilityContext()){
 // 版本踢人機制：本頁建置版本號。線上 app-version.json 的 build 大於此值時，代表這份頁面已過期，
 // versionGuard 會強制重新整理，把跑舊版（含登入系統之前的舊快取分頁）的瀏覽器趕回最新版＝強制登入。
 // 部署新版時，務必同時把這個數字與站台根目錄 app-version.json 的 build 一起 +1。
-const APP_BUILD = 20260730;
+const APP_BUILD = 20260731;
 // 進站前使用同意書：版本字串更新時，所有人需重新閱讀並重新同意（供稽核留痕）。
 const CONSENT_VERSION = "2026-06-16";
 const GOOGLE_REDIRECT_FLAG = "gdpGoogleRedirect";
@@ -7135,18 +7135,18 @@ function bindDocumentMap(){
   });
 }
 function examPacketCss(){
-  return `@page{size:A4 portrait;margin:16mm 15mm 16mm}
+  return `@page{size:A4 portrait;margin:0}
 body{margin:0;padding:0;background:#fff;color:#000;font-family:"Microsoft JhengHei","Noto Sans TC",serif;font-size:11pt;line-height:1.35}
-.exam-print-doc{margin:0 15mm}
-.exam-print-page{position:relative;box-sizing:border-box;padding:0;break-after:auto;page-break-after:auto}
+.exam-print-doc{margin:0}
+.exam-print-page{position:relative;box-sizing:border-box;min-height:297mm;padding:16mm 15mm 10mm;break-after:auto;page-break-after:auto;box-decoration-break:clone;-webkit-box-decoration-break:clone}
 .exam-print-page + .exam-print-page{break-before:page;page-break-before:always}
-.exam-fr-page{height:auto;min-height:265mm}
+.exam-fr-page{height:auto;min-height:297mm}
 .exam-print-title{text-align:center;font-size:18pt;font-weight:800;letter-spacing:.08em;margin:0 0 10mm}
 .exam-fr-table,.exam-paper-table{width:100%;border-collapse:collapse;table-layout:fixed}
-.exam-fr-table th,.exam-fr-table td,.exam-paper-table th,.exam-paper-table td{border:1px solid #000;padding:3px 4px;vertical-align:top;word-break:break-word}
+.exam-fr-table th,.exam-fr-table td,.exam-paper-table th,.exam-paper-table td{border:1px solid #000;padding:2px 3px;vertical-align:top;word-break:break-word}
 .exam-fr-table th{font-weight:700;text-align:center}
-.exam-fr-table td{height:10.5mm}
-.exam-fr-notes{margin-top:4mm;font-size:10pt;line-height:1.6}
+.exam-fr-table td{height:9mm;font-size:9.5pt}
+.exam-fr-notes{margin-top:3mm;font-size:9pt;line-height:1.45}
 .exam-fr-sign{position:relative;margin-top:5mm;display:grid;grid-template-columns:1fr 1fr;gap:4mm 14mm;break-inside:avoid;page-break-inside:avoid}
 .exam-fr-sign .sign-caption{grid-column:1/-1;font-size:9.5pt;color:#444;margin-bottom:1mm}
 .exam-fr-sign .sign-cell{display:flex;align-items:flex-end;gap:3mm;font-size:10.5pt}
