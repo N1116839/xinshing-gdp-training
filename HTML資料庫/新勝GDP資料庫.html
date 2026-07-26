@@ -625,19 +625,19 @@
     .ev-check-fill{height:6px;background:var(--brand);width:0%;transition:width .2s}
     @media(max-width:680px){.evidence-map{grid-template-columns:1fr}.evidence-node.center{min-height:50px;flex-direction:row;gap:10px;padding:12px}.metric-strip{grid-template-columns:repeat(2,1fr)}.metric{border-bottom:1px solid #ead6b6}.doc-map-status,.ev-check-list,.exam-scope-grid,.exam-source-grid,.exam-build-grid,.exam-form-grid,.exam-flow,.exam-stage-tabs,.exam-question-shell,.exam-start-card{grid-template-columns:1fr}.exam-print-row{grid-template-columns:1fr}.exam-print-row.head{display:none}.exam-work-head{position:static;align-items:flex-start;flex-direction:column}.exam-timer{margin-left:0}.exam-hero{padding:18px;min-height:220px}}
     @media print{
-      @page{size:A4 portrait;margin:14mm 12mm 16mm}
+      @page{size:A4 portrait;margin:16mm 15mm 16mm}
       body{background:#fff;color:#000}
       body *{visibility:hidden!important}
       .exam-print-doc,.exam-print-doc *{visibility:visible!important}
       .exam-print-doc{display:block!important;position:absolute;inset:0 auto auto 0;width:100%;padding:0;background:#fff;color:#000;font-family:"Microsoft JhengHei","Noto Sans TC",serif;font-size:11pt;line-height:1.35}
-      .exam-print-page{position:relative;min-height:267mm;box-sizing:border-box;padding:0;break-after:page;page-break-after:always}
-      .exam-print-page:last-child{break-after:auto;page-break-after:auto}
-      .exam-fr-page{height:auto;min-height:267mm}
+      .exam-print-page{position:relative;box-sizing:border-box;padding:0;break-after:auto;page-break-after:auto}
+      .exam-print-page + .exam-print-page{break-before:page;page-break-before:always}
+      .exam-fr-page{height:auto;min-height:265mm}
       .exam-print-title{text-align:center;font-size:18pt;font-weight:800;letter-spacing:.08em;margin:0 0 10mm}
       .exam-fr-table,.exam-paper-table{width:100%;border-collapse:collapse;table-layout:fixed}
-      .exam-fr-table th,.exam-fr-table td,.exam-paper-table th,.exam-paper-table td{border:1px solid #000;padding:6px 7px;vertical-align:top;word-break:break-word}
+      .exam-fr-table th,.exam-fr-table td,.exam-paper-table th,.exam-paper-table td{border:1px solid #000;padding:3px 4px;vertical-align:top;word-break:break-word}
       .exam-fr-table th{font-weight:700;text-align:center}
-      .exam-fr-table td{height:13mm}
+      .exam-fr-table td{height:10.5mm}
       .exam-fr-notes{margin-top:4mm;font-size:10pt;line-height:1.6}
       .exam-fr-sign{position:relative;margin-top:5mm;display:grid;grid-template-columns:1fr 1fr;gap:4mm 14mm;break-inside:avoid;page-break-inside:avoid}
       .exam-fr-sign .sign-caption{grid-column:1/-1;font-size:9.5pt;color:#444;margin-bottom:1mm}
@@ -2029,7 +2029,7 @@ function firstVisibleSectionId(ctx=visibilityContext()){
 // 版本踢人機制：本頁建置版本號。線上 app-version.json 的 build 大於此值時，代表這份頁面已過期，
 // versionGuard 會強制重新整理，把跑舊版（含登入系統之前的舊快取分頁）的瀏覽器趕回最新版＝強制登入。
 // 部署新版時，務必同時把這個數字與站台根目錄 app-version.json 的 build 一起 +1。
-const APP_BUILD = 20260727;
+const APP_BUILD = 20260729;
 // 進站前使用同意書：版本字串更新時，所有人需重新閱讀並重新同意（供稽核留痕）。
 const CONSENT_VERSION = "2026-06-16";
 const GOOGLE_REDIRECT_FLAG = "gdpGoogleRedirect";
@@ -7134,16 +7134,16 @@ function bindDocumentMap(){
   });
 }
 function examPacketCss(){
-  return `@page{size:A4 portrait;margin:14mm 12mm 16mm}
+  return `@page{size:A4 portrait;margin:16mm 15mm 16mm}
 body{margin:0;padding:0;background:#fff;color:#000;font-family:"Microsoft JhengHei","Noto Sans TC",serif;font-size:11pt;line-height:1.35}
-.exam-print-page{position:relative;min-height:267mm;box-sizing:border-box;padding:0;break-after:page;page-break-after:always}
-.exam-print-page:last-child{break-after:auto;page-break-after:auto}
-.exam-fr-page{height:auto;min-height:267mm}
+.exam-print-page{position:relative;box-sizing:border-box;padding:0;break-after:auto;page-break-after:auto}
+.exam-print-page + .exam-print-page{break-before:page;page-break-before:always}
+.exam-fr-page{height:auto;min-height:265mm}
 .exam-print-title{text-align:center;font-size:18pt;font-weight:800;letter-spacing:.08em;margin:0 0 10mm}
 .exam-fr-table,.exam-paper-table{width:100%;border-collapse:collapse;table-layout:fixed}
-.exam-fr-table th,.exam-fr-table td,.exam-paper-table th,.exam-paper-table td{border:1px solid #000;padding:6px 7px;vertical-align:top;word-break:break-word}
+.exam-fr-table th,.exam-fr-table td,.exam-paper-table th,.exam-paper-table td{border:1px solid #000;padding:3px 4px;vertical-align:top;word-break:break-word}
 .exam-fr-table th{font-weight:700;text-align:center}
-.exam-fr-table td{height:13mm}
+.exam-fr-table td{height:10.5mm}
 .exam-fr-notes{margin-top:4mm;font-size:10pt;line-height:1.6}
 .exam-fr-sign{position:relative;margin-top:5mm;display:grid;grid-template-columns:1fr 1fr;gap:4mm 14mm;break-inside:avoid;page-break-inside:avoid}
 .exam-fr-sign .sign-caption{grid-column:1/-1;font-size:9.5pt;color:#444;margin-bottom:1mm}
@@ -7351,7 +7351,7 @@ function bindExamTemplate(){
   actingSelect?.addEventListener("change",applyRole);
   function typeInfo(){
     const annual=typeRadios.find(r=>r.checked)?.value==="annual";
-    return annual?{label:"年度教育訓練測驗",count:20,point:5,minutes:25,seconds:25*60}:{label:"新人三個月測驗",count:10,point:10,minutes:10,seconds:10*60};
+    return annual?{label:"年度教育訓練測驗",annual:true,count:20,point:5,minutes:25,seconds:25*60}:{label:"新人三個月測驗",annual:false,count:10,point:10,minutes:10,seconds:10*60};
   }
   function shuffle(items){
     const arr=[...items];
@@ -7364,6 +7364,17 @@ function bindExamTemplate(){
   function questionSource(q){return String(q?.source||q?.sourceDoc||q?.sourceTitle||"");}
   function isCommon(q){return /(?:^|\s|\+|、)(?:DM10-01|WI10-01)(?:\s|\+|、|$)/.test(questionSource(q));}
   function isGov(q){return /TFDA|PIC\/S|公開查核|公開缺失|官方來源|政府/.test(questionSource(q));}
+  function recordTrainingItems(){
+    const items=[...tpl.printItems];
+    const govQuestions=(session.questions||[]).filter(isGov);
+    if(!session.info?.annual||!govQuestions.length) return items;
+    const years=[...new Set(govQuestions.flatMap(q=>[questionSource(q),q.sourceSection||""])
+      .flatMap(text=>[...String(text).matchAll(/(?:TFDA\s*)?(1\d{2})\s*年度/g)].map(m=>m[1])))]
+      .sort((a,b)=>Number(a)-Number(b));
+    const sourceLabel=years.length?`食藥署 ${years.join("、")} 年度公開資料`:"官方公開資料";
+    items.push(`年度政府公開 GDP 常見缺失訓練（依${sourceLabel}）`);
+    return items;
+  }
   function buildQuestions(count){
     const all=[...tpl.draftQuestions,...govExamQuestionStore.forRoles(selectedKeys())];
     const common=all.filter(isCommon);
@@ -7540,7 +7551,7 @@ function bindExamTemplate(){
       trainer:p.trainer||"",tdate:toRocDate(p.trainingDate),method:p.method||"",
       item:p.trainingItem||"教育訓練",label:session.info?.label||"測驗",
       score,pass:!!pass,result:pass?"合格":"未合格",correct,total,timedOut:!!timedOut,
-      pi:tpl.printItems,
+      pi:recordTrainingItems(),
       q:session.questions.map((q,i)=>({t:q.text,o:q.options.map(o=>o.text),s:(session.answers[i]==null?-1:Number(session.answers[i])),c:Number(q.correctIndex)}))
     };
   }
@@ -7603,7 +7614,7 @@ function bindExamTemplate(){
   function examPrintDocumentHtml(correct,total,score,pass,timedOut){
     const p=session.profile||{};
     const resultText=pass?"合格":"未合格";
-    const rows=tpl.printItems.map(item=>`
+    const rows=recordTrainingItems().map(item=>`
       <tr>
         <td colspan="2">${esc(item)}</td>
         <td colspan="2">新勝醫藥</td>
@@ -7611,7 +7622,7 @@ function bindExamTemplate(){
         <td colspan="2">${toRocDate(p.trainingDate)}</td>
         <td></td>
       </tr>`).join("");
-    const blankRows=Array.from({length:Math.max(0,8-tpl.printItems.length)},()=>`<tr><td colspan="2">&nbsp;</td><td colspan="2"></td><td></td><td colspan="2"></td><td></td></tr>`).join("");
+    const blankRows=Array.from({length:Math.max(0,8-recordTrainingItems().length)},()=>`<tr><td colspan="2">&nbsp;</td><td colspan="2"></td><td></td><td colspan="2"></td><td></td></tr>`).join("");
     const questions=session.questions.map((q,i)=>{
       const selected=session.answers[i];
       const selectedLabel=answerLabel(selected)||"未作答";
@@ -7685,7 +7696,7 @@ function bindExamTemplate(){
   }
   function printPacketHtml(correct,total,score,pass,timedOut){
     const p=session.profile||{};
-    const rows=tpl.printItems.map(item=>`<div class="exam-print-row"><span>${esc(item)}</span><span>${score} 分</span><span>${pass?"合格":"未合格"}</span><span>________</span></div>`).join("");
+    const rows=recordTrainingItems().map(item=>`<div class="exam-print-row"><span>${esc(item)}</span><span>${score} 分</span><span>${pass?"合格":"未合格"}</span><span>________</span></div>`).join("");
     const review=session.questions.map((q,i)=>{
       const selected=session.answers[i];
       const chosen=selected==null?"未作答":q.options[selected]?.text||"";
