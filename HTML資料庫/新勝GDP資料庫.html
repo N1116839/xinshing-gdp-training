@@ -2029,7 +2029,7 @@ function firstVisibleSectionId(ctx=visibilityContext()){
 // 版本踢人機制：本頁建置版本號。線上 app-version.json 的 build 大於此值時，代表這份頁面已過期，
 // versionGuard 會強制重新整理，把跑舊版（含登入系統之前的舊快取分頁）的瀏覽器趕回最新版＝強制登入。
 // 部署新版時，務必同時把這個數字與站台根目錄 app-version.json 的 build 一起 +1。
-const APP_BUILD = 20260726;
+const APP_BUILD = 20260727;
 // 進站前使用同意書：版本字串更新時，所有人需重新閱讀並重新同意（供稽核留痕）。
 const CONSENT_VERSION = "2026-06-16";
 const GOOGLE_REDIRECT_FLAG = "gdpGoogleRedirect";
@@ -7169,14 +7169,13 @@ function sharedExamPrintDoc(d){
   const result=d.result||(d.pass?"合格":"未合格");
   const rows=(d.pi||[]).map(item=>`
       <tr>
-        <td>${esc(item)}</td>
-        <td>新勝醫藥</td>
+        <td colspan="2">${esc(item)}</td>
+        <td colspan="2">新勝醫藥</td>
         <td>${esc(d.trainer)}</td>
-        <td>${esc(d.tdate)}</td>
-        <td>${d.score} 分，${esc(result)}</td>
+        <td colspan="2">${esc(d.tdate)}</td>
         <td></td>
       </tr>`).join("");
-  const blankRows=Array.from({length:Math.max(0,7-(d.pi||[]).length)},()=>`<tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>`).join("");
+  const blankRows=Array.from({length:Math.max(0,8-(d.pi||[]).length)},()=>`<tr><td colspan="2">&nbsp;</td><td colspan="2"></td><td></td><td colspan="2"></td><td></td></tr>`).join("");
   const questions=(d.q||[]).map((q,i)=>{
     const selLabel=q.s>=0?String.fromCharCode(65+q.s):"未作答";
     const corLabel=String.fromCharCode(65+q.c);
@@ -7191,23 +7190,23 @@ function sharedExamPrintDoc(d){
       <section class="exam-print-page exam-fr-page">
         <h1 class="exam-print-title">員工教育訓練紀錄表</h1>
         <table class="exam-fr-table">
+          <colgroup><col style="width:26.68%"><col style="width:7.14%"><col style="width:12.04%"><col style="width:7.88%"><col style="width:14.22%"><col style="width:10.70%"><col style="width:4.94%"><col style="width:16.40%"></colgroup>
           <tr>
-            <td colspan="2">姓名：${esc(d.name)}</td>
-            <td>性別：${esc(d.sex)}</td>
-            <td colspan="2">報到日期：${esc(d.onboard)}</td>
-            <td>學歷：${esc(d.edu)}</td>
+            <td>姓名：${esc(d.name)}</td>
+            <td colspan="2">性別：${esc(d.sex)}</td>
+            <td colspan="3">報到日期：${esc(d.onboard)}</td>
+            <td colspan="2">學歷：${esc(d.edu)}</td>
           </tr>
           <tr>
             <td colspan="2">單位：${esc(d.dept)}</td>
             <td colspan="4">職稱：${esc(d.title)}${d.acting?"；兼任/代理："+esc(d.acting):""}</td>
           </tr>
           <tr>
-            <th style="width:30%">訓練項目</th>
-            <th style="width:15%">訓練單位</th>
-            <th style="width:13%">訓練者</th>
-            <th style="width:18%">訓練日期</th>
-            <th style="width:14%">評核成效</th>
-            <th style="width:10%">人事簽核</th>
+            <th colspan="2">訓練項目</th>
+            <th colspan="2">訓練單位</th>
+            <th>訓練者</th>
+            <th colspan="2">訓練日期</th>
+            <th>人事簽核</th>
           </tr>
           ${rows}${blankRows}
         </table>
@@ -7606,14 +7605,13 @@ function bindExamTemplate(){
     const resultText=pass?"合格":"未合格";
     const rows=tpl.printItems.map(item=>`
       <tr>
-        <td>${esc(item)}</td>
-        <td>新勝醫藥</td>
+        <td colspan="2">${esc(item)}</td>
+        <td colspan="2">新勝醫藥</td>
         <td>${esc(p.trainer||"")}</td>
-        <td>${toRocDate(p.trainingDate)}</td>
-        <td>${score} 分，${resultText}</td>
+        <td colspan="2">${toRocDate(p.trainingDate)}</td>
         <td></td>
       </tr>`).join("");
-    const blankRows=Array.from({length:Math.max(0,7-tpl.printItems.length)},()=>`<tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>`).join("");
+    const blankRows=Array.from({length:Math.max(0,8-tpl.printItems.length)},()=>`<tr><td colspan="2">&nbsp;</td><td colspan="2"></td><td></td><td colspan="2"></td><td></td></tr>`).join("");
     const questions=session.questions.map((q,i)=>{
       const selected=session.answers[i];
       const selectedLabel=answerLabel(selected)||"未作答";
@@ -7634,23 +7632,23 @@ function bindExamTemplate(){
       <section class="exam-print-page exam-fr-page">
         <h1 class="exam-print-title">員工教育訓練紀錄表</h1>
         <table class="exam-fr-table">
+          <colgroup><col style="width:26.68%"><col style="width:7.14%"><col style="width:12.04%"><col style="width:7.88%"><col style="width:14.22%"><col style="width:10.70%"><col style="width:4.94%"><col style="width:16.40%"></colgroup>
           <tr>
-            <td colspan="2">姓名：${esc(p.name||"")}</td>
-            <td>性別：${esc(p.sex||"")}</td>
-            <td colspan="2">報到日期：${toRocDate(p.onboardDate)}</td>
-            <td>學歷：${esc(p.education||"")}</td>
+            <td>姓名：${esc(p.name||"")}</td>
+            <td colspan="2">性別：${esc(p.sex||"")}</td>
+            <td colspan="3">報到日期：${toRocDate(p.onboardDate)}</td>
+            <td colspan="2">學歷：${esc(p.education||"")}</td>
           </tr>
           <tr>
             <td colspan="2">單位：${esc(p.department||"")}</td>
             <td colspan="4">職稱：${esc(p.title||"")}${p.acting&&p.acting!=="無"?"；兼任/代理："+esc(p.acting):""}</td>
           </tr>
           <tr>
-            <th style="width:30%">訓練項目</th>
-            <th style="width:15%">訓練單位</th>
-            <th style="width:13%">訓練者</th>
-            <th style="width:18%">訓練日期</th>
-            <th style="width:14%">評核成效</th>
-            <th style="width:10%">人事簽核</th>
+            <th colspan="2">訓練項目</th>
+            <th colspan="2">訓練單位</th>
+            <th>訓練者</th>
+            <th colspan="2">訓練日期</th>
+            <th>人事簽核</th>
           </tr>
           ${rows}${blankRows}
         </table>
