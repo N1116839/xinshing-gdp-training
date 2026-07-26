@@ -176,5 +176,22 @@ service cloud.firestore {
         && request.resource.data.sectionId is string
         && request.resource.data.sourceId is string;
     }
+    match /gdpGovExamQuestions/{docId} {
+      allow read: if true;
+      allow create, update: if request.resource.data.keys().hasOnly(['questionId','questionText','options','correctIndex','explanation','sourceTitle','sourceSection','sourceQuote','sourceId','deficiencyItemId','roleKeys','level','topic','createdAt'])
+        && request.resource.data.keys().hasAll(['questionId','questionText','options','correctIndex','sourceTitle','sourceId','roleKeys','level'])
+        && request.resource.data.questionId == docId
+        && request.resource.data.questionText is string
+        && request.resource.data.questionText.size() <= 1000
+        && request.resource.data.options is list
+        && request.resource.data.options.size() == 4
+        && request.resource.data.correctIndex is int
+        && request.resource.data.correctIndex >= 0
+        && request.resource.data.correctIndex < 4
+        && request.resource.data.sourceTitle is string
+        && request.resource.data.sourceId is string
+        && request.resource.data.roleKeys is list
+        && request.resource.data.level in ['staff','leader'];
+    }
   }
 }

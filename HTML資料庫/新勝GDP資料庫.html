@@ -625,26 +625,26 @@
     .ev-check-fill{height:6px;background:var(--brand);width:0%;transition:width .2s}
     @media(max-width:680px){.evidence-map{grid-template-columns:1fr}.evidence-node.center{min-height:50px;flex-direction:row;gap:10px;padding:12px}.metric-strip{grid-template-columns:repeat(2,1fr)}.metric{border-bottom:1px solid #ead6b6}.doc-map-status,.ev-check-list,.exam-scope-grid,.exam-source-grid,.exam-build-grid,.exam-form-grid,.exam-flow,.exam-stage-tabs,.exam-question-shell,.exam-start-card{grid-template-columns:1fr}.exam-print-row{grid-template-columns:1fr}.exam-print-row.head{display:none}.exam-work-head{position:static;align-items:flex-start;flex-direction:column}.exam-timer{margin-left:0}.exam-hero{padding:18px;min-height:220px}}
     @media print{
-      @page{size:A4 portrait;margin:0}
+      @page{size:A4 portrait;margin:14mm 12mm 16mm}
       body{background:#fff;color:#000}
       body *{visibility:hidden!important}
       .exam-print-doc,.exam-print-doc *{visibility:visible!important}
       .exam-print-doc{display:block!important;position:absolute;inset:0 auto auto 0;width:100%;padding:0;background:#fff;color:#000;font-family:"Microsoft JhengHei","Noto Sans TC",serif;font-size:11pt;line-height:1.35}
-      .exam-print-page{position:relative;min-height:100vh;box-sizing:border-box;padding:14mm 12mm 16mm;break-after:page;page-break-after:always}
+      .exam-print-page{position:relative;min-height:267mm;box-sizing:border-box;padding:0;break-after:page;page-break-after:always}
       .exam-print-page:last-child{break-after:auto;page-break-after:auto}
-      .exam-fr-page{height:297mm;min-height:297mm}
+      .exam-fr-page{height:auto;min-height:267mm}
       .exam-print-title{text-align:center;font-size:18pt;font-weight:800;letter-spacing:.08em;margin:0 0 10mm}
       .exam-fr-table,.exam-paper-table{width:100%;border-collapse:collapse;table-layout:fixed}
       .exam-fr-table th,.exam-fr-table td,.exam-paper-table th,.exam-paper-table td{border:1px solid #000;padding:6px 7px;vertical-align:top;word-break:break-word}
       .exam-fr-table th{font-weight:700;text-align:center}
       .exam-fr-table td{height:13mm}
       .exam-fr-notes{margin-top:4mm;font-size:10pt;line-height:1.6}
-      .exam-fr-sign{position:absolute;left:12mm;right:12mm;bottom:16mm;display:grid;grid-template-columns:1fr 1fr;gap:4mm 14mm}
+      .exam-fr-sign{position:relative;margin-top:5mm;display:grid;grid-template-columns:1fr 1fr;gap:4mm 14mm;break-inside:avoid;page-break-inside:avoid}
       .exam-fr-sign .sign-caption{grid-column:1/-1;font-size:9.5pt;color:#444;margin-bottom:1mm}
       .exam-fr-sign .sign-cell{display:flex;align-items:flex-end;gap:3mm;font-size:10.5pt}
       .exam-fr-sign .sign-tag{font-weight:700;white-space:nowrap}
       .exam-fr-sign .sign-line{flex:1;border-bottom:1px solid #000;height:11mm}
-      .exam-doc-number{position:absolute;bottom:10mm;right:12mm;font-size:10pt}
+      .exam-doc-number{margin-top:3mm;text-align:right;font-size:10pt;break-inside:avoid;page-break-inside:avoid}
       .exam-paper-head{display:grid;grid-template-columns:1fr auto;gap:8mm;align-items:start;margin-bottom:6mm}
       .exam-paper-head h1{margin:0;text-align:left;font-size:16pt;line-height:1.4}
       .exam-paper-score{border:2px solid #000;padding:5mm 8mm;text-align:center;font-size:14pt;font-weight:800;min-width:34mm}
@@ -2029,7 +2029,7 @@ function firstVisibleSectionId(ctx=visibilityContext()){
 // 版本踢人機制：本頁建置版本號。線上 app-version.json 的 build 大於此值時，代表這份頁面已過期，
 // versionGuard 會強制重新整理，把跑舊版（含登入系統之前的舊快取分頁）的瀏覽器趕回最新版＝強制登入。
 // 部署新版時，務必同時把這個數字與站台根目錄 app-version.json 的 build 一起 +1。
-const APP_BUILD = 20260723;
+const APP_BUILD = 20260726;
 // 進站前使用同意書：版本字串更新時，所有人需重新閱讀並重新同意（供稽核留痕）。
 const CONSENT_VERSION = "2026-06-16";
 const GOOGLE_REDIRECT_FLAG = "gdpGoogleRedirect";
@@ -2773,6 +2773,30 @@ const deficiencyStore = {
     const items = this.bySectionId[sectionId];
     if (items && items.length > 0) return items;
     return null;
+  }
+};
+// 年度測驗的政府公開常見缺失題由 Firestore 供應；本機題庫僅作離線備援。
+// 每筆題目帶 roleKeys 與 level，讓同一官方來源可分別服務日常作業與組長複核訓練。
+const govExamQuestionStore = {
+  questions: [], loaded: false, loading: null,
+  init(){ if(!this.loading) this.loading=this._load(); return this.loading; },
+  async _load(){
+    if(!qaStore.db) return false;
+    try{
+      const {collection,getDocs}=qaStore.firebase;
+      const snap=await getDocs(collection(qaStore.db,"gdpGovExamQuestions"));
+      this.questions=snap.docs.map(d=>({id:d.id,...d.data()})).filter(q=>q.questionText&&Array.isArray(q.options)&&Number.isInteger(q.correctIndex));
+      this.loaded=true;
+      console.log("[govExamQuestionStore] Loaded "+this.questions.length+" official exam questions from Firestore");
+    }catch(e){ console.warn("[govExamQuestionStore] Failed to load official exam questions; using embedded annual questions",e); }
+    return this.loaded;
+  },
+  forRoles(keys){
+    const wanted=new Set(keys||[]);
+    return this.questions.filter(q=>(q.roleKeys||[]).some(key=>wanted.has(key))).map(q=>({
+      source:q.sourceTitle||"TFDA/PIC/S 官方來源",topic:q.topic||"年度公開查核重點",examLevel:q.level||"staff",
+      text:q.questionText,options:q.options,explanation:q.explanation||"",sourceSection:q.sourceSection||"政府公開常見缺失",sourceQuote:q.sourceQuote||"",deficiencyItemId:q.deficiencyItemId||""
+    }));
   }
 };
 const calendarStatusStore = {
@@ -6265,7 +6289,30 @@ const examTemplates = {
     ]
   }
 };
-const examDeptNames={doc:"文管",hr:"人事",purchase:"採購",sales:"業務",pharmacist:"管理藥師",warehouse:"倉管",qa:"品管"};
+const leaderExamQuestions={
+  warehouse_lead:[
+    {source:"DP33-01",topic:"組長進階：溫度監控複核",examLevel:"leader",text:"倉庫組長複核每月溫度紀錄時，發現儲存環境有偏差，應優先確認哪一項處置？",options:["已通知管理藥師，並將受影響藥品移至非符合區進行品質評估","只要溫度恢復正常即可不留紀錄","下個月再一併處理","直接修改曲線圖使數值符合"],explanation:"每月溫度紀錄應檢視偏差；異常時通知管理藥師，並移置非符合區進行品質評估。",sourceSection:"DP33-01、DP55-01 溫度監控與異常處置",sourceQuote:"每月檢視溫度紀錄偏差；溫度異常時通知管理藥師並移至非符合區進行品質評估。",reviewedBy:"Codex 依公司來源核對",reviewDate:"2026-07-26"},
+    {source:"DP34-01",topic:"組長進階：關鍵設備紀錄",examLevel:"leader",text:"關鍵設備發生故障或異常時，組長應確認已啟動哪一項文件化處理？",options:["填寫 FR12-03 偏差事件報告單，調查後啟動必要的 CAPA","只在設備旁貼故障標示","等下次保養時再補記","直接更換設備且不需紀錄"],explanation:"關鍵設備故障或異常需填寫 FR12-03，調查後啟動 CAPA。",sourceSection:"DP34-01 關鍵設備異常處理",sourceQuote:"設備故障或異常需填寫 FR12-03 偏差事件報告單，調查後啟動 CAPA。",reviewedBy:"Codex 依公司來源核對",reviewDate:"2026-07-26"},
+    {source:"DP57-01",topic:"組長進階：配銷紀錄複核",examLevel:"leader",text:"組長複核配送溫度核實紀錄時，嘉里醫藥的運輸過程溫度記錄至少應以何種頻率取得？",options:["每季提供 1 筆","每月提供 1 筆","每年提供 1 筆","只在溫度異常時提供"],explanation:"嘉里醫藥經評估後，每季提供 1 筆運輸過程溫度記錄作為核實紀錄。",sourceSection:"DP57-01 運輸過程溫度",sourceQuote:"嘉里醫藥經評估後，每季提供一筆運輸過程溫度記錄，作為核實紀錄。",reviewedBy:"Codex 依公司來源核對",reviewDate:"2026-07-26"}
+  ],
+  sales_lead:[
+    {source:"DP53-01",topic:"組長進階：客戶資格複核",examLevel:"leader",text:"業務組長年度複核合格客戶資料時，最重要應確認哪一項？",options:["每位合格客戶至少完成一次資格與許可文件有效性評估","只確認客戶今年是否有下單","只核對客戶聯絡人姓名","只統計客戶家數"],explanation:"每年應確認合格客戶的許可文件與 GDP 資格；每位合格客戶至少評估一次。",sourceSection:"DP53-01 客戶認可定期複查",sourceQuote:"每位合格客戶每年至少評估一次，確認許可文件與 GDP 資格。",reviewedBy:"Codex 依公司來源核對",reviewDate:"2026-07-26"},
+    {source:"DP62-01",topic:"組長進階：客訴進度管制",examLevel:"leader",text:"業務組長追蹤運銷品質客訴時，應以何項原則管制結案？",options:["原則上一個月內結案，並追蹤逾期案件","年度結束前結案即可","只要客戶沒有再來電即可結案","交由倉管處理即可"],explanation:"運銷品質申訴原則上一個月內結案，業務須管制進度。",sourceSection:"DP62-01 運銷品質申訴",sourceQuote:"運銷品質客訴原則上一個月內結案，業務需管制進度。",reviewedBy:"Codex 依公司來源核對",reviewDate:"2026-07-26"},
+    {source:"DP63-01",topic:"組長進階：退回品風險複核",examLevel:"leader",text:"組長複核退回品處置時，如無法確認下游運銷保存條件，應作何判定？",options:["不得回到可銷售庫存，依程序直接報廢處理","補貼新標籤後恢復銷售","與一般庫存混放等待處理","只要外觀完整即可入庫"],explanation:"無法確認保存條件的退回品，基於風險考量不得回到可銷售庫存，可依程序直接報廢。",sourceSection:"DP63-01 退回品風險評估",sourceQuote:"退回品若無法確認保存條件，基於風險考量不得回到可銷售庫存。",reviewedBy:"Codex 依公司來源核對",reviewDate:"2026-07-26"}
+  ]
+};
+function cloneExamTemplate(baseKey, role, roleBadge, additions=[]){
+  const base=examTemplates[baseKey];
+  return {...base,role,roleDocs:base.roleDocs.map(doc=>({...doc,role:roleBadge})),draftQuestions:[...base.draftQuestions,...additions]};
+}
+// WI10-01 對倉管／倉庫組長及業務／業助／業務組長列出相同必訓 SOP；
+// 平台以獨立職稱鍵保留聯集範圍，並讓組長抽到監督、複核與異常追蹤題。
+examTemplates.warehouse_staff=cloneExamTemplate("warehouse","倉管","倉管日常作業");
+examTemplates.warehouse_lead=cloneExamTemplate("warehouse","倉庫組長","倉庫組長管理複核",leaderExamQuestions.warehouse_lead);
+examTemplates.sales_staff=cloneExamTemplate("sales","業務","業務日常作業");
+examTemplates.sales_assistant=cloneExamTemplate("sales","業助","業助日常作業");
+examTemplates.sales_lead=cloneExamTemplate("sales","業務組長","業務組長管理複核",leaderExamQuestions.sales_lead);
+const examDeptNames={doc:"文管",hr:"人事",purchase:"採購",sales_staff:"業務",sales_lead:"業務組長",sales_assistant:"業助",pharmacist:"管理藥師",warehouse_staff:"倉管",warehouse_lead:"倉庫組長",qa:"品管"};
 function deptDisplayName(key){return examDeptNames[key]||"文管";}
 function examTemplateSection(s){
   const tpl=examTemplates[s.examTemplate];
@@ -7087,23 +7134,23 @@ function bindDocumentMap(){
   });
 }
 function examPacketCss(){
-  return `@page{size:A4 portrait;margin:0}
+  return `@page{size:A4 portrait;margin:14mm 12mm 16mm}
 body{margin:0;padding:0;background:#fff;color:#000;font-family:"Microsoft JhengHei","Noto Sans TC",serif;font-size:11pt;line-height:1.35}
-.exam-print-page{position:relative;min-height:100vh;box-sizing:border-box;padding:14mm 12mm 16mm;break-after:page;page-break-after:always}
+.exam-print-page{position:relative;min-height:267mm;box-sizing:border-box;padding:0;break-after:page;page-break-after:always}
 .exam-print-page:last-child{break-after:auto;page-break-after:auto}
-.exam-fr-page{height:297mm;min-height:297mm}
+.exam-fr-page{height:auto;min-height:267mm}
 .exam-print-title{text-align:center;font-size:18pt;font-weight:800;letter-spacing:.08em;margin:0 0 10mm}
 .exam-fr-table,.exam-paper-table{width:100%;border-collapse:collapse;table-layout:fixed}
 .exam-fr-table th,.exam-fr-table td,.exam-paper-table th,.exam-paper-table td{border:1px solid #000;padding:6px 7px;vertical-align:top;word-break:break-word}
 .exam-fr-table th{font-weight:700;text-align:center}
 .exam-fr-table td{height:13mm}
 .exam-fr-notes{margin-top:4mm;font-size:10pt;line-height:1.6}
-.exam-fr-sign{position:absolute;left:12mm;right:12mm;bottom:16mm;display:grid;grid-template-columns:1fr 1fr;gap:4mm 14mm}
+.exam-fr-sign{position:relative;margin-top:5mm;display:grid;grid-template-columns:1fr 1fr;gap:4mm 14mm;break-inside:avoid;page-break-inside:avoid}
 .exam-fr-sign .sign-caption{grid-column:1/-1;font-size:9.5pt;color:#444;margin-bottom:1mm}
 .exam-fr-sign .sign-cell{display:flex;align-items:flex-end;gap:3mm;font-size:10.5pt}
 .exam-fr-sign .sign-tag{font-weight:700;white-space:nowrap}
 .exam-fr-sign .sign-line{flex:1;border-bottom:1px solid #000;height:11mm}
-.exam-doc-number{position:absolute;bottom:10mm;right:12mm;font-size:10pt}
+.exam-doc-number{margin-top:3mm;text-align:right;font-size:10pt;break-inside:avoid;page-break-inside:avoid}
 .exam-paper-head{display:grid;grid-template-columns:1fr auto;gap:8mm;align-items:start;margin-bottom:6mm}
 .exam-paper-head h1{margin:0;text-align:left;font-size:16pt;line-height:1.4}
 .exam-paper-score{border:2px solid #000;padding:5mm 8mm;text-align:center;font-size:14pt;font-weight:800;min-width:34mm}
@@ -7319,12 +7366,13 @@ function bindExamTemplate(){
   function isCommon(q){return /(?:^|\s|\+|、)(?:DM10-01|WI10-01)(?:\s|\+|、|$)/.test(questionSource(q));}
   function isGov(q){return /TFDA|PIC\/S|公開查核|公開缺失|官方來源|政府/.test(questionSource(q));}
   function buildQuestions(count){
-    const all=tpl.draftQuestions;
+    const all=[...tpl.draftQuestions,...govExamQuestionStore.forRoles(selectedKeys())];
     const common=all.filter(isCommon);
     const gov=all.filter(isGov);
     const roleDocCodes=new Set((tpl.roleDocs||[]).map(d=>d.code));
     const matchesRoleDoc=q=>[...roleDocCodes].some(code=>questionSource(q).includes(code));
-    const role=all.filter(q=>!isCommon(q)&&!isGov(q)&&matchesRoleDoc(q));
+    const leaderMode=selectedKeys().some(key=>/_(?:lead)$/.test(key));
+    const role=all.filter(q=>!isCommon(q)&&!isGov(q)&&matchesRoleDoc(q)&&(!q.examLevel||leaderMode||q.examLevel==="staff"));
     const roleByDoc={};
     role.forEach(q=>{
       const doc=q.source.trim();
@@ -7341,10 +7389,13 @@ function bindExamTemplate(){
       return picked;
     }
     const isAnnual=typeRadios.find(r=>r.checked)?.value==="annual";
-    const reserveGov=isAnnual&&gov.length&&count>1;
+    const preferredGov=gov.filter(q=>!q.examLevel||q.examLevel===(leaderMode?"leader":"staff"));
+    const reserveGov=isAnnual&&preferredGov.length&&count>1;
     const targetCount=reserveGov?count-1:count;
     const commonCount=Math.min(common.length,targetCount,Math.max(1,Math.ceil(count*0.2)));
     for(let i=0;i<commonCount;i++){const q=pick(common);if(q) selected.push(q);}
+    // 組長保留同一必訓 SOP 的日常題，同時至少抽一題監督／複核／異常追蹤題。
+    if(leaderMode&&selected.length<targetCount){const q=pick(role.filter(item=>item.examLevel==="leader"));if(q) selected.push(q);}
     const docKeys=Object.keys(roleByDoc);
     const shuffledDocs=shuffle(docKeys);
     let roleTaken=0;
@@ -7354,7 +7405,7 @@ function bindExamTemplate(){
       if(q){selected.push(q);roleTaken++;}
     }
     if(reserveGov){
-      const g=pick(gov);
+      const g=pick(preferredGov);
       if(g&&selected.length<count) selected.push(g);
     }
     const extraPool=all.filter(q=>{
@@ -8677,6 +8728,7 @@ const versionGuard = {
   await qaStore.init();
   await authStore.init();
   await deficiencyStore.init();
+  await govExamQuestionStore.init();
   await analyticsStore.ensureQuarterReview();
   document.getElementById("authAdminBtn")?.addEventListener("click",()=>showSection("admin-console"));
   document.getElementById("authLogoutBtn2")?.addEventListener("click",()=>authStore.signOut());
