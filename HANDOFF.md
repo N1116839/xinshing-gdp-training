@@ -1,5 +1,7 @@
 # 新勝 GDP 專案交接（精簡版）
 
+> 最新補記：2026-09-07（FR57-01 權責修正，待 commit + push）。使用者確認第一章 `FR10-01 新勝GDP品質系統文件總覽表(有時程NEW)` 的目錄權責為判定依據：**FR57-01 正航進銷存電腦化系統確校報告書屬品保管理**，不可因系統有多個使用單位而列為跨部門責任。前台已同步：品保文件地圖、AI 問答與 fact 的可見範圍、行事曆權責、品保測驗文件與題庫；非品保職務不再加入 FR57-01 題目。新增全員可查的「權責不明先查 FR10-01，未列明再請管理者確認」fact 與品保考題；AGENTS.md 同步列為後續維護規則。驗收：HTML JS parse OK、`node verify_facts_ghpages.mjs` 1315/1315、keyword 847/847、合規掃描通過。
+
 > 最新補記：2026-07-26（列印固定內距版型修正 ✅，待 GitHub Pages 推送與實機列印確認）。
 > 使用者截圖確認 build 20260730 已套用年度缺失列與簽名欄，但左右白邊仍幾乎沒有、標題上緣被切；因此不再依賴 Chromium 對 `@page margin` 的採用。兩套列印 CSS（本機列印／分享列印）改為 `@page margin:0`，每個 `.exam-print-page` 以 `box-sizing:border-box` 強制 `padding:16mm 15mm 10mm`，並用 `box-decoration-break:clone` 使自然跨頁的答題紀錄每頁也沿用同一內距；FR24-03 表格列高 `9mm`、字級 `9.5pt`、cell padding `2×3px`，為標題、註記、兩個簽名與頁尾保留空間。`APP_BUILD`／`app-version.json` 已同步由 `20260730` 升為 `20260731`。
 > 使用者列印預覽仍有第 5 頁空白。根因重判：`data-exam-print` 直接呼叫 `window.print()`；全站內容只套 `visibility:hidden`，**仍占據列印排版高度**，而 `.exam-print-doc` 是 absolute，導致其後的隱形網站 DOM 被輸出為空白頁。已新增 `printExamDocument()`：列印前把 `.exam-print-doc` 從測驗結果卡暫移到 `body` 最外層，加 `body.exam-printing`；print CSS 對 `body.exam-printing > *:not(.exam-print-doc)` 使用 `display:none`（不只是 invisible），正式文件改 static flow，列印結束後用 comment marker 原位還原。此作法同時讓 `@page` 的左右邊界不再被 absolute 全寬容器覆蓋。`APP_BUILD`／`app-version.json` 已同步由 `20260729` 升為 `20260730`。
