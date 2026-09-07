@@ -494,7 +494,7 @@ const TESTS = [
   // ── 第五章：進出貨管理（DP54-01） ──
   { q: '收貨驗收流程是什麼',       expectId: 'fact-receiving-flow',              expectHint: '到貨→量車廂溫度' },
   { q: '驗收不合格怎麼辦',         expectId: 'fact-receiving-flow',              expectHint: '系統入貨' },
-  { q: '嘉里醫藥幾點收貨',         expectId: 'fact-receiving-time-control',      expectHint: '14:00' },
+  { q: '嘉里醫藥幾點收貨',         expectId: 'fact-receiving-time-control',      expectHint: '15:00' },
   // ── 第五章：倉儲管理（DP55-01） ──
   { q: '近效期藥品幾個月貼黃標',   expectId: 'fact-storage-near-expiry',         expectHint: '黃色標籤' },
   { q: '效期到了藥品怎麼辦',       expectId: 'fact-storage-near-expiry',         expectHint: '非符合區' },
@@ -630,7 +630,7 @@ const TESTS = [
 
   // ── 新增：溫度設備深入驗證 ──
   { q: '門禁系統牌子',              expectId: 'fact-computer-scope',               expectHint: 'Pegasus' },
-  { q: '進銷存用什麼系統',          expectId: 'fact-computer-scope',               expectHint: '正航' },
+  { q: '進銷存用什麼系統',          expectId: 'fact-erp-validation',                expectHint: '正航' },
   { q: '溫度監測點TM002在哪',       expectId: 'clarify-temperature-records',      expectHint: '一樓倉庫' },
   { q: '溫度監測點TM005在哪',       expectId: 'clarify-temperature-records',      expectHint: '二樓倉庫' },
   { q: '空調有幾台',                expectId: 'clarify-equipment-list',            expectHint: 'AC001' },
